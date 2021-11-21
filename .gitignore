@@ -1,5 +1,7 @@
 /.idea/
-/.vscode/
+*.o
+*.dSYM
+a.out
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
