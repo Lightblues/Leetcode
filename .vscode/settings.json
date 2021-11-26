@@ -1,9 +1,9 @@
 {
-    "pasteImage.defaultName": "Y-MM-DD-HH-mm-ss",
-    "pasteImage.path": "${currentFileNameWithoutExt}",
-    "files.associations": {
-        "vector": "cpp",
-        "iostream": "cpp"
-    }
-
+  "pasteImage.defaultName": "Y-MM-DD-HH-mm-ss",
+  "pasteImage.path": "${currentFileNameWithoutExt}",
+  "files.associations": {
+    "vector": "cpp",
+    "iostream": "cpp"
+  },
+  "go.inferGopath": false
 }
