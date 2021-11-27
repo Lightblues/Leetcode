@@ -280,6 +280,64 @@ func f32(){
 }
 
 
+/* 0042.Trapping-Rain-Water/ 接雨水
+Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
+结合画图理解
+Input: [0,1,0,2,1,0,1,3,2,1,2,1]
+Output: 6 
+
+抽象一下，本题是想求针对每个 i，找到它左边最大值 leftMax，右边的最大值 rightMax，然后 min(leftMax，rightMax) 为能够接到水的高度。*/
+// 扫描两遍, 分别求每个位置的左右最大, 即可得到可接水高度
+func trap(height []int) int {
+	// 左右分别扫描一遍, 得到每个位置可接水高度
+	record := make([]int, len(height))
+	minH := 0
+	for i,h := range height{
+		minH = max(h, minH)
+		record[i] = minH
+	}
+	minH  = 0
+	for i:=len(height)-1; i>=0; i--{
+		minH = max(height[i], minH)
+		record[i] = min(record[i], minH)
+	}
+	// 累计
+	result := 0
+	for i:=1; i<len(height); i++{
+		result += record[i]-height[i]
+	}
+	return result
+}
+// 解法一 双指针
+// 若用双指针一次遍历, 这里记录的左右最大值 maxLeft, maxRight, 需要对于每个 index(遍历的左右指针) 都是合理的, 这里通过控制左右指针的移动 (每次移动较高的那一个) 来更新左右最大值.
+func trap2(height []int) int {
+	left, right, maxLeft, maxRight, result := 0,len(height)-1,0,0,0
+	maxLR := 0
+	for left < right {
+		maxLR = max(maxLeft, maxRight)
+		if height[left] < height[right]{
+			if height[left] < maxLR {
+				result += maxLR-height[left]
+			} 
+			if height[left] > maxLeft{
+				maxLeft = height[left]
+			}
+			left++
+		} else {
+			if height[right] < maxLR {
+				result += maxLR-height[right]
+			}
+			if height[right] > maxRight{
+				maxRight = height[right]
+			}
+			right--
+		}
+	}
+	return result
+}
+func f42(){
+	fmt.Println(trap2([]int{0,1,0,2,1,0,1,3,2,1,2,1}))
+}
 
 /* 0045.Jump-Game-II/
 Given an array of non-negative integers nums, you are initially positioned at the first index of the array.
@@ -406,7 +464,225 @@ func f55(){
 }
 
 
+/* 0062.Unique-Paths/
+一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。问总共有多少条不同的路径？
+Input: m = 3, n = 2
+Output: 3
+Explanation:
+From the top-left corner, there are a total of 3 ways to reach the bottom-right corner:
+1. Right -> Right -> Down
+2. Right -> Down -> Right
+3. Down -> Right -> Right */
+func uniquePaths(m int, n int) int {
+	dp := make([][]int, m)
+	// for i:=0; i<m; i++ {
+	// 	dpLine := make([]int, n)
+	// 	for j:= 0; j<n ; j++{
+	// 		if i==0 || j==0 {
+	// 			dpLine[j] = 1
+	// 		} else {
+	// 			dpLine[j] = dpLine[j-1] + dp[i-1][j]
+	// 		}
+	// 		dp[i] = dpLine
+	// 	}
+	// }
+	// 先初始化矩阵,这样写起来更规范一点
+	for i:=0; i<m; i++ {
+		dp[i] = make([]int, n)
+	}
+	for i:=0; i<m; i++{
+		for j:=0;j<n; j++{
+			if i==0 || j==0{
+				dp[i][j] = 1
+			} else {
+				dp[i][j] = dp[i-1][j] + dp[i][j-1]
+			}
+		}
+	}
+	return dp[m-1][n-1]
+}
+func f62(){
+	fmt.Println(uniquePaths(7,3))
+}
+
+/* 0063.Unique-Paths-II/
+加了 obstacles
+Input:
+[
+  [0,0,0],
+  [0,1,0],
+  [0,0,0]
+]
+Output: 2
+Explanation:
+There is one obstacle in the middle of the 3x3 grid above.
+There are two ways to reach the bottom-right corner:
+1. Right -> Right -> Down -> Down
+2. Down -> Down -> Right -> Right */
+func uniquePathsWithObstacles(obstacleGrid [][]int) int {
+	// 边界条件 [[1]]
+	if len(obstacleGrid) == 0 || obstacleGrid[0][0] == 1 {
+		return 0
+	}
+	m, n := len(obstacleGrid), len(obstacleGrid[0])
+	dp := make([][]int, m)
+	for i:=0; i<m; i++ {
+		dp[i] = make([]int, n)
+	}
+	dp[0][0] = 1
+	for i:= 1; i<m; i++ {
+		if dp[i-1][0] != 0 && obstacleGrid[i][0]==0{
+			dp[i][0] = 1
+		}
+	}
+	for j:=1; j<n; j++{
+		if dp[0][j-1]!=0 && obstacleGrid[0][j]==0{
+			dp[0][j] = 1
+		}
+	}
+	for i:=1; i<m; i++{
+		for j:=1;j<n; j++{
+			if obstacleGrid[i][j] ==0{
+				dp[i][j] = dp[i-1][j]+dp[i][j-1]
+			}
+		}
+	}
+	return dp[m-1][n-1]
+}
+func f63(){
+	fmt.Println(uniquePathsWithObstacles([][]int{
+		{0,0,0},		// 这里可以省略类型 []int
+		{0,1,0},
+		{0,0,0},
+	}))
+}
+
+/* 0064.Minimum-Path-Sum/
+Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.
+Input:
+[
+  [1,3,1],
+  [1,5,1],
+  [4,2,1]
+]
+Output: 7
+Explanation: Because the path 1→3→1→1→1 minimizes the sum. */
+// 解法二 最原始的方法，辅助空间 O(n^2)
+func minPathSum1(grid [][]int) int {
+	m, n := len(grid), len(grid[0])
+	dp := make([][]int, m)
+	for i:=0; i<m; i++ {
+		dp[i] = make([]int, n)
+	}
+	dp[0][0] = grid[0][0]
+	for i:= 1; i<m; i++ {
+		dp[i][0] = dp[i-1][0] + grid[i][0]
+	}
+	for j:=1; j<n; j++{
+		dp[0][j] = dp[0][j-1] + grid[0][j]
+	}
+	for i:=1; i<m; i++{
+		for j:=1;j<n; j++{
+			dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j]
+		}
+	}
+	return dp[m-1][n-1]
+}
+// 解法一 原地 DP，无辅助空间
+// 这一题最简单的想法就是用一个二维数组来 DP，当然这是最原始的做法。由于只能往下和往右走，只需要维护 2 列信息就可以了，从左边推到最右边即可得到最小的解。更近一步，可以直接在原来的数组中做原地 DP，空间复杂度为 0 。
+func minPathSum(grid [][]int) int {
+	m, n := len(grid), len(grid[0])
+	for i := 1; i < m; i++ {
+		grid[i][0] += grid[i-1][0]
+	}
+	for j := 1; j < n; j++ {
+		grid[0][j] += grid[0][j-1]
+	}
+	for i := 1; i < m; i++ {
+		for j := 1; j < n; j++ {
+			grid[i][j] += min(grid[i-1][j], grid[i][j-1])
+		}
+	}
+	return grid[m-1][n-1]
+}
+func f64(){
+	fmt.Println(minPathSum1([][]int{
+		{1,3,1},
+		{1,5,1},
+		{4,2,1},
+	}))
+}
+
+/* 0070.Climbing-Stairs/
+假设你正在爬楼梯。需要 n 阶你才能到达楼顶。每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？注意：给定 n 是一个正整数
+Input: 3
+Output: 3
+Explanation: There are three ways to climb to the top.
+1. 1 step + 1 step + 1 step
+2. 1 step + 2 steps
+3. 2 steps + 1 step */
+// 注意递推公式: dp[i] = dp[i-2] + dp[i-1]
+// 这一题求解的值就是 **斐波那契数列**。
+func climbStairs(n int) int {
+	dp := make([]int, n+1)
+	dp[0], dp[1] = 1, 1
+	for i:=2; i<=n; i++{
+		dp[i] = dp[i-1]+dp[i-2]
+	}
+	return dp[n]
+}
+// 解法二 滚动数组
+// 实际上需要的就是最近的两个
+func climbStairs2(n int) int {
+    // dp := [2]int{1, 1}
+    // for i := 2; i <= n; i++ {
+    //     dp[i%2] = dp[0] + dp[1]
+    // }
+    // return dp[n%2]
+	f, g := 1,1
+	for i:=0; i<n; i++{
+		f,g = g, f+g
+	}
+	return f
+}
+func f70(){
+	fmt.Println(climbStairs2(4))
+}
+
+/* 0091.Decode-Ways/
+将字母进行了编码
+'A' -> 1
+'B' -> 2
+...
+'Z' -> 26 
+Given a non-empty string containing only digits, determine the total number of ways to decode it.
+
+Input: "226"
+Output: 3
+Explanation: It could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6).
+
+要注意 "06" 是不合法的. 
+DP递推公式: dp[i] += dp[i-1] (当 1 ≤ s[i-1 : i] ≤ 9)；dp[i] += dp[i-2] (当 10 ≤ s[i-2 : i] ≤ 26)
+*/
+func numDecodings(s string) int {
+	n:=len(s)
+	dp := make([]int, n+1)
+	// 哨兵, 或者理解为, 空字符串只有一种方式
+	dp[0] = 1
+	for i:=1; i<=n; i++{
+		if s[i-1]!='0' {
+			dp[i] += dp[i-1]
+		}
+		if i>1 && s[i-2]!='0' && 10*(s[i-2]-'0')+(s[i-1]-'0')<=26 {
+			dp[i] += dp[i-2]
+		}
+	}
+	return dp[n]
+}
+func f91(){
+	fmt.Println(numDecodings("226"))
+}
 
 func main(){
-	f55()
+	f91()
 }
