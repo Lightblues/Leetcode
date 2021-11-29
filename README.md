@@ -1,7 +1,3 @@
-TODO
-
-- 单元测试 testing 包
-- 包索引/导入方式
 
 ## 分类小结
 
@@ -45,5 +41,127 @@ TODO
 
 ### math
 
-- 2 两数相加, 形式为逆序链表.
+- 2 两数相加, 形式为逆序链表. `中`
   - 定义了基本的 `ListNode` 结构, 并定义 `List2Ints, IntsList` 实现数组和链表的方便转换.
+- 7 反转32位整数 `中`
+  - 这题主要的限制是在要防止 32位 sign int 溢出, 讨巧的思路可以用更长的整数类型/字符串来保存. 「标准」思路应该是每次 `*10` 之前进行检查 (或者说, 和 `math.MinInt32/10` 进行比较) 防止溢出.
+- 9 Palindrome 回文数
+  - 同样可以采用 1. 反转数字; 2. 转为数组; 3. 转为字符串等方式.
+  - 直接反转可能溢出 (虽然此时必然不是回文数); 思路是「反转整数长度的一半」(即循环条件 `x>rev`), 最后的判断条件: 若 x 为回文数且长度为偶数, 则 `x==rev`; 若为奇数, 则 `x==rev/10`
+- 12, 13 罗马数字转阿拉伯数字
+  - 就是所使用的基数不用, 累计即可
+- 60 Permutation-Sequence 找出以一定的数字作为元素的排列中的第 k 个 `难`
+  - 思路一 也即官方的 [缩小问题规模](https://leetcode-cn.com/problems/permutation-sequence/solution/di-kge-pai-lie-by-leetcode-solution/); 其实也可理解为贪婪剪枝的 DFS?
+    - 使用 go 来实现的时候没有 Python 中好用的 `math.perm` 函数, 方便的类型转换等. 解答中用到的一些技巧值得学习. 例如, 1. 构造了 factorial 来实现 Python 中的 math.perm; 2. 用 valid 数组标记还没有用过的数字
+    - 重点还是要明确公式: `a_i=(k-1)mod(n-1)!+1`
+  - 反过来的问题: 对于给定的排列确定其为顺序第几个?
+    - 公式 `k=sum(order_i*(n-1)!)+1`, 其中的 order_i 是在 序列 `a_i+1...a_n` 中小于 a_i 的元素数量
+- 29 整除 `中`
+  - 思路一 类似二分查找, 每次将除数 `*2` 找到小于等于被除数的最大的那一个, 迭代终止条件是 `dividend<divisor`, 即不断减去除数的倍数之后, 剩余的部分小于除数
+  - 思路二 `倍增法` 实际上在除数递增的过程中即可将被除数相减, 当增大到接近被除数之后再不断 `/2`, 终止条件是因子 `cnt==0`, 也即 `dividend<divisor`
+
+### binary search 二分查找
+
+总结了二分查找的注意点:
+
+- 循环退出条件，注意是 low <= high，而不是 low < high。
+- mid 的取值，mid := low + (high-low)»1
+- low 和 high 的更新。low = mid + 1，high = mid - 1。
+
+```go
+func binarySearchMatrix(nums []int, target int) int {
+ low, high := 0, len(nums)-1
+ for low <= high {
+  mid := low + (high-low)>>1
+  if nums[mid] == target {
+   return mid
+  } else if nums[mid] > target {
+   high = mid - 1
+  } else {
+   low = mid + 1
+  }
+ }
+ return -1
+}
+```
+
+四个基本的变种
+
+```go
+// 二分查找第一个与 target 相等的元素，时间复杂度 O(logn)
+func searchFirstEqualElement(nums []int, target int) int {
+ low, high := 0, len(nums)-1
+ for low <= high {
+  mid := low + ((high - low) >> 1)
+  if nums[mid] > target {
+   high = mid - 1
+  } else if nums[mid] < target {
+   low = mid + 1
+  } else {
+   if (mid == 0) || (nums[mid-1] != target) { // 找到第一个与 target 相等的元素
+    return mid
+   }
+   high = mid - 1
+  }
+ }
+ return -1
+}
+
+// 二分查找最后一个与 target 相等的元素，时间复杂度 O(logn)
+func searchLastEqualElement(nums []int, target int) int {
+ low, high := 0, len(nums)-1
+ for low <= high {
+  mid := low + ((high - low) >> 1)
+  if nums[mid] > target {
+   high = mid - 1
+  } else if nums[mid] < target {
+   low = mid + 1
+  } else {
+   if (mid == len(nums)-1) || (nums[mid+1] != target) { // 找到最后一个与 target 相等的元素
+    return mid
+   }
+   low = mid + 1
+  }
+ }
+ return -1
+}
+
+// 二分查找第一个大于等于 target 的元素，时间复杂度 O(logn)
+func searchFirstGreaterElement(nums []int, target int) int {
+ low, high := 0, len(nums)-1
+ for low <= high {
+  mid := low + ((high - low) >> 1)
+  if nums[mid] >= target {
+   if (mid == 0) || (nums[mid-1] < target) { // 找到第一个大于等于 target 的元素
+    return mid
+   }
+   high = mid - 1
+  } else {
+   low = mid + 1
+  }
+ }
+ return -1
+}
+
+// 二分查找最后一个小于等于 target 的元素，时间复杂度 O(logn)
+func searchLastLessElement(nums []int, target int) int {
+ low, high := 0, len(nums)-1
+ for low <= high {
+  mid := low + ((high - low) >> 1)
+  if nums[mid] <= target {
+   if (mid == len(nums)-1) || (nums[mid+1] > target) { // 找到最后一个小于等于 target 的元素
+    return mid
+   }
+   low = mid + 1
+  } else {
+   high = mid - 1
+  }
+ }
+ return -1
+}
+```
+
+- 35 搜索插入位置
+  - 基本的「在有序数组中找到最后一个比 target 小的元素」这一变种
+- 69 实现 sqrt
+  - 解法二 `牛顿法`, 即求 `f(x)=x^2-n` 的零点
