@@ -1,7 +1,12 @@
 package main
 
+import (
+	"fmt"
+
+	"rsc.io/quote"
+)
+
 // import "golang.org/x/tour/pic"
-import "fmt"
 
 // 返回一个“返回int的函数”
 func fibonacci() func() int {
@@ -11,10 +16,23 @@ func fibonacci() func() int {
 		return f
 	}
 }
-
-func main() {
+func getFibonacci(){
+	fmt.Println(quote.Go())
 	f := fibonacci()
 	for i := 0; i < 10; i++ {
 		fmt.Println(f())
 	}
+}
+
+func testNil(){
+	arr := [][]int{}
+	arr = append(arr, nil)
+	fmt.Println(arr, len(arr))
+	for i:=0; i<len(arr); i++{
+		fmt.Println("i =",i, ", ", arr[i])
+	}
+}
+
+func main() {
+	testNil()
 }

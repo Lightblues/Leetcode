@@ -1,30 +1,30 @@
 {
-    // 使用 IntelliSense 了解相关属性。 
-    // 悬停以查看现有属性的描述。
-    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Python: 当前文件",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "cwd": "${fileDirname}"
-        },
-        {
-            "name": "clang++ - 生成和调试活动文件", // Build and debug active file
-            "type": "cppdbg",
-            "request": "launch",
-            // "${fileDirname}/${fileBasenameNoExtension}
-            "program": "${fileDirname}/a.out", // The program setting specifies the program you want to debug
-            "args": [],
-            "stopAtEntry": false, // Change the stopAtEntry value to true to cause the debugger to stop on the main method when you start debugging.
-            "cwd": "${fileDirname}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb",
-            "preLaunchTask": "clang++ build active file" // Ensure that the preLaunchTask value matches the label of the build task in the tasks.json file.
-        }
-    ]
+  // 使用 IntelliSense 了解相关属性。
+  // 悬停以查看现有属性的描述。
+  // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: 当前文件",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "cwd": "${fileDirname}"
+    }
+    // {
+    //     "name": "clang++ - 生成和调试活动文件", // Build and debug active file
+    //     "type": "cppdbg",
+    //     "request": "launch",
+    //     // "${fileDirname}/${fileBasenameNoExtension}
+    //     "program": "${fileDirname}/a.out", // The program setting specifies the program you want to debug
+    //     "args": [],
+    //     "stopAtEntry": false, // Change the stopAtEntry value to true to cause the debugger to stop on the main method when you start debugging.
+    //     "cwd": "${fileDirname}",
+    //     "environment": [],
+    //     "externalConsole": false,
+    //     "MIMode": "lldb",
+    //     "preLaunchTask": "clang++ build active file" // Ensure that the preLaunchTask value matches the label of the build task in the tasks.json file.
+    // }
+  ]
 }

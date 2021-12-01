@@ -38,6 +38,12 @@
   - 需要特殊考虑的是0, 要注意 "06" 是不合法的.
   - DP递推公式: `dp[i] += dp[i-1]` (当 1 ≤ s[i-1 : i] ≤ 9)；`dp[i] += dp[i-2]` (当 10 ≤ s[i-2 : i] ≤ 26)
   - 这题和上面的都可以考虑 `哨兵` 的思想, 避免起始的边界情况
+- 95 给定一个数字生成所有的元素为1-n的 BST’s (binary search trees) `中` 但个人觉得挺难的 `structure`
+  - 这里函数定义是 `func generateTrees(n int) []*TreeNode`, 只需要返回node指针即可.
+  - 思路其实比较简单: 注意到对于**二叉搜索树**, 一个节点左边的数均小于该节点; 此题场景下, 递归 `func generateBSTrees(start, end int) []*TreeNode` 即可; 
+  - 要注意终止条件, 这里可以设置为 `start>end`
+- 96 求上面二叉树的数量
+  - 在上一题思路下就很简单了: 递推公式 `dp[i] = dp[0] * dp[n-1] + dp[1] * dp[n-2] + …… + dp[n-1] * dp[0]`
 
 ### math
 

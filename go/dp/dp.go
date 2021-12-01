@@ -18,8 +18,28 @@ func max(x,y int)int{
 	return y
 }
 
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
 
+// Tree2Postorder 把 二叉树 转换成 postorder 的切片
+func Tree2Postorder(root *TreeNode) []int {
+	if root == nil {
+		return nil
+	}
 
+	if root.Left == nil && root.Right == nil {
+		return []int{root.Val}
+	}
+
+	res := Tree2Postorder(root.Left)
+	res = append(res, Tree2Postorder(root.Right)...)
+	res = append(res, root.Val)
+
+	return res
+}
 
 
 
@@ -683,6 +703,94 @@ func f91(){
 	fmt.Println(numDecodings("226"))
 }
 
+/* 0095.Unique-Binary-Search-Trees-II/
+Given an integer n, generate all structurally unique BST’s (binary search trees) that store values 1 … n.
+Input: 3
+Output:
+[
+  [1,null,3,2],
+  [3,2,null,1],
+  [3,1,null,null,2],
+  [2,1,3],
+  [1,null,2,null,3]
+]
+Explanation:
+The above output corresponds to the 5 unique BST's shown below:
+
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+ */
+
+ /**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func generateTrees(n int) []*TreeNode {
+	if n==0 {
+		return []*TreeNode{}
+	}
+	return generateBSTrees(1, n)
+}
+func generateBSTrees(start, end int) []*TreeNode{
+	// 生成包括了 start到end 的所有BST
+	tree := []*TreeNode{}
+	if start>end {
+		tree = append(tree, nil)	// nil 初始化 空对象
+	}
+	for i:=start; i<=end; i++ {
+		// 遍历过程: 分别迭代生成左右子树, 然后拼接起来
+		left := generateBSTrees(start, i-1)
+		right := generateBSTrees(i+1, end)
+		for _,l := range left{
+			for _,r := range right{
+				root := &TreeNode{Val: i, Left: l, Right: r}
+				tree = append(tree, root)
+			}
+		}
+	}
+	return tree
+}
+func f95(){
+	tree := generateTrees(3)
+	for i:=0; i<len(tree);i++{
+		t:= tree[i]
+		fmt.Println((Tree2Postorder(t)))
+	}
+}
+
+/* 0096.Unique-Binary-Search-Trees/
+Given n, how many structurally unique BST’s (binary search trees) that store values 1 … n?
+Input: 3
+Output: 5
+Explanation:
+Given n = 3, there are a total of 5 unique BST's:
+
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3 */
+func numTrees(n int) int{
+	dp := make([]int, n+1)
+	dp[0] = 1
+	for i:=1; i<=n; i++ {
+		for j:=0; j<i; j++ {
+			dp[i] += dp[j] * dp[i-j-1]
+		}
+	}
+	return dp[n]
+}
+func f96(){
+	fmt.Println(numTrees(3), numTrees(4))
+}
+
 func main(){
-	f91()
+	f96()
 }
