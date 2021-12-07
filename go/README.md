@@ -1,9 +1,39 @@
 
+LeetCode Cookbook <https://books.halfrost.com/leetcode/>
+
+## 代码语法总结
+
+### 传递 值拷贝 vs 指针
+
+典型的问题是遍历二叉树, 例如 113题(找到二叉树路径和为目标值的所有路径), 需要维护一个历史的path.
+
+- go中将slice作为参数传递/赋值(Python中将list作为参数传递也类似), 传递的还是类似指针的类型; 因此相较于值拷贝, 内存开销会小一点.
+- 因此, 在对于这个类型进行修改的时候, 需要注意对于外层变量的影响
+
+#### go语言中的slice 传递 & 复制
+
+- go中的slice本质上还是包括了len, cap 属性的一个指针, 可表示为 `[3/5]0xc42003df10`, 传递给函数是浅复制(**仍然指向源slice的底层数组**), 若在函数内进行了修改
+  - 若函数内部对slice进行扩容，扩容时生成了一个新的底层数组, 两个 slice 的内存指向就不同了, 不会影响外层slice
+  - 若没有进行扩容, 修改了底层数组, 则外层同样引用这一底层数组的slice会被改变
+- **复制** slice
+  - 可以使用 cope 函数, `copy(s2, s1)` 将s1复制到s2, 若s1较长会被截断, 较短则复制s1那部分(s2后面的部分不变, len也不变); 函数返回成功复制的数量
+  - 或者是字面量 `append([]int{}, s1...)`
+
+### 全局变量 vs 传参
+
+参见 113 题(找到二叉树路径和为目标值的所有路径).
+
+- 对于 `pathSum(root *TreeNode, targetSum int) [][]int` 这样的问题
+  - **传参**, 递归函数 `pathSumRec(node *TreeNode, sum int, paths *[][]int, tmp []int)`; 这里用了指针 `paths [][]int{}`, 因为初始化的 `[][]int{}` 类型长度为0, 若在函数内部进行 append, 会因为进行了扩容而开辟一个新的内存, 从而无法修改到外层的 slice
+  - **全局变量+内部函数**, 在函数内部定义 `var dfs func(root *TreeNode, target int)`, 从而直接修改全局变量, 从而避免了外部定义一个函数, 需要考虑的传参问题
+
+之所以会有这样的困扰, 因为之前没看过 go 的内部函数语法; 从实际应用上来看, 「全局变量+内部函数」的方式无疑更简单和优雅.
+
 ## 分类小结
 
 总结一下每道题的思路:
 
-### DP
+### 07 DP
 
 - 5 最长回文子字符串, `中`
   - 解法四 `DP`, 时间复杂度 O(n^2), 空间复杂度 O(n^2)
@@ -40,12 +70,117 @@
   - 这题和上面的都可以考虑 `哨兵` 的思想, 避免起始的边界情况
 - 95 给定一个数字生成所有的元素为1-n的 BST’s (binary search trees) `中` 但个人觉得挺难的 `structure`
   - 这里函数定义是 `func generateTrees(n int) []*TreeNode`, 只需要返回node指针即可.
-  - 思路其实比较简单: 注意到对于**二叉搜索树**, 一个节点左边的数均小于该节点; 此题场景下, 递归 `func generateBSTrees(start, end int) []*TreeNode` 即可; 
+  - 思路其实比较简单: 注意到对于**二叉搜索树**, 一个节点左边的数均小于该节点; 此题场景下, 递归 `func generateBSTrees(start, end int) []*TreeNode` 即可;
   - 要注意终止条件, 这里可以设置为 `start>end`
 - 96 求上面二叉树的数量
   - 在上一题思路下就很简单了: 递推公式 `dp[i] = dp[0] * dp[n-1] + dp[1] * dp[n-2] + …… + dp[n-1] * dp[0]`
+- 97 交错字符串 `中`
+  - 两个字符串能否在不改变顺序的情况下, 拼接组成第目标字符串; 递推公式 `dp[i][j] = dp[i-1][j]&&s1[i-1]==s3[i+j-1] || dp[i][j-1]&&s2[j-1]==s3[i+j-1]`
+  - 注意到第 i 行仅依赖于 第 i-1 行, 因此可以 `滚动数组` 优化空间
 
-### math
+### 08 Backtracking
+
+- 17 电话号码的字母组合
+  - 直接回溯, 写成DFS即可
+- 37 解数独 `难`
+  - 注意回溯的思路: 对于每一个为空的格子, 尝试填入所有可能的数字(通过 `checkSudoku(board *[][]byte, pos position, val int) bool` 函数判断是否可行), 最后要把格子还原为空;
+  - 终止搜索: 只要找到一个解即可, 因此判断没有剩余的空格时, 直接返回 (最开始阶段, 扫描一遍数独, 将空格子记录到一个数组中).
+- 19 给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合 `中`
+  - 先对candidates排序避免重复, 回溯, 每次填入所有可能的数字(不超过target), 递归函数 `findcombinationSum(candidates []int, target int, index int, currentList []int, res *[][]int)` 其中的target为剩余的目标值, index是当前填入的数字所在指标
+
+-
+
+### 09 DFS
+
+- 94 中序遍历一棵二叉树 `易`
+- 98 判断二叉搜索树是否合法 `中`
+  - 注意需要一个节点合法, 需要满足「大于左子树上的所有节点, 小于右子树上的所有节点」
+  - 递归函数形式 `isValidbst(root *TreeNode, min, max float64) bool`
+  - 检查条件 `return v>min && v<max && isValidbst(root.Left, min, v) && isValidbst(root.Right, v, max)`
+  - 边界(root): `isValidbst(root, math.Inf(-1), math.Inf(1))`
+- 99 **二叉搜索树**中的两个节点被错误地交换。恢复这棵树。`中`, 偏 `难`
+  - see [here](https://leetcode-cn.com/problems/recover-binary-search-tree/solution/hui-fu-er-cha-sou-suo-shu-by-leetcode-solution/)
+  - 解法一 中序遍历转为列表. 核心思路是, 二叉搜索树中序遍历等价于一个递增列表, 直接转化为列表后处理
+    - 对于交换两个元素, 可能出现一个或两个位置不满足 `a[i]<a[i+1]`, 我们在中序遍历得到的列表中找到要交换的节点即可
+    - 若交换的是相邻元素, 例如 [1,3,2,4,5,6,7], 保留指针 i, i+1即可, 若不相邻, 例如 [1,6,3,4,5,2,7], 则会有 i,j 两个元素不满足递增条件, 保留 i+1, j; 综上, 可以通过一次遍历得到要交换的两个节点
+  - 解法二 上面是「显式中序遍历」, 将中序遍历的值序列保存在一个数组中, 我们也可以隐式地在中序遍历的过程就找到被错误交换的节点.
+    - 思路其实是一样的, 我们只关心中序遍历的值序列中**每个相邻的位置的大小关系是否满足条件**(且错误交换后最多两个位置不满足条件). 因此在中序遍历的过程我们只需要维护**当前中序遍历到的最后一个节点**, 然后在遍历到下一个节点的时候，看两个节点的值是否满足前者小于后者即可，如果不满足说明找到了一个交换的节点，且在找到两次以后就可以终止遍历。
+    - 具体实现上, 又可分为递归和用 stack 来记录两种方案. 1. 官答用了栈来记录当前节点的「右父亲列表」(注意, 对一个节点, 其中序遍历的下一个点是其右子树中最小的节点, 即不断尝试访问左儿子); 2. [halforest](https://books.halfrost.com/leetcode/ChapterFour/0001~0099/0099.Recover-Binary-Search-Tree/) 的解答用的是递归, 更为直观
+      - 注意这里的递归函数形式 `inOrderTraverse(root, prev, target1, target2 *TreeNode) (*TreeNode, *TreeNode, *TreeNode)` root 为当前节点, prev 为中序遍历的上一个节点, target1, target2 为要找的两个节点; 返回 prev, target1, target2.
+  - 解法三 取消栈空间, 略
+- 100 判断两个二叉树是否完全相同
+  - 深度优先即可
+- 101 判断二叉树是否对称
+- 104 二叉树的深度
+  - DFS 递归
+    - 当递归到 nil 时返回 0
+    - 节点部位空时返回 `return max(maxDepth(root.Left), maxDepth(root.Right)) + 1`
+  - BFS 用stack保存每一层的节点
+- 110 判断一棵树是不是平衡二叉树。平衡二叉树的定义是：树中每个节点都满足左右两个子树的高度差 <= 1 的这个条件 `易`
+  - DFS 递归 `isBalancedHight(root *TreeNode) (bool, int)` 返回这棵子树是否平衡, 以及树高
+- 111 给定一个二叉树，找出其最小深度。最小深度是从根节点到最近**叶子节点**的最短路径上的节点数量
+  - 叶子节点是指没有子节点的节点
+  - 和 104 的区别在于, 若左右孩子只有一个为空, 则应该根据另一个子树的深度计算; 只有当左右均不为空时才返回 `min(minDepth(root.Left), minDepth(root.Right)) + 1`
+- 112 给定一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和。说明: 叶子节点是指没有子节点的节点。
+  - 还是注意叶子节点的判断
+- 113 找出上题中的所有路径 `中`
+  - 难度倒是不大, 利用一个变量记录目前的路径, 倒是在 go 和 python 的指针传递上尝试了好久; 详见代码语法总结部分「全局变量 vs 传参」「传递 值拷贝 vs 指针」
+- 114 将二叉树展开为链表, 先序遍历
+  - 解法一 递归: 对于递归函数 `flatten2(root *TreeNode)`, 分别将左右孩子完成flat, 由于是先序遍历, 所以 `root->root.left->...->root.right` 即可, 注意是左子树转化的链表最末尾连接右子树
+  - 解法二 非递归 每次找到左子树的最右(也即链表最后一个元素), 然后将右子树连接上去, 参见 [here](https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list/solution/er-cha-shu-zhan-kai-wei-lian-biao-by-leetcode-solu/)
+
+### 11 binary search 二分查找
+
+- 4 寻找两个有序数组的中位数 `难`
+  - 简单起见, 合并更方便
+  - 二分搜索, 参见 [here](https://leetcode-cn.com/problems/median-of-two-sorted-arrays/solution/xun-zhao-liang-ge-you-xu-shu-zu-de-zhong-wei-s-114/)
+  - 这里go的实现, 通过维护数组的分界点来找, 思路也很清晰
+- 33 搜索旋转排序数组 `中`, 没有重复, 返回索引值
+  - 可以在常规二分查找的时候查看当前 mid 为分割位置分割出来的两个部分 `[l, mid]` 和 `[mid + 1, r]` 哪个部分是有序的
+  - 如果 `[l, mid - 1]` 是有序数组 (即 `nums[mid]>=nums[0]`)，且 target 的大小满足 `[nums[l],nums[mid])`，则我们应该将搜索范围缩小至 `[l, mid - 1]`，否则在 `[mid + 1, r]` 中寻找。
+  - 反之, 若 `nums[mid]<=nums[-1]`, 则可直接根据 target 是否在 `(nums[mid], nums[r]]` 判断是否在右半部分, 否则在另一边搜索
+- 34 找出给定目标值在排序数组中的开始位置和结束位置
+  - 基本变体: 找第一个/最后一个等于 target 的元素
+- 35 查找有序数组插入位置 `中`
+  - 经典变体, 即「在有序数组中找到最后一个比 target 小的元素」
+- 69 实现 sqrt
+  - 解法二 `牛顿法`, 即求 `f(x)=x^2-n` 的零点
+  - 更 fancy 的还可以更快
+- 74 搜索二维有序数组 `中`
+  - 基本的二分搜索
+- 81 搜索旋转排序数组Ⅱ, 和33题相比多个可重复
+  - 其实仅仅多了一种情况: 当 `nums[mid] == nums[l] && nums[mid]==nums[r]` 时无法判断哪一部分是有序的, 因此只能 `l++; r--`
+- 153 搜索旋转排序数组 中的最小值(旋转点) `中`
+  - 由于旋转数组也可以是正常升序数组, 因此判断条件应该是和 high 比较而不能只和 low 比较
+  - 解法一 其实也可以用基本的二分范式 `l<=r`, 判断条件复杂一点
+  - 解法二 这类题目也可以用 `low < high` 作为终止条件, 相较于基本范式, 这里 high 和 low 的是不对等的. high 只是用来缩减搜索范围, 而 low为输出结果的指针
+- 154 相较于 153 增加了可重复条件 `难`
+  - 如果还是用基本范式, 判断条件会更复杂一点; 但用双指针逼近的思路会更清楚
+- 162 找到数组中的「**山峰**」 `中`
+  - 算是二分的经典变体, 和 153 一样用 high low 进行判断会比较简单; 基于 `nums[mid+1] >= nums[mid]` 进行更新
+- 167 找到两数之和为目标值的index
+  - 和第 1 题一样, 不过时排好序的, 可以用双指针逼近, 从而免去了map空间
+- 209 长度最小的子数组 `中`
+  - 正数数组, 找到 >=target 的连续子数组的最小长度.
+  - 解法一 先计算 cumsum, 然而对于每一个子数组开始位置, 可以用二分搜索找到最小长度, 时间 O(nlogn), O(n)
+  - 解法二 「**滑动窗口**」在滑动窗口 [i,j]之间不断往后移动，如果总和小于 s，就扩大右边界 j，不断加入右边的值，直到 sum > s，之和再缩小 i 的左边界，不断缩小直到 sum < s，这时候右边界又可以往右移动。以此类推。 O(n), O(1)
+
+总结了二分查找的注意点:
+
+- 循环退出条件，注意是 low <= high，而不是 low < high。
+- mid 的取值，mid := low + (high-low)»1
+- low 和 high 的更新。low = mid + 1，high = mid - 1。
+
+四个基本的变种
+
+- 二分查找第一个与 target 相等的元素，时间复杂度 O(logn)
+- 二分查找最后一个与 target 相等的元素，时间复杂度 O(logn)
+- 二分查找第一个大于等于 target 的元素，时间复杂度 O(logn)
+- 二分查找最后一个小于等于 target 的元素，时间复杂度 O(logn)
+
+另外一类常见的: 基本有序数组. 在山峰数组中找山峰，在旋转有序数组中找分界点。第 33 题，第 81 题，第 153 题，第 154 题，第 162 题，第 852 题
+
+### 12 math
 
 - 2 两数相加, 形式为逆序链表. `中`
   - 定义了基本的 `ListNode` 结构, 并定义 `List2Ints, IntsList` 实现数组和链表的方便转换.
@@ -65,109 +200,3 @@
 - 29 整除 `中`
   - 思路一 类似二分查找, 每次将除数 `*2` 找到小于等于被除数的最大的那一个, 迭代终止条件是 `dividend<divisor`, 即不断减去除数的倍数之后, 剩余的部分小于除数
   - 思路二 `倍增法` 实际上在除数递增的过程中即可将被除数相减, 当增大到接近被除数之后再不断 `/2`, 终止条件是因子 `cnt==0`, 也即 `dividend<divisor`
-
-### binary search 二分查找
-
-总结了二分查找的注意点:
-
-- 循环退出条件，注意是 low <= high，而不是 low < high。
-- mid 的取值，mid := low + (high-low)»1
-- low 和 high 的更新。low = mid + 1，high = mid - 1。
-
-```go
-func binarySearchMatrix(nums []int, target int) int {
- low, high := 0, len(nums)-1
- for low <= high {
-  mid := low + (high-low)>>1
-  if nums[mid] == target {
-   return mid
-  } else if nums[mid] > target {
-   high = mid - 1
-  } else {
-   low = mid + 1
-  }
- }
- return -1
-}
-```
-
-四个基本的变种
-
-```go
-// 二分查找第一个与 target 相等的元素，时间复杂度 O(logn)
-func searchFirstEqualElement(nums []int, target int) int {
- low, high := 0, len(nums)-1
- for low <= high {
-  mid := low + ((high - low) >> 1)
-  if nums[mid] > target {
-   high = mid - 1
-  } else if nums[mid] < target {
-   low = mid + 1
-  } else {
-   if (mid == 0) || (nums[mid-1] != target) { // 找到第一个与 target 相等的元素
-    return mid
-   }
-   high = mid - 1
-  }
- }
- return -1
-}
-
-// 二分查找最后一个与 target 相等的元素，时间复杂度 O(logn)
-func searchLastEqualElement(nums []int, target int) int {
- low, high := 0, len(nums)-1
- for low <= high {
-  mid := low + ((high - low) >> 1)
-  if nums[mid] > target {
-   high = mid - 1
-  } else if nums[mid] < target {
-   low = mid + 1
-  } else {
-   if (mid == len(nums)-1) || (nums[mid+1] != target) { // 找到最后一个与 target 相等的元素
-    return mid
-   }
-   low = mid + 1
-  }
- }
- return -1
-}
-
-// 二分查找第一个大于等于 target 的元素，时间复杂度 O(logn)
-func searchFirstGreaterElement(nums []int, target int) int {
- low, high := 0, len(nums)-1
- for low <= high {
-  mid := low + ((high - low) >> 1)
-  if nums[mid] >= target {
-   if (mid == 0) || (nums[mid-1] < target) { // 找到第一个大于等于 target 的元素
-    return mid
-   }
-   high = mid - 1
-  } else {
-   low = mid + 1
-  }
- }
- return -1
-}
-
-// 二分查找最后一个小于等于 target 的元素，时间复杂度 O(logn)
-func searchLastLessElement(nums []int, target int) int {
- low, high := 0, len(nums)-1
- for low <= high {
-  mid := low + ((high - low) >> 1)
-  if nums[mid] <= target {
-   if (mid == len(nums)-1) || (nums[mid+1] > target) { // 找到最后一个小于等于 target 的元素
-    return mid
-   }
-   low = mid + 1
-  } else {
-   high = mid - 1
-  }
- }
- return -1
-}
-```
-
-- 35 搜索插入位置
-  - 基本的「在有序数组中找到最后一个比 target 小的元素」这一变种
-- 69 实现 sqrt
-  - 解法二 `牛顿法`, 即求 `f(x)=x^2-n` 的零点

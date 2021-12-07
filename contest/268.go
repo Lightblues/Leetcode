@@ -61,7 +61,7 @@ func Constructor(arr []int) RangeFreqQuery {
 
 
 func (this *RangeFreqQuery) Query(left int, right int, value int) int {
-
+	return 0
 }
 
 

@@ -18,6 +18,7 @@ func max(x,y int)int{
 	return y
 }
 
+// TreeNode 定义的二叉树节点
 type TreeNode struct {
 	Val   int
 	Left  *TreeNode
@@ -791,6 +792,65 @@ func f96(){
 	fmt.Println(numTrees(3), numTrees(4))
 }
 
+/* 0097.Interleaving-String/ 交错字符串
+Given strings s1, s2, and s3, find whether s3 is formed by an interleaving of s1 and s2.
+An interleaving of two strings s and t is a configuration where they are divided into non-empty substrings such that:
+s = s1 + s2 + ... + sn
+t = t1 + t2 + ... + tm
+|n - m| <= 1
+The interleaving is s1 + t1 + s2 + t2 + s3 + t3 + ... or t1 + s1 + t2 + s2 + t3 + s3 + ... 
+
+两个字符串能否在不改变顺序的情况下, 拼接组成第目标字符串
+Input: s1 = "aabcc", s2 = "dbbca", s3 = "aadbbcbcac"
+Output: true
+
+Follow up: Could you solve it using only O(s2.length) additional memory space? */
+// 解法一 DP
+func isInterleave(s1 string, s2 string, s3 string) bool {
+	m, n := len(s1), len(s2)
+	if len(s3) != m+n{
+		return false
+	}
+	dp := make([][]bool, m+1)
+	for i:=0; i<=m; i++{
+		dp[i] = make([]bool, n+1)
+	}
+	dp[0][0] = true
+	for i:=1; i<=m; i++{
+		dp[i][0] = s1[:i] == s3[:i]
+	}
+	for j:=1;j<=n;j++{
+		dp[0][j] = s2[:j]==s3[:j]
+	}
+	for i:=1; i<=m; i++{
+		for j:=1;j<=n;j++{
+			dp[i][j] = dp[i-1][j]&&s1[i-1]==s3[i+j-1] || dp[i][j-1]&&s2[j-1]==s3[i+j-1]
+		}
+	}
+	return dp[m][n]
+}
+// 优化空间 滚动数组
+func isInterleave2(s1, s2, s3 string) bool {
+	m, n := len(s1), len(s2)
+	if len(s3) != m+n{
+		return false
+	}
+	dp := make([]bool, n+1)
+	for j:=0; j<=n; j++{
+		dp[j] = s2[:j]==s3[:j]
+	}
+	for i:=1; i<=m; i++{
+		dp[0] = s1[:i]==s3[:i]
+		for j:=1;j<=n;j++{
+			dp[j] = dp[j]&&s1[i-1]==s3[i+j-1] || dp[j-1]&&s2[j-1]==s3[i+j-1]
+		}
+	}
+	return dp[n]
+}
+func f97(){
+	fmt.Println(isInterleave2("aabcc", "dbbca", "aadbbcbcac"))
+}
+
 func main(){
-	f96()
+	f97()
 }
