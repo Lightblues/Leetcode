@@ -1,0 +1,118 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+// ===================funcs ===================================
+func min(a,b int) int{
+	if a<b{return a}
+	return b
+}
+func max(a,b int)int{
+	if a>b{return a}
+	return b
+}
+
+// =================== problems ===================================
+/* 2089. 找出数组排序后的目标下标
+排序, 输出对应的index */
+func targetIndices(nums []int, target int) []int {
+	sort.Ints(nums)
+	results := []int{}
+	for i:=0; i<len(nums); i++ {
+		if nums[i] == target {
+			results = append(results, i)
+		}
+	}
+	return results
+}
+func f2089(){
+	fmt.Println(targetIndices([]int{1,2,5,2,3}, 2))
+}
+
+/* 2090. 半径为 k 的子数组平均值
+输入：nums = [7,4,3,9,1,8,5,2,6], k = 3
+输出：[-1,-1,-1,5,4,4,-1,-1,-1]
+解释：
+- avg[0]、avg[1] 和 avg[2] 是 -1 ，因为在这几个下标前的元素数量都不足 k 个。
+- 中心为下标 3 且半径为 3 的子数组的元素总和是：7 + 4 + 3 + 9 + 1 + 8 + 5 = 37 。
+  使用截断式 整数除法，avg[3] = 37 / 7 = 5 。
+- 中心为下标 4 的子数组，avg[4] = (4 + 3 + 9 + 1 + 8 + 5 + 2) / 7 = 4 。
+- 中心为下标 5 的子数组，avg[5] = (3 + 9 + 1 + 8 + 5 + 2 + 6) / 7 = 4 。
+- avg[6]、avg[7] 和 avg[8] 是 -1 ，因为在这几个下标后的元素数量都不足 k 个。
+
+输入：nums = [100000], k = 0
+输出：[100000]
+解释：
+- 中心为下标 0 且半径 0 的子数组的元素总和是：100000 。
+  avg[0] = 100000 / 1 = 100000 。
+
+输入：nums = [8], k = 100000
+输出：[-1]
+解释：
+- avg[0] 是 -1 ，因为在下标 0 前后的元素数量均不足 k 。 */
+func getAverages(nums []int, k int) []int {
+	result := make([]int, len(nums))
+	for i:=0; i<len(nums); i++ {
+		result[i] = -1
+	}
+	if len(nums)>=2*k+1{
+		temp := 0
+		for i:=0; i<2*k+1; i++{
+			temp += nums[i]
+		}
+		for i:=k; i<len(nums)-k; i++{
+			result[i] = temp / (2*k+1)
+			if i+k+1<len(nums){
+				temp = temp + nums[i+k+1] - nums[i-k]
+			}
+		}
+	}
+	return result
+}
+func f2090(){
+	fmt.Println(getAverages([]int{7,4,3,9,1,8,5,2,6}, 3))
+}
+
+/* 2091. 从数组中移除最大值和最小值
+从前或者从后面开始移除, 计算最小移除次数
+ */
+func minimumDeletions(nums []int) int {
+	minIndex, maxIndex := 0, 0
+	for i:=0; i<len(nums); i++{
+		if nums[i] > nums[maxIndex]{
+			maxIndex = i
+		}
+		if nums[i] < nums[minIndex]{
+			minIndex = i
+		}
+	}
+	// minL, minR := minIndex+1, len(nums)-minIndex
+	// maxL, maxR := maxIndex+1, len(nums)-maxIndex
+	// if minL<=minR && maxL<=maxR {
+	// 	return max(minL, maxL)
+	// } else if minR<=minL && maxR<=maxL {
+	// 	return max(minR, maxR)
+	// }
+	// return min(minL, minR) + min(maxL, maxR)
+
+	i1, i2 := min(minIndex, maxIndex), max(minIndex, maxIndex)
+	r1, r2, r3 := i2+1, len(nums)-i1, i1+1+len(nums)-i2
+	result := min(r1, r2)
+	return min(result, r3)
+}
+func f2091(){
+	fmt.Println(minimumDeletions([]int{-1,-53,93,-42,37,94,97,82,46,42,-99,56,-76,-66,-67,-13,10,66,85,-28}))
+}
+
+/* 2092. 找出知晓秘密的所有专家
+Python
+ */
+
+
+// =================== main ===================================
+func main() {
+	f2091()
+}
