@@ -1,6 +1,94 @@
-from typing import List
+from typing import List, Optional
 import bisect
 from collections import defaultdict
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution267:
+    """ 2073. 买票需要的时间 """
+    def timeRequiredToBuy(self, tickets: List[int], k: int) -> int:
+        numK = tickets[k]
+        result = 0
+        for i in range(k):
+            result += min(tickets[i], numK)
+        for j in range(k+1, len(tickets)):
+            result += min(tickets[j], numK-1)
+        return result+numK
+
+    """ 2074. 反转偶数长度组的节点 """
+    def reverseEvenLengthGroups(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        def reverse(head: ListNode, length: int):
+            if not head.next or not head.next.next:
+                return None
+            tail = head.next
+            now, next = head.next, head.next.next
+            for _ in range(length):
+                if next:
+                    next = next.next
+                    now.next.next = now
+            head.next = now
+            tail.next = next
+            return next
+        def step(node: ListNode, n:int):
+            for _ in range(n):
+                if node.next:
+                    node = node.next
+            return node
+        headRecord = head
+        count = 1
+        while head:
+            if count % 2:
+                head = step(head, count)
+            else:
+                head = reverse(head, count)
+            count += 1
+        return headRecord
+
+    """ 2075. 解码斜向换位密码 
+    想太复杂了: 直接斜方向直接解码, 然后去除末尾的空格即可"""
+    def decodeCiphertext(self, encodedText: str, rows: int) -> str:
+        if rows == 1:
+            return encodedText
+        cols = len(encodedText) // rows
+        matrix = []
+        for row in range(rows):
+            matrix.append(encodedText[row*cols:(row+1)*cols])
+        raw = ""
+        if rows>cols:
+            nDiag = 1
+        else:
+            nDiag= cols-rows + 1
+            # 检查最后一个斜行是否有字母
+            for i in range(rows-1):
+                if matrix[i][nDiag+i] != " ":
+                    nDiag += 1
+                    break
+        # 填入字母
+        for i in range(nDiag):
+            for j in range(rows):
+                x, y = j, i+j
+                if y>=cols:
+                    break
+                raw += matrix[x][y]
+        return raw.rstrip()
+
+    """ 2076. 处理含限制条件的好友请求 """
+    def friendRequests(self, n: int, restrictions: List[List[int]], requests: List[List[int]]) -> List[bool]:
+        pass
+
+sol = Solution267()
+print(
+    sol.decodeCiphertext("ch   ie   pr", rows = 3),
+    sol.decodeCiphertext("a  b  ", 3),
+    sol.decodeCiphertext("iveo    eed   l t    olc", 4),
+    sol.decodeCiphertext("iveo    eed   l te   olc", rows = 4)
+)
+
+
+
 
 class Solution268:
     """ 2078. 两栋颜色不同且距离最远的房子

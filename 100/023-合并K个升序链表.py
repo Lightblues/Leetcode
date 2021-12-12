@@ -101,6 +101,24 @@ class Solution:
                 heappush(pq, (l.next.val, index))
         return head_pre.next
 
+    def mergeKList3(self, lists):
+        import heapq
+
+        def __lt__(self, other):
+            return self.val < other.val
+        ListNode.__lt__ = __lt__
+        heap = []
+        for i in lists:
+            if i:
+                heapq.heappush(heap, i)
+        d = c = ListNode(-1)
+        while heap:
+            n = heapq.heappop(heap)
+            c.next = n
+            c = c.next
+            if n.next:
+                heapq.heappush(heap, n.next)
+        return d.next
 
 
 

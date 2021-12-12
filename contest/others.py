@@ -4,6 +4,19 @@ import heapq
 import random
 
 class Solution:
+    """ 128. 最长连续序列 """
+    def longestConsecutive(self, nums: List[int]) -> int:
+        nums = set(nums)
+        currL, maxL = 0, 0
+        for i in nums:
+            if i-1 not in nums:
+                currL = 1
+                while i+1 in nums:
+                    i += 1
+                    currL += 1
+                maxL = max(maxL, currL)
+        return maxL
+
 
     """ 332. 重新安排行程 机票行程重排列, 要求首尾相连, 欧拉通路
 所有这些机票都属于一个从 JFK（肯尼迪国际机场）出发的先生，所以该行程必须从 JFK 开始。如果存在多种有效的行程，请你按字典排序返回最小的行程组合。"""
@@ -65,9 +78,10 @@ class Solution:
 
 sol = Solution()
 results = [
-    sol.findAllPeople(4, [[3,1,3],[1,2,2],[0,3,3]], 3),
-    sol.findAllPeople2(6, [[1,2,5],[2,3,8],[1,5,10]], 1),
-    sol.findAllPeople2(4, [[3,1,3],[1,2,2],[0,3,3]], 3),
+    sol.longestConsecutive([100,4,200,1,3,2]),
+    # sol.findAllPeople(4, [[3,1,3],[1,2,2],[0,3,3]], 3),
+    # sol.findAllPeople2(6, [[1,2,5],[2,3,8],[1,5,10]], 1),
+    # sol.findAllPeople2(4, [[3,1,3],[1,2,2],[0,3,3]], 3),
     
     # sol.findItinerary([["MUC","LHR"],["JFK","MUC"],["SFO","SJC"],["LHR","SFO"]]),
     # sol.findItinerary2([["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]])

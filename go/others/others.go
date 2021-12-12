@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/heap"
 	"fmt"
 	"sort"
 )
@@ -15,7 +16,90 @@ func max(a,b int)int{
 	return b
 }
 
+// ListNode 列表结构
+type ListNode struct {
+	Val int
+	Next *ListNode
+}
+
 // =================== problems ===================================
+/* 23. 合并K个升序链表 */
+// type Item struct {
+// 	val int
+// 	node *ListNode
+// }
+// type ItemHeap []Item
+
+// func (h ItemHeap) Len() int { return len(h) }
+// func (h ItemHeap) Less(i, j int) bool { 
+// 	return h[i].val < h[j].val
+// }
+// func (h ItemHeap) Swap(i, j int) {
+// 	h[i], h[j] = h[j], h[i]
+// }
+// func (h *ItemHeap) Push(val int) {
+// 	*h = append(*h, Item{val, nil})
+// }
+// func (h *ItemHeap) Pop() interface{} {
+// 	old := *h
+// 	n := len(old)
+// 	x := old[n-1]
+// 	*h = old[:n-1]
+// 	return x
+// }
+// func mergeKLists(lists []*ListNode) *ListNode {
+// 	h := &ItemHeap{}
+// 	for _, l := range lists {
+// 		heap.Push(h, Item{l.Val, l})
+// 	}
+// 	res := ListNode{0, nil}
+// 	for {
+// 		item := heap.Pop(h).(Item)
+// 	}
+// 	return res.Next
+// }
+
+
+// TODO go 语言语法
+// https://leetcode-cn.com/problems/merge-k-sorted-lists/solution/go-zi-dai-zui-xiao-dui-by-zhaoyongjie-frgs/
+type minHeap []* ListNode
+
+func (h minHeap) Len() int { return len(h) }
+func (h minHeap) Less(i, j int) bool { return h[i].Val < h[j].Val }
+func (h minHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
+func (h *minHeap) Push(x interface{}) {
+	*h = append(*h, x.(*ListNode))
+}
+func (h *minHeap) Pop() interface{} {
+	old := *h
+	n := len(old) 
+	x := old[n-1]
+	*h = old[:n-1]
+	return x
+}
+func mergeKLists(lists []*ListNode) *ListNode {
+	h := new(minHeap)
+	// h := minHeap{}
+	for _, l := range lists {
+		if l!=nil {
+			heap.Push(h, l)
+		}
+	}
+	// dummyHead := ListNode{}
+	dummyHead := new(ListNode)
+	pre := dummyHead
+	for h.Len() >0{
+		tmp := heap.Pop(h).(*ListNode)
+		if tmp.Next != nil {
+			heap.Push(h, tmp.Next)
+		}
+		pre.Next = tmp
+		pre = pre.Next
+	}
+	return dummyHead.Next
+}
+
+
 /* 2089. 找出数组排序后的目标下标
 排序, 输出对应的index */
 func targetIndices(nums []int, target int) []int {
