@@ -25,6 +25,15 @@ type TreeNode struct {
 // 	for 
 // }
 
+// Node 树节点
+type Node struct {
+	Val   int
+	Left  *Node
+	Right *Node
+	Next  *Node
+}
+
+
 // =================== DFS ===================================
 /* 0094.Binary-Tree-Inorder-Traversal/ 中序遍历一颗二叉树
 Given a binary tree, return the inorder traversal of its nodes’ values.
@@ -410,9 +419,104 @@ func flatten2(root *TreeNode) {
 	root.Right = p
 }
 
-/* 0116.Populating-Next-Right-Pointers-in-Each-Node/
+/* 0116.Populating-Next-Right-Pointers-in-Each-Node/ 中
 给定一个 完美二叉树 ，其所有叶子节点都在同一层，每个父节点都有两个子节点。
-要求在这棵树的同层所有节点之间建立从左到右的next指针连接 */
+要求在这棵树的同层所有节点之间建立从左到右的next指针连接 
+
+这里的迭代其实也是比较直观的想法：利用上一层已经有的 Next 构成的链表来传递
+解法二，递归。递归函数 connectTwoNodes(n1, n2 *Node) 是同层的相邻两个节点，在函数中要求连接 1. node1, node2 其左右孩子；2. node1.Left.Next=node2.Right */
+//解法一：迭代
+func connect(root *Node) *Node {
+	now := root
+	for now != nil {
+		p := now
+		if p.Left == nil { break }
+		for p!=nil {
+			p.Left.Next = p.Right
+			n := p.Next
+			if n!=nil {
+				p.Right.Next = n.Left
+			}
+			p = p.Next
+		}
+		now = now.Left
+	}
+	return root
+}
+// 解法二 递归
+func connect2(root *Node) *Node {
+	if root == nil {return nil}
+	connectTwoNodes(root.Left, root.Right)
+	return root
+}
+func connectTwoNodes(n1, n2 *Node) {
+	if n1==nil || n2==nil {return}
+	n1.Next = n2
+	connectTwoNodes(n1.Left, n1.Right)
+	connectTwoNodes(n2.Left, n2.Right)
+	connectTwoNodes(n1.Right, n2.Left)
+}
+
+
+/* 0124.Binary-Tree-Maximum-Path-Sum/ 难 */
+func maxPathSum(root *TreeNode) int {
+	// 1. 计算从每个节点出发，向下的路径中的最大值，保存为 pathVal
+	pathVal := map[*TreeNode]int{}
+	var dfsSinglePathValue func(root *TreeNode) int
+	dfsSinglePathValue = func(root *TreeNode) int {
+		if root == nil {
+			return math.MinInt32
+		}
+		left := dfsSinglePathValue(root.Left)
+		right := dfsSinglePathValue(root.Right)
+		singlePathVal := max(max(root.Val+left, root.Val+right), root.Val)
+		pathVal[root] = singlePathVal
+		return singlePathVal
+	}
+	dfsSinglePathValue(root)
+	pathVal[nil] = math.MinInt32  // 边界情况，下面可能访问到空值
+
+	// 2. 遍历
+	maxPath := math.MinInt32 // 记录最大路径值
+	var dfsPathMax func(root *TreeNode)
+	dfsPathMax = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+		// pathMax 经过当前 root 的路径最大值
+		// pathVal[root] 是以 root 出发向下的最大路径值；还要考虑作为中间节点的情况
+		pathMax := max(pathVal[root], root.Val+pathVal[root.Left]+pathVal[root.Right])
+		// update
+		maxPath = max(maxPath, pathMax)
+		
+		// dfs
+		dfsPathMax(root.Left)
+		dfsPathMax(root.Right)
+	}
+	dfsPathMax(root)
+	return maxPath
+}
+// 解法二：把上面的两次 DFS 合并起来了
+func maxPathSum2(root *TreeNode) int {
+	if root == nil { return 0 }
+	max := math.MinInt32
+	getPathSum(root, &max)
+	return max
+}
+// 返回当前节点作为起点的最大路径值；更新全局的 max 最大路径值
+func getPathSum(root *TreeNode, maxP *int) int {
+	if root==nil { return math.MinInt32 }
+	left := getPathSum(root.Left, maxP)
+	right := getPathSum(root.Right, maxP)
+	// 当前 root点出发的最大路径值
+	currMax := max(max(root.Val+left, root.Val+right), root.Val)
+	// 经过当前节点的最大路径值
+	currMax2 := max(currMax, left+right+root.Val)
+	*maxP = max(*maxP, currMax2)
+	return currMax
+}
+
+
 
 
 // =================== Main ===================================

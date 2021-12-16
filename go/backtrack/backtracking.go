@@ -217,12 +217,69 @@ func f40(){
 }
 /* 0046.Permutations/
 给定一个没有重复数字的序列，返回其所有可能的全排列。 */
+func permute(nums []int) [][]int {
+	result := [][]int{}
+	now := make([]int, len(nums))
+	used := make([]bool, len(nums))		// 用一个列表记录该位置是否被用过
+	var dfs func(index int)
+	dfs = func(index int) {
+		if index == len(nums) {
+			tmp := append([]int{}, now...)
+			result = append(result, tmp)
+			return
+		}
+		for i:=0; i<len(nums); i++ {
+			if !used[i] {
+				now[index] = nums[i]
+				used[i] = true
+				dfs(index+1)
+				used[i] = false
+				// now = now[:index]
+			}
+		}
+	}
+	dfs(0)
+	return result
+}
+func f46(){
+	fmt.Println(permute([]int{1,2,3}))
+}
 
+/* /0047.Permutations-II/
+这一题是第 46 题的加强版，第 46 题中求数组的排列，数组中元素不重复，但是这一题中，数组元素会重复，所以需要最终排列出来的结果需要去重。 */
+func permuteUnique(nums []int) [][]int {
+	sort.Ints(nums)
+	now, used, result := make([]int, len(nums)), make([]bool, len(nums)), [][]int{}
+	var dfs func(index int)
+	dfs = func(index int) {
+		if index==len(nums) {
+			result = append(result, append([]int{}, now...))
+			return
+		}
+		for i:=0; i<len(nums); i++ {
+			if !used[i] {
+				// 去重逻辑: 前一个相同的数字没有用到, 则这一个不考虑
+				if i>0 && nums[i-1]==nums[i] && !used[i-1] { 
+					continue 
+				}
+				now[index] = nums[i]
+				used[i] = true
+				dfs(index+1)
+				used[i] = false
+			}
+		}
+	}
+	dfs(0)
+	return result
+}
+func f47(){
+	fmt.Println(permuteUnique([]int{1,1,2}))
+}
 
 
 
 
 
 func main() {
-	f40()
+	f47()
 }

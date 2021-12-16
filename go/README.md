@@ -86,10 +86,15 @@
 - 37 解数独 `难`
   - 注意回溯的思路: 对于每一个为空的格子, 尝试填入所有可能的数字(通过 `checkSudoku(board *[][]byte, pos position, val int) bool` 函数判断是否可行), 最后要把格子还原为空;
   - 终止搜索: 只要找到一个解即可, 因此判断没有剩余的空格时, 直接返回 (最开始阶段, 扫描一遍数独, 将空格子记录到一个数组中).
-- 19 给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合 `中`
+- 39 给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合 `中`
   - 先对candidates排序避免重复, 回溯, 每次填入所有可能的数字(不超过target), 递归函数 `findcombinationSum(candidates []int, target int, index int, currentList []int, res *[][]int)` 其中的target为剩余的目标值, index是当前填入的数字所在指标
-
--
+- 40 相较于39题candidate有重复, 要求每个元素只能使用一次 `中`
+  - 难点在于去除重复
+  - 解法1: 排序, 然后在从index开始遍历的过程中, 判断 `if i>index && nums[i]==nums[i-1]` 以避免重复放入一个数字
+  - 解法2: 直接将数组转为 map 统计各个数字出现的次数(例如 Python 中的 `freq = sorted(collections.Counter(candidates).items())`), 然后在选数字的时候, 尝试放入相同的数字多次, see [here](https://leetcode-cn.com/problems/combination-sum-ii/solution/zu-he-zong-he-ii-by-leetcode-solution/) .
+- 46 不重复数字全排列
+- 47 有重复数字的全排列 `中`
+  - DFS即可, 注意去重逻辑 —— 现排序, **遍历时前一个相同的数字没有用到, 则这一个不考虑**.
 
 ### 09 DFS
 
@@ -129,6 +134,16 @@
 - 114 将二叉树展开为链表, 先序遍历
   - 解法一 递归: 对于递归函数 `flatten2(root *TreeNode)`, 分别将左右孩子完成flat, 由于是先序遍历, 所以 `root->root.left->...->root.right` 即可, 注意是左子树转化的链表最末尾连接右子树
   - 解法二 非递归 每次找到左子树的最右(也即链表最后一个元素), 然后将右子树连接上去, 参见 [here](https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list/solution/er-cha-shu-zhan-kai-wei-lian-biao-by-leetcode-solu/)
+- 116 填充每个节点的下一个右侧节点指针 `中`
+  - 给二叉树同层之间的节点建立 Next 指针
+  - 解法一 迭代。其实也是比较直观的想法：利用上一层已经有的 Next 构成的链表来传递；减少了下面的递归栈。
+  - 解法二，递归。递归函数 `connectTwoNodes(n1, n2 *Node)` 是同层的相邻两个节点，在函数中要求连接 1. node1, node2 其左右孩子；2. `node1.Left.Next=node2.Right`
+- 124 二叉树中任意一条路径的最大和 `难`
+  - 乍一看有点复杂，分析：
+    - 首先需要记录从当前节点出发向下的最大路径和 `currMax := max(root.Val+left, root.Val+right, root.Val)`
+    - 然后是经过盖点的最大路径和 `max(currMax, left+right+root.Val)`
+  - 具体的实现上，自己用了两次DFS，其中第一次更新 `map[*TreeNode]int{}` 记录 currMax
+    - 而 [here](https://books.halfrost.com/leetcode/ChapterFour/0100~0199/0124.Binary-Tree-Maximum-Path-Sum/) 中，直接将 currMax 作为递归函数返回值来传递，更为简洁。
 
 ### 11 binary search 二分查找
 
