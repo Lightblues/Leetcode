@@ -4,6 +4,10 @@
 
 ## 代码语法总结
 
+### Stducture 数据结构
+
+- 208. 实现 Trie (前缀树)
+
 ### 类型转换
 
 ```go
@@ -19,7 +23,6 @@ directions := [][]int{
   {'A','D','E','E'},
 }
 ```
-
 
 ### 传递 值拷贝 vs 指针
 
@@ -100,38 +103,38 @@ directions := [][]int{
 
 ### 08 Backtracking
 
-- 17 电话号码的字母组合
+- 0017 电话号码的字母组合
   - 直接回溯, 写成DFS即可
-- 37 解数独 `难`
+- 0037 解数独 `难`
   - 注意回溯的思路: 对于每一个为空的格子, 尝试填入所有可能的数字(通过 `checkSudoku(board *[][]byte, pos position, val int) bool` 函数判断是否可行), 最后要把格子还原为空;
   - 终止搜索: 只要找到一个解即可, 因此判断没有剩余的空格时, 直接返回 (最开始阶段, 扫描一遍数独, 将空格子记录到一个数组中).
-- 39 给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合 `中`
+- 0039 给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合 `中`
   - 先对candidates排序避免重复, 回溯, 每次填入所有可能的数字(不超过target), 递归函数 `findcombinationSum(candidates []int, target int, index int, currentList []int, res *[][]int)` 其中的target为剩余的目标值, index是当前填入的数字所在指标
-- 40 相较于39题candidate有重复, 要求每个元素只能使用一次 `中`
+- 0040 相较于39题candidate有重复, 要求每个元素只能使用一次 `中`
   - 难点在于去除重复
   - 解法1: 排序, 然后在从index开始遍历的过程中, 判断 `if i>index && nums[i]==nums[i-1]` 以避免重复放入一个数字
   - 解法2: 直接将数组转为 map 统计各个数字出现的次数(例如 Python 中的 `freq = sorted(collections.Counter(candidates).items())`), 然后在选数字的时候, 尝试放入相同的数字多次, see [here](https://leetcode-cn.com/problems/combination-sum-ii/solution/zu-he-zong-he-ii-by-leetcode-solution/) .
-- 46 不重复数字**全排列**
-- 47 有重复数字的全排列 `中`
+- 0046 不重复数字**全排列**
+- 0047 有重复数字的全排列 `中`
   - DFS即可, 注意**去重**逻辑 —— 先排序, **遍历时前一个相同的数字没有用到, 则这一个不考虑**.
 - 51 N皇后 `难`
   - 其实也非常简单, DFS, 然后用 col, dia1, dia2 三个列表分别记录列和两个对角线的位置是否被占用, 遍历 rows 即可 (注意 col长度为 n, 而 dia1, dia2 长度为 2*n-1)
-- 77 组合 Combinations 给定两个数字, 找出所有 combinations of k numbers out of 1 … n
+- 0077 组合 Combinations 给定两个数字, 找出所有 combinations of k numbers out of 1 … n
   - k 层 DFS 即可
-- 78 子集 Subsets 给定一个不同元素的数组, 找出所有的子集
+- 0078 子集 Subsets 给定一个不同元素的数组, 找出所有的子集
   - DFS, 分别考虑第 index 位置的元素是否放入即可
   - 关联 `第 90 题，第 491 题`
-- 90 PowerSets 可重复的数组的所有子集 `中`
+- 0090 PowerSets 可重复的数组的所有子集 `中`
   - 排序+DFS
-  - 去重逻辑: 用一个 lastUsed 标记上一个元素是否被用到. 当 1. 前后元素相同; 2. 上一个元素未被用到的时候, 应该跳过选入该元素 [也即 index>0 && (*nums](index-1)==[*nums](index) && !lastUsed)
-- 79 判断一个字符串是否出现在一个 grid 中 `中`
-- 89 Gray 编码 `中` 参见 [wiki](https://zh.wikipedia.org/wiki/%E6%A0%BC%E9%9B%B7%E7%A0%81)
+  - 去重逻辑: 用一个 lastUsed 标记上一个元素是否被用到. 当 1. 前后元素相同; 2. 上一个元素未被用到的时候, 应该跳过选入该元素. 也即 `index>0 && (*nums)[index-1]==(*nums)[index] && !lastUsed`
+- 0079 判断一个字符串是否出现在一个 grid 中 `中`
+- 0089 Gray 编码 `中` 参见 [wiki](https://zh.wikipedia.org/wiki/%E6%A0%BC%E9%9B%B7%E7%A0%81)
   - 1. 直接排列. 以二进制为0值的格雷码为第零项，第一项改变最右边的位元，第二项改变右起第一个为1的位元的左边位元，第三、四项方法同第一、二项，如此反复，即可排列出n个位元的格雷码。
   - 2. 镜像排列. n位元的格雷码可以从n-1位元的格雷码以上下镜射后加上新位元的方式快速的得到。
   - 另外, 观察 1-4 位 Gray码, 结合 wiki, 可以看到, 1. n位Gray码的前 2**(n-1) 位正是 n-1 位 Gray码; 2. Gray码最大的数字是 10000; 3. 上面两种方式生成的顺序是一致的
-- 93 找到一个字符串对应的所有可能 IP
+- 0093 找到一个字符串对应的所有可能 IP
   - 注意判断 IP是否合法, DFS
-- 127 单词接龙 `难`
+- 0127 单词接龙 `难`
   - 给定两个单词, 要求从 begin 变为 end, 每次只能变动一个字母, 并且中间的单词要在字典中, 求 **最短转换序列** 的长度
   - 参见 [sol](https://leetcode-cn.com/problems/word-ladder/solution/dan-ci-jie-long-by-leetcode-solution/)
   - 看到 **最短**, 首先想到 BFS. 为此, 首先需要将问题转化为图.
@@ -143,19 +146,55 @@ directions := [][]int{
     - 注意此时, 计算到的最短路径相应地应该 `/2`
   - 方法二：**双向广度优先搜索**
     - 可以可观地减少搜索空间大小
-- 126 单词接龙 II `难`
+- 0126 单词接龙 II `难`
   - 要求找到 127 **中所有的最短路径**
   - 这里写得比较繁琐, [here](https://books.halfrost.com/leetcode/ChapterFour/0100~0199/0126.Word-Ladder-II/) 更简洁
   - 核心在于 **BFS 找到所有的最短路径** `BFS`
     - 还是利用 queue 结构, 问题在如何判断是否遍历完了一整层? 用 `queueLen` 记录当前层的长度, 当 queueLen==0 时进行更新.
     - 避免重复搜索 (剪枝) 的关键: `!(dist[v]<dist[u]+1)` 这里的 u 是当前搜索的节点, v 是从 u 出发相连的节点. 初始化节点 dist 为 `inf := math.MaxInt32`, 则需要添加 v 的有两种情况: 1. `dist[v]==inf` 即第一次遇到 v; 2. `dist[v]=dist[u]+1` 即当前层到达 v 有多种最短路径. 而若 `dist[v]<dist[u]+1`, 则说明到达 v 有更短的路径, 跳过.
-- 131 分割字符串为回文串序列 `中` 挺难的
+- 0131 分割字符串为回文串序列 `中` 挺难的
   - see [here](https://leetcode-cn.com/problems/palindrome-partitioning/solution/fen-ge-hui-wen-chuan-by-leetcode-solutio-6jkv/)
   - 首先想到的是 遍历 index, 然后分别对左右子串进行 DFS, 这样复杂度爆炸
   - 实际上, 只需要记录在 index 前的字符串的分割可能, 然后遍历从 index出发的所有可能的回文子串即可
     - 用一个 tmp 字符串列表记录当前的分割方式
     - 为了避免重复判断, 可以用一个矩阵 isPalindrome **记录 `s[i:j]` 是否回文**.
       - 注意这里的 DP 递归形式, `dp[i][j] = s[i]==s[j] && dp[i+1][j-1]`. 这就要求 i 从大到小, j 从小到大遍历, 考虑到可能出现 `j=1, j=i+1` 的情况, 定义 dp[i,i-1], dp[i,i-2] 为 true (或者直接定义 j<=i 时 dp[i,j]=true).
+- 0212 找到棋盘 board 中所有出现在字典 words 中的单词 `难`
+  - 是 `79` 题的加强, 复杂度升高了
+  - 解法1: 直接遍历
+  - 解法2: Trie+回溯
+    - 采用前缀树 Trie 记录所有代搜索的 word, 然后从 board 每个点出发尝试匹配 Trie
+    - 为了避免重复, 在 DFS 的过程中, 将搜索过的位置用 `#` 符号进行标记
+- 0216 找出所有相加之和为 n 的 k 个数的组合
+- 0301 去除重复的括号 `难`
+  - 要求返回去除某些字符后合法的所有字符串
+  - 思路0: 第一遍循环记录最少应该删除的数量 countRemoveL, countRemoveR; 然后 DFS搜索, 当出现 1. 括号不合法; 2. 删除数量多于上面两个值是结束遍历.
+    - 括号合法的条件: 顺序遍历过程中, **左括号的数量应该始终 `>=` 右括号**
+  - see [here](https://leetcode-cn.com/problems/remove-invalid-parentheses/solution/shan-chu-wu-xiao-de-gua-hao-by-leetcode-9w8au/)
+  - 思路2 BFS: 因为是找最短的所以考虑 BFS, 为了避免重复, 可以对待检查的字符串建立 map 去重
+- 0306 累加数 `中` 判断一个字符串是否可构成累加序列
+  - 两次遍历开始的两个数字, 然后判断后续是否构成累加即可
+- 0357 计算各个位数不同的数字个数
+- 0401 二进制手表 `易` 但感觉复杂度有 `中`
+  - 思路0: 采用 DFS, 遍历所有的亮灯情况
+  - see [here](https://leetcode-cn.com/problems/binary-watch/solution/er-jin-zhi-shou-biao-by-leetcode-solutio-3559/)
+  - 方法一：枚举时分, 直接遍历 0-11 和 0-59
+    - 注意计算亮灯数可以用函数 `bits.OnesCount8(h)` 或 Python 中的 `bin(h).count("1")`
+    - 另外, 字符串输出可以用 `fmt.Sprintf("%d:%02d", hour, min)`
+  - 方法二：二进制枚举
+    - 直接枚举 0-1023 所有的十位二进制数, 前四位和后六位分别表示时刻和分钟, 则判断条件为 `h < 12 && m < 60 && bits.OnesCount(uint(i)) == turnedOn`
+- 0473 数组构成正方形 `中`
+  - 方法0: 利用一个 used 标记使用的元素, 然后依次生成四条边
+  - see [here](https://leetcode-cn.com/problems/matchsticks-to-square/solution/huo-chai-pin-zheng-fang-xing-by-leetcode/)
+  - 方法一: 也是DFS, 不过直接用一个数组记录四条边的长度, 一次遍历数组, 尝试放在四条边, 复杂度 $4^N$
+  - 方法二：动态规划 + 状态压缩. 所谓「DP」其实就是我之前的思路, 因为可以依次生成每一条边. 不过标答的解法更简洁.
+- 0491 找出所有递增子序列 `中`
+  - 关联 `第 78 题，第 90 题`
+  - see [here](https://leetcode-cn.com/problems/increasing-subsequences/solution/di-zeng-zi-xu-lie-by-leetcode-solution/)
+  - 方法二：递归枚举 + 减枝
+    - 注意这里的重复逻辑: 即使是在乱序数组中, 为了防止重复, 当这时遍历的数字和之前选入的数字一样时, 不遍历即可. 也即, 这里的代码逻辑和 0090 题完全一致.
+  - 方法一：二进制枚举 + 哈希
+    - 遍历所有可能的子序列, 然后去重, 串哈希算法 (即 Rabin-Karp 编码, 见 1392)
 
 ### 09 DFS
 

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/bits"
 	"sort"
 	"strconv"
 	"strings"
@@ -1174,10 +1175,9 @@ func dfsFindWord(word string, board *[][]byte, directions *[][]int, index int, v
 			(*visited)[nx][ny] = true
 			if dfsFindWord(word, board, directions, index+1, visited, nx,ny,m,n){
 				return true
-			} else{
-				// Note 如果没找到, 应该将 visited 复原
-				(*visited)[nx][ny] = false
 			}
+			// Note 如果没找到, 应该将 visited 复原
+			(*visited)[nx][ny] = false
 		}
 	}
 	return false
@@ -1185,8 +1185,70 @@ func dfsFindWord(word string, board *[][]byte, directions *[][]int, index int, v
 func isValidFindWord(x,y,m,n int)bool{
 	return x>=0 && x<m && y>=0 && y<n
 }
+
+// Trie 记录所有代搜索的 word
+type Trie struct {
+	children [26]*Trie
+	word string
+}
+// Insert 插入词表中的 word
+func (t *Trie)Insert(s string){
+	node := t
+	for _,ch := range s{
+		ch -= 'a'
+		if node.children[ch] == nil{
+			node.children[ch] = &Trie{}
+		}
+		node = node.children[ch]
+	}
+	node.word = s
+}
+// 方式2: 采用 Trie 记录所有代搜索的 word, 然后从 board 每个点出发尝试匹配 Trie
+func findWords2(board [][]byte, words []string) []string {
+	directions := []struct{ x, y int }{
+		{-1,0},
+		{1,0},
+		{0,-1},
+		{0,1},
+	}
+	t := &Trie{}
+	for _,word := range words {
+		t.Insert(word)
+	}
+	m,n := len(board), len(board[0])
+	seen := map[string]bool{}
+	var dfs func(node *Trie, x,y int)
+	dfs = func(node *Trie, x,y int) {
+		ch := board[x][y]
+		node = node.children[ch-'a']
+		if node==nil {return}
+		if node.word != "" {seen[node.word]=true}
+
+		// 防止 DFS 过程中重复一个位置
+		board[x][y] = '#'
+		for _,d := range directions{
+			nx,ny := x+d.x, y+d.y
+			if nx>=0 && nx<m && ny>=0 && ny<n && board[nx][ny]!='#' {
+				dfs(node, nx, ny)
+			}
+		}
+		board[x][y] = ch
+	}
+
+	for x := range board{
+		for y:= range board[0]{
+			dfs(t, x,y)
+		}
+	}
+	result := []string{}
+	for word := range seen {
+		result = append(result, word)
+	}
+	return result
+}
+
 func f212(){
-	fmt.Println(findWords([][]byte{
+	fmt.Println(findWords2([][]byte{
 		{'o','a','a','n'},
 		{'e','t','a','e'},
 		{'i','h','k','r'},
@@ -1224,6 +1286,83 @@ func dfsCombinationSum3(begin, remain, remainK int, tmp *[]int, result *[][]int)
 }
 func f216(){
 	fmt.Println(combinationSum3(3,9))
+}
+
+/* 301. Remove Invalid Parentheses 
+Given a string s that contains parentheses and letters, remove the minimum number of invalid parentheses to make the input string valid.
+Return all the possible results. You may return the answer in any order.
+Example 1:
+
+Input: s = "()())()"
+Output: ["(())()","()()()"]
+Example 2:
+
+Input: s = "(a)())()"
+Output: ["(a())()","(a)()()"]
+Example 3:
+
+Input: s = ")("
+Output: [""]
+*/
+func removeInvalidParentheses(s string) []string {
+	countL, countR := 0, 0
+	countRemoveL, countRemoveR := 0, 0
+	for _, ch := range s {
+		if ch=='(' {
+			countL++
+		} else if ch==')' {
+			if countR == countL {
+				countRemoveR++
+			} else {
+				countR++
+			}
+		}
+	}
+	countRemoveL = countL-countR
+	// if countRemoveL+countRemoveR == len(s) {
+	// 	return []string{""}
+	// }
+	result := []string{}
+	tmp := ""
+	dfsRemoveInvalidParentheses(tmp, s, 0, &result, countRemoveL, countRemoveR, 0,0)
+	resultFilter := map[string]bool{}
+	for _,ss := range result {
+		resultFilter[ss] = true
+	}
+	result = []string{}
+	for ss := range resultFilter {
+		result = append(result, ss)
+	}
+	return result
+}
+func dfsRemoveInvalidParentheses(tmp, s string, index int, result *[]string, countRemoveL, countRemoveR int, countL, countR int){
+	if index==len(s) {
+		if countL==countR && countRemoveR==0 && countRemoveL==0{
+			*result = append(*result, tmp)
+		}
+		return
+	}
+	ch := s[index]
+	if ch=='(' {
+		dfsRemoveInvalidParentheses(tmp+"(", s, index+1, result, countRemoveL, countRemoveR, countL+1, countR)
+		if countRemoveL>0 {
+			dfsRemoveInvalidParentheses(tmp, s, index+1, result, countRemoveL-1, countRemoveR, countL, countR)
+		}
+	} else if ch==')' {
+		if countL>countR {
+			dfsRemoveInvalidParentheses(tmp+")", s, index+1, result, countRemoveL, countRemoveR, countL, countR+1)
+		}
+		if countRemoveR>0 {
+			dfsRemoveInvalidParentheses(tmp, s, index+1, result, countRemoveL, countRemoveR-1, countL, countR)
+		}
+	} else {
+		dfsRemoveInvalidParentheses(tmp+string(ch), s, index+1, result, countRemoveL, countRemoveR, countL, countR)
+	}
+}
+func f301(){
+	fmt.Println(removeInvalidParentheses("()())()"))
+	fmt.Println(removeInvalidParentheses("(a)())()"))
+	fmt.Println(removeInvalidParentheses(")(n"))
 }
 
 
@@ -1267,6 +1406,196 @@ func f306(){
 }
 
 
+/* 0357.Count-Numbers-with-Unique-Digits/
+Given a non-negative integer n, count all numbers with unique digits, x, where 0 ≤ x < 10n.
+
+Input: 2
+Output: 91 
+Explanation: The answer should be the total numbers in the range of 0 ≤ x < 100, 
+             excluding 11,22,33,44,55,66,77,88,99
+*/
+// 暴力打表法
+func countNumbersWithUniqueDigits1(n int) int {
+	res := []int{1, 10, 91, 739, 5275, 32491, 168571, 712891, 2345851, 5611771, 8877691}
+	if n >= 10 {
+		return res[10]
+	}
+	return res[n]
+}
+func countNumberWithUniqueDigits(n int) int {
+	if n>10 {return 0}
+	if n==0 { return 1 }
+	result, tmp, availableDigits := 10, 9, 9
+	for ; n>1; n-- {
+		tmp *= availableDigits
+		availableDigits--
+		result += tmp
+	}
+	return result
+}
+func f357(){
+	fmt.Println(countNumberWithUniqueDigits(3))
+}
+
+/* 0401.Binary-Watch/
+二进制手表顶部有 4 个 LED 代表小时（0-11），底部的 6 个 LED 代表分钟（0-59）。每个 LED 代表一个 0 或 1，最低位在右侧。
+给定一个非负整数 n 代表当前 LED 亮着的数量，返回二进制表所有可能的时间。 
+
+Input: n = 1
+Return: ["1:00", "2:00", "4:00", "8:00", "0:01", "0:02", "0:04", "0:08", "0:16", "0:32"]*/
+func readBinaryWatch(turnedOn int) []string {
+	hourBases := []int{1,2,4,8}
+	minBases := []int{1,2,4,8,16,32}
+	result := []string{}
+	for i:=0; i<=turnedOn; i++ {
+		avaHours, avaMins := []int{}, []int{}
+		dfsAvailableDigits(&hourBases, 0, i, 0, &avaHours)
+		dfsAvailableDigits(&minBases, 0, turnedOn-i, 0, &avaMins)
+		for _,hour := range avaHours {
+			if hour>11 {continue}
+			for _,min := range avaMins {
+				if min>59 {continue}
+				result = append(result, convertBinaryEatch(hour, min))
+			}
+		}
+	}
+	return result
+}
+func convertBinaryEatch(hour, min int) string {
+	minStr := ""
+	if min<10 {
+		minStr += "0" + strconv.Itoa(min)
+	} else {
+		minStr += strconv.Itoa(min)
+	}
+	return strconv.Itoa(hour)+ ":" + minStr
+}
+func dfsAvailableDigits(bases *[]int, index, turnedOn, tmp int, result *[]int){
+	if turnedOn > len(*bases) {
+		return
+	}
+	if turnedOn==0 {
+		*result = append(*result, tmp)
+		return
+	}
+	for i:=index; i<len(*bases); i++ {
+		dfsAvailableDigits(bases, i+1, turnedOn-1, tmp+(*bases)[i], result)
+	}
+}
+// https://leetcode-cn.com/problems/remove-invalid-parentheses/solution/shan-chu-wu-xiao-de-gua-hao-by-leetcode-9w8au/
+func readBinaryWatch1(turnedOn int) []string {
+	result := []string{}
+	for hour :=uint64(0); hour<=11; hour++ {
+		for min:=uint64(0); min<=59 ;min++ {
+			if bits.OnesCount64(hour) + bits.OnesCount64(min) == turnedOn {
+				result = append(result, fmt.Sprintf("%d:%02d", hour, min))
+			}
+		}
+	}
+	return result
+}
+func readBinaryWatch2(turnedOn int) []string {
+	result := []string{}
+	for i:=0; i<1024; i++ {
+		hour, min := i>>6, i&63 
+		if hour<12 && min<60 && bits.OnesCount64(uint64(i))==turnedOn {
+			result = append(result, fmt.Sprintf("%d:%02d", hour, min))
+		}
+	}
+	return result
+}
+func f401(){
+	// fmt.Println(readBinaryWatch1(1));
+	fmt.Println(readBinaryWatch2(1))
+}
+
+/* 0473.Matchsticks-to-Square/
+现在已知小女孩有多少根火柴，请找出一种能使用所有火柴拼成一个正方形的方法。不能折断火柴，可以把火柴连接起来，并且每根火柴都要用到。输入为小女孩拥有火柴的数目，每根火柴用其长度表示。输出即为是否能用所有的火柴拼成正方形。
+
+Input: matchsticks = [1,1,2,2,2]
+Output: true
+Explanation: You can form a square with length 2, one side of the square came two sticks with length 1.*/
+func makesquare(matchsticks []int) bool {
+	sort.Ints(matchsticks)
+	sum := 0
+	for _, i := range matchsticks {
+		sum += i
+	}
+	if sum % 4 != 0 {return false}
+	target := sum/4
+	used := make([]bool, len(matchsticks))
+	return dfsMakeSquare(&matchsticks, &used, target, target, len(matchsticks)-1, len(matchsticks))
+}
+func dfsMakeSquare(sticks *[]int, used *[]bool, target, tmp, index, remain int) bool {
+	// remain 记录还有多少火柴
+	if remain==0 {return true}
+	// 为了剪枝, 从大到小遍历
+	for i:= index; i>=0; i-- {
+		if (*sticks)[i] > tmp || (*used)[i] {
+			continue
+		} else {
+			(*used)[i] = true
+			if (*sticks)[i] == tmp {
+				// 找满了一条边, 从头开始遍历
+				result := dfsMakeSquare(sticks, used, target, target, len(*sticks)-1, remain-1)
+				if result {return true}
+			} else {
+				result := dfsMakeSquare(sticks, used, target, tmp-(*sticks)[i], i-1, remain-1)
+				if result {return true}
+			}
+			(*used)[i] = false
+			
+		}
+	}
+	return false
+}
+func f473(){
+	// fmt.Println(makesquare([]int{1,1,2,2,2}))
+	fmt.Println(makesquare([]int{5,5,5,5,4,4,4,4,3,3,3,3}))
+}
+
+/* 0491.Increasing-Subsequences/
+Given an integer array, your task is to find all the different possible increasing subsequences of the given array, and the length of an increasing subsequence should be at least 2.
+
+Input: [4, 6, 7, 7]
+Output: [[4, 6], [4, 7], [4, 6, 7], [4, 6, 7, 7], [6, 7], [6, 7, 7], [7,7], [4,7,7]]
+
+输入：nums = [4,4,3,2,1]
+输出：[[4,4]]
+
+这一题和第 78 题和第 90 题是类似的题目。第 78 题和第 90 题是求所有子序列，这一题在这两题的基础上增加了非递减和长度大于 2 的条件。需要注意的两点是，原数组中元素可能会重复，最终结果输出的时候需要去重。最终结果输出的去重用 map 处理，数组中重复元素用 DFS 遍历搜索。在每次 DFS 中，用 map 记录遍历过的元素，保证本轮 DFS 中不出现重复的元素，递归到下一层还可以选择值相同，但是下标不同的另外一个元素。外层循环也要加一个 map，这个 map 是过滤每组解因为重复元素导致的重复解，经过过滤以后，起点不同了，最终的解也会不同。*/
+
+// 方式二 和90代码完全一样. see https://leetcode-cn.com/problems/increasing-subsequences/solution/di-zeng-zi-xu-lie-by-leetcode-solution/
+func findSubsequences(nums []int) [][]int {
+	tmp, result := []int{}, [][]int{}
+	dfsFindSubsequences(0, math.MinInt32, &nums, &tmp, &result)
+	return result
+}
+func dfsFindSubsequences(index, lastNum int, nums, tmp *[]int, result *[][]int) {
+	if index==len(*nums) {
+		if len(*tmp)>= 2{
+			*result = append(*result, append([]int{}, (*tmp)...))
+		}
+		return
+	}
+	// 递归情况1: 加入当前元素
+	if (*nums)[index]>=lastNum {
+		*tmp = append(*tmp, (*nums)[index])
+		dfsFindSubsequences(index+1, (*nums)[index], nums, tmp, result)
+		*tmp = (*tmp)[:len(*tmp)-1]
+	}
+	// 递归情况2: 不加入当前元素
+	// 为了避免重复, 当前要加入的数字和 tmp 中上一个数字相同时, 不遍历
+	if (*nums)[index]!=lastNum {
+		dfsFindSubsequences(index+1, lastNum, nums, tmp, result)
+	}
+}
+func f491(){
+	fmt.Println(findSubsequences([]int{4, 6, 7, 7}))
+}
 func main() {
-	f306()
+	// f357()
+	// f401()
+	// f473()
+	f491()
 }

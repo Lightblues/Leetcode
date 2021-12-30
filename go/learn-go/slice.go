@@ -1,11 +1,14 @@
 package main
 
-import "fmt"
+// import "fmt"
 
+// func main(){
+// 	s1 := make([]int, 4, 32)
+// 	fmt.Println(len(s1), cap(s1))
+// 	var s2 []int
+// 	fmt.Println("var: ", len(s2), cap(s2))
+// }
 
 func main(){
-	s1 := make([]int, 4, 32)
-	fmt.Println(len(s1), cap(s1))
-	var s2 []int
-	fmt.Println("var: ", len(s2), cap(s2))
+	println("Let's go!")
 }

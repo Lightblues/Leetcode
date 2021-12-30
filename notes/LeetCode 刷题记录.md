@@ -1,6 +1,18 @@
 # LeetCode 刷题记录
 
-看到一个比较习惯的 Blogger 微石也有 LeetCode 刷题记录：<https://akihoo.github.io/posts/c80e95e5.html> 思路还挺像哈哈哈
+## Python
+
+```python
+order = ord(ch) - ord('a')
+
+
+# 返回的数据结构应该用 "" 包裹?
+def searchPrefix(self, prefix) -> "Trie":
+```
+
+## 资源
+
+Blogger 微石也有 LeetCode 刷题记录：<https://akihoo.github.io/posts/c80e95e5.html> 思路还挺像哈哈哈
 
 ## 一些文章
 
@@ -402,7 +414,7 @@ class Solution:
 
 输入：[1,8,6,2,5,4,8,3,7]
 输出：49
-解释：图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49。
+解释：图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49。
 
 输入：height = [1,1]
 输出：1
