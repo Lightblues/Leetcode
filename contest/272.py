@@ -72,6 +72,8 @@ class Solution272:
             result += len(subarr) - self.lengthOfLIS2(subarr)
         return result
 
+    # 计算最长递增子序列
+    # 思路 1: DP, 定义 `dp[i]` 为 第 i 个数字结尾的最长上升子序列的长度, 注意 第 i 个元素必须被选中; 递推公式 `dp[i] = max(dp[j]) + 1`, 其中的 j 要求 `nums[j]<=nums[i]`
     def lengthOfLIS(self, nums: List[int]) -> int:
         # 
         dp = [1] * len(nums)
@@ -80,6 +82,9 @@ class Solution272:
                 if nums[i] >= nums[j]:
                     dp[i] = max(dp[i], dp[j]+1)
         return max(dp)
+    # 方法二：贪心 + 二分查找
+    # 维护一个数组 d[i] ，表示长度为 i 的最长上升子序列的末尾元素的最小值, 用 len 记录目前最长上升子序列的长度. 注意到数组 d 是单调递增的
+    # 我们依次遍历数组 nums 中的每个元素，并更新数组 d 和 len 的值。如果 nums[i]>d[len] 则更新 len = len + 1，否则在 d[1…len]中找满足 d[i−1]<nums[j]<d[i] 的下标 ii，并更新 d[i] = d[i]=nums[j]。
     def lengthOfLIS2(self, nums: List[int]) -> int:
         d = []
         for num in nums:

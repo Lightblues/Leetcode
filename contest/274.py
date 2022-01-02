@@ -108,7 +108,7 @@ class Solution274:
             cumsum2 += len1 + len2 + 2
         results.append(cumsum2)
         return max(results)
-
+    # 拓扑排序剪枝, https://leetcode-cn.com/problems/maximum-employees-to-be-invited-to-a-meeting/solution/nei-xiang-ji-huan-shu-tuo-bu-pai-xu-fen-c1i1b/
     def maximumInvitations2(self, favorite: List[int]) -> int:
         n = len(favorite)
         graph = [[] for _ in range(n)]  # 喜欢 i 的员工列表
