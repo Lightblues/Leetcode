@@ -1,19 +1,21 @@
 {
-    "configurations": [
-        {
-            "name": "Mac",
-            "includePath": [
-                "${workspaceFolder}/**"
-            ],
-            "defines": [],
-            "macFrameworkPath": [
-                "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
-            ],
-            "compilerPath": "/usr/bin/clang",
-            "cStandard": "c11",
-            "cppStandard": "c++17", // 不同的标准影响 IntelliSense 的提示
-            "intelliSenseMode": "clang-x64" // macos-clang-x64
-        }
-    ],
-    "version": 4
+  "configurations": [
+    // https://blog.csdn.net/luoshabugui/article/details/118094735
+    {
+      "name": "Mac",
+      "includePath": [
+        "${workspaceFolder}/**"
+        // "/Library/Developer/CommandLineTools/usr/include/c++/v1"
+      ],
+      "defines": [],
+      "macFrameworkPath": [
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+      ],
+      "compilerPath": "/usr/bin/clang++", // clang 会报错 iostream
+      "cStandard": "c11",
+      "cppStandard": "c++17", // 不同的标准影响 IntelliSense 的提示
+      "intelliSenseMode": "clang-x64" // macos-clang-x64
+    }
+  ],
+  "version": 4
 }

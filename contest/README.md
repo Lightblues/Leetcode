@@ -1,7 +1,10 @@
 
 - LeetCode Cookbook <https://books.halfrost.com/leetcode/>
 - 代码随想录 <https://github.com/youngyangyang04/leetcode-master>
-- Labulalong <https://labuladong.github.io/algo/>
+- Labulalong <https://labuladong.github.io/algo/>; Github <https://github.com/labuladong/fucking-algorithm>
+
+- 编程语言
+  - JAVA 廖雪峰课程 <https://www.liaoxuefeng.com/wiki/1252599548343744>
 
 ## 代码语法总结
 

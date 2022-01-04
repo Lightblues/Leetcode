@@ -108,12 +108,14 @@ class Solution271:
             cumsum.append(num+cumsum[-1])
         result = 0
         # 遍历所有可能到达的区域
-        for dleft in range(k+1):    # k+1
-            dright = max(k - 2*dleft, 0)
-            l,r = startPos-dleft, startPos+dright
+        for d1 in range(k+1):    # k+1
+            d2 = max(k - 2*d1, 0)
+            # 先向左
+            l,r = startPos-d1, startPos+d2
             lindex,rindex = bisect.bisect_left(pos, l), bisect.bisect(pos, r)
             result = max(result, cumsum[rindex-1] - cumsum[lindex-1])
-            l,r = startPos-dright, startPos+dleft
+            # 先向右
+            l,r = startPos-d2, startPos+d1
             lindex,rindex = bisect.bisect_left(pos, l), bisect.bisect(pos, r)
             result = max(result, cumsum[rindex-1] - cumsum[lindex-1])
         return result

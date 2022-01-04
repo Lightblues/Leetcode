@@ -5,26 +5,59 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: 当前文件",
+      "type": "java",
+      "name": "Launch Solution",
+      "request": "launch",
+      "mainClass": "jj.Solution",
+      "projectName": "leetcode_50d9da0f"
+    },
+    {
+      "type": "java",
+      "name": "Launch HalloWorld",
+      "request": "launch",
+      "mainClass": "jj.HalloWorld",
+      "projectName": "leetcode_50d9da0f"
+    },
+    {
+      "type": "java",
+      "name": "Launch HalloWorld",
+      "request": "launch",
+      "mainClass": "java.HalloWorld",
+      "projectName": "leetcode_50d9da0f"
+    },
+    {
+      "type": "java",
+      "name": "Java",
+      "request": "launch",
+      "mainClass": "${file}"
+    },
+    {
+      "name": "Go",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${fileDirname}"
+    },
+    {
+      "name": "Python",
       "type": "python",
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
       "cwd": "${fileDirname}"
+    },
+    {
+      "name": "clang++ - 生成和调试活动文件",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${fileDirname}/a.out",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "preLaunchTask": "clang++ build active file"
     }
-    // {
-    //     "name": "clang++ - 生成和调试活动文件", // Build and debug active file
-    //     "type": "cppdbg",
-    //     "request": "launch",
-    //     // "${fileDirname}/${fileBasenameNoExtension}
-    //     "program": "${fileDirname}/a.out", // The program setting specifies the program you want to debug
-    //     "args": [],
-    //     "stopAtEntry": false, // Change the stopAtEntry value to true to cause the debugger to stop on the main method when you start debugging.
-    //     "cwd": "${fileDirname}",
-    //     "environment": [],
-    //     "externalConsole": false,
-    //     "MIMode": "lldb",
-    //     "preLaunchTask": "clang++ build active file" // Ensure that the preLaunchTask value matches the label of the build task in the tasks.json file.
-    // }
   ]
 }
