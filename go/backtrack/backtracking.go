@@ -1565,7 +1565,7 @@ Output: [[4, 6], [4, 7], [4, 6, 7], [4, 6, 7, 7], [6, 7], [6, 7, 7], [7,7], [4,7
 
 这一题和第 78 题和第 90 题是类似的题目。第 78 题和第 90 题是求所有子序列，这一题在这两题的基础上增加了非递减和长度大于 2 的条件。需要注意的两点是，原数组中元素可能会重复，最终结果输出的时候需要去重。最终结果输出的去重用 map 处理，数组中重复元素用 DFS 遍历搜索。在每次 DFS 中，用 map 记录遍历过的元素，保证本轮 DFS 中不出现重复的元素，递归到下一层还可以选择值相同，但是下标不同的另外一个元素。外层循环也要加一个 map，这个 map 是过滤每组解因为重复元素导致的重复解，经过过滤以后，起点不同了，最终的解也会不同。*/
 
-// 方式二 和90代码完全一样. see https://leetcode-cn.com/problems/increasing-subsequences/solution/di-zeng-zi-xu-lie-by-leetcode-solution/
+// 方式二 递归枚举 + 减枝 和 90 代码完全一样. see https://leetcode-cn.com/problems/increasing-subsequences/solution/di-zeng-zi-xu-lie-by-leetcode-solution/
 func findSubsequences(nums []int) [][]int {
 	tmp, result := []int{}, [][]int{}
 	dfsFindSubsequences(0, math.MinInt32, &nums, &tmp, &result)
@@ -1590,12 +1590,136 @@ func dfsFindSubsequences(index, lastNum int, nums, tmp *[]int, result *[][]int) 
 		dfsFindSubsequences(index+1, lastNum, nums, tmp, result)
 	}
 }
+// 方法一：二进制枚举 + 哈希
+func findSubsequences1(nums []int) [][]int {
+	result := [][]int{}
+	tmp := []int{}
+	// 计算 tmp 数组的 hash
+	getHash := func (base, mod int) int{
+		hash := 0
+		for _,x := range tmp {
+			// hash值更新公式, 也即每一位的权重为 base**i, 为了避免 [0,0], [0,0,0] 可能的冲突, 后面加上一个数字
+			// base 只要比字符串中的所有数字大 (不同元素的数量)即可
+			hash = (hash*base+x+101) % mod
+		}
+		return hash
+	}
+	// 构造 tmp 数组
+	getSubseq := func (index int) {
+		tmp = []int{}
+		for i:=0; i<len(nums); i++ {
+			if (index & 1) != 0 {
+				tmp = append(tmp, nums[i])
+			}
+			index >>= 1
+		}
+	}
+	// test increase
+	testIncrease := func ()bool {
+		for i:=0; i<len(tmp)-1; i++ {
+			if tmp[i+1]<tmp[i] {
+				return false
+			}
+		}
+		return true
+	}
+	// hashSet 记录出现过的数组
+	hashSet := map[int]bool{}
+	for i:=0; i<2<<len(nums); i++ {
+		getSubseq(i)
+		hash := getHash(263, int(1e9 + 7))
+		if len(tmp)>1 && testIncrease() && !hashSet[hash] {
+			hashSet[hash] = true
+			result = append(result, append([]int{}, tmp...))
+		}
+	}
+	return result
+}
+
 func f491(){
 	fmt.Println(findSubsequences([]int{4, 6, 7, 7}))
+	fmt.Println(findSubsequences1([]int{-1,0,0,0}))
 }
+
+/* 0494.Target-Sum/
+给定一个非负整数数组，a1, a2, …, an, 和一个目标数，S。现在有两个符号 + 和 -。对于数组中的任意一个整数，可以从 + 或 - 中选择一个符号添加在前面。返回可以使最终数组和为目标数 S 的所有添加符号的方法数。
+Input: nums is [1, 1, 1, 1, 1], S is 3. 
+Output: 5
+Explanation: 
+
+-1+1+1+1+1 = 3
++1-1+1+1+1 = 3
++1+1-1+1+1 = 3
++1+1+1-1+1 = 3
++1+1+1+1-1 = 3
+
+There are 5 ways to assign symbols to make the sum of nums be target 3. */
+func findTargetSumWays(nums []int, S int) int {
+	result := 0
+	dfsFindTargetSumWays(0, 0, S, &result, &nums)
+	return result
+}
+func dfsFindTargetSumWays(index, tmp, target int, result *int, nums *[]int){
+	if index==len(*nums) {
+		if tmp==target {
+			(*result)++
+		}
+		return
+	}
+	dfsFindTargetSumWays(index+1, tmp-(*nums)[index], target, result, nums)
+	dfsFindTargetSumWays(index+1, tmp+(*nums)[index], target, result, nums)
+}
+// DP, see [here](https://leetcode-cn.com/problems/target-sum/solution/mu-biao-he-by-leetcode-solution-o0cp/)
+func findTargetSumWays1(nums []int, target int) int {
+    sum := 0
+    for _, v := range nums {
+        sum += v
+    }
+    diff := sum - target
+    if diff < 0 || diff%2 == 1 {
+        return 0
+    }
+    n, neg := len(nums), diff/2
+    dp := make([][]int, n+1)
+    for i := range dp {
+        dp[i] = make([]int, neg+1)
+    }
+    dp[0][0] = 1
+    for i, num := range nums {
+        for j := 0; j <= neg; j++ {
+            dp[i+1][j] = dp[i][j]
+            if j >= num {
+                dp[i+1][j] += dp[i][j-num]
+            }
+        }
+    }
+    return dp[n][neg]
+}
+// 滚动数组
+func findTargetSumWays2(nums []int, target int) int{
+	sum := 0
+	for _,num := range nums{ sum += num }
+	diff := sum-target
+	if diff<0 || diff%2!=0 {return 0}
+	neg := diff/2
+	// dp[i][j] 为前 i 个数字中选取部分, 其和为 j 的组合数量
+	dp := make([]int, neg+1)
+	dp[0] = 1
+	for _,num := range nums {
+		for j:= neg; j>=num; j-- {
+			dp[j] += dp[j-num]
+		}
+	}
+	return dp[len(dp)-1]
+}
+func f494(){
+	fmt.Println(findTargetSumWays2([]int{1, 1, 1, 1, 1}, 3))
+}
+
 func main() {
 	// f357()
 	// f401()
 	// f473()
 	f491()
+	// f494()
 }

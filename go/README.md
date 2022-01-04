@@ -1,5 +1,5 @@
 
-- LeetCode Cookbook <https://books.halfrost.com/leetcode/>
+- LeetCode Cookbook <https://books.halfrost.com/leetcode/> ⭐️
 - 代码随想录 <https://github.com/youngyangyang04/leetcode-master>
 
 ## 代码语法总结
@@ -195,6 +195,16 @@ directions := [][]int{
     - 注意这里的重复逻辑: 即使是在乱序数组中, 为了防止重复, 当这时遍历的数字和之前选入的数字一样时, 不遍历即可. 也即, 这里的代码逻辑和 0090 题完全一致.
   - 方法一：二进制枚举 + 哈希
     - 遍历所有可能的子序列, 然后去重, 串哈希算法 (即 Rabin-Karp 编码, 见 1392)
+- 0494 用加减号连接数组, 构成目标值的数量 `中`
+  - 方法一, DFS
+  - 方法二, DP, see [here](https://leetcode-cn.com/problems/target-sum/solution/mu-biao-he-by-leetcode-solution-o0cp/)
+    - `dp[i][j]` 为前 i 个数字中选取部分, 其和为 j 的组合数量
+    - 可知, 更新公式为 `dp[i][j] = dp[i-1][j] + dp[i-1][j-nums[i]]`, 当 `j<nums[i]` 不合法, 第二项取0.
+    - 优化空间, 可以用 **滚动数组**. 则更新公式为 `dp[j] += dp[j-nums[j]]`. 注意因为用了滚动数组, 内层循环需采用倒序遍历的方式.
+  - 评论区中整理了相关的「**背包问题**」
+    - 01背包：`416. 分割等和子集 474. 一和零 494. 目标和 879. 盈利计划 1049. 最后一块石头的重量 II 1230. 抛掷硬币`
+    - 完全背包：`1449. 数位成本和为目标值的最大数字 322. 零钱兑换 518. 零钱兑换 II 279. 完全平方数, 377. 组合总和 Ⅳ`
+    - 分组背包: `1155. 掷骰子的N种方法` 每一组是一个骰子，每个骰子只能拿一个体积为1到6的物品
 
 ### 09 DFS
 

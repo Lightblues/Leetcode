@@ -74,7 +74,34 @@ func composition(){
 	horse.hello()
 }
 
+func sliceAppend(){
+	my_slice := []int{11,22,33,44,55}
+	new_slice := my_slice[1:3]
+
+	// append()追加一个元素2323，返回新的slice
+	app_slice := append(new_slice,2323)
+
+	fmt.Println(my_slice)
+	fmt.Println(new_slice)
+	fmt.Println(app_slice)
+}
+
+func sliceMerge(){
+	// s1 := []int{1,2}
+	// s2 := []int{3,4}
+	// s3 := append(s1, s2...)	 //进行了扩容
+
+	s0 := make([]int,4)
+	s1 := s0[:2:4]
+	s1[1] = 2
+	s2 := []int{3,4}
+	s3 := append(s1, s2...)
+	fmt.Println(s1, s3)
+}
+
 func main() {
 	// ptrStruct();
-	composition();
+	// composition();
+	// sliceAppend()
+	sliceMerge()
 }
