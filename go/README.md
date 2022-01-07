@@ -1,6 +1,7 @@
 
 - LeetCode Cookbook <https://books.halfrost.com/leetcode/> ⭐️
 - 代码随想录 <https://github.com/youngyangyang04/leetcode-master>
+- OI Wiki <https://oi-wiki.org/>; 例如其中介绍 VS Code 的就很赞
 
 ## 代码语法总结
 
@@ -205,6 +206,32 @@ directions := [][]int{
     - 01背包：`416. 分割等和子集 474. 一和零 494. 目标和 879. 盈利计划 1049. 最后一块石头的重量 II 1230. 抛掷硬币`
     - 完全背包：`1449. 数位成本和为目标值的最大数字 322. 零钱兑换 518. 零钱兑换 II 279. 完全平方数, 377. 组合总和 Ⅳ`
     - 分组背包: `1155. 掷骰子的N种方法` 每一组是一个骰子，每个骰子只能拿一个体积为1到6的物品
+- 0526 组合数, 要求每个位置的数字能被 index 整除或整除 index `中`
+  - 方法1: DFS 即可
+  - 方法二：`状态压缩 + 动态规划`. 参见 [here](https://leetcode-cn.com/problems/beautiful-arrangement/solution/you-mei-de-pai-lie-by-leetcode-solution-vea2/)
+    - 核心在于 DP, 递推公式 `dp[mask] = sum{dp[mask-2^i]}` 这里的 i 要求满足其在mask所对应的数字中并且可整除; 这里的 mask 表示仅使用部分数字时所对应的二进制数 (状态压缩)
+- 0638 有一些礼包可以打折, 要求给定购买物品数量的情况下, 找到最优解 `中`
+  - DFS, 数据量不大
+  - 方法一: [here](https://leetcode-cn.com/problems/shopping-offers/solution/da-li-bao-by-leetcode-solution-p1ww/) **记忆化搜索**. DP 更新公式分两种情况:
+    - 一是购买礼包 `dp[needs] = min{price_i + dp[needs-needs_i]}`, 其中 price_i 和 needs_i 分别是礼包的价格和成分.
+    - 二是不购买, 直接通过所有物品的单价算出来; 转移公式为两者较小值
+  - 因为大礼包中可能包含多个物品，所以并不是所有状态都可以得到。因此，我们使用记忆化搜索而不是完全遍历的方法，来计算出满足每个购物清单 needs 所需花费的最低价格。
+- 0784 字符串 S 中的每个字母转变大小写, 所有可能 `中`
+  - 方法一: DFS
+  - 方法二: 先将第一个字母变大写，然后依次把后面的字母变大写。最终的解数组中答案是翻倍增长的
+    - 每一步为 `ans = [""]`，依次更新 `ans = ["a", "A"]`， ans = `["ab", "Ab", "aB", "AB"]`， `ans = ["abc", "Abc", "aBc", "ABc", "abC", "AbC", "aBC", "ABC"]`。
+  - [sol](https://leetcode-cn.com/problems/letter-case-permutation/solution/zi-mu-da-xiao-xie-quan-pai-lie-by-leetcode/) 中还用到了 位表达, 或 itertools, 单复杂度是一样的
+- 0816 将一个去除了小数点和逗号的二维左边还原 `中`
+  - 注意判断一个字符串是否可构成数字 (小数)
+    - 长度为 1, 只能构成整数
+    - 以0结尾, 无法构成小数
+      - 若同时还以0开头(长度>1 则无法构成数字
+    - 长度>1 且不已0结尾
+      - 若以0开头, 只能构成 `0.xxx` 形式的小数
+      - 否则可以构成小数点任意位置的小数
+- 0842 划分 Fibonacci 字符串 `中`
+  - 关联 0306, 也即累加数组
+  - 注意这里要求数列中的元素为有符号正整数, 即 `0 <= F[i] <= 2^31 - 1`
 
 ### 09 DFS
 

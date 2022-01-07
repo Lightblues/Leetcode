@@ -1716,10 +1716,234 @@ func f494(){
 	fmt.Println(findTargetSumWays2([]int{1, 1, 1, 1, 1}, 3))
 }
 
+/* 0526.Beautiful-Arrangement/
+Suppose you have N integers from 1 to N. We define a beautiful arrangement as an array that is constructed by these N numbers successfully if one of the following is true for the ith position (1 <= i <= N) in this array:
+
+The number at the i position is divisible by i.th
+i is divisible by the number at the i position.th
+Now given N, how many beautiful arrangements can you construct?
+
+Input: 2
+Output: 2*/
+func countArrangement1(N int) int {
+	nums := make([]int, N)
+	used := make([]bool, N)
+	for i:=0; i<N; i++ {
+		nums[i] = i+1
+	}
+	result := 0
+	checkDivisible := func(num, d int) bool {
+		dd := num/d
+		return dd*d == num
+	}
+	var dfs func(index int)
+	dfs = func(index int) {
+		if index==N {
+			result++
+			return
+		}
+		for i:=0; i<N; i++ {
+			if !used[i] && (checkDivisible(nums[i], index+1) || checkDivisible(index+1, nums[i])) {
+				used[i] = true
+				dfs(index+1)
+				used[i] = false
+			}
+		}
+	}
+	dfs(0)
+	return result
+}
+func f526(){
+	fmt.Println(countArrangement1(2))
+}
+
+/* 0638.Shopping-Offers/
+在 LeetCode 商店中， 有许多在售的物品。然而，也有一些大礼包，每个大礼包以优惠的价格捆绑销售一组物品。
+现给定每个物品的价格，每个大礼包包含物品的清单，以及待购物品清单。请输出确切完成待购清单的最低花费。每个大礼包的由一个数组中的一组数据描述，最后一个数字代表大礼包的价格，其他数字分别表示内含的其他种类物品的数量。任意大礼包可无限次购买。
+Input: [2,5], [[3,0,5],[1,2,10]], [3,2]
+Output: 14
+Explanation: 
+There are two kinds of items, A and B. Their prices are $2 and $5 respectively. 
+In special offer 1, you can pay $5 for 3A and 0B
+In special offer 2, you can pay $10 for 1A and 2B. 
+You need to buy 3A and 2B, so you may pay $10 for 1A and 2B (special offer #2), and $4 for 2A.
+ */
+func shoppingOffers(price []int, special [][]int, needs []int) int {
+	n := len(price)
+	result := math.MaxInt32
+	// checkCompelete := func()bool {
+	// 	for _,i := range needs {
+	// 		if i>0 { return false }
+	// 	}
+	// 	return true
+	// }
+	min := func(a,b int) int {if a<b {return a}; return b}
+	possible := func(index int) int {
+		s := special[index]
+		r := math.MaxInt32
+		for i:=0; i<n; i++ {
+			if s[i]>0{
+				r = min(r, needs[i]/s[i])
+			}
+		}
+		return r
+	}
+	var dfs func(index int, priceTmp int)
+	dfs = func(index,priceTmp int){
+		// if checkCompelete() {return}
+		if index==len(special) {
+			for j:=0; j<n; j++ {
+				priceTmp += price[j] * needs[j]
+			}
+			result = min(result, priceTmp)
+			return
+		}
+		for i:=0; i<=possible(index); i++ {
+			for j:=0; j<n; j++  {
+				needs[j] -= i * special[index][j]
+			}
+			dfs(index+1, priceTmp + i*special[index][n])
+			for j:=0; j<n; j++  {
+				needs[j] += i * special[index][j]
+			}
+		}
+	}
+	dfs(0, 0)
+	return result
+}
+func f638(){
+	fmt.Println(shoppingOffers(
+		[]int{2,5}, [][]int{
+			{3,0,5},{1,2,10},
+		}, []int{3,2},
+	))
+}
+
+/* 0784.Letter-Case-Permutation/
+Input: S = "a1b2"
+Output: ["a1b2", "a1B2", "A1b2", "A1B2"]
+
+Input: S = "3z4"
+Output: ["3z4", "3Z4"]
+
+Input: S = "12345"
+Output: ["12345"] */
+// 解法一，DFS 深搜
+func letterCasePermutation(s string) []string {
+	return []string{}
+}
+
+
+/* 0816.Ambiguous-Coordinates/
+Example 2:Input: s = "(00011)"
+Output:  ["(0.001, 1)", "(0, 0.011)"]
+Explanation:
+0.0, 00, 0001 or 00.01 are not allowed. */
+func ambiguousCoordinates(s string) []string {
+	findPoss := func(ss string) []string {
+		result := []string{}
+		// 
+		if len(ss)==1 {
+			return append(result, ss)
+		}
+		// 当以 0 结尾, 无法作为小数
+		if ss[len(ss)-1]=='0' {
+			// 若首尾均为 0, 则无法构成数字
+			if ss[0] != '0' {
+				result = append(result, ss)
+			}
+			return result
+		}
+		// 长度 >1 且最后一个元素不为 0, 特殊情况为第一个元素为 0
+		if ss[0]=='0'{
+			return append(result, "0."+ss[1:])
+		}
+        result = append(result, ss)
+		for i:=1; i<len(ss); i++ {
+			result = append(result, ss[:i]+"."+ss[i:])
+		}
+		return result
+	}
+	result := []string{}
+	s = s[1:len(s)-1]
+	for i:=1; i<len(s); i++ {
+		ra := findPoss(s[:i])
+		rb := findPoss(s[i:])
+		for _,a := range ra {
+			for _,b := range rb {
+				result = append(result, "("+a+", "+b+")")
+			}
+		}
+	}
+	return result
+}
+func f816(){
+	fmt.Println(ambiguousCoordinates("(00011)"))
+}
+
+/* 0842.Split-Array-into-Fibonacci-Sequence/
+关联 0306, 
+要求满足条件
+- 0 <= F[i] <= 2^31 - 1, (that is, each integer fits a 32-bit signed integer type);
+- F.length >= 3;
+- and F[i] + F[i+1] = F[i+2] for all 0 <= i < F.length - 2. 
+
+Input: "11235813"
+Output: [1,1,2,3,5,8,13]
+*/
+func splitIntoFibonacci(num string) []int {
+	n := len(num)
+	// 注意 1<<i = 2^i
+	maxVal := 1<<31-1
+	maxLen := len(strconv.Itoa(maxVal))
+	// min := func (a,b int) int{ if a < b { return a}; return b}
+	result := []int{}
+	var checkFibonacci func(a,b int, index int) bool
+	checkFibonacci = func(a,b int, index int) bool {
+		// end
+		if index==n {
+			return true
+		}
+		if a+b>maxVal || a>maxVal || b>maxVal {
+			return false
+		}
+		next := a+b
+		nextLen := len(strconv.Itoa(next))
+		if n-index<nextLen {return false;}
+		poss, _ := strconv.Atoi(num[index:index+nextLen])
+		if poss!=next {return false;}
+		result = append(result,next)
+		return checkFibonacci(b,next,index+nextLen)
+	}
+	
+	for i:=1; i<n && i<=maxLen; i++ {
+		if i>1 && num[0]=='0' {continue}
+		for j:= i+1; j<n && j-i<maxLen; j++ {
+			if j-i>1 && num[i]=='0' {continue}
+			a,_ := strconv.Atoi(num[:i])
+			b,_ := strconv.Atoi(num[i:j])
+			result = []int{a,b}
+			if checkFibonacci(a,b,j) {
+				return result
+			}
+		}
+	}
+	return []int{}
+}
+func f842(){
+	fmt.Println(splitIntoFibonacci("1023"))
+	fmt.Println(splitIntoFibonacci("3611537383985343591834441270352104793375145479938855071433500231900737525076071514982402115895535257195564161509167334647108949738176284385285234123461518508746752631120827113919550237703163294909"))
+}
+
+
 func main() {
 	// f357()
 	// f401()
 	// f473()
-	f491()
+	// f491()
 	// f494()
+	// f526()
+	// f638()
+	// f816()
+	f842()
 }
