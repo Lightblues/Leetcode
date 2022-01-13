@@ -1,7 +1,10 @@
 package main
 
 import (
+	"container/heap"
 	"fmt"
+	"math"
+	"sort"
 )
 
 func min(x, y int) int {
@@ -851,6 +854,487 @@ func f97(){
 	fmt.Println(isInterleave2("aabcc", "dbbca", "aadbbcbcac"))
 }
 
+/* 0115.Distinct-Subsequences/
+给定一个字符串 s 和一个字符串 t ，计算在 s 的子序列中 t 出现的个数。字符串的一个 子序列 是指，通过删除一些（也可以不删除）字符且不干扰剩余字符相对位置所组成的新字符串。（例如，“ACE” 是 “ABCDE” 的一个子序列，而 “AEC” 不是）题目数据保证答案符合 32 位带符号整数范围。
+
+Input: s = "rabbbit", t = "rabbit"
+Output: 3
+Explanation:
+As shown below, there are 3 ways you can generate "rabbit" from S.
+rabbbitrabbbitrabbbit
+ */
+func numDistinct(s string, t string) int {
+	m,n := len(s), len(t)
+	dp := make([][]int,m+1)
+	for i:=0; i<=m; i++ {
+		dp[i] = make([]int, n+1)
+	}
+	for i:=0; i<=m; i++ {
+		dp[i][0] = 1
+	}
+	for i:=1; i<=m; i++ {
+		for j:=1; j<=n; j++ {
+			if s[i-1]==t[j-1] {
+				dp[i][j] = dp[i-1][j-1] + dp[i-1][j]
+			} else {
+				dp[i][j] = dp[i-1][j]
+			}
+		}
+	}
+	return dp[m][n]
+}
+func f115(){
+	fmt.Println(numDistinct("rabbbit", "rabbit"))
+}
+
+/* 118. Pascal’s Triangle #
+给定一个非负整数 numRows，生成杨辉三角的前 numRows 行。在杨辉三角中，每个数是它左上方和右上方的数的和。
+
+Input: 5
+Output:
+[
+     [1],
+    [1,1],
+   [1,2,1],
+  [1,3,3,1],
+ [1,4,6,4,1]
+]*/
+func generate(numRows int) [][]int {
+	result := [][]int{}
+	row := []int{1}
+	result = append(result, []int{1})
+	for i:=1; i<numRows; i++ {
+		tmp := []int{1}
+		lastNum := row[0]
+		for j:=1; j<len(row);j++ {
+			tmp = append(tmp, lastNum+row[j])
+			lastNum = row[j]
+		}
+		tmp = append(tmp,1)
+		result = append(result, tmp[:])
+		row = tmp[:]
+	}
+	return result
+}
+func f118(){
+	fmt.Println(generate(4))
+}
+
+/* 0119.Pascals-Triangle-II/
+给定一个非负索引 k，其中 k ≤ 33，返回杨辉三角的第 k 行。 */
+func getRow(rowIndex int) []int {
+	row := []int{1}
+	for i:=1; i<rowIndex; i++ {
+		tmp := []int{1}
+		lastNum := row[0]
+		for j:=0; j<len(row);j++ {
+			tmp = append(tmp, lastNum+row[j])
+			lastNum = row[j]
+		}
+		tmp = append(tmp,1)
+		row = tmp[:]
+	}
+	return row
+}
+func f119(){
+	fmt.Println(getRow(3))
+}
+
+/* 0120.Triangle/
+给定一个三角形，找出自顶向下的最小路径和。每一步只能移动到下一行中相邻的结点上。
+[
+     [2],
+    [3,4],
+   [6,5,7],
+  [4,1,8,3]
+]
+The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11).
+ */
+func minimumTotal(triangle [][]int) int {
+	min := func(a,b int) int{if a < b {return a}; return b}
+	m := len(triangle)
+	for i:=1; i<m; i++ {
+		triangle[i][0] += triangle[i-1][0]
+		for j:=1; j<i; j++ {
+			triangle[i][j] += min(triangle[i-1][j-1], triangle[i-1][j])
+		}
+		triangle[i][i] += triangle[i-1][i-1]
+	}
+	result := math.MaxInt32
+	for i:=0; i<m; i++ {
+		result = min(result, triangle[m-1][i])
+	}
+	return result
+}
+func f120(){
+	t := [][]int{
+		{2},
+		{3,4},
+		{6,5,7}, 
+		{4,1,8,3},
+	}
+	fmt.Println(minimumTotal(t))
+}
+
+/* 0121.Best-Time-to-Buy-and-Sell-Stock/
+一次买卖的最大利润
+Input: [7,1,5,3,6,4]
+Output: 5
+Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.
+             Not 7-1 = 6, as selling price needs to be larger than buying price. */
+func maxProfit(prices []int) int {
+	minNow := math.MaxInt32
+	result := 0
+	for _,price := range prices {
+		result = max(result, price-minNow)
+		minNow = min(minNow, price)
+	}
+	return result
+}
+func f121(){
+	fmt.Println(maxProfit([]int{7,1,5,3,6,4}))
+}
+
+/* 0122.Best-Time-to-Buy-and-Sell-Stock-II/
+ */
+func maxProfit2(prices []int) int {
+	result := 0
+	for i:=1; i<len(prices); i++ {
+		if prices[i]>prices[i-1] {
+			result += prices[i]-prices[i-1]
+		}
+	}
+	return result
+}
+func f122(){fmt.Println(maxProfit2([]int{7,1,5,3,6,4}))}
+
+/* 0152.Maximum-Product-Subarray/
+给定一个整数数组 nums ，找出一个序列中乘积最大的连续子序列（该序列至少包含一个数）。
+
+Input: [2,3,-2,4]
+Output: 6
+Explanation: [2,3] has the largest product 6. */
+func maxProduct(nums []int) int {
+	// 对于 0 进行了考虑, 想歪了
+	return 0
+	// result := math.MinInt32
+	// tmpMax := math.MinInt32
+	// tmpMin := math.MaxInt32
+	// for _,num := range nums {
+	// 	if num>0 {
+	// 		tmpMax = max(tmpMax, tmpMax*num)
+	// 		tmpMin = min(tmpMin, tmpMin*num)
+	// 	} else if num<0{
+	// 		tmpMax = max(tmpMax, tmpMin*num)
+	// 		tmpMin = min(tmpMin, tmpMax*num)
+	// 	} else {
+	// 		tmpMax = math.MinInt32
+	// 		tmpMin = math.MaxInt32
+	// 	}
+	// 	result = max(result, tmpMax)
+	// }
+	// return max(result, tmpMax)
+}
+// 需要维护当前最大和最小, see https://leetcode-cn.com/problems/maximum-product-subarray/solution/cheng-ji-zui-da-zi-shu-zu-by-leetcode-solution/
+func maxProduct2(nums []int) int {
+	minNow, maxNow, result := nums[0], nums[0], nums[0]
+	for i := 1; i < len(nums); i++ {
+		if nums[i] < 0 {
+			minNow, maxNow = maxNow, minNow
+		}
+		maxNow = max(nums[i], maxNow*nums[i])
+		minNow = min(nums[i], minNow*nums[i])
+		result = max(result, maxNow)
+	}
+	return result
+}
+func f152(){
+	fmt.Println(maxProduct2([]int{2,3,-1,4}))
+}
+
+/* 0174.Dungeon-Game/ 
+用一个矩阵表示每个房间的 HP 损失(获得), 要求从左上角走到右下角的最小 HP
+不同与最短路径和, 要求每一个状态时刻的 HP 都为正数.
+采用 DP, 注意要从终点向前遍历. [因为不知道往后的路径需要消耗多少 HP, 因此不满足「无后效性」]
+
+输入: [[-2,-3,3],[-5,-10,1],[10,30,-5]]
+输出: 7
+
+https://leetcode-cn.com/problems/dungeon-game/solution/di-xia-cheng-you-xi-by-leetcode-solution/  
+*/
+func calculateMinimumHP(dungeon [][]int) int {
+	max := func(a,b int) int{if a>b {return a}; return b;}
+	min := func(a,b int) int{if a>b {return b}; return a;}
+	m,n := len(dungeon), len(dungeon[0])
+	// dp := make([]int, n)
+	// nowHP := make([]int,n)
+	// for j:=0;j<n;j++{
+	// 	if j==0 {
+	// 		if dungeon[0][0] >= 0 {
+	// 			dp[0] = 1
+	// 			nowHP[0] = 1+dungeon[0][0]
+	// 		} else {
+	// 			dp[0] = -dungeon[0][0]+1
+	// 			nowHP[0] = 1
+	// 		}
+	// 	} else {
+	// 		if dungeon[0][j] + nowHP[j-1] > 0 {
+	// 			dp[j] = dp[j-1]
+	// 			nowHP[j] = nowHP[j-1]+dungeon[0][j]
+	// 		} else {
+	// 			dp[j] = dp[j-1] + 1-(nowHP[j-1]+dungeon[0][j])
+	// 			nowHP[j] = 1
+	// 		}
+	// 	}
+	// }
+	// for i:=1;i<m; i++ {
+	// 	if nowHP[0]+dungeon[i][0]>0 {
+	// 		// dp[0]
+	// 		nowHP[0]  += dungeon[i][0]
+	// 	}
+	// 	for j:=1;j<n;j++ {
+	// 		dungeon[i][j] += max(dungeon[i][j-1], dungeon[i-1][j])
+	// 	}
+	// }
+	// return dp[n-1]
+
+	dp := make([][]int, m)
+	for i:=0; i<m; i++ {
+		dp[i] = make([]int, n)
+	}
+	dp[m-1][n-1] = max(1, 1-dungeon[m-1][n-1])
+	for i:=m-2; i>=0; i-- {
+		dp[i][n-1] = max(1, dp[i+1][n-1]-dungeon[i][n-1])
+	}
+	for j:=n-2; j>=0; j-- {
+		dp[m-1][j] = max(1, dp[m-1][j+1]-dungeon[m-1][j])
+	}
+	for i:=m-2; i>=0; i-- {
+		for j:=n-2; j>=0; j-- {
+			dp[i][j] = max(1, min(dp[i][j+1], dp[i+1][j])-dungeon[i][j])
+		}
+	}
+	return dp[0][0]
+}
+func f174(){
+	fmt.Println(calculateMinimumHP([][]int{
+		{-2,-3,3}, 
+		{-5,-10,1},
+		{10,30,-5},
+	}))
+}
+
+/* 0198.House-Robber/
+你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
+给定一个代表每个房屋存放金额的非负整数数组，计算你在不触动警报装置的情况下，能够偷窃到的最高金额。
+
+Input: [2,7,9,3,1]
+Output: 12
+Explanation: Rob house 1 (money = 2), rob house 3 (money = 9) and rob house 5 (money = 1).
+             Total amount you can rob = 2 + 9 + 1 = 12.*/
+func rob198(nums []int) int {
+	if len(nums)==1{return nums[0]}
+	max := func(a,b int) int {if a>b {return a}; return b}
+	dp1, dp2 := nums[0], max(nums[0], nums[1])
+	for i:=2;i<len(nums);i++ {
+		dp1, dp2 = dp2, max(dp2, dp1+nums[i])
+	}
+	return dp2
+}
+
+/* 0213.House-Robber-II/
+这个地方所有的房屋都围成一圈，这意味着第一个房屋和最后一个房屋是紧挨着的。 */
+func rob213(nums []int) int {
+	if len(nums)==1 {return nums[0]}
+	max := func(a,b int) int {if a>b {return a}; return b}
+	n := len(nums)
+	return max(rob198(nums[:n-1]), rob198(nums[1:]))
+}
+
+
+
+/* 0264.Ugly-Number-II/
+Given an integer n, return the nth ugly number.
+
+Ugly number is a positive number whose prime factors only include 2, 3, and/or 5.
+
+Input: n = 10
+Output: 12
+Explanation: [1, 2, 3, 4, 5, 6, 8, 9, 10, 12] is the sequence of the first 10 ugly numbers.*/
+func nthUglyNumber(n int) int {
+	uglyNumbers := []int{1}
+	p2, p3, p5 := 0, 0, 0
+	for len(uglyNumbers) < n {
+		x2, x3, x5 := uglyNumbers[p2]*2, uglyNumbers[p3]*3, uglyNumbers[p5]*5
+		xx := min(min(x2, x3), x5)
+		uglyNumbers = append(uglyNumbers, xx)
+		// 注意可能有重复, 例如 2*3, 3*2 因此不是 else if 
+		if xx == x2 {
+			p2++
+		}
+		if xx == x3 {
+			p3++
+		} 
+		if xx == x5 {
+			p5++
+		}
+	}
+	return uglyNumbers[n-1]
+}
+// 方法二: heap
+type hp struct { sort.IntSlice }
+func (h *hp) Push(v interface{}) {h.IntSlice = append(h.IntSlice, v.(int))}
+func (h *hp) Pop() interface{} {
+	a := h.IntSlice;
+	v := a[len(a)-1];
+	h.IntSlice = a[:len(a)-1];
+	return v
+}
+func nthUglyNumber2(n int) int {
+	h := &hp{sort.IntSlice{1}}
+	seen := map[int]struct{}{1:{}}
+	for i:=1; ; i++ {
+		x := heap.Pop(h).(int)
+		if i ==n {
+			return x
+		}
+		for _,f := range []int{2,3,5} {
+			next := x*f
+			if _,has := seen[next]; !has {
+				heap.Push(h, next)
+				seen[next] = struct{}{}
+			}
+		}
+	}
+}
+
+func f264(){
+	fmt.Println(nthUglyNumber2(10))
+}
+
+/* 0279.Perfect-Squares/
+判断一个数最少是多少个完全平方数之和
+
+Input: n = 12
+Output: 3
+Explanation: 12 = 4 + 4 + 4.
+
+方法一：动态规划 */
+func numSquares(n int) int {
+	// isSquare := func(x int) bool {
+	// 	r := int(math.Sqrt(float64(x)))
+	// 	return x==r*r
+	// }
+	min := func(a,b int)int{if a<b {return a}; return b}
+	dp := make([]int, n+1)
+	dp[1] = 1
+	for i:=2; i<=n; i++ {
+		minn := math.MinInt64
+		for j:=1; j*j<=i; j++ {
+			minn = min(minn, dp[i-j*j])
+		}
+		// 当 i 为平方数, 例如为 4 时, minn=dp[0]=0
+		dp[i] = minn+1
+	}
+	return dp[n]
+}
+
+/* 0300.Longest-Increasing-Subsequence/
+Given an unsorted array of integers, find the length of longest increasing subsequence.
+
+Input: [10,9,2,5,3,7,101,18]
+Output: 4 
+Explanation: The longest increasing subsequence is [2,3,7,101], therefore the length is 4.*/
+func lengthOfLIS(nums []int) int {
+	max := func (a,b int)int { if a>b { return a}; return b}
+	dp := make([]int, len(nums))
+	dp[0] = 1
+	// dp[i] 为以第 i 个元素结果为 LIS 长度, 因此注意返回的不是最后一个元素
+	result := 0
+	for i:=1;i<len(nums);i++ {
+		maxx := 0
+		for j:=0;j<i; j++ {
+			if nums[j]<nums[i] {
+				maxx = max(maxx, dp[j])
+			}
+		}
+		dp[i] = maxx+1
+		result = max(result, dp[i])
+	}
+	return result
+}
+// 方法二：贪心 + 二分查找
+func lengthOfLIS2(nums []int) int {
+	// d[i] 记录长度为 i+1 的IS 的最小结尾元素
+	d := []int{}
+	for _,num := range nums {
+		if len(d)==0 || d[len(d)-1] < num {
+			d = append(d, num)
+		} else {
+			// 目标: 找到最后一个 <num 的元素, 更新该元素后面一个位置
+			// 下面的错误写法中, 可能遇到 最后出现 len(d)=0 && pos=0 有问题
+			// l,r,pos := 0,len(d)-1,0
+			// for l<=r {
+			// 	mid := (l+r) >> 1
+			// 	if d[mid]<num {
+			// 		pos = mid
+			// 		l = mid+1
+			// 	} else {
+			// 		r = mid-1
+			// 	}
+			// }
+			// d[pos+1] = num
+			
+			// 这里将 pos 记录为最早的 >num 的元素, 避免了问题
+			l,r,pos := 0, len(d)-1, len(d)-1
+			for l<=r{
+				mid := (l+r)>>1
+				if d[mid]>=num{
+					pos = mid
+					r = mid-1
+				} else {
+					l = mid+1
+				}
+			}
+			d[pos] = num
+		}
+	}
+	return len(d)
+}
+
+func f300(){
+	fmt.Println(lengthOfLIS2([]int{1,3,6,7,9,4,10,5,6}))
+	fmt.Println(lengthOfLIS2([]int{10,9,2,5,3,7,101,18}))
+}
+
+
+/* 0309.Best-Time-to-Buy-and-Sell-Stock-with-Cooldown/
+买卖股票, 有 Cooldown 即卖出后第二天不能直接买入
+Say you have an array for which the ith element is the price of a given stock on day i.
+
+Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one and sell one share of the stock multiple times) with the following restrictions:
+
+You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+After you sell your stock, you cannot buy stock on next day. (ie, cooldown 1 day)
+
+Input: [1,2,3,0,2]
+Output: 3 
+Explanation: transactions = [buy, sell, cooldown, buy, sell]*/
+func maxProfit309(prices []int) int {
+
+}
+
+
 func main(){
-	f97()
+	// f97()
+	// f115()
+	// f118()
+	// f119()
+	// f120()
+	// f121()
+	// f122()
+	// f152()
+	// f174()
+	// f264()
+	f300()
 }
