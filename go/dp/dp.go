@@ -1321,7 +1321,186 @@ Input: [1,2,3,0,2]
 Output: 3 
 Explanation: transactions = [buy, sell, cooldown, buy, sell]*/
 func maxProfit309(prices []int) int {
+	dp := make([][3]int, len(prices))
+	dp[0][0] = -prices[0]
+	for i:=1; i<len(prices); i++ {
+		dp[i][0] = max(dp[i-1][0], dp[i-1][2]-prices[i])
+		dp[i][1] = dp[i-1][0]+prices[i]
+		dp[i][2] = max(dp[i-1][1], dp[i-1][2])
+	}
+	return max(dp[len(dp)-1][1], dp[len(dp)-1][2])
+}
+func f309(){
+	fmt.Println(maxProfit309([]int{1,2,3,0,2}))
+}
 
+/* 0322.Coin-Change/
+You are given coins of different denominations and a total amount of money amount. Write a function to compute the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.
+
+Input: coins = [1, 2, 5], amount = 11
+Output: 3 
+Explanation: 11 = 5 + 5 + 1
+
+Input: coins = [2], amount = 3
+Output: -1
+
+一开始考虑到转移公式 `dp[i] = min{dp[j]+1}`, 其中 j<i 为满足 dp[j] 合法并且 i-j 在 coins 中的位置; 然而复杂度为 O(N^2) 直接超时
+反过来想, 要寻找满足要求的 j 只需要遍历 coins 即可找到可能的 j, 复杂度 O(n * len(coins))
+ */
+func coinChange(coins []int, amount int) int {
+	min := func(a,b int) int {if a<b {return a}; return b}
+	coinsMap := map[int]bool{}
+	for _, coin := range coins {
+		coinsMap[coin] = true
+	}
+	dp := make([]int, amount+1)
+	for i:=1; i<=amount; i++ {
+		// dp[i] = -1
+		// for j:=0;j<i;j++ {
+		// 	if dp[j] != -1 {
+		// 		if _,ok := coinsMap[i-j]; ok{
+		// 			if dp[i] != -1 {
+		// 				dp[i] = min(dp[i], dp[j]+1)
+		// 			} else {
+		// 				dp[i] = dp[j]+1
+		// 			}
+		// 		}
+		// 	}
+		// }
+
+		// 反过来想: 遍历 coins 即可
+		dp[i] = math.MaxInt64
+		for _,coin := range coins {
+			if i-coin >= 0 && dp[i-coin]!=math.MaxInt64 {
+				dp[i] = min(dp[i], dp[i-coin]+1)
+			}
+		}
+	}
+	if dp[amount] == math.MaxInt64 {
+		return -1
+	}
+	return dp[amount]
+}
+func f322(){
+	fmt.Println(coinChange([]int{1,2,5}, 3))
+	fmt.Println(coinChange([]int{70,497,443,146,392}, 5695))
+}
+
+/* 0329.Longest-Increasing-Path-in-a-Matrix/
+Input: nums = 
+[
+  [9,9,4],
+  [6,6,8],
+  [2,1,1]
+] 
+Output: 4 
+Explanation: The longest increasing path is [1, 2, 6, 9].
+
+*/
+// 方法一: 记忆化深度优先搜索
+func longestIncreasingPath(matrix [][]int) int {
+	max := func (a,b int) int { if a>b { return a}; return b}
+	directions := [][]int {
+		{1,0},
+		{-1,0},
+		{0,1},
+		{0,-1},
+	}
+	m,n := len(matrix), len(matrix[0])
+	// 记忆化深度优先搜索
+	memory := make([][]int, m)
+	for i:=0; i<m; i++ {
+		memory[i] = make([]int, n)
+	}
+	checkInMatrix := func(x,y int) bool {
+		return x>=0 && x<m && y>=0 && y<n
+	}
+
+	var dfs func(x,y int) int
+	dfs = func(x, y int) int {
+		// 由于在下面进行了判断, 这里是多余的
+		// if !checkInMatrix(x,y) {
+		// 	return 0
+		// }
+		// 记忆化深度优先搜索
+		if memory[x][y] != 0 {
+			return memory[x][y]
+		}
+		// DFS, 更新公式 `memo[x][y] = 1 + max{memo[nx][ny]}`
+		longest := 1
+		for _,d := range directions{
+			nx,ny := x+d[0],y+d[1]
+			if checkInMatrix(nx,ny) && matrix[nx][ny] > matrix[x][y]{
+				longest = max(longest, 1+dfs(nx,ny))
+			}
+		}
+		memory[x][y] = longest
+		return longest
+	}
+
+	// 主循环: 直接遍历矩阵所有位置, 用 result 记录结果即可
+	result := 0
+	for i:=0; i<m; i++ {
+		for j:=0; j<n; j++ {
+			tmp := dfs(i,j)
+			result = max(result, tmp)
+		}
+	}
+	return result
+}
+// 方法二：拓扑排序
+func f329(){
+	fmt.Print(longestIncreasingPath([][]int{
+		{3,4,5},
+		{3,2,6},
+		{2,2,1},}))
+}
+
+/* 337.House-Robber-III/
+相较于 0198, 0264 房间的排列变成了二叉树, 同样要求不能同时偷相邻的两个房间 */
+func rob337(root *TreeNode) int {
+	a,b := dfsRob(root)
+	return max(a,b)
+}
+func dfsRob(root *TreeNode) (a,b int) {
+    if root == nil {
+        return 0,0
+    }
+    l0,l1 := dfsRob(root.Left)
+    r0,r1 := dfsRob(root.Right)
+    result0 := max(l0, l1) + max(r0, r1)
+    result1 := root.Val + l0 + r0
+    return result0, result1
+}
+
+/* 0338.Counting-Bits/
+Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1’s in their binary representation and return them as an array.
+
+总结一些二进制运算: 
+  X&1==1or==0，可以用 X&1 判断奇偶性，X&1>0 即奇数。
+  X = X & (X-1) 清零最低位的1
+  X & -X => 得到最低位的1 
+  X&~X => 0
+   */
+func countBits(num int) []int {
+	bitNums := make([]int, num+1)
+	for i:=1; i<=num; i++ {
+		bitNums[i] = bitNums[i&(i-1)] + 1
+	}
+	return bitNums
+}
+func f338(){
+	fmt.Println(countBits(5))
+}
+
+/* 0343.Integer-Break/
+将一个整数分解成至少两个整数, 要求这些整数的乘积最大
+
+Input: 10
+Output: 36
+Explanation: 10 = 3 + 3 + 4, 3 × 3 × 4 = 36.*/
+func integerBreak(n int) int {
+	
 }
 
 
@@ -1336,5 +1515,9 @@ func main(){
 	// f152()
 	// f174()
 	// f264()
-	f300()
+	// f300()
+	// f309()
+	// f322()
+	// f329()
+	f338()
 }
