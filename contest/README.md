@@ -5,6 +5,7 @@
 
 - 编程语言
   - JAVA 廖雪峰课程 <https://www.liaoxuefeng.com/wiki/1252599548343744>
+  - Python 库 LearnKu <https://learnku.com/docs/pymotw>
 
 ## 代码语法总结
 
@@ -343,7 +344,7 @@
   - 贪心, 从 target 往下 /2
 - 5982. 解决智力问题
   - 给定一系列的题目, questions[i] = [pointsi, brainpoweri], 你选择做某一题的代价是只能跳过后面 brainpower 题
-  - DP, 从后往前
+  - DP, 从后往前, 记录从该位置往后的最大解, 递推公式 `dp[i] = max([dp[i+1], point+dp[i+skip+1]])`
 - 5983. 同时运行 N 台电脑的最长时间
   - 给定一组电池 batteries, 每个电池可以给一台电脑运行一定的时间. 可以把一个电池替换给不同的电脑, 要求让所有电脑同时运行的最长时间
   - 这里的限制条件为电量最大的 n 个电池, 小的电池看作对它们的补充.
@@ -352,6 +353,11 @@
 
 ### D68
 
+- 2114. 句子中的最多单词数
+- 2115. 从给定原材料中找到所有可以做出的菜
+  - 给定一个菜单, 每道菜的成分可能包括食材或其他的菜品, 要求在一定的初始食材下能够得到的所有菜品
+  - 思路一: 本题数据量比较小, 可以暴力遍历. 用一个 flag 记录一次遍历是否有新的菜品(食材) 生成, 当没有时即结束
+  - 思路二: 依赖关系构成图, 显然可以用 `拓扑排序` 解决, see [here](https://leetcode-cn.com/problems/find-all-possible-recipes-from-given-supplies/solution/cong-gei-ding-yuan-cai-liao-zhong-zhao-d-d02i/)
 - 2116. 判断一个括号字符串是否有效 `中`
   - 给定一个在某些位上固定的字符串 (例如 `s = "))()))", locked = "010100"`), 判断能够通过修改其他自由位使其成为合法的括号序列
   - 思路一: 关注 lock 部分 (剩下偶数个自由位一定可以匹配)
@@ -360,5 +366,31 @@
     - 原本分了上面三种情况讨论, 实际上可以合并: 用 space 最前面的部分匹配右括号, 最后面的部分匹配左括号, `len(spaces)>=len(leftStack)+len(rightStack) and all([i>j for i,j in zip(spaces[-len(leftStack):], leftStack)]) and all([i<j for i,j in zip(spaces[:len(rightStack)], rightStack)])`
   - 方法一：数学, see [here](https://leetcode-cn.com/problems/check-if-a-parentheses-string-can-be-valid/solution/pan-duan-yi-ge-gua-hao-zi-fu-chuan-shi-f-0s47/)
     - 定义了有效字符串「分数」的概念, 然后通过: 维护 1. 前缀 s[0..i] 可以达到的最大分数；2. 前缀 s[0..i] 「可以达到的最小分数」及「作为有效前缀所需的最小分数」两者的较大值. 这两个数组来进行判断.
+- 2117. 一个区间内所有数乘积的缩写 `难`
+  - 放弃了
+  - 参见 [思路详解+详细讨论一下精度问题](https://leetcode-cn.com/problems/abbreviating-the-product-of-a-range/solution/fen-bie-ji-suan-qian-5wei-he-hou-5wei-si-dc9x/), Python 超时了. 另外 [here](https://leetcode-cn.com/problems/abbreviating-the-product-of-a-range/solution/yi-ge-shu-ju-tuan-mie-jue-da-bu-fen-dai-234yd/) 做了更多的分析
 
-## 题目记录
+## 每日一题
+
+- 2029. 石子游戏 IX `中` 但实际上可以说很难!
+  - 分别取石子, A优先, 两条规则
+    - 当某个人取出后总和为 3的倍数时, 其失败;
+    - 当取完所有的石子, 条件1不成立, 则 A 失败(不管最后一个是谁取的).
+  - 博弈, 参见 [官方解答](https://leetcode-cn.com/problems/stone-game-ix/solution/shi-zi-you-xi-ix-by-leetcode-solution-kk5f/).
+  - 首先的失败条件是取出的石子总和为 3, 因此可将石子除以3的余数为 0,1,2 分成三类
+  - 先不考虑 0, 假设只有 1,2. 由于每个人都是最佳决策, 因此只会出现
+    - `1,1,2,1,2,1,...` 或者 `2,2,1,2,1,2,...` 的序列. 也即除了第一颗, 两个都回去相同的石子.
+    - 条件 1 的失败条件为对方没有可取的石子, 因此 A 的策略是取数量少的那一类.
+      - 以 `1,1,2,1,2,1,...` 序列为例, A 获胜条件为: 有类型 1 的石子并且数量少于类型 2, `0 < cn1 <= cn2`
+    - 综合两种情况, A 获胜条件为 `cnt1 >= 1 and cnt2 >= 1`
+  - 还要考虑 1, 当 0 的数量为偶数时, 条件不改变. 考虑 0 有奇数个
+    - A 的策略仍然是选择较少的类, 然而此时 B 可以有一次选类型 0 石子的机会, 因此条件变为
+      - `cnt1 - cnt2 > 2 or cnt2 - cnt1 > 2`
+- 1345. 跳跃游戏 IV `难`
+  - 给一个数组, 只能前后一格, 或者跳到相同数字的格子上, 求到达终点的最小跳数
+  - 显然可以建模为最短路径问题;
+  - 然而直接建图 BFS 超时了. 问题在于, 当存在大量点的数字相同, 变为稠密图, BFS 复杂度为 `O(n^2)`
+  - 方法一：广度优先搜索 see [here](https://leetcode-cn.com/problems/jump-game-iv/solution/tiao-yue-you-xi-iv-by-leetcode-solution-zsix/)
+    - 考虑这一问题的特殊性: 所有相同元素构成稠密图, 因此没有必要遍历改子图上所有的边 —— 递归一遍这些节点后, 没有必要在这一稠密图上搜索了
+    - 因此, 直接不构建这一部分的图
+    - 具体而言, 不构建显式的图, 直接记录每个数值包括的位置集合 val2index. 当从一个点 index 出发遍历了所有 val2index[arr[index]] 中的节点后, 直接 `del val2index[arr[index]]` 从而避免构建这一稠密图
