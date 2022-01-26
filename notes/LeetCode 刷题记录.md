@@ -1,24 +1,6 @@
 # LeetCode 刷题记录
 
-## Python
-
-```python
-order = ord(ch) - ord('a')
-
-
-# 返回的数据结构应该用 "" 包裹?
-def searchPrefix(self, prefix) -> "Trie":
-```
-
-## 资源
-
-Blogger 微石也有 LeetCode 刷题记录：<https://akihoo.github.io/posts/c80e95e5.html> 思路还挺像哈哈哈
-
 ## 一些文章
-
-### 大佬 Blog
-
-[辰曦~文若](https://www.cnblogs.com/chenxiwenruo/) 看到 KMP 的似乎很硬核
 
 ### DP
 
@@ -31,14 +13,6 @@ Blogger 微石也有 LeetCode 刷题记录：<https://akihoo.github.io/posts/c80
 阮一峰 [字符串匹配的KMP算法](http://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html)
 [KMP 求最小循环节](https://www.cnblogs.com/zjl192628928/p/9552949.html)
 
-### 其他
-
-[今日头条2017校招题目解析(一)：KMP中next数组与Trie树的应用](https://segmentfault.com/a/1190000014466075)
-
-## 面经
-
-[面经 | 字节跳动实习算法岗（2019届）](https://zhuanlan.zhihu.com/p/86746425)
-[字节跳动数据挖掘算法工程师一面（记录）](https://blog.csdn.net/jianminli2/article/details/103585066)
 
 ### 002 两数相加
 
