@@ -374,3 +374,83 @@ def test2013():
 # ]
 # for r in rels:
 #     print(r)
+
+class Solution220127:
+    """ 2047. 句子中的有效单词数
+     根据空格分隔单词，一个正确的词要求：
+    1. 至多一个连字符，其前后必须是字母；
+    2. 至多一个标点符号（'!'、'.' 和 ','），必须在结尾
+    作为一道简单题还是挺烦的 [here](https://leetcode-cn.com/problems/number-of-valid-words-in-a-sentence/solution/ju-zi-zhong-de-you-xiao-dan-ci-shu-by-le-hvow/)
+     """
+    def countValidWords(self, sentence: str) -> int:
+        def isValid(word):
+            if len(word) == 0:
+                return False
+            for i in range(10):
+                if word.count(str(i)) >0:
+                    return False
+            if '-' in word:
+                if word.count('-')>1:
+                    return False
+                index = word.index('-')
+                if index==0 or index==len(word)-1 or not word[index-1].isalpha() or not word[index+1].isalpha():
+                    return False
+            pCount = word.count(',')+word.count('.')+word.count('!')
+            if pCount>1:
+                return False
+            if pCount==1 and word[-1] not in [',', '.', '!']:
+                return False
+            return True
+        return sum(map(isValid, sentence.split(' ')))
+
+    def countValidWords2(self, sentence: str) -> int:
+        def valid(s: str) -> bool:
+            hasHyphens = False
+            for i, ch in enumerate(s):
+                if ch.isdigit() or ch in "!.," and i < len(s) - 1:
+                    return False
+                if ch == '-':
+                    if hasHyphens or i == 0 or i == len(s) - 1 or not s[i - 1].islower() or not s[i + 1].islower():
+                        return False
+                    hasHyphens = True
+            return True
+        return sum(valid(s) for s in sentence.split())
+
+    """ 1996. 游戏中弱角色的数量
+    定义“弱角色”：包括攻击和防御两个属性，两个指标都严格小于另一个角色的角色，返回一组人物中弱角色的数量
+    方法一：排序
+    可以按照攻击从大到小排序；题目中要求两个属性严格小于才成立，如何保证当 maxY>y 时，所对应的 maxX 是严格大于当前的 x？一种方式当然可以对 x 分组记录之前分组的 maxX，另一种方法是设定第二排序指标为 防御值Y 从小到大排序，这样遍历的时候仅需记录 maxY 即可
+    [here](https://leetcode-cn.com/problems/the-number-of-weak-characters-in-the-game/solution/you-xi-zhong-ruo-jiao-se-de-shu-liang-by-3d2g/)
+    方法二：单调栈
+    思路其实差不多，而且也要双指标排序；不过用了递增栈逻辑上清楚一点。
+     """
+    def numberOfWeakCharacters(self, properties: List[List[int]]) -> int:
+        properties.sort(key=lambda x: (-x[0], x[1]))
+        result = 0
+        maxY = 0
+        for x,y in properties:
+            if y<maxY:
+                result += 1
+            else:
+                maxY = y
+        return result
+    # 单调递增栈。(x[0], -x[1]) 排序。也即，按照递增次序遍历攻击值，栈内元素为尚无法成为弱角色的；为了处理相同攻击值的情况，采用防御值倒序作为第二排序指标
+    def numberOfWeakCharacters(self, properties: List[List[int]]) -> int:
+        properties.sort(key = lambda x: (x[0], -x[1]))
+        ans = 0
+        st = []
+        for _, def_ in properties:
+            while st and st[-1] < def_:
+                st.pop()
+                ans += 1
+            st.append(def_)
+        return ans
+
+
+sol2 = Solution220127()
+rels = [
+    # sol2.countValidWords("!this  1-s b8d!"),
+    sol2.numberOfWeakCharacters(properties = [[1,5],[10,4],[4,3]])
+]
+for r in rels:
+    print(r)

@@ -2,6 +2,7 @@
 - LeetCode Cookbook <https://books.halfrost.com/leetcode/>
 - 代码随想录 <https://github.com/youngyangyang04/leetcode-master>
 - Labulalong <https://labuladong.github.io/algo/>; Github <https://github.com/labuladong/fucking-algorithm>
+- 宫水三叶 <https://github.com/SharingSource/LogicStack-LeetCode> Index 中对于题型进行了总结
 
 - 编程语言
   - JAVA 廖雪峰课程 <https://www.liaoxuefeng.com/wiki/1252599548343744>
@@ -661,3 +662,13 @@ directions := [][]int{
   - 实现一个类，实现 count：输入一个坐标，返回这个点和已有的点能够组成正方形（平行坐标轴的）的数量
   - 注意审题，因为是正方形所以遍历的复杂度不是很高，所以逻辑实现在 count 函数中即可
   - 用一个 `map{x:[ys]}` 记录每一行出现过的列（或者 [官答](https://leetcode-cn.com/problems/detect-squares/solution/jian-ce-zheng-fang-xing-by-leetcode-solu-vwzs/) 中直接 `map{[x][y]:count}` 记录每一个点出现的次数，数据结构 `defaultdict(Counter)`）遍历所有可能的正方形即可
+- 2047. 句子中的有效单词数 `易`
+  - 根据空格分隔单词，一个正确的词要求：1. 不包含数字；至多一个连字符，其前后必须是字母；2. 至多一个标点符号（'!'、'.' 和 ','），必须在结尾
+  - 作为一道简单题还是挺烦的 [here](https://leetcode-cn.com/problems/number-of-valid-words-in-a-sentence/solution/ju-zi-zhong-de-you-xiao-dan-ci-shu-by-le-hvow/) 用了一次遍历；自己实现的时候调用了 count 相对会慢一点？测下来差不多
+- 1996. 游戏中弱角色的数量 `中` 大概是比较经典的双排序场景
+  - 定义“弱角色”：包括攻击和防御两个属性，两个指标都严格小于另一个角色的角色，返回一组人物中弱角色的数量。参见 [here](https://leetcode-cn.com/problems/the-number-of-weak-characters-in-the-game/solution/you-xi-zhong-ruo-jiao-se-de-shu-liang-by-3d2g/)
+  - 方法一：排序
+    - 可以按照攻击从大到小排序；题目中要求两个属性严格小于才成立，如何保证当 maxY>y 时，所对应的 maxX 是严格大于当前的 x？一种方式当然可以对 x 分组记录之前分组的 maxX，另一种方法是设定第二排序指标为 防御值Y 从小到大排序，这样遍历的时候仅需记录 maxY 即可。
+    - 也即 `properties.sort(key=lambda x: (-x[0], x[1]))`
+  - 方法二：单调栈
+    - 思路其实差不多，而且也要双指标排序；不过用了递增栈逻辑上清楚一点。
