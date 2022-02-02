@@ -450,7 +450,94 @@ class Solution220127:
 sol2 = Solution220127()
 rels = [
     # sol2.countValidWords("!this  1-s b8d!"),
-    sol2.numberOfWeakCharacters(properties = [[1,5],[10,4],[4,3]])
+    # sol2.numberOfWeakCharacters(properties = [[1,5],[10,4],[4,3]])
+]
+
+class Solution3:
+    """ 1765. 地图中的最高点 medium
+给你一个大小为 m x n 的整数矩阵 isWater ，它代表了一个由 陆地 和 水域 单元格组成的地图。
+约束为相邻的两个点高度差至多为1, 要求最高点. 
+
+输入：isWater = [[0,0,1],[1,0,0],[0,0,0]]
+输出：[[1,1,0],[0,1,1],[1,2,2]]
+解释：所有安排方案中，最高可行高度为 2 。
+任意安排方案中，只要最高高度为 2 且符合上述规则的，都为可行方案。
+
+从所有的水域 (高度为 0) 出发, BFS即可. 注意这里的起始状态是一组点, 这样一层层拓展出去是不会违反约束的. """
+    def highestPeak(self, isWater: List[List[int]]) -> List[List[int]]:
+        m,n = len(isWater), len(isWater[0])
+        directions = [
+            [1,0],
+            [-1,0],
+            [0,1], [0,-1]
+        ]
+        used = set()
+        result = [[0] * n for _ in range(m)]
+        def isvalid(x,y):
+            return 0<=x<m and 0<=y<n
+        def getValid(x,y):
+            result = []
+            for dx,dy in directions:
+                if isvalid(x+dx,y+dy) and (x+dx,y+dy) not in used:
+                    result.append((x+dx,y+dy))
+            return result
+        q = [(x,y) for x in range(m) for y in range(n) if isWater[x][y]==1]
+        used = used.union(set(q))
+        height = 1
+        while q:
+            newQ = []
+            for x,y in q:
+                for nx,ny in getValid(x,y):
+                    newQ.append((nx,ny))
+                    result[nx][ny] = height
+                    used.add((nx,ny))
+            height += 1
+            q = newQ
+        return result
+    
+    """ 884. 两句话中的不常见单词 易
+给定两句话, 输出「不常见」的词
+如果某个单词在其中一个句子中恰好出现一次，在另一个句子中却 没有出现 ，那么这个单词就是 不常见的 。
+
+输入：s1 = "apple apple", s2 = "banana"
+输出：["banana"] """
+    def uncommonFromSentences(self, s1: str, s2: str) -> List[str]:
+        # 尝试通过 set 解决, 下面有问题; 实际上该题词数最多 200, 暴力便利更方便
+        # s1 = s1.strip().split()
+        # s1 = collections.Counter(s1)
+        # s1 = set([k for k,v in s1.items() if v==1])
+        # s2 = s2.strip().split()
+        # s2 = collections.Counter(s2)
+        # s2 = set([k for k,v in s2.items() if v==1])
+        # return list(s1.difference(s2)) + list(s2.difference(s1))
+
+        c1 = collections.Counter(s1.strip().split())
+        c2 = collections.Counter(s2.strip().split())
+        result = []
+        for k,v in c1.items():
+            if v==1 and k not in c2:
+                result.append(k)
+        for k,v in c2.items():
+            if v==1 and k not in c1:
+                result.append(k)
+        return result
+    
+    """ 1342. 将数字变成 0 的操作次数 易
+    给你一个非负整数 num ，请你返回将它变成 0 所需要的步数。 如果当前数字是偶数，你需要把它除以 2 ；否则，减去 1 。 """
+    def numberOfSteps(self, num: int) -> int:
+        count  = 0
+        while num > 0:
+            if num%2 ==1:
+                num -= 1
+            else :
+                num //= 2
+            count += 1
+        return count
+
+sol = Solution3()
+rels = [
+    # sol.highestPeak(isWater = [[0,0,1],[1,0,0],[0,0,0]]),
+    sol.uncommonFromSentences(s1 = "apple apple", s2 = "banana"),
 ]
 for r in rels:
     print(r)
