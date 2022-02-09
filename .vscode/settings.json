@@ -5,5 +5,11 @@
     "vector": "cpp",
     "iostream": "cpp"
   },
-  "go.inferGopath": false
+  "go.inferGopath": false,
+  "java.project.sourcePaths": [
+    "learn-java/src",
+    "learn-java/com/itranswarp/learnjava"
+  ],
+  "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m"
+  //   "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m"
 }

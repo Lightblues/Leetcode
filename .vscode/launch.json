@@ -4,27 +4,13 @@
   // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-    {
-      "type": "java",
-      "name": "Launch Solution",
-      "request": "launch",
-      "mainClass": "jj.Solution",
-      "projectName": "leetcode_50d9da0f"
-    },
-    {
-      "type": "java",
-      "name": "Launch HalloWorld",
-      "request": "launch",
-      "mainClass": "jj.HalloWorld",
-      "projectName": "leetcode_50d9da0f"
-    },
-    {
-      "type": "java",
-      "name": "Launch HalloWorld",
-      "request": "launch",
-      "mainClass": "java.HalloWorld",
-      "projectName": "leetcode_50d9da0f"
-    },
+    // {
+    //   "type": "java",
+    //   "name": "Launch SumOfInteger",
+    //   "request": "launch",
+    //   "mainClass": "com.itranswarp.learnjava.SumOfInteger",
+    //   "projectName": "Leetcode_30f8d4bc"
+    // },
     {
       "type": "java",
       "name": "Java",

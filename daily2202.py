@@ -7,6 +7,7 @@ import collections
 import math
 import bisect
 import heapq
+from unittest import result
 
 class Solution:
     def longestNiceSubstring(self, s: str) -> str:
@@ -160,6 +161,60 @@ DFS 即可, Copilot 牛逼! 下面的DFS直接帮写好了
             countb = sab.count(b[1])
             return construct(c[1]*c[0], b[1]*(b[0]-countb)+sab)
 
+    """ 1001. 网格照明 hard
+大小为 n x n 的网格 grid, lamps 给定了一组灯, lamps[i] = [rowi, coli] 可以照亮 行、列、两条对角线
+再给一组查询坐标 queries[j] = [rowj, colj], 每次查询返回该点是否被照亮, 并且查询后关闭该点为中心的 3*3 九个坐标上的灯
+
+输入：n = 5, lamps = [[0,0],[0,4]], queries = [[0,4],[0,1],[1,4]]
+输出：[1,1,0]
+
+思路: 用四个字典记录 行、列、两条对角线 上的亮灯情况
+ """
+    def gridIllumination(self, n: int, lamps: List[List[int]], queries: List[List[int]]) -> List[int]:
+        lightX = collections.defaultdict(set)
+        lightY = collections.defaultdict(set)
+        lightD1 = collections.defaultdict(set)
+        lightD2 = collections.defaultdict(set)
+        def addLight(x,y):
+            lightX[x].add(y)
+            lightY[y].add(x)
+            lightD1[x-y].add(x)
+            lightD2[x+y].add(x)
+        def checkLight(x,y):
+            if lightX[x] or lightY[y] or lightD1[x-y] or lightD2[x+y]:
+                return 1
+            return 0
+        def removeSingleLight(x,y):
+            if y in lightX[x]:
+                lightX[x].remove(y)
+            if x in lightY[y]:
+                lightY[y].remove(x)
+            if x in lightD1[x-y]:
+                lightD1[x-y].remove(x)
+            if x in lightD2[x+y]:
+                lightD2[x+y].remove(x)
+        def removeLight(x,y):
+            for xx in range(x-1,x+2):
+                for yy in range(y-1,y+2):
+                    if 0<=xx<n and 0<=yy<n:
+                        removeSingleLight(xx,yy)
+        for x,y in lamps:
+            addLight(x,y)
+        result = []
+        for x,y in queries:
+            result.append(checkLight(x,y))
+            removeLight(x,y)
+        return result
+
+    """ 2006. 差的绝对值为 K 的数对数目 """
+    def countKDifference(self, nums: List[int], k: int) -> int:
+        result = 0
+        for i in range(len(nums)):
+            for j in range(i+1, len(nums)):
+                if abs(nums[i]-nums[j]) == k:
+                    result += 1
+        return result
+
 
 sol = Solution()
 rels = [
@@ -168,7 +223,8 @@ rels = [
     # sol.findMinFibonacciNumbers(19),
     # sol.getMaximumGold(grid = [[0,6,0],[5,8,7],[0,9,0]]),
     # sol.longestDiverseString(a = 1, b = 1, c = 7),
-    sol.longestDiverseString(a = 2, b = 2, c = 1)
+    # sol.longestDiverseString(a = 2, b = 2, c = 1),
+    sol.gridIllumination(n = 5, lamps = [[0,0],[0,4]], queries = [[0,4],[0,1],[1,4]]),
 ]
 for r in rels:
     print(r)
