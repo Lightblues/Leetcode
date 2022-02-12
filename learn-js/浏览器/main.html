@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Browser</title>
+        <!-- <link rel="stylesheet" href="../css/style.css"> -->
+        <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script src="main.js"></script>
+    </head>
+    <body>
+        <dl id="drink-menu" style="border: solid 1px #ccc; padding: 6px">
+            <dt>摩卡</dt>
+            <dd>热摩卡咖啡</dd>
+            <dt>酸奶</dt>
+            <dd>北京老酸奶</dd>
+            <dt>果汁</dt>
+            <dd>鲜榨苹果汁</dd>
+        </dl>
+
+        <div id="DOM" hidden>
+            <div id="test-div" hidden>
+                <div class="c-red">
+                    <p id="test-p">JavaScript</p>
+                    <p>Java</p>
+                </div>
+                <div class="c-red c-green">
+                    <p>Python</p>
+                    <p>Ruby</p>
+                    <p>Swift</p>
+                </div>
+                <div class="c-green">
+                    <p>Scheme</p>
+                    <p>Haskell</p>
+                </div>
+            </div>
+
+            <div id="p-id"></div>
+
+            <div id="test-div" hidden>
+                <p id="test-js">javascript</p>
+                <p>Java</p>
+            </div>
+
+            <!-- insert -->
+            <p id="js">JavaScript</p>
+            <div id="list">
+                <p id="java">Java</p>
+                <p id="python">Python</p>
+                <p id="scheme">Scheme</p>
+            </div>
+
+            <ol id="test-list">
+                <li class="lang">Scheme</li>
+                <li class="lang">JavaScript</li>
+                <li class="lang">Python</li>
+                <li class="lang">Ruby</li>
+                <li class="lang">Haskell</li>
+            </ol>
+
+            <script src="elements.js"></script>
+        </div>
+
+        <div id="input">
+            <form id="input-email">
+                <input type="text" id="email" value="example@mail.com" />
+                <button id="btn" onclick="testInput()">提交</button>
+            </form>
+            <form id="test-form">
+                <input type="text" name="test" />
+                <button type="button" onclick="doSubmitForm()">Submit</button>
+            </form>
+
+            <form
+                id="test-register"
+                action="#"
+                target="_blank"
+                onsubmit="return checkRegisterForm()"
+            >
+                <p id="test-error" style="color: red"></p>
+                <p>
+                    用户名: <input type="text" id="username" name="username" />
+                </p>
+                <p>
+                    口令:
+                    <input type="password" id="password" name="password" />
+                </p>
+                <p>重复口令: <input type="password" id="password-2" /></p>
+                <p>
+                    <button type="submit">提交</button>
+                    <button type="reset">重置</button>
+                </p>
+            </form>
+            <script src="./from.js"></script>
+        </div>
+    </body>
+</html>

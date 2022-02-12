@@ -1,0 +1,23 @@
+{
+    "name": "hello-sequelize",
+    "version": "1.0.0",
+    "description": "Hello Sequelize example with async",
+    "main": "app.js",
+    "scripts": {
+        "start": "node --use_strict app.js"
+    },
+    "keywords": [
+        "sequelize",
+        "async"
+    ],
+    "author": "Michael Liao",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/michaelliao/learn-javascript.git"
+    },
+    "dependencies": {
+        "mysql2": "^2.3.3",
+        "sequelize": "^6.16.1"
+    }
+}

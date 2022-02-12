@@ -215,6 +215,31 @@ DFS 即可, Copilot 牛逼! 下面的DFS直接帮写好了
                     result += 1
         return result
 
+    """ 1447. 最简分数
+给你一个整数 n ，请你返回所有 0 到 1 之间（不包括 0 和 1）满足分母小于等于  n 的 最简 分数 。分数可以以 任意 顺序返回。
+
+输入：n = 3
+输出：["1/2","1/3","2/3"] """
+    def simplifiedFractions(self, n: int) -> List[str]:
+        def gcd(a,b):
+            a,b = sorted([a,b])
+            while b % a:
+                a,b = b % a, a
+            return a
+        result = []
+        for i in range(2, n+1):
+            for j in range(1, i):
+                if gcd(i,j) == 1:
+                    result.append(str(j)+'/'+str(i))
+        return result
+
+    """ 1984. 学生分数的最小差值 """
+    def minimumDifference(self, nums: List[int], k: int) -> int:
+        nums.sort()
+        result = float('inf')
+        for i in range(len(nums)-k+1):
+            result = min(result, nums[i+k-1]-nums[i])
+        return result
 
 sol = Solution()
 rels = [
@@ -224,7 +249,8 @@ rels = [
     # sol.getMaximumGold(grid = [[0,6,0],[5,8,7],[0,9,0]]),
     # sol.longestDiverseString(a = 1, b = 1, c = 7),
     # sol.longestDiverseString(a = 2, b = 2, c = 1),
-    sol.gridIllumination(n = 5, lamps = [[0,0],[0,4]], queries = [[0,4],[0,1],[1,4]]),
+    # sol.gridIllumination(n = 5, lamps = [[0,0],[0,4]], queries = [[0,4],[0,1],[1,4]]),
+    sol.minimumDifference(nums = [90], k = 1),
 ]
 for r in rels:
     print(r)
