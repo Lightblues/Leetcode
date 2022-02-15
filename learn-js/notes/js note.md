@@ -908,21 +908,27 @@ a.forEach(function (element) {
 
 ## JS 函数
 
-- 变量作用域: 变量提升; 全局作用域; let, const
+- 参数
+  - `function foo(a, b, ...rest) {}`; `arguments` 对象; 值传递, 对象引用是值
+- 变量作用域
+  - 变量提升; 全局作用域; 申明块级作用域 let, const
+- Function 构造器
+  - `var myFunction = new Function("a", "b", "return a * b");`
 - 解构赋值: 类似Python中的序列解包
+  - 对象的解构赋值. 别名; 嵌套; 默认值; 在函数传参时使用
 - 对象的方法
   - this 关键词
-  - apply, call()
+  - apply, call(). `Math.max.apply(null, [3, 5, 4]);`
 - 高阶函数
   - forEach
   - map, reduce
   - filter
-  - sort
+  - sort. `sort((firstEl, secondEl) => { /* ... */ } )` 注意返回 -1,0,1 负数表示优先级高
   - every
   - find, findIndex
 - 函数闭包: 返回一个新的函数
   - 作用: 1. 可以像 class 一样定义私有变量; 2. 可以封装新的函数
-- 箭头函数: 类似语法糖, 主要区别在于对于 this 的指向进行了一定修复, 其内部的 this 是词法作用域, 由上下文确定
+- 箭头函数: 主要区别在于对于 this 的指向进行了一定修复, 其内部的 this 是词法作用域, 由上下文确定
 - generator 生成器: 类似 Python
   - 作用: 1. 可以记录过程中变量, 完成 object 采用实现的任务; 2. 更重要的是, 可以把异步回调代码变成“同步”代码
 
@@ -947,7 +953,7 @@ a.forEach(function (element) {
   - JavaScript的函数定义有个特点，它会先扫描整个函数体的语句，把所有申明的变量“提升”到函数顶部
   - 提升的仅仅是声明 (undefined), 而不会运行变量赋值
 
-如果没有return语句，函数执行完毕后也会返回结果，只是结果为undefined。
+如果没有return语句，函数执行完毕后也会返回结果，只是结果为 `undefined`。
 
 ```js
 function abs(x) {
@@ -972,8 +978,8 @@ var abs = function (x) {
 
 函数调用
 
-- 由于JavaScript**允许传入任意个参数而不影响调用**，因此传入的参数比定义的参数多也没有问题，虽然函数内部并不需要这些参数。
-- 传入的参数比定义的少也没有问题（注意函数没有返回值的时候得到的是 `undefined`）。在上例中，abs(x)函数的参数x将收到 `undefined`，计算结果为 `NaN`。
+- 由于JavaScript **允许传入任意个参数而不影响调用**，因此传入的参数比定义的参数多也没有问题，虽然函数内部并不需要这些参数。
+- 传入的参数比定义的少也没有问题（注意函数没有返回值的时候得到的是 `undefined`）。在上例中，abs(x) 函数的参数x将收到 `undefined`，计算结果为 `NaN`。
 
 ```js
 // 避免收到异常值或是 undefined
@@ -1806,6 +1812,32 @@ function* next_id() {
 
 ## 标准对象
 
+- `number`、`string`、`boolean`、`function` 和 `undefined`
+- 包装对象, `Number, Boolean, String`; 注意用 new 来创建的话将返回一个对象
+- 转为数字 `parseInt(), parseFloat()`
+- 判断
+  - 是否为 array `Array.isArray(arr)`
+  - 是否为 null `myVar === null` (null 类型为 object)
+  - 是否存在 `typeof myVar === 'undefined'`
+- Date
+  - `var now = new Date();`
+  - Date 对象的方法: getFullYear, getMonth, getDate, getDay, getHours, getMinutes, getSeconds, getMilliseconds
+    - getTime 返回时间戳
+  - now 方法返回时间戳 `Date.now()`
+  - parse 方法: `var d = Date.parse('2015-06-24T19:49:22.875+08:00');`
+- RegExp
+  - `/正则表达式/`, 表达式内的 `\` 符号不需要转义, 若用 new 创建输入的字符串需要转义
+  - 标志: g 全局 (记录 lastIndex 再次运行回往后匹配), i 忽略大小写, m 多行
+  - test
+  - `exec` 匹配失败返回 null, 成功则返回 Array, 其中第一个为完整匹配, 后面是分组
+  - 默认贪婪匹配, 加 `?` 非贪婪, 例如 `var re = /^(\d+?)(0*)$/;` 第二组匹配最后的 0
+  - 正则基础
+    - `*, +, ?, {n}, {n,m}` 限制长度
+- JSON
+  - 序列化: `JSON.stringify()`, 第二个参数为对 key, value 进行处理的函数, 第三个参数指定输出个数
+    - 还可以通过指定 object 的 `toJSON` 方法自定义输出对象内容
+  - 反序列化: `JSON.parse('{"name":"小明","age":14}')`
+
 ### 对象 basic
 
 - 在JavaScript的世界里，一切都是对象。
@@ -1857,10 +1889,9 @@ typeof new String('str'); // 'object'
 new String('str') === 'str'; // false
 ```
 
-最后有细心的同学指出，任何对象都有`toString()`方法吗？`null`和`undefined`就没有！确实如此，这两个特殊值要除外，虽然`null`还伪装成了`object`类型。
-
-更细心的同学指出，`number`对象调用`toString()`报SyntaxError：`123.toString(); // SyntaxError`。
-遇到这种情况，要特殊处理一下：
+- 最后有细心的同学指出，任何对象都有`toString()`方法吗？`null`和`undefined`就没有！确实如此，这两个特殊值要除外，虽然`null`还伪装成了`object`类型。
+- 更细心的同学指出，`number`对象调用`toString()`报SyntaxError：`123.toString(); // SyntaxError`。
+  - 遇到这种情况，要特殊处理一下：
 
 ```js
 123..toString(); // '123', 注意是两个点！
@@ -1971,9 +2002,9 @@ if (Date.now) {
   - `*, +, ?, {n}, {n,m}` 限制长度
 - `[]` 表示范围
   - 例如, `[a-zA-Z\_\$][0-9a-zA-Z\_\$]*` 匹配 JavaScript允许的变量名；
-  - `A|B` 可以匹配A或B
-  - `^` 表示行的开头，`^\d` 表示必须以数字开头。
-  - `$` 表示行的结束，`\d$` 表示必须以数字结束。
+- `A|B` 可以匹配A或B
+- `^` 表示行的开头，`^\d` 表示必须以数字开头。
+- `$` 表示行的结束，`\d$` 表示必须以数字结束。
 
 #### 创建 RegExp
 
@@ -2431,7 +2462,6 @@ class PrimaryStudent extends Student {
         alert('I am at grade ' + this.grade);
     }
 }
-
 ```
 
 ## 浏览器
@@ -2453,7 +2483,7 @@ class PrimaryStudent extends Student {
     - `href` 完整 URL, 例如 `http://www.example.com:8080/path/index.html?a=1&b=2#TOP`
     - `protocol`, `host`, `port`, `pathname`
     - `search`, `hash`
-  - 方法: addign, reload
+  - 方法: assign, reload
 - document
   - document对象表示当前页面。由于HTML在浏览器中以DOM形式表示为树形结构，document对象就是整个DOM树的根节点。
   - document的 `title` 属性是从HTML文档中的 `<title>xxx</title>` 读取的，但是可以动态改变
@@ -2714,6 +2744,51 @@ HTML表单的输入控件主要有以下几种：
 - 下拉框，对应的`<select>`，用于选择一项；
 - 隐藏文本，对应的`<input type="hidden">`，用户不可见，但表单提交时会把隐藏文本发送到服务器。
 
+### 操作文件
+
+- 在HTML表单中，可以上传文件的唯一控件就是`<input type="file">`
+  - 当一个表单包含`<input type="file">`时，表单的`enctype`必须指定为`multipart/form-data`，`method`必须指定为`post`，浏览器才能正确编码并以`multipart/form-data`格式发送表单的数据
+- File API
+  - HTML5的File API提供了`File`和`FileReader`两个主要对象，可以获得文件信息并读取文件
+
+```js
+var
+    fileInput = document.getElementById('test-image-file'),
+    info = document.getElementById('test-file-info'),
+    preview = document.getElementById('test-image-preview');
+// 监听change事件:
+fileInput.addEventListener('change', function () {
+    // 清除背景图片:
+    preview.style.backgroundImage = '';
+    // 检查文件是否选择:
+    if (!fileInput.value) {
+        info.innerHTML = '没有选择文件';
+        return;
+    }
+    // 获取File引用:
+    var file = fileInput.files[0];
+    // 获取File信息:
+    info.innerHTML = '文件: ' + file.name + '<br>' +
+                     '大小: ' + file.size + '<br>' +
+                     '修改: ' + file.lastModified;
+    if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif') {
+        alert('不是有效的图片文件!');
+        return;
+    }
+    // 读取文件:
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var
+            data = e.target.result; // 'data:image/jpeg;base64,/9j/4AAQSk...(base64编码)...'            
+        preview.style.backgroundImage = 'url(' + data + ')';
+    };
+    // 以DataURL的形式读取文件:
+    reader.readAsDataURL(file);
+});
+```
+
+上面的代码演示了如何通过HTML5的File API读取文件内容。以DataURL的形式读取到的文件是一个字符串，类似于`data:image/jpeg;base64,/9j/4AAQSk...(base64编码)...`，常用于设置图像。如果需要服务器端处理，把字符串`base64,`后面的字符发送给服务器并用Base64解码就可以得到原始文件的二进制内容。
+
 ### AJAX
 
 [here](https://www.liaoxuefeng.com/wiki/1022910821149312/1023022332902400)
@@ -2917,7 +2992,7 @@ Promise.race([p1, p2]).then(function (result) {
 
 ## 错误处理
 
-- try ... catch ... finally
+- `try ... catch(e) ... finally`
 - JavaScript有一个标准的`Error`对象表示错误，还有从`Error`派生的`TypeError`、`ReferenceError`等错误对象。我们在处理错误时，可以通过`catch(e)`捕获的变量`e`访问错误对象
   - `e instanceof TypeError` 判断错误类型
   - `e.message`
@@ -3102,4 +3177,82 @@ _.delay(log, 2000, 'Hello,', 'world!');
 
 ### Object
 
+- `keys, allKeys`
+  - `keys()`可以非常方便地返回一个object自身所有的key，但不包含从原型链继承下来的
+  - `allKeys()`除了object自身的key，还包含从原型链继承下来的
+- `values`
+  - 和`keys()`类似，`values()`返回object自身但不包含原型链继承的所有值
+- `mapObject`
+  - `mapObject()`就是针对object的map版本
+- invert
+  - `invert()`把object的每个key-value来个交换，key变成value，value变成key
+- extend, extendOwn
+  - `extend()`把多个object的key-value合并到第一个object并返回
+  - `extendOwn()`和`extend()`类似，但获取属性时忽略从原型链继承下来的属性
+- clone
+  - 如果我们要复制一个object对象，就可以用`clone()`方法，它会把原有对象的所有属性都复制到新的对象中
+  - 注意，`clone()`是“浅复制”。所谓“浅复制”就是说，两个对象相同的key所引用的value其实是同一对象
+- isEqual
+  - `isEqual()`对两个object进行深度比较，如果内容完全相同，则返回`true`
+  - `isEqual()`其实对`Array`也可以比较：
+
+```js
+function Student(name, age) {
+    this.name = name;
+    this.age = age;
+}
+Student.prototype.school = 'No.1 Middle School';
+var xiaoming = new Student('小明', 20);
+_.allKeys(xiaoming); // ['name', 'age', 'school']
+
+var obj = { a: 1, b: 2, c: 3 };
+// 注意传入的函数签名，value在前，key在后:
+_.mapObject(obj, (v, k) => 100 + v); // { a: 101, b: 102, c: 103 }
+
+var obj = {
+    Adam: 90,
+    Lisa: 85,
+    Bart: 59
+};
+_.invert(obj); // { '59': 'Bart', '85': 'Lisa', '90': 'Adam' }
+
+/* extend */
+var a = {name: 'Bob', age: 20};
+_.extend(a, {age: 15}, {age: 88, city: 'Beijing'}); // {name: 'Bob', age: 88, city: 'Beijing'}
+// 变量a的内容也改变了：
+a; // {name: 'Bob', age: 88, city: 'Beijing'}
+
+/* clone */
+var source = {
+    name: '小明',
+    age: 20,
+    skills: ['JavaScript', 'CSS', 'HTML']
+};
+var copied = _.clone(source);
+source.skills === copied.skills; // true
+
+/* isEqual */
+var o1 = ['Bob', { skills: ['Java', 'JavaScript'] }];
+var o2 = ['Bob', { skills: ['Java', 'JavaScript'] }];
+
+o1 === o2; // false
+_.isEqual(o1, o2); // true
+```
+
 ### Chaining
+
+- 把对象包装成能进行链式调用的方法，就是`chain()`函数
+- 联系 jQuery 的链式调用
+
+```js
+/* jQuery支持链式调用 */
+$('a').attr('target', '_blank')
+      .append(' <i class="uk-icon-external-link"></i>')
+      .click(function () {});
+
+/* chain */
+var r = _.chain([1, 4, 9, 16, 25])
+         .map(Math.sqrt)
+         .filter(x => x % 2 === 1)
+         .value();
+```

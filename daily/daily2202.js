@@ -1,3 +1,5 @@
+const _ = require("underscore");
+
 /**
  * @param {number[][]} grid
  * @return {number}
@@ -135,15 +137,136 @@ var numEnclaves2 = function (grid) {
     return enclaves;
 };
 
+/**
+ * @param {string} text
+ * @return {number}
+ */
+/* 1189. “气球” 的最大数量
+ */
+var maxNumberOfBalloons = function (text) {
+    let map = {};
+    for (let i = 0; i < text.length; i++) {
+        if (map[text[i]]) {
+            map[text[i]]++;
+        } else {
+            map[text[i]] = 1;
+        }
+    }
+    let balloon = {};
+    for (let char of "balloon") {
+        balloon[char] = balloon[char] ? balloon[char] + 1 : 1;
+    }
+    let count = Infinity;
+    function min(a, b) {
+        return a < b ? a : b;
+    }
+    for (let char in balloon) {
+        if (!map[char]) {
+            return 0;
+        }
+        count = min(count, parseInt(map[char] / balloon[char]));
+    }
+    return count;
+};
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+/* 540. 有序数组中的单一元素
+有序数组中仅有一个元素为单一, 其他都有两个, 找出单一元素
+
+你设计的解决方案必须满足 O(log n) 时间复杂度和 O(1) 空间复杂度。*/
+var singleNonDuplicate0 = function (nums) {
+    var before,
+        flag = false;
+    for (let num of nums) {
+        if (num !== before) {
+            if (flag) {
+                return before;
+            }
+            flag = true;
+            before = num;
+        } else {
+            flag = false;
+        }
+    }
+    return before;
+};
+/* 注意到, 由于是有序数组中只有一个单一元素, 该单一元素的位置一定是在 偶数位 x
+在x之前, 2i, 2i+1 相同, 在 x之后, 2i-1, 2i 相同 (注意以0开始) 
+二分查找 */
+var singleNonDuplicate = function (nums) {
+    var left = 0,
+        right = nums.length - 1;
+    while (left < right) {
+        var mid = Math.floor((left + right) / 2);
+        // 当 mid 为偶数时, 比较 mid, mid+1; 当 mid 为奇数时, 比较 mid, mid-1; 可以统一写成 mid, mid^1
+        if (nums[mid] === nums[mid ^ 1]) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    return nums[left];
+};
+
+/** 1380. 矩阵中的幸运数
+ * @param {number[][]} matrix
+ * @return {number[]}
+ */
+/* 1380. 矩阵中的幸运数
+给一个矩阵找出所有幸运数字: 定义幸运数字为, 该行最小, 该列最大的数字. */
+var luckyNumbers = function (matrix) {
+    [m, n] = [matrix.length, matrix[0].length];
+    let res = [];
+    for (let i = 0; i < m; i++) {
+        let min = Infinity;
+        let minIndex = -1;
+        for (let j = 0; j < n; j++) {
+            if (matrix[i][j] < min) {
+                min = matrix[i][j];
+                minIndex = j;
+            }
+        }
+        let flag = true;
+        for (let j = 0; j < m; j++) {
+            if (matrix[j][minIndex] > min) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            res.push(min);
+        }
+    }
+    return res;
+};
+
+/*  */
+
 var results = [
-    numEnclaves(
-        (grid = [
-            [0, 0, 0, 0],
-            [1, 0, 1, 0],
-            [0, 1, 1, 0],
-            [0, 0, 0, 0],
-        ])
-    ),
+    // numEnclaves(
+    //     (grid = [
+    //         [0, 0, 0, 0],
+    //         [1, 0, 1, 0],
+    //         [0, 1, 1, 0],
+    //         [0, 0, 0, 0],
+    //     ])
+    // ),
+
+    // maxNumberOfBalloons("balon"),
+    // maxNumberOfBalloons("loonbalxballpoon"),
+    // maxNumberOfBalloons("leetcode"),
+
+    // _.min([1, 2, 3]),
+    // singleNonDuplicate([3, 3, 7, 7, 10, 11, 11]),
+
+    luckyNumbers([
+        [3, 7, 8],
+        [9, 11, 13],
+        [15, 16, 17],
+    ]),
 ];
 for (let r of results) {
     console.log(r);

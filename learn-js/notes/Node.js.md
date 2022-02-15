@@ -1,6 +1,63 @@
 
 ## Node.js
 
+!!! note
+    - 如何运行?
+        - 直接 node. `node app.js`
+        - npm `npm start`. 需要在 `package.json` 中的 scripts 定义对应的 start 命令 (也是 node)
+        - VSCode 中运行, 或配置 debug
+    - koa
+        - koa middleware
+            - `app.use(async (ctx, next) => {}` (每个async函数是 middleware)
+            - 参数`ctx`是由koa传入的封装了request和response的变量，我们可以通过它访问request和response，`next`是koa传入的将要处理的下一个异步函数
+        - `koa-router` 处理 URL
+            - 使用`router.get('/path', async fn)`来注册一个GET请求。
+            - 可以在请求路径中使用带变量的`/hello/:name`，变量可以通过`ctx.params.name`访问。
+        - `koa-bodyparser` 解析 body
+            - `app.use(bodyParser());`
+            - 解析参数，把解析后的参数绑定到`ctx.request.body`中
+        - Middleware
+            - 代码重构. 例如对于 URL处理的代码放在同一个 controllers 文件夹中, 用专门写一个函数扫描`controllers`目录和创建`router`
+    - Nunjucks: 模板引擎
+        - 作用: 特殊字符转义, 格式化, if, for 等逻辑
+        - 对于 Python 中 jinja2 的 js 实现
+        - 使用很方便: `var s = env.render('hello.html', { name: 'Tom' });`
+        - block, 继承 `extends`
+    - mysql
+        - sequelize, mysql2 包
+        - 创建 sequelize 对象实例, 然后定义模型 (数据库表)
+        - 操作
+            - `create` 插入数据
+            - `findAll` 查询
+                - 对查询到的实例调用 `save, destory`
+    - mocha: 单元测试
+        - 如何执行测试?
+            - 方法一 `node_modules\mocha\bin\mocha`
+            - 方法二，在 `package.json` 中添加 scripts `"test": "mocha"`, 然后 `npm test` 即可
+            - 方法三，配置 VS Code, `.vscode/launch.json`, 定义 `"program": "${workspaceRoot}/node_modules/mocha/bin/mocha"` 以及 `"type": "node",` —— 其实就是运行 `node node_modules/mocha/bin/mocha`
+        - assert 包: `const assert = require('assert');`
+        - 如果要测试同步函数，我们传入无参数函数即可
+            - `it(' description', function () {}`
+            - 然后在其中 assert 判断即可
+        - 如果要测试异步函数，我们要传入的函数需要带一个参数，通常命名为`done`
+            - `it(' description', function (done) {}`
+            - 然后在其中运行代测试的函数 f
+            - 手动调用`done()`表示测试成功，`done(err)`表示测试出错
+        - 对于 async 函数, 更方便的是直接将其转化为同步函数测试
+            - 例如, 传入 `async () => { assert.strictEqual(await f(), groundTruth) }`
+        - Http 测试: `supertest` 包
+            - `request = require('supertest')`
+            - 使用 `let res = await request(server).get('/');` 构造一个GET请求，发送给koa的应用，然后获得响应
+            - 可以手动检查响应对象，例如，`res.body`，还可以利用`supertest`提供的`expect()`更方便地断言响应的HTTP代码、返回内容和HTTP头。断言HTTP头时可用使用正则表达式
+    - WebSocket
+        - ws 协议
+        - koa 和 ws 包可以共用一个端口, 比如默认的 3000. 因为 koa 实际上调用 Node标准http模块创建的 http.Server 监听的, 只是把响应函数注册到了其中, ws 也一样, 因此可以用一个端口, 根据协议不同分别由 koa 和 ws 处理.
+        - 如何识别用户身份?
+            - 总体而言, cookie 是一个服务端和客户端相互配合的过程. 服务器创建 cookie, 浏览器保存并在之后的请求中附加 cookie; 若要建立 ws 链接也用 cookie 即可.
+        - 案例: 聊天室. 服务器维护一组 ws 连接, 每当收到一条消息之后, 广播到所有连接.
+    - REST
+        - 获取资源用 GET, 新建、更新、删除 分别用 POST, PUT, DELETE 请求, 内容放在 body 中 (`Content-Type` 为 `application/json`)
+
 - 因为JavaScript是单线程执行，根本不能进行同步IO操作，所以，JavaScript的这一“缺陷”导致了它只能使用异步IO。
 - 优势
   - 最大的优势是借助JavaScript天生的事件驱动机制加V8高性能引擎，使编写高性能Web服务轻而易举。
@@ -11,8 +68,6 @@
 - Node
   - 命令行模式和Node交互模式
 - [使用 VSCode 调试](https://www.liaoxuefeng.com/wiki/1022910821149312/1099503821472096)
-
--
 
 ### 模块
 
@@ -290,14 +345,14 @@ rs.pipe(ws);
 
 #### http 模块
 
-- 要理解Web服务器程序的工作原理，首先，我们要对HTTP协议有基本的了解。如果你对HTTP协议不太熟悉，先看一看[HTTP协议简介](http://www.liaoxuefeng.com/wiki/1016959663602400/1017804782304672)。
+- 要理解Web服务器程序的工作原理，首先，我们要对HTTP协议有基本的了解。如果你对HTTP协议不太熟悉，先看一看 [HTTP协议简介](http://www.liaoxuefeng.com/wiki/1016959663602400/1017804782304672)。
 - 要开发HTTP服务器程序，从头处理TCP连接，解析HTTP是不现实的。这些工作实际上已经由Node.js自带的`http`模块完成了。应用程序并不直接和HTTP协议打交道，而是操作`http`模块提供的`request`和`response`对象。
   - `request`对象封装了HTTP请求，我们调用`request`对象的属性和方法就可以拿到所有HTTP请求的信息；
   - `response`对象封装了HTTP响应，我们操作`response`对象的方法，就可以把HTTP响应返回给浏览器。
 - `var server = http.createServer(function (request, response) {}` (直接去看示例代码)
 - 然后设置监听 `server.listen(8080);`
 - 其他模块
-  - 解析URL需要用到Node.js提供的`url`模块，它使用起来非常简单，通过`parse()`将一个字符串解析为一个`Url`对象
+  - 解析URL需要用到Node.js提供的`url`模块，它使用起来非常简单，通过`parse()` 将一个字符串解析为一个`Url`对象
   - 处理本地文件目录需要使用Node.js提供的`path`模块，它可以方便地构造目录
 
 用Node.js实现一个HTTP服务器程序非常简单。我们来实现一个最简单的Web程序`hello.js`，它对于所有请求，都返回`Hello world!`：
@@ -472,7 +527,7 @@ openssl rsa -in rsa-key.pem -outform PEM -pubout -out rsa-pub.pem
 - 由于Node.js把JavaScript引入了服务器端，因此，原来必须使用PHP/Java/C#/Python/Ruby等其他语言来开发服务器端程序，现在可以使用Node.js开发了！
   - 在Node.js诞生后的短短几年里，出现了无数种Web框架、ORM框架、模版引擎、测试框架、自动化构建工具
   - 常见的Web框架包括：[Express](http://expressjs.com/)，[Sails.js](http://sailsjs.org/)，[koa](http://koajs.com/)，[Meteor](https://www.meteor.com/)，[DerbyJS](http://derbyjs.com/)，[Total.js](https://www.totaljs.com/)，[restify](http://restify.com/)……
-  - ORM框架比Web框架要少一些：[Sequelize](http://www.sequelizejs.com/)，[ORM2](http://dresende.github.io/node-orm2/)，[Bookshelf.js](http://bookshelfjs.org/)，[Objection.js](http://vincit.github.io/objection.js/)……
+  - ORM 框架比Web框架要少一些：[Sequelize](http://www.sequelizejs.com/)，[ORM2](http://dresende.github.io/node-orm2/)，[Bookshelf.js](http://bookshelfjs.org/)，[Objection.js](http://vincit.github.io/objection.js/)……
   - 模版引擎PK：[Jade](http://jade-lang.com/)，[EJS](http://ejs.co/)，[Swig](https://github.com/paularmstrong/swig)，[Nunjucks](http://mozilla.github.io/nunjucks/)，[doT.js](http://olado.github.io/doT/)……
   - 测试框架包括：[Mocha](http://mochajs.org/)，[Expresso](http://visionmedia.github.io/expresso/)，[Unit.js](http://unitjs.com/)，[Karma](http://karma-runner.github.io/)……
   - 构建工具有：[Grunt](http://gruntjs.com/)，[Gulp](http://gulpjs.com/)，[Webpack](http://webpack.github.io/)……
@@ -653,7 +708,7 @@ router.post('/signin', async (ctx, next) => {
   - 简单逻辑
     - 模板还需要能执行一些简单逻辑，比如，要按条件输出内容
 - Nunjucks
-  - 我们选择Nunjucks作为模板引擎。Nunjucks是Mozilla开发的一个纯JavaScript编写的模板引擎，既可以用在Node环境下，又可以运行在浏览器端。但是，主要还是运行在Node环境下，因为浏览器端有更好的模板解决方案，例如MVVM框架。
+  - 我们选择Nunjucks作为模板引擎。Nunjucks是 Mozilla 开发的一个纯JavaScript编写的模板引擎，既可以用在Node环境下，又可以运行在浏览器端。但是，主要还是运行在Node环境下，因为浏览器端有更好的模板解决方案，例如MVVM框架。
   - 就是用 js 重新实现了 Python的模板引擎[jinja2](https://www.liaoxuefeng.com/wiki/1016959663602400/1017806952856928)
 
 如何使用模板引擎?
@@ -840,7 +895,7 @@ create table pets (
   - 安装 `sequelize, mysql2`
   - 第一步，创建一个sequelize对象实例
   - 第二步，定义 **模型** Pet，告诉Sequelize如何映射数据库表
-    - 用`sequelize.define()`定义Model时，传入名称`pet`，默认的表名就是`pets`。第二个参数指定列名和数据类型，如果是主键，需要更详细地指定。第三个参数是额外的配置，我们传入`{ timestamps: false }`是为了关闭Sequelize的自动添加timestamp的功能。
+    - 用 `sequelize.define()` 定义Model时，传入名称 `pet`，默认的表名就是 `pets`。第二个参数指定列名和数据类型，如果是主键，需要更详细地指定。第三个参数是额外的配置，我们传入`{ timestamps: false }`是为了关闭Sequelize的自动添加timestamp的功能。
   - 操作
     - `create` 插入数据
     - `findAll` 查询
@@ -1420,8 +1475,8 @@ ws.onmessage = function(event) {
 ##### 编写 REST API
 
 - 编写REST API，实际上就是编写处理HTTP请求的async函数，不过，REST请求和普通的HTTP请求有几个特殊的地方：
-  - REST请求仍然是标准的HTTP请求，但是，除了GET请求外，POST、PUT等请求的body是JSON数据格式，请求的`Content-Type`为`application/json`
-  - REST响应返回的结果是JSON数据格式，因此，响应的`Content-Type`也是`application/json`。
+  - REST请求仍然是标准的HTTP请求，但是，除了GET请求外，POST、PUT等请求的body是JSON数据格式，请求的`Content-Type` 为 `application/json`
+  - REST响应返回的结果是JSON数据格式，因此，响应的 `Content-Type`也是`application/json`。
 - REST规范定义了资源的通用访问格式，虽然它不是一个强制要求，但遵守该规范可以让人易于理解。
   - 获取资源, 使用 GET
     - 资源还可以按层次组织
@@ -1551,7 +1606,7 @@ $('#name').text('Homer').css('color', 'red');
 
 来看创建一个 VM 的核心代码:
 
-- `el`指定了要把Model绑定到哪个DOM根节点上，语法和jQuery类似。这里的`'#vm'`对应ID为`vm`的一个`<div>`节点
+- `el` 指定了要把Model绑定到哪个DOM根节点上，语法和jQuery类似。这里的`'#vm'`对应ID为`vm`的一个`<div>`节点
   - 在该节点以及该节点内部，就是Vue可以操作的View。Vue可以自动把Model的状态映射到View上，但是不能操作View范围之外的其他DOM节点。
 
 ```js
@@ -1648,7 +1703,7 @@ var vm = new Vue({
   - 而应该这样修改 `vm.todos[0].name = 'New name';`
   - 或者，通过`splice()`方法，删除某个元素后，再添加一个元素，达到“赋值”的效果
     - `vm.todos.splice(index, 1, {});`
-    - Vue可以监听数组的`splice`、`push`、`unshift`等方法调用
+    - Vue可以监听数组的 `splice`、`push`、`unshift` 等方法调用
 
 ##### 集成 API
 
@@ -1667,7 +1722,7 @@ var vm = new Vue({
     - 一是直接用jQuery的AJAX调用REST API，不过这种方式比较麻烦。
     - 第二个方法是使用[vue-resource](https://github.com/vuejs/vue-resource)这个针对Vue的扩展，它可以给VM对象加上一个`$resource`属性，通过`$resource`来方便地操作API。
 - 如何实现修改?
-  - 用`contenteditable="true"`让DOM节点变成可编辑的，用`v-on:blur="update(t, 'name', $event)"`在编辑结束时调用`update()`方法并传入参数，特殊变量`$event`表示DOM事件本身。
+  - 用`contenteditable="true"` 让DOM节点变成可编辑的，用`v-on:blur="update(t, 'name', $event)"`在编辑结束时调用`update()`方法并传入参数，特殊变量`$event`表示DOM事件本身。
 
 ```js
 <div id="vm">
