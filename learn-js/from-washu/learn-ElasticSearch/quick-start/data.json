@@ -1,0 +1,62 @@
+[
+  {
+    "id": "2",
+    "user" : "双榆树-张三",
+    "message" : "今儿天气不错啊，出去转转去",
+    "uid" : 2,
+    "age" : 20,
+    "city" : "北京",
+    "province" : "北京",
+    "country" : "中国",
+    "address" : "中国北京市海淀区",
+    "location" : {
+      "lat" : "39.970718",
+      "lon" : "116.325747"
+    }
+  },
+  {
+    "id": "3",
+    "user" : "东城区-老刘",
+    "message" : "出发，下一站云南！",
+    "uid" : 3,
+    "age" : 30,
+    "city" : "北京",
+    "province" : "北京",
+    "country" : "中国",
+    "address" : "中国北京市东城区台基厂三条3号",
+    "location" : {
+      "lat" : "39.904313",
+      "lon" : "116.412754"
+    }
+  },
+  {
+    "id": "4",
+    "user" : "东城区-李四",
+    "message" : "happy birthday!",
+    "uid" : 4,
+    "age" : 30,
+    "city" : "北京",
+    "province" : "北京",
+    "country" : "中国",
+    "address" : "中国北京市东城区",
+    "location" : {
+      "lat" : "39.893801",
+      "lon" : "116.408986"
+    }
+  },
+  {
+    "id": "7",
+    "user" : "虹桥-老吴",
+    "message" : "好友来了都今天我生日，好友来了,什么 birthday happy 就成!",
+    "uid" : 7,
+    "age" : 90,
+    "city" : "上海",
+    "province" : "上海",
+    "country" : "中国",
+    "address" : "中国上海市闵行区",
+    "location" : {
+      "lat" : "31.175927",
+      "lon" : "121.383328"
+    }
+  }
+]

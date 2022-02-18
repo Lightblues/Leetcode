@@ -1,0 +1,159 @@
+# 以下为官方教程 https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html
+POST logs-my_app-default/_doc
+{
+  "@timestamp": "2099-05-06T16:21:15.000Z",
+  "event": {
+    "original": "192.0.2.42 - - [06/May/2099:16:21:15 +0000] \"GET /images/bg.jpg HTTP/1.0\" 200 24736"
+  }
+}
+PUT logs-my_app-default/_bulk
+{ "create": { } }
+{ "@timestamp": "2099-05-07T16:24:32.000Z", "event": { "original": "192.0.2.242 - - [07/May/2020:16:24:32 -0500] \"GET /images/hm_nbg.jpg HTTP/1.0\" 304 0" } }
+{ "create": { } }
+{ "@timestamp": "2099-05-08T16:25:42.000Z", "event": { "original": "192.0.2.255 - - [08/May/2099:16:25:42 +0000] \"GET /favicon.ico HTTP/1.0\" 200 3638" } }
+GET logs-my_app-default/_search
+{
+  "query": {
+    "match_all": { }
+  },
+  "sort": [
+    {
+      "@timestamp": "desc"
+    }
+  ]
+}
+GET logs-my_app-default/_search
+{
+  "query": {
+    "match_all": { }
+  },
+  "fields": [
+    "@timestamp"
+  ],
+  "_source": false,
+  "sort": [
+    {
+      "@timestamp": "desc"
+    }
+  ]
+}
+# fields 指定需要的字段，配合 _source=false
+GET logs-my_app-default/_search
+{
+  "query": {
+    "range": {
+      "@timestamp": {
+        "gte": "2099-05-05",
+        "lt": "2099-05-08"
+      }
+    }
+  },
+  "fields": [
+    "@timestamp"
+  ],
+  "_source": false,
+  "sort": [
+    {
+      "@timestamp": "desc"
+    }
+  ]
+}
+GET .ds-logs-my_app-default-2021.05.07-000001/_search
+{
+  "query": {
+    "range": {
+      "@timestamp": {
+        "gte": "2099-05-05",
+        "lt": "2099-05-08"
+      }
+    }
+  },
+  "fields": [
+    "@timestamp"
+  ],
+  "_source": false,
+  "sort": [
+    {
+      "@timestamp": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+
+GET logs-my_app-default/_search
+{
+  "runtime_mappings": {
+    "source.ip": {
+      "type": "ip",
+      "script": """
+        String sourceip=grok('%{IPORHOST:sourceip} .*').extract(doc[ "event.original" ].value)?.sourceip;
+        if (sourceip != null) emit(sourceip);
+      """
+    }
+  },
+  "query": {
+    "range": {
+      "@timestamp": {
+        "gte": "2099-05-05",
+        "lt": "2099-05-08"
+      }
+    }
+  },
+  "fields": [
+    "@timestamp",
+    "source.ip"
+  ],
+  "_source": false,
+  "sort": [
+    {
+      "@timestamp": "desc"
+    }
+  ]
+}
+
+GET logs-my_app-default/_search
+{
+  "runtime_mappings": {
+    "http.response.body.bytes": {
+      "type": "long",
+      "script": """
+        String bytes=grok('%{COMMONAPACHELOG}').extract(doc[ "event.original" ].value)?.bytes;
+        if (bytes != null) emit(Integer.parseInt(bytes));
+      """
+    }
+  },
+  "aggs": {
+    "average_response_size":{
+      "avg": {
+        "field": "http.response.body.bytes"
+      }
+    }
+  },
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "2099-05-05",
+              "lt": "2099-05-08"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "fields": [
+    "@timestamp",
+    "http.response.body.bytes"
+  ],
+  "_source": false,
+  "sort": [
+    {
+      "@timestamp": "desc"
+    }
+  ]
+}
+
+DELETE _data_stream/logs-my_app-default

@@ -1,3 +1,13 @@
+## LeetCode
+
+js 标准内置对象参见 <https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects>
+
+- Map
+    - 属性: size
+    - 方法:
+        - has, get, set, delete, clear
+        - keys, values, entries
+        - forEach
 
 ## 函数
 

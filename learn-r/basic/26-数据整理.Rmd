@@ -1,0 +1,190 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+from <https://www.math.pku.edu.cn/teachers/lidf/docs/Rbook/html/_Rbook/summary-summ.html>
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+d.class <- read_csv(
+  "../data/Rbook/class.csv", 
+  col_types=cols(
+  .default = col_double(),
+  name=col_character(),
+  sex=col_factor(levels=c("M", "F"))
+))
+dim(d.class)
+```
+
+另一个例子数据集是R的NHANES扩展包提供的NHANES， 这是一个规模更大的示例数据框， 可以看作是美国扣除住院病人以外的人群的一个随机样本， 有10000个观测，有76个变量， 主题是个人的健康与营养方面的信息。 仅作为教学使用而不足以作为严谨的科研用数据。 原始数据的情况详见http://www.cdc.gov/nchs/nhanes.htm。
+
+```{r}
+library(NHANES)
+data(NHANES)
+```
+
+```{r}
+print(dim(NHANES))
+print(names(NHANES))
+```
+
+变量ID是受试者编号， SurveyYr是调查年份， 同一受试者可能在多个调查年份中有数据。 变量中包括性别、年龄、种族、收入等人口学数据， 包括体重、身高、脉搏、血压等基本体检数据， 以及是否糖尿病、是否抑郁、是否怀孕、已生产子女数等更详细的健康数据， 运动习惯、饮酒、性生活等行为方面的数据。 这个教学用数据集最初的使用者是Cashmere高中的Michelle Dalrymple 和新西兰奥克兰大学的Chris Wild。
+
+
+```{r}
+# 筛选 filter
+d.class |>
+  filter(sex=="F", age<=13) # |> knitr::kable()
+d.class[15:20,] # 逻辑下标中有缺失值会在结果中产生缺失值
+
+# 按照行序号选择
+# slice 
+slice(d.class, 3:5)
+
+# sample_n 对观测随机抽样
+# replace, weight
+sample_n(d.class, size = 3)
+
+# distinct()去除重复行
+distinct(d.class, sex, age) # 注意不是写成字符串, 而是直接写变量名， 这是dplyr和tidyr包的特点
+
+# `drop_na()` 去除指定的变量有缺失值的行
+NHANES |> drop_na(AlcoholDay) |> nrow()
+# 基本stats包的`complete.cases`函数返回是否无缺失值的逻辑向量， `na.omit`函数则返回无缺失值的观测的子集。
+
+# select()选择列子集
+d.class |> select(name:age, weight, -height) |> head()
+
+# 取出单个变量为向量
+head(d.class, 3) |> pull(name) # |> paste(collapse=":")
+# 如果是字符串(保存在变量)
+varname = "name";
+# 0. 直接用基本R语法
+d.class[[varname]]
+# 1. 这么写
+d.class |> pull(!!sym(varname))
+d.class |> pull ({{varname}})
+# 2. 或者先select也行
+d.class |> select(one_of(varname)) |> pull()
+
+# arrange 排序
+arrange(d.class, sex, desc(age))
+
+# rename() 修改变量名
+dplyr::rename(d.class, h=height, w=weight)
+
+# mutate()计算新变量
+mutate(d.class, rwh=weight/height, sexc=ifelse(sex=="F", "女", "男"))
+mutate(d.class, secx={x=rep("男", length(sex)); x[sex=="F"]="女"; x})
+
+# tranmute()生成新变量的数据框
+transmute(d.class, rwh=weight/height)
+
+# %>%
+d.class %>% lm(weight~height, data=.) %>% coef()
+
+# expand_grid()
+tidyr::expand_grid(group=1:3, subgroup=1:2, obs=1:2)
+expand.grid(group=1:3, subgroup=1:2, obs=1:2)
+```
+
+```{r}
+d.sep <- read_csv(
+"testid, succ/total
+1, 1/10
+2, 3/5
+3, 2/8
+")
+```
+```{r}
+d.sep |> separate(`succ/total`, into=c("succ", "total"), sep="/", convert=TRUE)
+```
+
+```{r}
+dexp <- tibble(
+  design = c("AA", "AB", "BA", "BB"),
+  response = c(120, 110, 105, 95))
+extract(dexp, design, into=c("fac1", "fac2"), regex="(.)(.)")
+```
+
+
+
+```{r}
+# unite 合并
+d.sep |> separate(`succ/total`, into=c("succ", "total"), sep="/", convert=TRUE) |> unite(ratio, succ, total, sep=":")
+```
+
+```{r}
+# 数据框纵向合并
+d3.class <- d.class |>
+  select(name, sex, age) |>
+  filter(sex=="M")
+d4.class <- d.class |>
+  select(name, sex, age) |>
+  filter(sex=="F")
+bind_rows(d3.class, d4.class)
+# base::rbind
+base::rbind(d3.class, d4.class)
+# 顺序不影响
+d3.class |>
+  bind_rows(d4.class)
+
+# 横向合并
+# 确定主键(防止重复)
+count(d.class, name)
+count(d.class, name) %>% filter(n>1)
+
+d1.class <- d.class |>
+  filter(age <= 12) |>
+  select(name, sex) |>
+  filter(!(name %in%  "Sandy"))
+d2.class <- d.class |>
+  filter(age <= 12) |>
+  select(name, age, height, weight)
+inner_join(d1.class, d2.class, by=c("name"="name"))
+```
+
+```{r}
+# 标准化
+d.class %>% select(height, weight) %>% scale(center=apply(., 2, min), scale=apply(., 2, max)-apply(., 2, min))
+# 自定义函数
+scale01 <- function(x){
+  mind <- apply(x, 2, min)
+  maxd <- apply(x, 2, max)
+  scale(x, center=mind, scale=maxd-mind)
+}
+d.class |> 
+  select(height, weight) %>%
+  scale01()
+```
+
+```{r}
+# 转化为长表: pivot_longer()
+library(nlmeU)
+data(armd.wide)
+head(armd.wide, 3)
+```
+
+```{r}
+armd.wide |>
+  pivot_longer(
+    cols = starts_with("visual"),
+    names_to = "time",
+    values_to = "visual",
+    names_prefix = "visual",
+    names_transform = list(time = as.integer),
+    values_drop_na = TRUE) |>
+  head(10)
+```
+```{r}
+dwide4 <- anscombe[1:3,]
+dwide4[["id"]] <- seq(3)
+dwide4 |> select(id, everything()) # 调整列顺序
+```
+
+

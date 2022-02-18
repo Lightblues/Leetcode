@@ -243,8 +243,179 @@ var luckyNumbers = function (matrix) {
     return res;
 };
 
-/*  */
+/* 1719. 重构一棵树的方案数 hard
+定义一颗树的祖先展开: 结果是一组 (x_i, y_i) 包括了一颗有根树中所有的祖先关系
+例如, 对于 [[1,2],[2,3]] 重构是唯一的
+而对于 [[1,2],[2,3],[1,3]], 可知对应的树有很多, 例如 1->2->3 就是一颗
 
+现在给定一个数组 (祖先方向不定), 要求判断是否是一颗树的展开, 如果不是返回0, 结果是否唯一返回 1/2
+
+from [here](https://leetcode-cn.com/problems/number-of-ways-to-reconstruct-a-tree/solution/zhong-gou-yi-ke-shu-de-fang-an-shu-by-le-36e1/)
+分析节点度数:
+假定给定的数组满足条件, 可知: 1. root 的读书为 n-1; 2. 若 (x,y) 为祖先关系, 则子节点 y 满足 degree[x]>=degree[y], 且 adj[x] \superset adj[y]; 3. 若 degree[x]=degree[y], 则两个节点一定是单链关系, 此时两个节点是可以互换的 (不唯一)
+因此总结
+1. 若 degree[x]>degree[y], 则 x 为祖先
+2. 若 degree[x]<degree[y], 则 y 为祖先
+3. 若 degree[x]=degree[y], 则结果不唯一
+
+如何解题? 遍历节点, 构造度. 1. 首先检测是否存在根节点; 2. 然后对于每一个节点 x, 寻找其「父节点」 (从度数大于它的集合中找, 选其中度数最小的); 若找到的节点度数 =degree[x], 当所有节点都满足时说明结果不唯一. 
+
+ */
+/**
+ * @param {number[][]} pairs
+ * @return {number}
+ */
+var checkWays = function (pairs) {
+    const adj = new Map();
+    for (const p of pairs) {
+        if (!adj.has(p[0])) {
+            adj.set(p[0], new Set());
+        }
+        if (!adj.has(p[1])) {
+            adj.set(p[1], new Set());
+        }
+        adj.get(p[0]).add(p[1]);
+        adj.get(p[1]).add(p[0]);
+    }
+    // 找根节点
+    let root = -1
+    const entries = new Set()
+    for (const entry of adj.entries()) {
+        entries.add(entry)
+    }
+    for (const [node, neg] of entries) {
+        if (neg.size === adj.size - 1) {
+            root = node;
+        }
+    }
+    if (root === -1) {
+        return 0;
+    }
+    // 判断是否都有祖先节点
+    let res = 1;
+    for (const [node, neg] of entries) {
+        if (root === node) {
+            continue
+        }
+        const currDegree = neg.size;
+        let parentNod = -1;
+        let parentDegree = Number.MAX_SAFE_INTEGER;
+        for (const neighbour of neg) {
+            if (adj.has(neighbour) && adj.get(neighbour).size < parentDegree && adj.get(neighbour).size >= currDegree) {
+                parentNod = neighbour;
+                parentDegree = adj.get(neighbour).size;
+            }
+        }
+        if (parentNod === -1) {
+            return 0;
+        }
+        // 检测父节点是否包含所有孩子节点
+        for (const neighbour of neg) {
+            if (neighbour === parentNod) {
+                continue;
+            }
+            if (!adj.get(parentNod).has(neighbour)) {
+                return 0;
+            }
+        }
+        if (parentDegree === currDegree) {
+            res = 2;
+        }
+    }
+    return res;
+};
+
+/* 688. 骑士在棋盘上的概率 medium
+在一个 `n x n` 的国际象棋棋盘上，一个骑士从单元格 `(row, column)` 开始，并尝试进行 `k` 次移动。
+求最后留在棋盘上的概率 (出去之后不再移动).
+
+输入: n = 3, k = 2, row = 0, column = 0
+输出: 0.0625
+解释: 有两步(到(1,2)，(2,1))可以让骑士留在棋盘上。
+在每一个位置上，也有两种移动可以让骑士留在棋盘上。
+骑士留在棋盘上的总概率是0.0625。
+
+维护一个 Map 记录当前步留在每个位置的概率. 初始化 (row, column) 的概率为 1.
+ */
+/**
+ * @param {number} n
+ * @param {number} k
+ * @param {number} row
+ * @param {number} column
+ * @return {number}
+ */
+var knightProbability = function (n, k, row, column) {
+    var directions = [
+        [2, 1],
+        [2, -1],
+        [-2, 1],
+        [-2, -1],
+        [1, 2],
+        [1, -2],
+        [-1, 2],
+        [-1, -2]
+    ]
+    var checkVaild = function (x, y) {
+        return x >= 0 && x < n && y >= 0 && y < n
+    }
+    // 初始化. 这里复杂了, 实际上可以直接初始化 (row, column) 的概率为 1
+    if (k == 0) {
+        return (row >= 0 && row < n && column >= 0 && column < n) ? 1 : 0;
+    }
+    var probs = new Map();
+    for (let [dx, dy] of directions) {
+        let x = row + dx;
+        let y = column + dy;
+        if (checkVaild(x, y)) {
+            if (!probs.has(x + ',' + y)) {
+                probs.set(x + ',' + y, 1 / 8);
+            } else {
+                probs.set(x + ',' + y, probs.get(x + ',' + y) + 1 / 8);
+            }
+        }
+    }
+    // 模拟移动
+    for (let i = 1; i < k; i++) {
+        let nextProbs = new Map();
+        for (let [key, value] of probs) {
+            let [x, y] = key.split(',').map(x => parseInt(x));
+            for (let [dx, dy] of directions) {
+                let nx = x + dx;
+                let ny = y + dy;
+                if (checkVaild(nx, ny)) {
+                    if (!nextProbs.has(nx + ',' + ny)) {
+                        nextProbs.set(nx + ',' + ny, value / 8);
+                    } else {
+                        nextProbs.set(nx + ',' + ny, nextProbs.get(nx + ',' + ny) + value / 8);
+                    }
+                }
+            }
+        }
+        probs = nextProbs;
+    }
+    var result = 0;
+    for (let [key, value] of probs) {
+        result += value;
+    }
+    return result;
+};
+
+/* 1791. 找出星型图的中心节点 easy */
+/**
+ * @param {number[][]} edges
+ * @return {number}
+ */
+var findCenter = function (edges) {
+    var firstEdge = edges[0];
+    let [n1, n2] = edges[1];
+    if (firstEdge.indexOf(n1) != -1) {
+        return n1
+    } else {
+        return n2
+    }
+};
+
+// ============================ results ============================
 var results = [
     // numEnclaves(
     //     (grid = [
@@ -262,11 +433,17 @@ var results = [
     // _.min([1, 2, 3]),
     // singleNonDuplicate([3, 3, 7, 7, 10, 11, 11]),
 
-    luckyNumbers([
-        [3, 7, 8],
-        [9, 11, 13],
-        [15, 16, 17],
-    ]),
+    // luckyNumbers([
+    //     [3, 7, 8],
+    //     [9, 11, 13],
+    //     [15, 16, 17],
+    // ]),
+
+    // checkWays([[1, 2], [2, 3], [1, 3]]),
+
+    // knightProbability(n = 3, k = 2, row = 0, column = 0),
+
+
 ];
 for (let r of results) {
     console.log(r);

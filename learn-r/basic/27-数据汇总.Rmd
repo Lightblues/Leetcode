@@ -1,0 +1,175 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+d.cancer <- read_csv("../data/Rbook/cancer.csv", locale=locale(encoding = "GBK"))
+```
+
+```{r}
+d.cancer
+```
+
+*   位置度量：`mean()`, `median()`。
+*   分散程度（变异性）度量：`sd()`, `IQR()`, `mad()`。
+*   分位数：`min()`, `max()`, `quantile()`。
+*   按下标查询，如`first(x)`取出`x[1]`， `last(x)`取出`x`的最后一个元素， `nth(x,2)`取出`x[2]`。 可以提供一个缺省值以防某个下标位置不存在。
+*   计数：`n()`给出某个组的观测数， `sum(!is.na(x))`统计`x`的非缺失值个数， `n_distinct(x)`统计`x`的不同值个数(缺失值也算一个值)。 `count(x)`给出`x`的每个不同值的个数（类似于`table()`函数）。
+
+```{r}
+# summarise
+summarise(d.cancer, nobs=n(), n=sum(!is.na(age)), meam.age=mean(age, na.rm=TRUE), sd.age=sd(age, na.rm=TRUE))
+
+# summarise_at
+summarise_at(d.cancer, c("v0", "v1"), list(avg=~mean(.), std=~sd(.)), na.rm=TRUE) # ~f(.) 表示自定义无名函数, . 表示自变量/参数
+summarise_at(d.cancer, c("v0", "v1"), list(avg=mean, std=sd), na.rm=TRUE) # 这样也行
+summarise_at(d.cancer, vars(v0, v1), list(avg=mean, std=sd), na.rm=TRUE) # 注意第二个参数筛选的是字符串
+
+# summarise_if
+summarise_if(d.cancer, is.numeric, mean, na.rm=TRUE)
+d.cancer |>
+  select(v0, v1) |>
+  summarise_all(
+    list(avg = ~mean(.), std = ~sd(.)), 
+    na.rm=TRUE) |>
+  pivot_longer(
+    everything(),
+    names_sep ="_",
+    names_to = c("variable", ".value")
+    )
+
+# group_by
+d.cancer %>% group_by(sex) %>% summarise(count=n(), mean.age=mean(age, na.rm=TRUE))
+# 为了查询数值型变量取值满足某种条件的个数和比例， 可以将该条件用`sum()`和`mean()`函数统计
+d.cancer %>% group_by(sex) |> summarise(nold=sum(age>=60, na.rm=TRUE), pold=nold/n())
+# `group_by()`分组后除了可以分组汇总， 还可以分组筛选
+d.cancer |> group_by(sex) |> filter(rank(desc(v0)) <= 2) |> arrange(sex, desc(v0))
+# 在分组后也可以根据每组的统计量用`mutate()`定义新变量
+d.cancer |> group_by(sex) |> mutate(v0s=v0/max(v0), v1s=v1/sum(v1))
+
+# 交叉分类的汇总
+d.cancer |> group_by(sex, type) |> summarise(freq=n())
+# 如果仅需要计算交叉分类频数， 不需要用`group_by()`， 可以用dplyr的`count()`函数
+count(d.cancer, sex, type)
+g1.cancer <- d.cancer |> group_by(sex, type) |> summarise(freq=n()) 
+g1.cancer |> summarise(ntotal=sum(freq)) # |> summarise(ntotal2=sum(ntotal))
+g1.cancer |> ungroup() |> summarise(ntotal=sum(freq))
+```
+
+
+```{r}
+# group_by, nest()
+n1.cancer <- d.cancer |> group_by(type) |> nest()
+n1.cancer
+# map 对 list 中保存的每个 df 进行操作
+fmodel = function(subdf) lm(v1~v0, data=subdf)
+model.cancer = n1.cancer |> mutate(lmr = map(data, fmodel))
+# map_dbl 提取单个元素
+frsqr = function(lm) { summary(lm)$r.squared }
+model.cancer |> mutate(r.squared=map_dbl(lmr, frsqr)) |> select(-data) # map_dbl 返回一个元素
+# 返回一个 tibble
+fextract = function(df.lm) { x1 = coef(df.lm); tibble(intercept=x1[1], v0=x1[2], r.squared=summary(df.lm)$r.squared) }
+model.cancer |> mutate(outlist=map(lmr, fextract)) |> unnest(outlist)
+model.cancer |> mutate(outlist=map(lmr, broom::tidy)) |> unnest(outlist)
+
+# 返回的也可以不止一行
+fcoefmat <- function(mod){ as_tibble(summary(mod)$coefficients, rownames="term") }
+.lm = lm(v1~v0,d.cancer); fcoefmat(.lm)
+broom::tidy(.lm)
+model.cancer %>% mutate(outlist=map(lmr, fcoefmat)) %>% unnest(outlist)
+# 更方便.  broom扩展包提供了tidy函数， 可以将统计模型的输出转换为数据框
+model.cancer |> mutate(outlist=map(lmr, broom::tidy)) |> unnest(outlist)
+
+fitted(.lm)
+# ~ . 的用法参见 https://stackoverflow.com/questions/62488162/use-of-tilde-and-period-in-r
+model.cancer |> mutate(v1hat=map(lmr, ~fitted(.))) |> unnest(c(data, v1hat))
+n1.cancer |> unnest(data)
+
+vnames = expand_grid(var = c("v0", "v1"), stat = c("min", "max")) |> pmap_chr(paste, sep="_")
+d.cancer |> group_by(type) |> summarise(stat=list(vnames), value=list(c(range(v0), range(v1)))) |> unnest(c(stat, value))
+```
+```{r}
+long.table = d.cancer |> group_by(type) |> summarise(stat=list(vnames), value=list(c(range(v0), range(v1)))) |> unnest(c(stat, value))
+long.table |> separate(stat, into=c("variable", "stat"), sep="_") |> pivot_wider(names_from="stat", values_from="value")
+```
+
+```{r}
+d1 = tibble(id=1:2, df=vector("list", 2))
+d1[["df"]][1] = list(tibble(x=1, y=2))
+d1[["df"]][2] = list(tibble(x=11:12, y=21:22))
+d1 |> unnest(df)
+```
+
+
+
+## 基本 R 的汇总
+
+```{r}
+summary(d.cancer[["v0"]])
+
+rank(d.cancer[["v0"]])
+rank(desc(d.cancer[["v0"]]))
+
+# 离散
+res <- table(d.cancer[["sex"]]); res
+as.data.frame(res)
+res
+prop.table(res)
+barplot(res, main="性别分布")
+# 列联表
+res2 <- with(d.cancer, table(sex, type)); res2
+as.data.frame(res2)
+barplot(res2, legend=TRUE)
+barplot(res2, legend=TRUE, beside=TRUE)
+addmargins(res2)
+margin.table(res2, 2) # 对于不同的 dim 求和
+```
+
+dataframe
+
+```{r}
+data(iris)
+apply(as.matrix(iris[,1:4]), 2, function(x) c(n=sum(!is.na(x)), mean=mean(x, na.rm=TRUE), sd=sd(x, na.rm=TRUE)))
+```
+
+## 基本 R 分类汇总
+
+```{r}
+# tapply
+with(d.cancer, tapply(v0, sex, mean))
+# aggregate
+aggregate(d.cancer[, c("age", "v0", "v1")], list(sex=d.cancer[["sex"]]), mean, na.rm=TRUE)
+# 交叉分组后概括
+with(d.cancer, aggregate(cbind(v0, v1), list(sex=sex, type=type), mean, na.rm=TRUE))
+
+# split()
+sp = split(d.cancer[,c("v0", "v1")], d.cancer[["sex"]])
+sapply(sp, colMeans) # colMeans
+```
+
+
+## 练习
+
+TODO, 需要看看字符串处理
+
+```{r}
+d.patients = read_csv("../data/Rbook/patients.csv", locale = locale(encoding = "GBK"))
+```
+
+```{r}
+d.patients
+```
+```{r}
+d.patients |> mutate(
+  发病年=as.integer(str_split_fixed(d.patients$发病日期, "/", n=3)[,1]),
+  发病月=as.integer(str_split_fixed(d.patients$发病日期, "/", n=3)[,2]),
+  发病年龄=发病年 - as.integer(str_split_fixed(出生日期, "/", n=3)[,1]),
+  发病年月 = paste0(str_split_fixed(d.patients$发病日期, "/", n=3)[,1], str_split_fixed(d.patients$发病日期, "/", n=3)[,2]),
+)
+```
+

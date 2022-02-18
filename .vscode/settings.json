@@ -1,15 +1,17 @@
 {
-  "pasteImage.defaultName": "Y-MM-DD-HH-mm-ss",
-  "pasteImage.path": "${currentFileNameWithoutExt}",
-  "files.associations": {
-    "vector": "cpp",
-    "iostream": "cpp"
-  },
-  "go.inferGopath": false,
-  "java.project.sourcePaths": [
-    "learn-java/src",
-    "learn-java/com/itranswarp/learnjava"
-  ],
-  "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m"
-  //   "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m"
+    "go.inferGopath": false
+    //   "pasteImage.defaultName": "Y-MM-DD-HH-mm-ss",
+    //   "pasteImage.path": "${currentFileNameWithoutExt}",
+    //   "files.associations": {
+    //     "vector": "cpp",
+    //     "iostream": "cpp"
+    //   },
+    //   "go.inferGopath": false,
+    //   "java.project.sourcePaths": [
+    //     "learn-java/src",
+    //     "learn-java/com/itranswarp/learnjava"
+    //   ],
+    // "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m",
+    // "liveServer.settings.port": 5501
+    //   "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m"
 }
