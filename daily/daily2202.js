@@ -415,6 +415,25 @@ var findCenter = function (edges) {
     }
 };
 
+/* 917. 仅仅反转字母 */
+/**
+ * @param {string} s
+ * @return {string}
+ */
+var reverseOnlyLetters = function (s) {
+    var indexs = [];
+    for (let i = 0; i < s.length; i++) {
+        if (s[i] >= 'a' && s[i] <= 'z' || s[i] >= 'A' && s[i] <= 'Z') {
+            indexs.push(i);
+        }
+    }
+    var result = s.split("");
+    for (let i = 0; i < indexs.length; i++) {
+        result[indexs[i]] = s[indexs[indexs.length - i - 1]];
+    }
+    return result.join("");
+};
+
 // ============================ results ============================
 var results = [
     // numEnclaves(
@@ -443,7 +462,7 @@ var results = [
 
     // knightProbability(n = 3, k = 2, row = 0, column = 0),
 
-
+    reverseOnlyLetters("ab-cd"),
 ];
 for (let r of results) {
     console.log(r);
