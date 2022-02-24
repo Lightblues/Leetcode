@@ -416,25 +416,6 @@ var findCenter = function (edges) {
 };
 
 
-/* 917. 仅仅反转字母 */
-/**
- * @param {string} s
- * @return {string}
- */
-var reverseOnlyLetters = function (s) {
-    var indexs = [];
-    for (let i = 0; i < s.length; i++) {
-        if (s[i] >= 'a' && s[i] <= 'z' || s[i] >= 'A' && s[i] <= 'Z') {
-            indexs.push(i);
-        }
-    }
-    var result = s.split("");
-    for (let i = 0; i < indexs.length; i++) {
-        result[indexs[i]] = s[indexs[indexs.length - i - 1]];
-    }
-    return result.join("");
-}
-
 
 /* 969. 煎饼排序 medium
 支持的操作是翻煎饼, 即反转 [0:i] 区间的煎饼.
@@ -698,6 +679,63 @@ var numberOfGoodSubsets = function (nums) {
     return ans;
 };
 
+/* 0917. 仅仅反转字母 `easy` */
+/**
+ * @param {string} s
+ * @return {string}
+ */
+var reverseOnlyLetters = function (s) {
+    var indexs = [];
+    for (let i = 0; i < s.length; i++) {
+        if (s[i] >= 'a' && s[i] <= 'z' || s[i] >= 'A' && s[i] <= 'Z') {
+            indexs.push(i);
+        }
+    }
+    var result = s.split("");
+    for (let i = 0; i < indexs.length; i++) {
+        result[indexs[i]] = s[indexs[indexs.length - i - 1]];
+    }
+    return result.join("");
+}
+
+/* 1706. 球会落何处 `medium`
+用一个grid表示该位置挡板的方向, 从最上边的每一个位置放小球, 返回小球最后落在的位置, 若无法掉出来 (挡板呈现V字形) 则返回 -1.
+注意球无法掉下来的条件: 出现V字形或者到达边界无法再往边界方向.
+ */
+/**
+ * @param {number[][]} grid
+ * @return {number[]}
+ */
+var findBall = function (grid) {
+    var [m, n] = [grid.length, grid[0].length];
+    var res = [];
+    for (let i = 0; i < n; i++) {
+        res.push(i);
+    }
+    for (let j = 0; j < m; j++) {
+        for (let i = 0; i < n; i++) {
+            var now = res[i];
+            if (now === -1) {
+                continue;
+            }
+            if (grid[j][now] === 1) {
+                if (now < n - 1 && grid[j][now + 1] !== -1) {
+                    res[i] = now + 1;
+                } else {
+                    res[i] = -1;
+                }
+            } else {
+                if (now > 0 && grid[j][now - 1] !== 1) {
+                    res[i] = now - 1;
+                } else {
+                    res[i] = -1;
+                }
+            }
+        }
+    }
+    return res;
+};
+
 // ============================ results ============================
 var results = [
     // numEnclaves(
@@ -727,7 +765,7 @@ var results = [
     // knightProbability(n = 3, k = 2, row = 0, column = 0),
 
 
-    reverseOnlyLetters("ab-cd"),
+    // reverseOnlyLetters("ab-cd"),
 
     // pancakeSort([3, 2, 4, 1]),
 
@@ -737,8 +775,10 @@ var results = [
     // pushDominoes("RR.L"),
     // pushDominoes("R."),
 
-    numberOfGoodSubsets(nums = [1, 2, 3, 4]), // 6
-    numberOfGoodSubsets([4, 2, 3, 15]), // 5
+    // numberOfGoodSubsets(nums = [1, 2, 3, 4]), // 6
+    // numberOfGoodSubsets([4, 2, 3, 15]), // 5
+
+    findBall(grid = [[1, 1, 1, -1, -1], [1, 1, 1, -1, -1], [-1, -1, -1, 1, 1], [1, 1, 1, 1, -1], [-1, -1, -1, -1, -1]]),
 ];
 for (let r of results) {
     console.log(r);
