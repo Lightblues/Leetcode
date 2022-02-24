@@ -1,9 +1,14 @@
 """ 
 from [Python实现最大堆（大顶堆）](https://cloud.tencent.com/developer/article/1570953)
 
-这里的 MaxHeap 类实现了 add, pop, 等方法, 具体的操作为 shift_up, shift_down 进行调整顺序.
+这里的 MaxHeap 类实现了 add, pop, 等方法, 具体的操作为 sift_up, sift_down 进行调整顺序.
+注意这里的 shift_up 的 heapq 中的 _sift_up 方法不完全一样.
 
-另外, 在 heapq 中还有常用的操作 heapify, 思路为: 对于一个堆中的所有非叶子节点开始, 从后向前遍历i, 每次使得i后面的子树为合法的. 注意这里的 shift_up 的方法比较简单, 和其中的 _sift_up 方法不一样.
+另外有 heapify操作, 将一个 lst 转为堆. see[here](https://blog.csdn.net/lighthear/article/details/79945528)
+1. 一个简单的思路: 顺序遍历列表, 对于每一个元素都进行这里的 sift_up 操作. 这样时间复杂度为 O(nlog(n))
+2. 另外, 还可基于 sift_down 方法, 从最后一个非叶子节点开始向前遍历. 这样时间复杂度为 O(n)
+    sift_down: 每次从两个孩子中找到较小的那一个, 然后往下一层继续.
+
  """
 
 import heapq
