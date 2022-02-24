@@ -415,6 +415,7 @@ var findCenter = function (edges) {
     }
 };
 
+
 /* 917. 仅仅反转字母 */
 /**
  * @param {string} s
@@ -432,6 +433,269 @@ var reverseOnlyLetters = function (s) {
         result[indexs[i]] = s[indexs[indexs.length - i - 1]];
     }
     return result.join("");
+}
+
+
+/* 969. 煎饼排序 medium
+支持的操作是翻煎饼, 即反转 [0:i] 区间的煎饼.
+返回给数组arr 排序的操作序列
+ 
+输入：[3,2,4,1]
+输出：[4,2,4,3]
+解释：
+我们执行 4 次煎饼翻转，k 值分别为 4，2，4，和 3。
+初始状态 arr = [3, 2, 4, 1]
+第一次翻转后（k = 4）：arr = [1, 4, 2, 3]
+第二次翻转后（k = 2）：arr = [4, 1, 2, 3]
+第三次翻转后（k = 4）：arr = [3, 2, 1, 4]
+第四次翻转后（k = 3）：arr = [1, 2, 3, 4]，此时已完成排序。
+ */
+/**
+ * @param {number[]} arr
+ * @return {number[]}
+ */
+// 瞎几把实现, ⚠️ js 中的 sort 是原地操作!
+var pancakeSort = function (arr) {
+    sortedArr = [...arr].sort((a, b) => a - b); // js 中的 sort 是原地操作!
+    let res = [];
+    for (let i = arr.length - 1; i >= 0; i--) {
+        // console.log(arr, sortedArr[i]);
+        let max = arr.indexOf(sortedArr[i]);
+        if (max != i) {
+            res.push(max + 1);
+            res.push(i + 1);
+            arrLast = arr.slice(i + 1);
+            arrFirst = arr.slice(0, i + 1);
+            arrFirst = arrFirst.slice(max + 1).reverse().concat(arrFirst.slice(0, max + 1));
+            arr = arrFirst.concat(arrLast);
+        }
+    }
+    return res;
+};
+// https://leetcode-cn.com/problems/pancake-sorting/solution/jian-bing-pai-xu-by-leetcode-solution-rzzu/
+var pancakeSort = function (arr) {
+    const ret = [];
+    for (let n = arr.length; n > 1; n--) {
+        let index = 0;
+        for (let i = 1; i < n; i++) {
+            if (arr[i] >= arr[index]) {
+                index = i;
+            }
+        }
+        if (index === n - 1) {
+            continue;
+        }
+        reverse(arr, index);
+        reverse(arr, n - 1);
+        ret.push(index + 1);
+        ret.push(n);
+    }
+    return ret;
+}
+// 辅助函数, 翻转 arr[:end+1]
+const reverse = (arr, end) => {
+    for (let i = 0, j = end; i < j; i++, j--) {
+        let temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+};
+
+/* 0717. 1比特与2比特字符 `easy` 
+第一种字符用 0 表示, 第二种字符用 10或11 两个比特表示
+给定一个比特序列, 判断最后一个字符是否可能为一比特字符(第一种) (因为编码可能有多种?)
+ 
+输入: bits = [1, 1, 1, 0]
+输出: false
+解释: 唯一的编码方式是两比特字符和两比特字符。
+所以最后一个字符不是一比特字符。
+ 
+思路1:
+考虑: 1. 当最后一个比特为1时显然 false; 2. 最后一个比特为0, 则前溯, 累计有多少个连续的1, 若为奇数, false; 若为偶数, true.
+思路2:
+注意, 这种情况下编码是唯一的!!
+*/
+/**
+ * @param {number[]} bits
+ * @return {boolean}
+ */
+var isOneBitCharacter = function (bits) {
+    var n = bits.length;
+    if (bits[n - 1] !== 0) {
+        return false;
+    }
+    var count = 0;
+    for (var i = n - 2; i >= 0; i--) {
+        if (bits[i] === 1) {
+            count++;
+        } else {
+            break;
+        }
+    }
+    if (count % 2 === 1) {
+        return false;
+    }
+    return true;
+};
+
+/* 0838. 推多米诺 `medium`
+给定一系列骨牌的初始状态: L,R,. 标志向左向右倒, 或者不动, 判断结束状态. 当一个牌分别受到左右两边的力时, 保持竖直.
+ 
+自己用了极其繁琐的方式: 记录所有 L,R 牌的位置; 对于每个竖直的牌, 维护四个index分别记录其左右两边最靠近的起始向左向右的牌的index.
+当 lright>lleft 时, 牌可能向右倒, 当 rleft<lright 时, 牌可能向左; 若上面两个条件都成立, 则根据距离判断. 繁琐的是要判断这些 index 是否存在.
+为此, 写了 `findIndexBigger, findIndexSmaller(arr, startIndex, index)` 分别从 startIndex 出发, 在序列arr中找到大于index的最小值(小于index的最大值)
+ */
+/**
+ * @param {string} dominoes
+ * @return {string}
+ */
+var pushDominoes = function (dominoes) {
+    var n = dominoes.length;
+    var indexLeft = [],
+        indexRight = [];
+    for (var i = 0; i < n; i++) {
+        if (dominoes[i] === 'L') {
+            indexLeft.push(i);
+        } else if (dominoes[i] === 'R') {
+            indexRight.push(i);
+        }
+    }
+    function findIndexBigger(arr, startIndex, index) {
+        // 从指标 arr 中找到大于 index 的最小值
+        var i = startIndex;
+        if (arr.length === 0) {
+            return -1;
+        }
+        while (i < arr.length && arr[i] < index) {
+            i++;
+        }
+        if (i === arr.length) {
+            return -1;
+        }
+        return i;
+    }
+    function findIndexSmaller(arr, startIndex, index) {
+        // 从指标 arr 中找到小于 index 的最大值
+        var i = startIndex;
+        if (arr.length === 0) {
+            return -1;
+        }
+        while (i < arr.length - 1 && arr[i + 1] < index) {
+            i++;
+        }
+        return i;
+    }
+    var result = [];
+    var ll = -1, lr = -1, rl = 0, rr = 0;
+    var lindex, rindex;
+    for (var i = 0; i < n; i++) {
+        if (dominoes[i] !== '.') {
+            result.push(dominoes[i]);
+            continue;
+        }
+        // .
+        rl = findIndexBigger(indexLeft, rl, i);
+        rr = findIndexBigger(indexRight, rr, i);
+        ll = findIndexSmaller(indexLeft, ll, i);
+        lr = findIndexSmaller(indexRight, lr, i);
+        lindex = undefined, rindex = undefined;
+        if (lr !== -1) {
+            if (ll === -1 || indexRight[lr] > indexLeft[ll]) {
+                lindex = indexRight[lr];
+            }
+        }
+        if (rl !== -1) {
+            if (rr === -1 || indexRight[rr] > indexLeft[rl]) {
+                rindex = indexLeft[rl];
+            }
+        }
+        if (lindex !== undefined && rindex === undefined || lindex !== undefined && rindex !== undefined && (i - lindex) < (rindex - i)) {
+            result.push('R');
+        } else if (rindex !== undefined && lindex === undefined || lindex !== undefined && rindex !== undefined && (i - lindex) > (rindex - i)) {
+            result.push('L');
+        } else {
+            result.push('.');
+        }
+    }
+    return result.join("");
+
+};
+
+
+/* 1994. 好子集的数目 `hard`
+给定一组数字, 都不大于30. 求满足条件的所有子集的数量, 条件为: 子集中所有数字的乘积可以 = 不同的质数的乘积.
+ 
+输入：nums = [4,2,3,15]
+输出：5
+解释：好子集为：
+- [2]：乘积为 2 ，可以表示为质数 2 的乘积。
+- [2,3]：乘积为 6 ，可以表示为互不相同质数 2 和 3 的乘积。
+- [2,15]：乘积为 30 ，可以表示为互不相同质数 2，3 和 5 的乘积。
+- [3]：乘积为 3 ，可以表示为质数 3 的乘积。
+- [15]：乘积为 15 ，可以表示为互不相同质数 3 和 5 的乘积。
+ 
+[here](https://leetcode-cn.com/problems/the-number-of-good-subsets/solution/hao-zi-ji-de-shu-mu-by-leetcode-solution-ky65/)
+由于数字都比较小, 可以罗列所有的质数 primes=[2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+对于一组数字, 它们所用到的质数可以通过状态压缩来表示, 即 01 表示以上10个质数用到了哪几个, 记为 mask
+考虑 DP: 用 dp[i][mask] 表示只使用数字 2~i, 并且所用的数字质数为 mask, 这样的子集的数量.
+状态转移方程: 若 数字i本身包含平方因子, 例如 4, 12 等, 则该数字无法采用, dp[i][mask] = dp[i-1][mask];
+否则, 假设i包含的质数组合为 subset, 则 dp[i][mask] = dp[i-1][mask] + dp[i-1][mask\subset], 其中的 subset 必然是 mask 的子集, mask\subset 可以异或得到
+因此, 从 i=2开始遍历到 30, 最后的结果即 sum(dp[30][1:])
+需要注意的是数字 1, 其可以取任意数量, 因此初始化 df[1][0] = 2**freq[1]
+ */
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var numberOfGoodSubsets = function (nums) {
+    var primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+    var mod = 10 ** 9 + 7;
+    var maxValue = 30;
+
+    var freq = new Array(maxValue + 1).fill(0);
+    for (let num of nums) {
+        freq[num] += 1;
+    }
+    var f = new Array(1 << primes.length).fill(0);
+    // 数字1, 初始化
+    // 不同于Python, 可以用 pow 指定mod, 这里要注意溢出!
+    // f[0] = (2 ** freq[1]) % mod;
+    f[0] = 1;
+    for (let i = 0; i < freq[1]; i++) {
+        f[0] = (f[0] * 2) % mod;
+    }
+
+    for (let i = 2; i <= maxValue; i++) {
+        // 从2开始遍历
+        var occ = freq[i];
+        if (occ === 0) { continue }
+        // 检查 i 的每个质因数是否均不超过 1 个
+        var subset = 0, x = i;
+        var check = true;
+        for (let j = 0; j < primes.length; j++) {
+            if (x % (primes[j] * primes[j]) === 0) {
+                check = false;
+                break;
+            }
+            if (x % primes[j] === 0) {
+                subset |= 1 << j;
+            }
+        }
+        if (!check) {
+            continue
+        }
+        // DP
+        for (let mask = (1 << primes.length) - 1; mask > 0; mask--) {
+            if ((mask & subset) === subset) {
+                f[mask] = (f[mask] + f[mask ^ subset] * occ) % mod;
+            }
+        }
+    }
+    var ans = 0;
+    for (let mask = 1; mask < (1 << primes.length); mask++) {
+        ans = (ans + f[mask]) % mod;
+    }
+    return ans;
 };
 
 // ============================ results ============================
@@ -462,7 +726,19 @@ var results = [
 
     // knightProbability(n = 3, k = 2, row = 0, column = 0),
 
+
     reverseOnlyLetters("ab-cd"),
+
+    // pancakeSort([3, 2, 4, 1]),
+
+    // isOneBitCharacter(bits = [1, 1, 1, 0]),
+
+    // pushDominoes(dominoes = ".L.R...LR..L.."),
+    // pushDominoes("RR.L"),
+    // pushDominoes("R."),
+
+    numberOfGoodSubsets(nums = [1, 2, 3, 4]), // 6
+    numberOfGoodSubsets([4, 2, 3, 15]), // 5
 ];
 for (let r of results) {
     console.log(r);

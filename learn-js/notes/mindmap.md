@@ -2,12 +2,33 @@
 
 js 标准内置对象参见 <https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects>
 
+- Array
+    - 属性: length
+    - 常见方法:
+        - 头尾添加 push, pop, unshift, shift
+        - 遍历 forEach
+        - 复制/子集 slice
+        - 查找 indexOf
+        - 通过索引删除 splice
+    - 其他方法
+        - reverse 翻转
+        - concat 拼接
+        - sort 排序
+        - `join("")` 类似Python中的 `"".join([])`
 - Map
     - 属性: size
     - 方法:
         - has, get, set, delete, clear
         - keys, values, entries
         - forEach
+
+排序
+
+- 注意 js 中的 sort 方法是原地操作, 也返回排序后的结果
+
+数组
+
+- 复制: 1. arr.slice() 方法; 2. map, filter 辅助实现; 3. `[...arr]` 语法进行复制; 4. `_.clone` ; 5. JSON 进行 stringify, parse 进行深复制.
 
 ## 函数
 

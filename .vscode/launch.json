@@ -1,49 +1,69 @@
 {
-  // 使用 IntelliSense 了解相关属性。
-  // 悬停以查看现有属性的描述。
-  // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
-  "version": "0.2.0",
-  "configurations": [
-    // {
-    //   "type": "java",
-    //   "name": "Launch SumOfInteger",
-    //   "request": "launch",
-    //   "mainClass": "com.itranswarp.learnjava.SumOfInteger",
-    //   "projectName": "Leetcode_30f8d4bc"
-    // },
-    {
-      "type": "java",
-      "name": "Java",
-      "request": "launch",
-      "mainClass": "${file}"
-    },
-    {
-      "name": "Go",
-      "type": "go",
-      "request": "launch",
-      "mode": "debug",
-      "program": "${fileDirname}"
-    },
-    {
-      "name": "Python",
-      "type": "python",
-      "request": "launch",
-      "program": "${file}",
-      "console": "integratedTerminal",
-      "cwd": "${fileDirname}"
-    },
-    {
-      "name": "clang++ - 生成和调试活动文件",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${fileDirname}/a.out",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${fileDirname}",
-      "environment": [],
-      "externalConsole": false,
-      "MIMode": "lldb",
-      "preLaunchTask": "clang++ build active file"
-    }
-  ]
+    // 使用 IntelliSense 了解相关属性。
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Node daily2202",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/daily/daily2202.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${fileDirname}",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "externalConsole": false,
+            "sourceMaps": false,
+            "outDir": null
+        },
+        // {
+        //   "type": "java",
+        //   "name": "Launch SumOfInteger",
+        //   "request": "launch",
+        //   "mainClass": "com.itranswarp.learnjava.SumOfInteger",
+        //   "projectName": "Leetcode_30f8d4bc"
+        // },
+        {
+            "type": "java",
+            "name": "Java",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "name": "Go",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${fileDirname}"
+        },
+        {
+            "name": "Python",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${fileDirname}"
+        },
+        {
+            "name": "clang++ - 生成和调试活动文件",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/a.out",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "clang++ build active file"
+        }
+    ]
 }
