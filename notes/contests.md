@@ -258,6 +258,61 @@
     - 放弃了
     - 参见 [思路详解+详细讨论一下精度问题](https://leetcode-cn.com/problems/abbreviating-the-product-of-a-range/solution/fen-bie-ji-suan-qian-5wei-he-hou-5wei-si-dc9x/), Python 超时了. 另外 [here](https://leetcode-cn.com/problems/abbreviating-the-product-of-a-range/solution/yi-ge-shu-ju-tuan-mie-jue-da-bu-fen-dai-234yd/) 做了更多的分析
 
+### D69
+
+- 2129. 将标题首字母大写
+- 2130. 链表最大孪生和
+- 2131. 连接两字母单词得到的最长回文串
+    - 给一组长度为2的字符串, 将他们拼接, 形成最大的回文串
+    - 考虑 1. aa 的形式, 若数量为奇数, 只能放在中间, 若为偶数, 可以两侧对应位置放置; 2. ab + ba 的形式, 左右对称放置
+- 2132. 用邮票贴满网格图
+    - 给一个矩阵grid, 其中数字为1的位置不能使用; 要求用 stampHeight x stampWidth 的邮票去贴满所有空的位置, 返回能否实现. 矩阵不可旋转, 可以重叠.
+    - 二维前缀和 + 二维差分
+        - from [here](<https://leetcode-cn.com/problems/stamping-the-grid/solution/wu-nao-zuo-fa-er-wei-qian-zhui-he-e>
+        - r-wei-zwiu/)
+        - 首先, 利用 **二维前缀和矩阵** 可以快速计算 (x1,y1), (x2,y2) 区域内的元素和.
+            - 前缀和 `m[x,y]` 表示 (0,0),(x,y) 所定义的矩阵之和;
+            - 递推计算公式为 `m[x+1,y+1] = m[x+1,y]+m[x,y+1]-m[x,y]+matrix[x,y]`. 这里的前缀和矩阵 m 有哨兵, 即大小为 (m+1,n+1)
+            - 利用二维前缀, 求 (x1,y1),(x2,y2) 所定义的子矩阵之和的计算公式为 `m[x2+1,y2+1] - m[x2+1,y1] - m[x1][y2+1] + m[x1,y1]`.
+            - 在本题中, 计算grid的前缀和矩阵, 即可以用来判断该区域内是否有1.
+        - 根据二维前缀和的计算, 可以定义 **二维差分矩阵**. 另参见 [here](https://zhuanlan.zhihu.com/p/439268614)
+            - 计算公式为 `s[x,y] = matrix[x,y] - matrix[x-1,y] - matrix[x,y-1] + matrix[x-1,y-1]` (注意和上面前缀和的递推计算意义不一样)
+            - 可知, 我们所定义的差分矩阵, 其前缀和就是原矩阵!!
+            - 根据差分矩阵, 我们可以快速在 (x1,y1), (x2,y2) 范围内都加上一个数字: 等价于在其差分矩阵的 `(x1,y1),(x2+1,y2+1)` 位置+1, `(x2,y1+1),(x1+1,y2)` 位置-1.
+            - 在本题中, 利用对于每个为空的坐标,尝试以其为左上角贴邮票, 利用差分矩阵记录贴上去的邮票所占据的位置. 最后利用差分矩阵还原, 计算每个位置的邮票数量, 若出现原本为空的位置没有贴上邮票, 说明不满足.
+        - 注意, 为了边界条件, 1. 这里定义的前缀和矩阵第一行第一列为0; 2. 而根据差分的定义, 在更新(x2,y2)位置时候用到了 s(x2+1,y2+1), 因此形状也为 (m+1,n+1).
+
+### D70
+
+- 2144. 打折购买糖果的最小开销
+- 2145. 统计隐藏数组数目
+- 2146. 价格范围内最高排名的 K 样物品
+    - 网格搜索, 0表示不能走, 不同的格子有价格, 要求找到价格在 pricing = [low, high] 区间内的位置.
+    - 要求找到优先级最高的k个, 优先级为: 1. 距离; 2. 价格; 3. 行坐标; 4. 列坐标.
+    - 思路: BFS.
+        - 广度优先, 每一轮维护 paths 记录当前可到达的坐标, potentials 为满足pricing约束的坐标集合, 然后 `select(potentials, k)` 根据优先级筛选.
+        - 注意边界条件: 1. 每一轮中,当paths为空时说明无法继续搜索; 2. 开始状态, 需要判断start点是否符合要求并加入visited.
+- 2147. 分隔长廊的方案数
+    - 简单
+
+### D71
+
+- 2160. 拆分数位后四位数字的最小和
+- 2161. 根据给定数字划分数组
+- 2162. 设置时间的最少代价
+    - 设置四位的时间, 前后两位分别表示分钟和秒钟, 例如 `8090` 表示 80*60+90 秒
+    - 给定 startAt ，moveCost ，pushCost 和 targetSeconds 分别表示初始的手指位置, 移动和按按钮的代价, 以及目标的秒数, 要求返回最小的代价. **前置0可以不输入**
+    - 思路: 模拟
+        - 注意到, 犹豫两位数字可以大于59, 因此同样的秒数可能有多种表示. 除了 1. 基本的 `minutes, seconds = targetSeconds//60 , targetSeconds%60`, 还有可能 2. 是 `minutes-1, seconds+60` (`seconds+60<100`), 计算两者较小的代价.
+        - 用函数 `getCost(minutes, seconds)` 模拟该方案的代价.
+        - 需要注意边界: 1. 当 `targetSeconds<60` 时 第二种方案非法; 2. 当 `targetSeconds>=60000` 时, 第一种方案非法. 因此可以在 getCost 函数中增加判断: `minutes>99 or seconds>99 or minutes<0 or seconds<0` 时返回 Inf, 更简单.
+- 2163. 删除元素后和的最小差值
+    - 给一个长度为 3n 的数组 nums, 要求删除其中 n个数字, 使得删除后, 数组前n个数字之和 - 后n个数字之和最小.
+    - 方法一：优先队列 [here](https://leetcode-cn.com/problems/minimum-difference-in-sums-after-removal-of-elements/solution/shan-chu-yuan-su-hou-he-de-zui-xiao-chai-ah0j/)
+        - 目标: 前n个数字之和最小, 后n个数字之和最大.
+        - 可知, 最后剩余的两组数字, 其原始的分割点一定在 [n, 2n] 之间. 因此, 可以 遍历遍历每一个分割点, 分别计算前后的最小和最大和, 然后求最小值.
+        - 为此, 可以分别建立一个最大堆和最小堆, 遍历 [n, 2n] 个数字 (pushpop), 记录每一个分割点的的值. 需要注意的是, 后半部分应该逆序, 注意代码.
+
 ### D72
 
 - 2176. 统计数组中相等且可以被整除的数对
