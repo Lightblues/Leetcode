@@ -736,6 +736,21 @@ var findBall = function (grid) {
     return res;
 };
 
+/* 2016. 增量元素之间的最大差值 */
+var maximumDifference = function (nums) {
+    var minNow = Number.MAX_VALUE,
+        result = -1;
+    for (let num of nums) {
+        if (num > minNow) {
+            result = Math.max(result, num - minNow);
+        }
+        if (num < minNow) {
+            minNow = num;
+        }
+    }
+    return result;
+};
+
 // ============================ results ============================
 var results = [
     // numEnclaves(
@@ -778,7 +793,9 @@ var results = [
     // numberOfGoodSubsets(nums = [1, 2, 3, 4]), // 6
     // numberOfGoodSubsets([4, 2, 3, 15]), // 5
 
-    findBall(grid = [[1, 1, 1, -1, -1], [1, 1, 1, -1, -1], [-1, -1, -1, 1, 1], [1, 1, 1, 1, -1], [-1, -1, -1, -1, -1]]),
+    // findBall(grid = [[1, 1, 1, -1, -1], [1, 1, 1, -1, -1], [-1, -1, -1, 1, 1], [1, 1, 1, 1, -1], [-1, -1, -1, -1, -1]]),
+
+    maximumDifference(nums = [7, 1, 5, 4]),
 ];
 for (let r of results) {
     console.log(r);
