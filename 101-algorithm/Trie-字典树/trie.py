@@ -1,3 +1,6 @@
+""" 
+参见 https://oi-wiki.org/string/trie/ """
+
 # https://leetcode-cn.com/problems/implement-trie-prefix-tree/solution/shi-xian-trie-qian-zhui-shu-by-leetcode-ti500/
 class Trie:
     def __init__(self):
