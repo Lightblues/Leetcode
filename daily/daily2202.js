@@ -736,7 +736,7 @@ var findBall = function (grid) {
     return res;
 };
 
-/* 2016. 增量元素之间的最大差值 */
+/* 2016. 增量元素之间的最大差值 `easy` */
 var maximumDifference = function (nums) {
     var minNow = Number.MAX_VALUE,
         result = -1;
@@ -749,6 +749,21 @@ var maximumDifference = function (nums) {
         }
     }
     return result;
+}
+
+/**
+ * @param {string} num1
+ * @param {string} num2
+ * @return {string}
+ */
+var complexNumberMultiply = function (num1, num2) {
+    var [a, b] = num1.slice(0, num1.length - 1).split("+");
+    var [c, d] = num2.slice(0, num2.length - 1).split("+");
+    [a, b] = [parseInt(a), parseInt(b)];
+    [c, d] = [parseInt(c), parseInt(d)];
+    var x = a * c - b * d,
+        y = a * d + b * c;
+    return `${x}+${y}i`;
 };
 
 // ============================ results ============================
@@ -795,7 +810,12 @@ var results = [
 
     // findBall(grid = [[1, 1, 1, -1, -1], [1, 1, 1, -1, -1], [-1, -1, -1, 1, 1], [1, 1, 1, 1, -1], [-1, -1, -1, -1, -1]]),
 
+
     maximumDifference(nums = [7, 1, 5, 4]),
+
+    complexNumberMultiply(num1 = "1+1i", num2 = "1+1i"),
+    complexNumberMultiply(num1 = "1+-1i", num2 = "1+-1i"),
+
 ];
 for (let r of results) {
     console.log(r);
