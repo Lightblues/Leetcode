@@ -766,6 +766,97 @@ var complexNumberMultiply = function (num1, num2) {
     return `${x}+${y}i`;
 };
 
+/* 0553. 最优除法 `medium`
+给定一组正整数，相邻的整数之间将会进行浮点除法操作。例如， [2,3,4] -> 2 / 3 / 4 。
+添加括号, 要求最后的结果最小, 要求括号时最简的.
+
+思路: 除法添加括号, 理解成把数组中各个数字放在分子还是分母上. 显然, 前两个数字, 第一个一定在分子, 第二个一定在分母上. 通过 2/(3/4/5/...) 将第三位之后的数字放在分子上.
+
+输入: [1000,100,10,2]
+输出: "1000/(100/10/2)"
+解释:
+1000/(100/10/2) = 1000/((100/10)/2) = 200
+但是，以下加粗的括号 "1000/((100/10)/2)" 是冗余的，
+因为他们并不影响操作的优先级，所以你需要返回 "1000/(100/10/2)"。
+
+其他用例:
+1000/(100/10)/2 = 50
+1000/(100/(10/2)) = 50
+1000/100/10/2 = 0.5
+1000/100/(10/2) = 2
+ */
+/**
+ * @param {number[]} nums
+ * @return {string}
+ */
+var optimalDivision = function(nums) {
+    // nums.sort((i,j)=>i-j>0?1:-1);
+    // var res = ""
+    // if (nums.length === 1) {
+    //     return nums[0].toString();
+    // }
+    // res += nums[nums.length-1] + "/(" + nums[nums.length-2];
+    // for (let i=nums.length-3; i>=0; i--) {
+    //     res += "/" + nums[i];
+    // }
+    // res += ")";
+    // return res
+
+    if (nums.length === 1) {
+        return nums[0].toString();
+    }
+    if (nums.length === 2) {
+        return nums[0] + "/" + nums[1];
+    }
+    var res = nums[0].toString() + "/(";
+    var remains = nums.slice(1);
+    res += remains.join("/");
+    return res + ")";
+};
+
+
+/* 1601. 最多可达成的换楼请求数目 `hard`
+ */
+/**
+ * @param {number} n
+ * @param {number[][]} requests
+ * @return {number}
+ */
+ var maximumRequests = function(n, requests) {
+    var delta = new Array(n).fill(0);
+    var result = 0, cnt = 0, len = requests.length;
+    var countNonZero = function (arr) {
+        var cnt = 0;
+        for (let num of arr){
+            if (num!==0) {
+                cnt++;
+            }
+        }
+        return cnt;
+    }
+    function dfs(i) {
+        if (i===len) {
+            if (countNonZero(delta)===0) {
+                result = Math.max(cnt, result);
+            }
+            return;
+        }
+        var [from, to] = requests[i];
+        // 1. 不用
+        dfs(i+1);
+        // 2. 用
+        cnt++;
+        delta[from-1]--;
+        delta[to-1]++;
+        dfs(i+1);
+        cnt--;
+        delta[from-1]++;
+        delta[to-1]--;
+    }
+    dfs(0);
+    return result;
+};
+
 // ============================ results ============================
 var results = [
     // numEnclaves(
@@ -810,11 +901,15 @@ var results = [
 
     // findBall(grid = [[1, 1, 1, -1, -1], [1, 1, 1, -1, -1], [-1, -1, -1, 1, 1], [1, 1, 1, 1, -1], [-1, -1, -1, -1, -1]]),
 
+    // complexNumberMultiply(num1 = "1+1i", num2 = "1+1i"),
+    // complexNumberMultiply(num1 = "1+-1i", num2 = "1+-1i"),
 
-    maximumDifference(nums = [7, 1, 5, 4]),
 
-    complexNumberMultiply(num1 = "1+1i", num2 = "1+1i"),
-    complexNumberMultiply(num1 = "1+-1i", num2 = "1+-1i"),
+    // maximumDifference(nums = [7, 1, 5, 4]),
+
+    // optimalDivision([1000,100,10,2]),
+
+    maximumRequests(n = 5, requests = [[0,1],[1,0],[0,1],[1,2],[2,0],[3,4]]),
 
 ];
 for (let r of results) {
