@@ -43,6 +43,7 @@ class SolutionD68:
 
     """ 2179. 统计数组中好三元组数目
 整数数组 `nums1` 和 `nums2` ，两者都是 `[0, 1, ..., n - 1]` 的 **排列** 。
+要求找满足条件的三元组数量, 条件: (x,t,z) 出现在两数组中的次序是一致的.
 
 输入：nums1 = [2,0,1,3], nums2 = [0,1,2,3]
 输出：1
@@ -57,7 +58,7 @@ class SolutionD68:
 
 另见 [here](https://leetcode-cn.com/problems/count-good-triplets-in-an-array/solution/deng-jie-zhuan-huan-shu-zhuang-shu-zu-by-xmyd/)
  """
-    def goodTriplets(self, nums1: List[int], nums2: List[int]) -> int:
+    def goodTriplets0(self, nums1: List[int], nums2: List[int]) -> int:
         # 任务转为, 在 numMap 找到递增的三元组
         n2iNum2 = {num:i for i, num in enumerate(nums2)}
         numMap = [n2iNum2[num] for num in nums1]
@@ -77,15 +78,49 @@ class SolutionD68:
 
         """ 笑死, 暴力用 numpy; 用数组+for会超时 """
         import numpy as np
-        last1 = []
-        last2 = np.zeros([len(nums2),], dtype=int)
+        last1 = [] # 遍历数组过程中, 记录出现过的数字 (长度为1的子序列), 为了统计数量, 排好序
+        last2 = np.zeros([len(nums2),], dtype=int) # 记录出现比nums小的数字的数量
         for num in numMap:
-            idx1 = bisect.bisect_left(last1, num)
-            idx2 = last2[num]
-            res += idx2
+            idx1 = bisect.bisect_left(last1, num) # 以num结尾的长度2子序列的个数
+            res += last2[num]
             last1.insert(idx1, num)
             last2[num:] += idx1
         return int(res) # 返回 int
+    
+    def goodTriplets(self, nums1: List[int], nums2: List[int]) -> int:
+        class BIT:
+            def __init__(self, n):
+                self.n = n
+                self.tree = [0] * (n + 1)
+            def update(self, i, val):
+                while i <= self.n:
+                    self.tree[i] += val
+                    i += i & -i
+            def query(self, i):
+                res = 0
+                while i > 0:
+                    res += self.tree[i]
+                    i -= i & -i
+                return res
+        # 转换nums2的元素到nums1数组中的index, 然后问题等价于求nums中递增三元组的数量
+        mapping = {num:i+1 for i, num in enumerate(nums1)} # 注意index从1开始!
+        nums = [mapping[num] for num in nums2]
+        # 采用两个BIT 树状数组计算
+        n = len(nums)
+        bit1 = BIT(n)
+        bit2 = BIT(n)
+        low = [0] * n # low 记录左侧比 nums[i] 小的数字的个数
+        high = [0] * n # high 记录右侧比 nums[i] 小的数字的个数, 从右往左计算
+        for i in range(n):
+            # i, j 分别从左右遍历
+            j = n-1-i
+            n1, n2 = nums[i], nums[j]
+            low[i] = bit1.query(n1-1)
+            high[j] = i - bit2.query(n2-1)
+            bit1.update(n1, 1)
+            bit2.update(n2, 1)
+        return sum(low[i]*high[i] for i in range(n))
+
 
 
 sol = SolutionD68()
@@ -98,6 +133,7 @@ result = [
 
     sol.goodTriplets(nums1 = [2,0,1,3], nums2 = [0,1,2,3]),
     sol.goodTriplets(nums1 = [4,0,1,3,2], nums2 = [4,1,0,2,3]),
+    # 1, 4
 ]
 for r in result:
     print(r)
