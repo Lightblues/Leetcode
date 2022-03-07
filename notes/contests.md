@@ -355,12 +355,15 @@
 - 2178. 拆分成最多数目的偶整数之和
 - 2179. 统计数组中好三元组数目
     - 给两个数组, 分别是 [0:n-1] 的一个排序, 要求找满足条件的三元组数量, 条件: (x,t,z) 出现在两数组中的次序是一致的.
-    - 分析可以, 将nums1中数字在num2中的index依次写出来, 记为 numMap, 则结果就是该数组中递增的三元组的个数
+    - 分析可知, 将nums1中数字在num2中的index依次写出来, 记为 numMap, 则结果就是该数组中递增的三元组的个数
     - 思路1:
         - 遍历 numMap, 对于一个数字 num, 考虑以num结尾的长度为2的递增数组的数量 —— 为数组之前部分比num小的元素数量; 记为 last1
         - 进一步考虑以num结尾的长度为3的递增数组的数量, 可知其为 last1 中, 所有小于num的组数之和.
         - 因此, 这里的核心问题在于: 实现一个数据结构, 可以 1. 查询其中比 query 小的数量; 2. 插入某一个数值的数量.
-        - 该问题可以建模为 「**树状数组/线段树**」, 参见 [here](https://oi-wiki.org/ds/fenwick/) TODO:
+        - 该问题可以建模为 「**树状数组/线段树**」, 参见 [here](https://oi-wiki.org/ds/fenwick/)
+    - 思路2 树状数组:
+        - 已知, 问题可以转化为, **在一个数组中计算递增三元组的数量.**
+        - 分别用两个 BIT, 计算位置i之前的比 num[i] 小的数量, 以及位置i之后的比 num[i] 大的元素数量. 这样最终的结果就是 `sum(low[i]*high[i] for i in range(n))`
     - 另见 [here](https://leetcode-cn.com/problems/count-good-triplets-in-an-array/solution/deng-jie-zhuan-huan-shu-zhuang-shu-zu-by-xmyd/)
 
 ### D73
