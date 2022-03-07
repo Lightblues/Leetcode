@@ -1,5 +1,5 @@
 
-参见 [tarjan算法 割点割边强联通 算法讲解&模板 自用整理](https://blog.csdn.net/qq_19895789/article/details/89144975)
+参见 [tarjan算法 割点割边强联通 算法讲解&模板 自用整理](https://blog.csdn.net/qq_19895789/article/details/89144975); [OI](https://oi-wiki.org/graph/scc/)
 
 在具体实现Tarjan算法上，我们需要在DFS（深度优先遍历）中，额外定义三个数组 `dfn[]，low[]，parent[]`
 

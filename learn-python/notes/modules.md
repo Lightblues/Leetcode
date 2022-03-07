@@ -12,4 +12,15 @@ import functools
 def factorial(n):
     print(f"计算 {n} 的阶乘")
     return 1 if n <= 1 else n * factorial(n - 1)
+
+# 手动实现 cache
+def wrapper(f):
+    cache = {}
+    def inner(*args, **kwargs):
+        if args not in cache:
+            cache[args] = f(*args, **kwargs)
+        return cache[args]
+        # return f(*args, **kwargs)
+    return inner
+f = wrapper(f)
 ```
