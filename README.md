@@ -1,3 +1,11 @@
+TODO: 数据结构整理
+
+- 差分数组
+- 并查集 <https://leetcode-cn.com/tag/union-find/problemset/>
+    - <https://leetcode-cn.com/problems/merge-intervals/>
+- 区间树(线段树) Interval Tree
+
+参考
 
 - LeetCode Cookbook <https://books.halfrost.com/leetcode/>
 - 代码随想录 <https://github.com/youngyangyang04/leetcode-master>
