@@ -10,8 +10,7 @@ from functools import lru_cache
 from structures import ListNode, TreeNode
 
 """ 
-https://leetcode-cn.com/contest/biweekly-contest-71
-@20220223 补 """
+@20220320 """
 class Solution:
     """ 6027. 统计数组中峰和谷的数量
 首尾的不算, 相同数字算一个峰/谷
@@ -35,8 +34,7 @@ class Solution:
         return res
 
     """ 6028. 统计道路上的碰撞次数 
-给定一个字符串表示车辆方向. 
-`'L'`、`'R'` 或 `'S'` 分别表示第 `i` 辆车是向 **左** 、向 **右** 或者 **停留** 在当前位置。每辆车移动时 **速度相同** 。
+给定一个字符串表示车辆方向. `'L'`、`'R'` 或 `'S'` 分别表示第 `i` 辆车是向 **左** 、向 **右** 或者 **停留** 在当前位置。每辆车移动时 **速度相同** 。
 相向碰撞 2分, 一个静止的1分; 碰撞后都静止; 求最后的分数。
 
 模拟. 注意一些边界讨论.
@@ -68,11 +66,9 @@ class Solution:
         return res
 
     """ 6029. 射箭比赛中的最大得分
-12个区域得分分别为 0...11
-如果 `ak >= bk` ，那么 Alice 得 `k` 分。如果 `ak < bk` ，则 Bob 得 `k` 分
-现在知道Alice的分布, 要求Bob得分最高的一种方式
+12个区域得分分别为 0...11; 如果 `ak >= bk` ，那么 Alice 得 `k` 分。如果 `ak < bk` ，则 Bob 得 `k` 分; 现在知道Alice的分布, 要求Bob得分最高的一种方式
 
-DBS即可
+DFS即可
      """
     def maximumBobPoints(self, numArrows: int, aliceArrows: List[int]) -> List[int]:
         maxScore = 0
