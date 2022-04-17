@@ -13,6 +13,15 @@ Sys.setlocale(category="LC_ALL",locale="Chinese")     # 设置语言
 set.seed(1) # 设置随机数种子
 ```
 
+## 快捷键
+
+Rstudio 快捷键, [here](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts-in-the-RStudio-IDE)
+
+- 注释: command+shift+c, 修改为 cmd+Enter
+- 赋值符号: (Insert Assignment Operator): Opt+-, 修改为 cmd+-
+- 插入代码块: Cmd+Opt+I
+- 执行代码块: Cmd+Shift+Enter
+
 ## 数据结构
 
 ### data.frame 数据框
@@ -102,13 +111,16 @@ dat3$rvi <- dat3$baojia / dat3$yuanjia    ## 保值率 = 报价 / 原价
 dat3$log_rvi <- log(dat3$baojia / (dat3$yuanjia - dat3$baojia))    ## 对数保值比率 = log(报价 / (原价 - 报价))
 ```
 
-排序
+### 排序: 利用 order
 
 ```r
 head(dat3[order(dat3$log_rvi), ], n = 10)    ## 查看保值率最低的10个数据
+
+attach(mtcars)
+newdata <- mtcars[order(mpg, -cyl),]
 ```
 
-分位数 quantile
+### 分位数 quantile
 
 ```r
 # 找到其四分之三分位点，赋值给bar
@@ -146,7 +158,6 @@ travel_dat$Date[allweek] <- "工作日和周末"
 travel_dat %>% group_by(Date) %>% summarise(mean = mean(Price))
 ```
 
-
 ### 划分连续为离散 cut
 
 ```r
@@ -154,7 +165,62 @@ travel_dat %>% group_by(Date) %>% summarise(mean = mean(Price))
 cut(coef_district$p, breaks=c(0, .001, .01, .05, .1, 1), labels=c('***', '**', '*', '.', '_'))
 ```
 
-### 字符串处理
+### 分组统计: group_by + summarise
+
+```r
+# 从“Place”变量中提取出全部景点数和经典景点数，并分别以“AllPlace”和“ClassicPlace”变量存入数据集travel_dat，变量类型为数值型。
+place <- travel_dat$Place %>% as.character()                                                  # 变成字符变量
+travel_dat$AllPlace <- place %>% str_extract("[[:digit:]]+?(?=个景点)") %>% as.numeric()      # 得到所有景点个数
+travel_dat$ClassicPlace <- place %>% str_extract("[[:digit:]]+?(?=个经典)") %>% as.numeric()  # 得到经典景点个数
+
+# 将全部景点数按由少到多分成4组，分别为“9个及以下”，“10-16个”，“17-25个”，“25个以上”，以变量“AllPlacesGroup”变量保存在数据集travel_dat中，计算每一组内产品的平均价格并使用dplyr包的summarise()函数进行展示。
+travel_dat$AllPlacesGroup <- cut(travel_dat$AllPlace, breaks = c(0, 9, 16, 25, 77))           # 按景点个数数量分组
+
+travel_dat %>% group_by(AllPlacesGroup) %>% summarise(mean(Price, na.rm=T))                   # 每组价格均值
+```
+
+### jieba 分词, 词云
+
+```r
+library(jiebaRD)
+library(jiebaR)         # 加载包
+
+cutter = worker()        # 设置分词引擎
+words.seg = segment(hot.pot$字段1,cutter) # 对文本进行分词处理
+words.seg<-gsub("[0-9a-zA-Z]+?","",words.seg)  # 去除数字和英文
+stopwords = c('区','路','火锅','小区','分店','店')
+words.seg<-filter_segment(words.seg,stopwords)  # 去除中文停止词
+words.table = plyr::count(words.seg)
+
+# 词云
+library(wordcloud2)
+wordcloud2(words.table)
+```
+
+### NER
+
+任务需求是判断是否包含人名
+
+```r
+# 提示：箱线图显示，店名中包含人物词汇的火锅团购店的团购销量要显著高于店名中不包含人物词汇的。
+library(Rwordseg) # 加载包
+
+hot.pot$if.have.name = 0      # 定义变量
+for (i in 1:dim(hot.pot)[1]){   # 若isNameRecognition设定变化前后分词情况有变化，则说明火锅店名字中含有人名
+  segment.options(isNameRecognition=FALSE)
+  words.seg1 = segmentCN(hot.pot[i,]$字段1)
+  segment.options(isNameRecognition=TRUE)
+  words.seg2 = segmentCN(hot.pot[i,]$字段1)
+  if (length(words.seg1) != length(words.seg2))
+    hot.pot[i,]$if.have.name = 1
+}
+
+boxplot(log.sales~if.have.name,data=hot.pot,varwidth=T,col=7,xlab='',ylab='对数（季均销量+1）',main='是否使用人名词汇对销量的影响',names=c('否','是')) # 箱线图
+```
+
+## 字符串处理
+
+- [41 R语言的文本处理](https://www.math.pku.edu.cn/teachers/lidf/docs/Rbook/html/_Rbook/text.html)
 
 gsub 提取数字
 
@@ -199,7 +265,67 @@ StarNum <- function(x)                                          # 自定义函�
 star1<- star  %>% lapply(StarNum) %>% unlist()                  # 得到产品等级
 ```
 
-### 分组
+### stringr 包
+
+- <https://stringr.tidyverse.org/>
+
+```r
+x <- c("why", "video", "cross", "extra", "deal", "authority")
+str_length(x) 
+#> [1] 3 5 5 5 4 9
+str_c(x, collapse = ", ")
+#> [1] "why, video, cross, extra, deal, authority"
+str_sub(x, 1, 2)
+#> [1] "wh" "vi" "cr" "ex" "de" "au"
+
+
+# 正则表达式
+# detect 检查是否存在匹配
+str_detect(x, "[aeiou]")
+#> [1] FALSE  TRUE  TRUE  TRUE  TRUE  TRUE
+
+# count 计算匹配次数
+str_count(x, "[aeiou]")
+#> [1] 0 3 1 2 2 4
+
+# subset 进行筛选
+str_subset(x, "[aeiou]")
+#> [1] "video"     "cross"     "extra"     "deal"      "authority"
+
+# locate 给出匹配的位置 (第一次)
+str_locate(x, "[aeiou]")
+#>      start end
+#> [1,]    NA  NA
+#> [2,]     2   2
+#> [3,]     3   3
+
+# extract 抽取匹配内容
+str_extract(x, "[aeiou]")
+#> [1] NA  "i" "o" "e" "e" "a"
+
+# match 抽取分组的匹配内容
+# extract the characters on either side of the vowel
+str_match(x, "(.)[aeiou](.)")
+#>      [,1]  [,2] [,3]
+#> [1,] NA    NA   NA  
+#> [2,] "vid" "v"  "d" 
+
+# replace 替换
+str_replace(x, "[aeiou]", "?")
+#> [1] "why"       "v?deo"     "cr?ss"     "?xtra"     "d?al"      "?uthority"
+
+# split 进行切分
+str_split(c("a,b", "c,d,e"), ",")
+#> [[1]]
+#> [1] "a" "b"
+#> 
+#> [[2]]
+#> [1] "c" "d" "e"
+```
+
+#### str_extract 抽取
+
+例子: 抽取数字 (正则)
 
 ```r
 # 从“Place”变量中提取出全部景点数和经典景点数，并分别以“AllPlace”和“ClassicPlace”变量存入数据集travel_dat，变量类型为数值型。
@@ -211,47 +337,6 @@ travel_dat$ClassicPlace <- place %>% str_extract("[[:digit:]]+?(?=个经典)") %
 travel_dat$AllPlacesGroup <- cut(travel_dat$AllPlace, breaks = c(0, 9, 16, 25, 77))           # 按景点个数数量分组
 
 travel_dat %>% group_by(AllPlacesGroup) %>% summarise(mean(Price, na.rm=T))                   # 每组价格均值
-```
-
-
-
-### jieba 分词, 词云
-
-```r
-library(jiebaRD)
-library(jiebaR)         # 加载包
-
-cutter = worker()        # 设置分词引擎
-words.seg = segment(hot.pot$字段1,cutter) # 对文本进行分词处理
-words.seg<-gsub("[0-9a-zA-Z]+?","",words.seg)  # 去除数字和英文
-stopwords = c('区','路','火锅','小区','分店','店')
-words.seg<-filter_segment(words.seg,stopwords)  # 去除中文停止词
-words.table = plyr::count(words.seg)
-
-# 词云
-library(wordcloud2)
-wordcloud2(words.table)
-```
-
-### NER
-
-任务需求是判断是否包含人名
-
-```r
-# 提示：箱线图显示，店名中包含人物词汇的火锅团购店的团购销量要显著高于店名中不包含人物词汇的。
-library(Rwordseg) # 加载包
-
-hot.pot$if.have.name = 0      # 定义变量
-for (i in 1:dim(hot.pot)[1]){   # 若isNameRecognition设定变化前后分词情况有变化，则说明火锅店名字中含有人名
-  segment.options(isNameRecognition=FALSE)
-  words.seg1 = segmentCN(hot.pot[i,]$字段1)
-  segment.options(isNameRecognition=TRUE)
-  words.seg2 = segmentCN(hot.pot[i,]$字段1)
-  if (length(words.seg1) != length(words.seg2))
-    hot.pot[i,]$if.have.name = 1
-}
-
-boxplot(log.sales~if.have.name,data=hot.pot,varwidth=T,col=7,xlab='',ylab='对数（季均销量+1）',main='是否使用人名词汇对销量的影响',names=c('否','是')) # 箱线图
 ```
 
 ## 模型
@@ -370,12 +455,14 @@ table(rtb$dc, pred.class)
 好像可以直接 plot (包括了 AUC)
 
 ```r
-glm.pred = predict(glm.fit2, type="response")
+glm.pred = predict(glm.fit2, data.test, type="response")
 glm.roc = pROC::roc(rtb$dc, glm.pred)
 
 plot(glm.roc, print.auc=TRUE, auc.polygon=TRUE, grid=c(0.1, 0.2),
-     max.auc.polygon=TRUE, auc.polygon.col="skyblue"
-     # , print.thres=TRUE
+     max.auc.polygon=TRUE, auc.polygon.col="skyblue",
+     # print.thres=TRUE,
+     main = "预测ROC曲线", xlim = c(1,0),
+     xlab = "特异度",ylab = "敏感度"
      )
 ```
 
@@ -497,198 +584,4 @@ print(cumsum(eigen_values)/sum(eigen_values))
 # (2) PCA得到的结果
 evs = pca_model$explained_variance %>% unname()
 print(cumsum(evs)/sum(evs))
-```
-
-## 绘图
-
-### 基本绘图样式
-
-设置子图等
-
-```r
-# 规范流程
-opar <- par(no.readonly = TRUE)    ## 保存绘图原格式
-par(mfrow = c(1, 2), font.main = 2, font.axis = 2, font.lab = 2, lwd = 2)    ## 设置绘图格式
-
-# ... 绘图
-
-par(opar)    ## 格式复位
-
-# macOS 下中文
-par(family="PingFangSC-Regular")
-```
-
-#### legend
-
-```r
-# 两种方式: 可以在 barplot中设置, 更规范的应该是另外设置 legend
-mp = barplot(coef_district$coef, col=coef_district$color, main = "回归系数 ~ 行政区 柱状图", xlab="行政区", ylab="回归系数", 
-             # legend.text=c('***', '**', '*', '.', '_'), args.legend=list(x="bottomright", fill=coul[1:5])
-             )
-legend("bottomright", legend=c('***', '**', '*', '.', '_'), fill=coul)
-```
-
-#### 中文问题
-
-参见 [mac中RStudio中文正常显示问题汇总](https://blog.csdn.net/CrispyCici/article/details/102482593)
-
-```r
-# 安装字体
-library(showtext)  # 安装此包前需要在mac中按照XQuartz，https://www.xquartz.org
-showtext_auto() 
-font_add("PingFangSC-Regular",regular = "/System/Library/Fonts/PingFang.ttc") # 第一个参数是根据字体随便取个名字，regular参数是相应字体在电脑中的文件
-
-# (1) 一般作图含中文
-par(family="PingFangSC-Regular")
-plot(...)
-
-# (2) ggplot
-ggplot(data, aes(x= ,y= )) + #用法示例
-  geom_histogram() +
-  geom_text(..., family="PingFangSC-Regular") +
-  ggtitle("xxx") + 
-  theme(text=element_text(family='PingFangSC-Regular')) 
-```
-
-### 分布图 hist
-
-```r
-opar <- par(no.readonly = TRUE)    ## 保存绘图原格式
-par(mfrow = c(1, 2), font.main = 2, font.axis = 2, font.lab = 2, lwd = 2)    ## 设置绘图格式
-
-hist(dat3$rvi, freq = T, main = "汽车保值率直方图", col = "#7F7FFF", xlab = "保值率", ylab = "频数", xlim = c(0, 1), ylim = c(0, 1500), breaks = seq(0, 1, 0.05))    ## 保值率 直方图
-
-hist(dat3$log_rvi, freq = T, main = "汽车对数保值比率直方图", col = "#7F7FFF", xlab = "对数保值比率", ylab = "频数", xlim = c(-3, 3), ylim = c(0, 2000), breaks = seq(-5, 5, 0.25))    ## 对数保值比率 直方图
-
-par(opar)    ## 格式复位
-```
-
-### 柱状图 barplot
-
-```r
-mp = barplot(coef_district$coef, col=coef_district$color, main = "回归系数 ~ 行政区 柱状图", xlab="行政区", ylab="回归系数", 
-             # legend.text=c('***', '**', '*', '.', '_'), args.legend=list(x="bottomright", fill=coul[1:5])
-             )
-# 设置 legend
-legend("bottomright", legend=c('***', '**', '*', '.', '_'), fill=coul)
-# 设置横坐标
-lablist <- rownames(coef_district)
-text(mp, par("usr")[3], labels = lablist, srt = 45, adj = c(1.1,1.1), xpd = TRUE, cex=0.6)
-```
-
-### 箱线图
-
-```r
-par(font.main = 2, font.axis = 2, font.lab = 2, lwd = 2, pch = 1)    ## 设置绘图格式
-
-boxplot(dat3$log_rvi ~ dat3$nationalState, main = "对数保值比率关于排放标准的箱线图", xlab = "排放标准", ylab = "对数保值比率", col = "#FF9933")    ## 对数保值比率 - 排放标准 箱线图
-
-par(opar)    ## 格式复位
-```
-
-#### 调整因子顺序
-
-参见 [Ordering boxplots in base R](https://r-graph-gallery.com/9-ordered-boxplot.html)
-
-```r
-new_order <- with(data, reorder(district0, log_recent_order_num, median))
-boxplot(log_recent_order_num ~ new_order, data=data, main = "对数月销量 ~ 行政区划 箱线图", xlab = "行政区划", ylab = "月销量", col = "#FF9933")
-```
-
-### 散点图
-
-```r
-plot(datFinal$licheng, datFinal$ratio, main = "汽车对数保值比率对里程的散点图", xlab = "里程", ylab = "对数保值比率", font.main = 2, font.lab = 2, font.axis = 2, lwd = 2, pch = 16, cex = 0.6)    ## 保值比率对里程的散点图
-```
-
-### Spline 图
-
-分组的比例图
-
-```r
-rtb$isp = factor(rtb$isp,                         # 更名
-                   levels = c(0,1,2,3), 
-                   labels = c("未知","中国移动","中国联通","中国电信"))
-table(rtb$isp)
-# 输入的应该是二维表. 如下面横轴是 isp也即手机运营商, 纵轴是dc, 有两个标签也即 点击/未点击
-table(rtb$isp, rtb$dc) %>% 
-  spineplot(main="手机运营商",
-            col=c("gray","gold"),
-            yaxlabels = c("未点击","点击"))
-```
-
-## ggplot
-
-### 分组绘图: facet_wrap
-
-```r
-ggplot(diamonds, aes(x=price)) +
-  geom_histogram(bins=50) + facet_wrap(~cut) + theme_minimal() +
-  ggtitle("Diamond Prices Distribution ~ Cut") 
-```
-
-### geom_point
-
-例子: 画出 kmeans 聚类结果
-
-```r
-# 这里用的是 sparkR 训练模型
-kmean.model4 = km_data$training %>%
-  ml_kmeans(features=c("V1", "V2"), k=4, seed = 116)
-pred4 = ml_predict(kmean.model4, km_data$training) %>%
-  collect()
-
-# plot cluster membership
-pred4 %>%
-  ggplot(aes(V1, V2)) +
-  geom_point(aes(V1, V2, col = factor(prediction + 1)),
-             size = 2, alpha = 0.5) + 
-  # 聚类中心
-  geom_point(data = kmean.model4$centers, aes(V1, V2),
-             col = scales::muted(c("red", "green", "blue", "yellow")), 
-             pch = 'x', size = 12) +
-  # 类标签
-  scale_color_discrete(name = "Predicted Cluster",
-                       labels = paste("Cluster", 1:4)) +
-  labs(
-    x = "V1",
-    y = "V2",
-    title = "K-Means Clustering with K=4",
-  )
-```
-
-### geom_boxplot
-
-```r
-ggplot(diamonds, aes(factor(color), price, fill=color)) + 
-  geom_boxplot() +
-  ggtitle("Boxplot Price ~ Color") 
-
-# 绘制价格的对数对产品等级的分组箱线图，并按每一等级的平均价格由低到高进行排列
-travel_dat$Star2 <- as.factor(star1)                            # 变成因子变量并保存至travel_dat中
-travel_dat$Star2 <- factor(travel_dat$Star2,                    # 按照均价重新排序水平
-                      levels = levels(travel_dat$Star2)[c(1,5,2,3,4)], 
-                      labels = c("2钻","无信息","3钻","4钻","5钻"))
-ggplot(travel_dat, aes_string(x="Star2", y="Price")) +          # 箱线图
-  geom_boxplot(varwidth=T, color = adjustcolor("#8CE52E"), fill = adjustcolor("#8CE52E", alpha.f = 0.4)) +
-  scale_y_log10(breaks=c(2e3,1e4,8e4),                          # 对价格取对数
-    labels=c("2千", "1万", "8万")) +
-  ylab("产品价格（对数变换）") +
-  xlab("") + 
-  theme(panel.background = element_rect(fill = "transparent"),  # 背景透明
-        panel.grid.major = element_blank(),                     # 去掉背景网格
-        panel.grid.minor = element_blank(),
-        axis.ticks = element_blank())                           # 去掉坐标轴
-```
-
-### geom_histogram
-
-```r
-ggplot(travel_dat, aes(x = Price)) + 
-  geom_histogram(fill = adjustcolor("#FDE255")) +           # 直方图
-  scale_x_log10(                                            # log变换
-    breaks=c(1e3,1e4,1e5),                   
-    labels=c("1千", "1万", "10万")) +                       # 改变坐标轴数值名称
-  xlab("产品价格（对数变换）") + ylab("频数") +             # x轴y轴的label
-  theme_classic()
 ```

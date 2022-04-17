@@ -1639,9 +1639,3 @@ sink()
 ## Multiple R-squared:  0.6544, Adjusted R-squared:  0.652 
 ## F-statistic: 265.2 on 1 and 140 DF,  p-value: < 2.2e-16
 ```
-
-### multivariate analyses
-
-#### PCA
-
-### ggplot

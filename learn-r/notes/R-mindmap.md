@@ -1,3 +1,8 @@
+
+相关资源
+
+- Rstudio 的 Cheatsheet <https://github.com/rstudio/cheatsheets>
+
 ## 笔记/小结
 
 - 关于R语言中的数据类型
