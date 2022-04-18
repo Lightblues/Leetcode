@@ -42,7 +42,9 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "${fileDirname}"
+            // "program": "${workspaceFolder}"
+            "program": "${file}",
+            "cwd": "${fileDirname}"
         },
         {
             "name": "Python",
