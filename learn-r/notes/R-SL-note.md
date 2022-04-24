@@ -19,8 +19,11 @@ Rstudio 快捷键, [here](https://support.rstudio.com/hc/en-us/articles/20071185
 
 - 注释: command+shift+c, 修改为 cmd+Enter
 - 赋值符号: (Insert Assignment Operator): Opt+-, 修改为 cmd+-
+- 管道符号: (Insert Pipe Operator): Cmd+Shift+M, 修改为 Cmd+=
 - 插入代码块: Cmd+Opt+I
 - 执行代码块: Cmd+Shift+Enter
+
+调整光标位置: 参见 `View` 中定义的各个快捷键
 
 ## 数据结构
 
@@ -118,6 +121,9 @@ head(dat3[order(dat3$log_rvi), ], n = 10)    ## 查看保值率最低的10个数
 
 attach(mtcars)
 newdata <- mtcars[order(mpg, -cyl),]
+
+# 按照 V1 降序排列
+df1 <- df1[order(df1$V1, decreasing = TRUE),]
 ```
 
 ### 分位数 quantile
@@ -186,10 +192,10 @@ library(jiebaRD)
 library(jiebaR)         # 加载包
 
 cutter = worker()        # 设置分词引擎
-words.seg = segment(hot.pot$字段1,cutter) # 对文本进行分词处理
-words.seg<-gsub("[0-9a-zA-Z]+?","",words.seg)  # 去除数字和英文
+words.seg = segment(hot.pot$字段1, cutter) # 对文本进行分词处理
+words.seg <- gsub("[0-9a-zA-Z]+?","",words.seg)  # 去除数字和英文
 stopwords = c('区','路','火锅','小区','分店','店')
-words.seg<-filter_segment(words.seg,stopwords)  # 去除中文停止词
+words.seg <- filter_segment(words.seg, stopwords)  # 去除中文停止词
 words.table = plyr::count(words.seg)
 
 # 词云
@@ -337,6 +343,75 @@ travel_dat$ClassicPlace <- place %>% str_extract("[[:digit:]]+?(?=个经典)") %
 travel_dat$AllPlacesGroup <- cut(travel_dat$AllPlace, breaks = c(0, 9, 16, 25, 77))           # 按景点个数数量分组
 
 travel_dat %>% group_by(AllPlacesGroup) %>% summarise(mean(Price, na.rm=T))                   # 每组价格均值
+```
+
+### JiebaR 分词
+
+下面展示了 jiebaR 载入自定义词典, 分词, 绘制词数分布图
+
+```r
+library(jiebaR)
+# 初始化分词工具
+seg <- worker(bylines = T)
+# 读入自定义词典
+new_words <- read.table('userdict.dat', header = F, stringsAsFactors = F)
+# 将词典加入分词引擎
+new_user_word(seg, new_words$V1)
+
+# 分词, 注意分词结果是 list
+catalog$name <- as.character(catalog$name)
+cata_seg <- segment(catalog$name, seg)
+# 提取出“生鲜”
+food_and_drink_seg <- cata_seg[which(catalog$first == "生鲜")]
+# 计算不同商品名称包含的词数
+word_lengths <- sapply(food_and_drink_seg, length)
+hist(word_lengths)
+```
+
+### 正则表达式 grepl
+
+- \\\\:转义符
+- ^:匹配输入字符串的开始位置
+- $:匹配输入字符串的结束位置
+- *:匹配前面的子表达式零次或多次
+- +:匹配前面的子表示式一次或多次
+- ?:匹配前面的子表达式零次或一次
+- .:匹配除 `\n` 以外的任何单个字符
+- x|y:匹配x或y
+- \[xyz]:字符集和，匹配集合中所包含的任意字符
+- \[^xyz]:负字符集合，匹配非集合中的任意字符
+- \[a-z]:字符范围，匹配任意小写字母
+- \[^a-z]:负值字符范围
+- \[A-Z]:字符范围，匹配任意大写字母
+- \[0-9]:字符范围，匹配任意数字
+- `[\u4e00-\u9fa5]`:中文字符范围
+- \\\\s:匹配任意空白字符，包括空格、制表符、换页符等等
+
+```r
+# 匹配包含某些关键词的字符串
+s0 <- "have a nice day, 666"
+grepl(".+nice.+", s0)
+grepl(".+666.+", s0) # F
+
+# 匹配全是英文字母组成的字符串
+s1 <- "asfGYJKhkgdnabuqwKHg"
+grepl("^([a-z]|[A-Z])+$", s1)
+
+# 匹配全是数字组成的字符串
+s2 <- "34241341"
+grepl("^[0-9]+$", s2)
+
+# 匹配中文
+s3 <- "数据abc666挖掘"
+grepl('^[\u4e00-\u9fa5]+[a-z|A-Z]+[0-9]+[\u4e00-\u9fa5]+$', s3)
+```
+
+## IO
+
+```r
+library(readxl)
+catalogs <- readxl::read_excel("catalogs.xlsx")
+head(catalogs)
 ```
 
 ## 模型

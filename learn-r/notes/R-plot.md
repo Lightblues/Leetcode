@@ -406,6 +406,22 @@ ggarrange(bxp, dp, bp + rremove("x.text"),
           ncol = 2, nrow = 2)
 ```
 
+输入 list 时, 注意需要指定参数 `plotlist` !
+
+```r
+plots.list <- vector("list", 2)
+for (i in 1:2) {
+    second.cat <-  c("生鲜", "食品饮料、保健食品")[i]
+    # ...
+    plots.list[[i]] <- p
+}
+# ggarrange 中文有警告, 需要关闭 !!
+# ```{r warning=FALSE}
+ggpubr::ggarrange(plotlist = plots.list)
+```
+
+#### 其他 替代包
+
 也可以使用 cowplot::plot_grid, gridExtra::grid.arrange 来完成
 
 ```r
@@ -418,3 +434,5 @@ library("gridExtra")
 grid.arrange(bxp, dp, bp + rremove("x.text"), 
              ncol = 2, nrow = 2)
 ```
+
+
