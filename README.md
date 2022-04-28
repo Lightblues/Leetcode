@@ -12,12 +12,11 @@
 
 ## Notes
 
-- [每日一题](notes/daily.md)
-- [周赛](notes/contests.md)
 - [分类题解](notes/01-分类总结/分类.md)
 - [代码语法小结](notes/language-parctise.md)
 
 ## 其他
 
-- [周赛记录](./notes/contests.md)
-- [每日一题](./notes/daily.md)
+- [周赛记录](notes/Leetcode-contests.md)
+- 刷了一小段的 [每日一题](notes/Leetcode-daily.md)
+- [Python语法总结](notes/Python-base.md)

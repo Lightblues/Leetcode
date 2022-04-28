@@ -1,4 +1,4 @@
-TODO: 数据结构整理
+TODO: 数据结构整理: KMP, ...
 
 - 差分数组
 - 并查集 <https://leetcode-cn.com/tag/union-find/problemset/>
@@ -19,3 +19,5 @@ TODO: 数据结构整理
 3. 平衡树解法
     维护一个 Treemap(java)/map(C++)/SortedDict(python)，存储区间的 start=>end 映射即可
     [352. 将数据流变为多个不相交区间](https://leetcode-cn.com/problems/data-stream-as-disjoint-intervals/)
+
+- KMP [题目汇总](https://leetcode-cn.com/problems/distinct-echo-substrings/solution/by-flix-zsuj/)

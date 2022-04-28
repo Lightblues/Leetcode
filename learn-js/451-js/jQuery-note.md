@@ -1,42 +1,42 @@
 ## jQuery
 
 - 作用
-  - 消除浏览器差异：你不需要自己写冗长的代码来针对不同的浏览器来绑定事件，编写AJAX等代码；
-  - 简洁的操作DOM的方法：写`$('#test')`肯定比`document.getElementById('test')`来得简洁；
-  - 轻松实现动画、修改CSS等各种操作。
+    - 消除浏览器差异：你不需要自己写冗长的代码来针对不同的浏览器来绑定事件，编写AJAX等代码；
+    - 简洁的操作DOM的方法：写`$('#test')`肯定比`document.getElementById('test')`来得简洁；
+    - 轻松实现动画、修改CSS等各种操作。
 - `$.fn.jquery` 查看版本
 - `$` 符号
-  - `$`是著名的jQuery符号。实际上，jQuery把所有功能全部封装在一个全局变量`jQuery`中，而`$`也是一个合法的变量名，它是变量`jQuery`的别名
-  - `$`本质上就是一个函数，但是函数也是对象，于是`$`除了可以直接调用外，也可以有很多其他属性。
+    - `$`是著名的jQuery符号。实际上，jQuery把所有功能全部封装在一个全局变量`jQuery`中，而`$`也是一个合法的变量名，它是变量`jQuery`的别名
+    - `$`本质上就是一个函数，但是函数也是对象，于是`$`除了可以直接调用外，也可以有很多其他属性。
 
 ### 选择器
 
 - 选择器是jQuery的核心。一个选择器写出来类似`$('#dom-id')`。
 - 返回 jQuery 对象. jQuery对象类似数组，它的每个元素都是一个引用了DOM节点的对象。
-  - 找不到时返回 `[]`, 因此 jQuery的选择器不会返回`undefined`或者`null`
+    - 找不到时返回 `[]`, 因此 jQuery的选择器不会返回`undefined`或者`null`
 - jQuery对象和DOM对象之间可以互相转化
-  - 例如, 对于 `var div = $('#abc');` jQuery 对象
-  - `var divDom = div.get(0);` 转为 DOM 对象.
-  - `var another = $(divDom);` 将 DOM 对象转为 jQuery 对象
+    - 例如, 对于 `var div = $('#abc');` jQuery 对象
+    - `var divDom = div.get(0);` 转为 DOM 对象.
+    - `var another = $(divDom);` 将 DOM 对象转为 jQuery 对象
 - 通常情况下你不需要获取DOM对象，直接使用jQuery对象更加方便
 - 按ID查找, `#`
-  - `var div = $('#abc');` 查找 `<div id="abc">`
+    - `var div = $('#abc');` 查找 `<div id="abc">`
 - tag, 直接写 tag 名称
-  - `var ps = $('p');` 返回所有 `<p>` 节点
-  - `ps.length` 返回查找到的数量
+    - `var ps = $('p');` 返回所有 `<p>` 节点
+    - `ps.length` 返回查找到的数量
 - class, `.`
-  - `var a = $('.red');` 所有节点包含`class="red"`都将返回, 也匹配 `<p class="green red">...</p>`
-  - 查找多个 class: `var a = $('.red.green');`
+    - `var a = $('.red');` 所有节点包含`class="red"`都将返回, 也匹配 `<p class="green red">...</p>`
+    - 查找多个 class: `var a = $('.red.green');`
 - 属性, `[...="..."]`
-  - `var email = $('[name=email]');`
-  - 当属性的值包含空格等特殊字符时，需要用双引号括起来
-  - 按属性查找还可以使用前缀查找或者后缀查找
-  - `var icons = $('[class^="icon-"]');`
+    - `var email = $('[name=email]');`
+    - 当属性的值包含空格等特殊字符时，需要用双引号括起来
+    - 按属性查找还可以使用前缀查找或者后缀查找
+    - `var icons = $('[class^="icon-"]');`
 - 组合查找
-  - `var emailInput = $('input[name=email]');` 筛选 name属性为 email 的 input 节点
+    - `var emailInput = $('input[name=email]');` 筛选 name属性为 email 的 input 节点
 - 多项选择器 `,`
-  - `$('p.red,p.green');` 筛选 class 包含 red或green 的 p 节点
-  - 要注意的是，选出来的元素是按照它们在HTML中出现的顺序排列的，而且不会有重复元素。例如，`<p class="red green">`不会被上面的`$('p.red,p.green')`选择两次。
+    - `$('p.red,p.green');` 筛选 class 包含 red或green 的 p 节点
+    - 要注意的是，选出来的元素是按照它们在HTML中出现的顺序排列的，而且不会有重复元素。例如，`<p class="red green">`不会被上面的`$('p.red,p.green')`选择两次。
 
 ```js
 /* ID */
@@ -86,21 +86,21 @@ $('p.red,p.green'); // 把<p class="red">和<p class="green">都选出来
 #### 层级选择器
 
 - 层级选择器（Descendant Selector）
-  - 用 `` 空格隔开, 具有层级关系的两个节点
-  - 例如, `$('form[name=upload] input');` 筛选 name为upload 表单下的 input 节点
-  - 也可以多层, `$('form.test p input');`
+    - 用 `` 空格隔开, 具有层级关系的两个节点
+    - 例如, `$('form[name=upload] input');` 筛选 name为upload 表单下的 input 节点
+    - 也可以多层, `$('form.test p input');`
 - 子选择器（Child Selector）
-  - 限制为父子关系 `>`
-  - `$('ul.lang>li.lang-javascript');`
+    - 限制为父子关系 `>`
+    - `$('ul.lang>li.lang-javascript');`
 
 ##### 过滤器（Filter）
 
 - 过滤器一般不单独使用，它通常附加在选择器上，帮助我们更精确地定位元素
-  - `:` 后加筛选条件
-  - `first-child, last-child, nth-child(2), nth-child(even)`
-  - 例如 `$('ul.lang li:nth-child(odd)');` 选出序号为奇数的元素
+    - `:` 后加筛选条件
+    - `first-child, last-child, nth-child(2), nth-child(even)`
+    - 例如 `$('ul.lang li:nth-child(odd)');` 选出序号为奇数的元素
 - `:visible`, `:hidden` 选出可见的或隐藏的元素
-  - 例如 `$('div:visible');`
+    - 例如 `$('div:visible');`
 
 针对表单元素，jQuery还有一组特殊的选择器：
 
@@ -118,15 +118,15 @@ $('p.red,p.green'); // 把<p class="red">和<p class="green">都选出来
 可以对 jQuery 进一步执行查找
 
 - 最常见的查找是在某个节点的所有子节点中查找，使用`find()`方法，它本身又接收一个任意的选择器
-  - `var dy = ul.find('.dy');` 在 ul 这个 jQuery 对象的子节点中查找 class 为 dy 的节点
+    - `var dy = ul.find('.dy');` 在 ul 这个 jQuery 对象的子节点中查找 class 为 dy 的节点
 - 如果要从当前节点开始向上查找，使用`parent()`方法
 - 对于位于同一层级的节点，可以通过`next()`和`prev()`方法
-  - 它们和 parent 方法都可以传入筛选条件, 若不符合则返回空 jQuery 对象
+    - 它们和 parent 方法都可以传入筛选条件, 若不符合则返回空 jQuery 对象
 
 过滤
 
 - `filter()`方法可以过滤掉不符合选择器条件的节点
-  - 也可以传入一个函数，要特别注意函数内部的`this`被绑定为DOM对象，不是jQuery对象
+    - 也可以传入一个函数，要特别注意函数内部的`this`被绑定为DOM对象，不是jQuery对象
 - `map()`方法把一个jQuery对象包含的若干DOM节点转化为其他对象
 - `irst()`、`last()`和`slice()`方法可以返回一个新的jQuery对象，把不需要的DOM节点去掉
 
@@ -153,14 +153,14 @@ var sub = langs.slice(2, 4); // Swift, Scheme, 参数和数组的slice()方法�
 - 一个jQuery对象可以包含0个或任意个DOM对象，它的方法实际上会作用在对应的每个DOM节点上。
 - jQuery对象的所有方法都返回一个jQuery对象（可能是新的也可能是自身），这样我们可以进行链式调用，非常方便
 - 修改文本
-  - jQuery对象的`text()`和`html()`方法分别获取节点的文本和原始HTML文本
+    - jQuery对象的`text()`和`html()`方法分别获取节点的文本和原始HTML文本
 - 修改 CSS
-  - style 属性: `css` 方法
-    - 调用jQuery对象的`css('name', 'value')`方法
-    - `$('#test-css li.dy>span').css('background-color', '#ffd351').css('color', 'red');` 设置相应节点的 background-color, color 两个CSS属性
-    - 为了和JavaScript保持一致，CSS属性可以用`'background-color'`和`'backgroundColor'`两种格式。
-  - class 属性
-    - `hasClass(), addClass(), removeClass()`
+    - style 属性: `css` 方法
+        - 调用jQuery对象的`css('name', 'value')`方法
+        - `$('#test-css li.dy>span').css('background-color', '#ffd351').css('color', 'red');` 设置相应节点的 background-color, color 两个CSS属性
+        - 为了和JavaScript保持一致，CSS属性可以用`'background-color'`和`'backgroundColor'`两种格式。
+    - class 属性
+        - `hasClass(), addClass(), removeClass()`
 
 ```js
 var div = $('#test-div');
@@ -177,33 +177,33 @@ div.removeClass('highlight'); // 删除highlight这个class
 ### 事件
 
 - 鼠标事件
-  - `click`: 鼠标单击时触发；
-  - dblclick：鼠标双击时触发；
-  - `mouseenter`：鼠标进入时触发；
-  - mouseleave：鼠标移出时触发；
-  - mousemove：鼠标在DOM内部移动时触发；
-  - `hover`：鼠标进入和退出时触发两个函数，相当于mouseenter加上mouseleave。
+    - `click`: 鼠标单击时触发；
+    - dblclick：鼠标双击时触发；
+    - `mouseenter`：鼠标进入时触发；
+    - mouseleave：鼠标移出时触发；
+    - mousemove：鼠标在DOM内部移动时触发；
+    - `hover`：鼠标进入和退出时触发两个函数，相当于mouseenter加上mouseleave。
 - 键盘事件
-  - 键盘事件仅作用在当前焦点的DOM上，通常是`<input>`和`<textarea>`。
-  - `keydown`：键盘按下时触发；
-  - keyup：键盘松开时触发；
-  - `keypress`：按一次键后触发。
+    - 键盘事件仅作用在当前焦点的DOM上，通常是`<input>`和`<textarea>`。
+    - `keydown`：键盘按下时触发；
+    - keyup：键盘松开时触发；
+    - `keypress`：按一次键后触发。
 - 其他事件
-  - `focus`：当DOM获得焦点时触发；
-  - `blur`：当DOM失去焦点时触发；
-  - `change`：当`<input>`、`<select>`或`<textarea>`的内容改变时触发；
-  - `submit`：当`<form>`提交时触发；
-  - `ready`：当页面被载入并且DOM树完成初始化后触发。
-    - `ready`仅作用于`document`对象。由于`ready`事件在DOM完成初始化后触发，且只触发一次，所以非常适合用来写其他的初始化代码
+    - `focus`：当DOM获得焦点时触发；
+    - `blur`：当DOM失去焦点时触发；
+    - `change`：当`<input>`、`<select>`或`<textarea>`的内容改变时触发；
+    - `submit`：当`<form>`提交时触发；
+    - `ready`：当页面被载入并且DOM树完成初始化后触发。
+        - `ready`仅作用于`document`对象。由于`ready`事件在DOM完成初始化后触发，且只触发一次，所以非常适合用来写其他的初始化代码
 
 #### ready
 
 - 比如, 要在 head 里设置 DOM 的某个事件监听, 由于 DOM 还没有初始化, 是找不到的
 - 因此需要 `$(document).on('ready', function () {})` 设置当页面初始化之后再来绑定事件
-  - 例如绑定到一个 form 节点上设置 submit 后要执行的 `$('#testForm).on('submit', function () {})`
+    - 例如绑定到一个 form 节点上设置 submit 后要执行的 `$('#testForm).on('submit', function () {})`
 - 由于 ready 事件非常普遍, 可以简写
-  - `$(document).ready(f)`
-  - 甚至直接 `$(f)`, 也即, 在 `$()` 中传入回调函数
+    - `$(document).ready(f)`
+    - 甚至直接 `$(f)`, 也即, 在 `$()` 中传入回调函数
 - 可以反复绑定事件处理函数，它们会依次执行
 
 ```js
@@ -242,9 +242,9 @@ $(function () {
 - 事件的触发总是由用户操作引发的
 - 因此, 用代码修改的时候无法触发
 - `trigger()` 方法
-  - 有些时候，我们希望用代码触发事件
-  - 可以用 `trigger('change')` 触发
-  - 或者是简写, 无参数的`change()`方法来触发 change 事件
+    - 有些时候，我们希望用代码触发事件
+    - 可以用 `trigger('change')` 触发
+    - 或者是简写, 无参数的`change()`方法来触发 change 事件
 
 ```js
 // 绑定事件, 监听用户输入
@@ -269,12 +269,12 @@ input.change(); // 触发change事件
 ### AJAX
 
 - 可以通过 `$.ajax(url, settings)` 处理 AJAX 请求
-  - settings 中的选项包括 `method, contentType, data, headers, dataType` 等
-  - 通过 `done, fail, always` 方法来进行类似 Promise 的处理
+    - settings 中的选项包括 `method, contentType, data, headers, dataType` 等
+    - 通过 `done, fail, always` 方法来进行类似 Promise 的处理
 - 对于常用的请求, 可以简写成 `$.get(rul, paras)` `$.post(url, paras)`
-  - `$.getJSON(url, paras)` 快速通过GET获取一个JSON对象
+    - `$.getJSON(url, paras)` 快速通过GET获取一个JSON对象
 - jQuery的AJAX完全封装的是JavaScript的AJAX操作，所以它的安全限制和前面讲的用JavaScript写AJAX完全一样
-  - 如果需要使用JSONP，可以在`ajax()`中设置`jsonp: 'callback'`
+    - 如果需要使用JSONP，可以在`ajax()`中设置`jsonp: 'callback'`
 
 jQuery在全局对象`jQuery`（也就是`$`）绑定了`ajax()`函数，可以处理AJAX请求。`ajax(url, settings)`函数需要接收一个URL和一个可选的`settings`对象，常用的选项如下：
 
@@ -314,13 +314,13 @@ var jqxhr = $.ajax("/api/categories", {
 ```
 
 - 对常用的AJAX操作，jQuery提供了一些辅助方法
-  - get
-    - 第二个参数如果是object，jQuery自动把它变成query string然后加到URL后面
-    - 这样我们就不用关心如何用URL编码并构造一个query string了。
-  - post
-    - 传入的第二个参数默认被序列化为`application/x-www-form-urlencoded`
-    - 作为POST的body被发送
-  - getJSON
+    - get
+        - 第二个参数如果是object，jQuery自动把它变成query string然后加到URL后面
+        - 这样我们就不用关心如何用URL编码并构造一个query string了。
+    - post
+        - 传入的第二个参数默认被序列化为`application/x-www-form-urlencoded`
+        - 作为POST的body被发送
+    - getJSON
 
 ```js
 var jqxhr = $.get('/path/to/resource', {

@@ -1,3 +1,12 @@
+# JavaScript note
+
+- 廖雪峰 <https://www.liaoxuefeng.com/wiki/1022910821149312/1023025235359040>
+- RUNOOB <https://www.runoob.com/nodejs/nodejs-tutorial.html>
+
+其他
+
+- Node.js 入门教程 <http://nodejs.cn/learn>
+- npm 廖雪峰 [Npm 模块安装机制](http://www.ruanyifeng.com/blog/2016/01/npm-install.html)
 
 ## Quick Start
 
@@ -90,12 +99,12 @@ arr[6]; // 索引超出了范围，返回undefined
 
 ```js
 var person = {
-    name: 'Bob',
-    age: 20,
-    tags: ['js', 'web', 'mobile'],
-    city: 'Beijing',
-    hasCar: true,
-    zipcode: null
+ name: 'Bob',
+ age: 20,
+ tags: ['js', 'web', 'mobile'],
+ city: 'Beijing',
+ hasCar: true,
+ zipcode: null
 };
 
 person.name; // 'Bob'
@@ -229,7 +238,7 @@ alert(str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, ''));
 
 if (!String.prototype.trim) {
   String.prototype.trim = function () {
-    return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+ return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
 };
 var str = "       Hello World!        ";
 alert(str.trim());
@@ -306,31 +315,31 @@ arr; // arr变为[1, 2, 3, undefined, undefined, 'x']
 
 ```js
 function showList(){
-    let fruits, text, fLen, i;
-    fruits = ['banana', 'orange', 'apple'];
-    fLen = fruits.length;
-    text = '<ul>'
-    for (i=0; i<fLen; i++) {
-        text += "<li>" + fruits[i] + '</li>';
-    }
-    text += '</ul>';
-    // console.log(text);
-    document.getElementById('demo').innerHTML = text;
+ let fruits, text, fLen, i;
+ fruits = ['banana', 'orange', 'apple'];
+ fLen = fruits.length;
+ text = '<ul>'
+ for (i=0; i<fLen; i++) {
+  text += "<li>" + fruits[i] + '</li>';
+ }
+ text += '</ul>';
+ // console.log(text);
+ document.getElementById('demo').innerHTML = text;
 }
 
 function showList2() {
-    let fruits, text;
-    fruits = ["Banana", "Orange", "Apple", "Mango"];
+ let fruits, text;
+ fruits = ["Banana", "Orange", "Apple", "Mango"];
 
-    text = '<ul>';
-    fruits.forEach(foo);
-    text += '</ul>';
+ text = '<ul>';
+ fruits.forEach(foo);
+ text += '</ul>';
 
-    function foo(value){
-        text += '<li>' + value + '</li>';
-    }
+ function foo(value){
+  text += '<li>' + value + '</li>';
+ }
 
-    document.getElementById('demo').innerHTML = text;
+ document.getElementById('demo').innerHTML = text;
 }
 ```
 
@@ -468,7 +477,7 @@ points.sort(function(a, b){return b - a});
 ```js
 var arr = [40, 100, 1, 5, 25, 10];
 function myArrayMax(arr) {
-    return Math.max.apply(null, arr);
+ return Math.max.apply(null, arr);
 }
 ```
 
@@ -478,14 +487,14 @@ function myArrayMax(arr) {
 
 ```js
 function myArrayMax(arr) {
-    var len = arr.length
-    var max = -Infinity;
-    while (len--) {
-        if (arr[len] > max) {
-            max = arr[len];
-        }
-    }
-    return max;
+ var len = arr.length
+ var max = -Infinity;
+ while (len--) {
+  if (arr[len] > max) {
+   max = arr[len];
+  }
+ }
+ return max;
 }
 ```
 
@@ -494,7 +503,7 @@ function myArrayMax(arr) {
 ```js
 // map
 function pow(x) {
-    return x * x;
+ return x * x;
 }
 
 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -504,7 +513,7 @@ console.log(results);
 // reduce
 var arr = [1, 3, 5, 7, 9];
 arr.reduce(function (x, y) {
-    return x + y;
+ return x + y;
 }); // 25
 ```
 
@@ -538,11 +547,11 @@ filter也是一个常用的操作，它用于把Array的某些元素过滤掉，
 ```js
 // 利用 filter 的 index 参数去除重复字符串
 var
-    r,
-    arr = ['apple', 'strawberry', 'banana', 'pear', 'apple', 'orange', 'orange', 'strawberry'];
-    
+ r,
+ arr = ['apple', 'strawberry', 'banana', 'pear', 'apple', 'orange', 'orange', 'strawberry'];
+ 
 r = arr.filter(function (element, index, self) {
-    return self.indexOf(element) === index;
+ return self.indexOf(element) === index;
 });
 console.log(r.toString());    
 ```
@@ -552,16 +561,16 @@ console.log(r.toString());
 ```js
 let arr = [];
 for(var i = 1; i < 101; i++){
-    arr.push(i);
+ arr.push(i);
 };
 var getPrime = function(arr){
-    return arr.filter(function(ele){
-        if (ele==1){return false;}
-        for (var i=2; i<=Math.sqrt(ele); i++){
-            if (ele % i == 0) return false;
-        }
-        return true;
-    })
+ return arr.filter(function(ele){
+  if (ele==1){return false;}
+  for (var i=2; i<=Math.sqrt(ele); i++){
+   if (ele % i == 0) return false;
+  }
+  return true;
+ })
 }
 console.log(getPrime(arr))
 ```
@@ -639,8 +648,8 @@ function myFunction(value, index, array) {
 
 ```js
 var xiaohong = {
-    name: '小红',
-    'middle-school': 'No.1 Middle School'
+ name: '小红',
+ 'middle-school': 'No.1 Middle School'
 };
 
 xiaohong['middle-school']; // 'No.1 Middle School'
@@ -652,7 +661,7 @@ xiaohong.name; // '小红'
 
 ```js
 var xiaoming = {
-    name: '小明'
+ name: '小明'
 };
 xiaoming.age; // undefined
 xiaoming.age = 18; // 新增一个age属性
@@ -665,12 +674,12 @@ delete xiaoming.school; // 删除一个不存在的school属性也不会报错
 
 // 查看一个对象是否有一个属性，可以用 in 操作符
 var xiaoming = {
-    name: '小明',
-    birth: 1990,
-    school: 'No.1 Middle School',
-    height: 1.70,
-    weight: 65,
-    score: null
+ name: '小明',
+ birth: 1990,
+ school: 'No.1 Middle School',
+ height: 1.70,
+ weight: 65,
+ score: null
 };
 'name' in xiaoming; // true
 'grade' in xiaoming; // false
@@ -687,11 +696,11 @@ xiaoming.hasOwnProperty('toString'); // false
 ```js
 var age = 3;
 if (age >= 18) {
-    alert('adult');
+ alert('adult');
 } else if (age >= 6) {
-    alert('teenager');
+ alert('teenager');
 } else {
-    alert('kid');
+ alert('kid');
 }
 ```
 
@@ -714,24 +723,24 @@ if (age >= 18) {
 var x = 0;
 var i;
 for (i=1; i<=10000; i++) {
-    x = x + i;
+ x = x + i;
 }
 x; // 50005000
 
 var arr = ['Apple', 'Google', 'Microsoft'];
 var i, x;
 for (i=0; i<arr.length; i++) {
-    x = arr[i];
-    console.log(x);
+ x = arr[i];
+ console.log(x);
 }
 
 // 其中的 3 个条件都是可省略的
 var x = 0;
 for (;;) { // 将无限循环下去
-    if (x > 100) {
-        break; // 通过if判断来退出循环
-    }
-    x ++;
+ if (x > 100) {
+  break; // 通过if判断来退出循环
+ }
+ x ++;
 }
 ```
 
@@ -743,20 +752,20 @@ for 循环的一个变体是 `for ... in` 循环，它可以把一个对象的�
 ```js
 // for...in
 var o = {
-    name: 'Jack',
-    age: 20,
-    city: 'Beijing'
+ name: 'Jack',
+ age: 20,
+ city: 'Beijing'
 };
 for (var key in o) {
-    console.log(key); // 'name', 'age', 'city'
+ console.log(key); // 'name', 'age', 'city'
 }
 
 // 循环列表
 // 但注意，请注意，for ... in对Array的循环得到的是String而不是Number。
 var a = ['A', 'B', 'C'];
 for (var i in a) {
-    console.log(i); // '0', '1', '2'
-    console.log(a[i]); // 'A', 'B', 'C'
+ console.log(i); // '0', '1', '2'
+ console.log(a[i]); // 'A', 'B', 'C'
 }
 ```
 
@@ -766,8 +775,8 @@ for (var i in a) {
 var x = 0;
 var n = 99;
 while (n > 0) {
-    x = x + n;
-    n = n - 2;
+ x = x + n;
+ n = n - 2;
 }
 x; // 2500
 ```
@@ -777,7 +786,7 @@ x; // 2500
 ```js
 var n = 0;
 do {
-    n = n + 1;
+ n = n + 1;
 } while (n < 100);
 n; // 100
 ```
@@ -848,13 +857,13 @@ var a = ['A', 'B', 'C'];
 var s = new Set(['A', 'B', 'C']);
 var m = new Map([[1, 'x'], [2, 'y'], [3, 'z']]);
 for (var x of a) { // 遍历Array
-    console.log(x);
+ console.log(x);
 }
 for (var x of s) { // 遍历Set
-    console.log(x);
+ console.log(x);
 }
 for (var x of m) { // 遍历Map
-    console.log(x[0] + '=' + x[1]);
+ console.log(x[0] + '=' + x[1]);
 }
 
 // 当我们手动给Array对象添加了额外的属性后，for ... in 循环将带来意想不到的意外效果
@@ -863,11 +872,11 @@ a.name = 'Hello'; // 会在最后, 也即 a[3] === 1
 a.push(1);
 console.log(a);
 for (var x in a) {
-    console.log(x); // '0', '1', '2', 'name'
+ console.log(x); // '0', '1', '2', 'name'
 }
 // 此时用 for...of 就只会循环集合本身的元素
 for (var x of a) {
-    console.log(x); // 'A', 'B', 'C'
+ console.log(x); // 'A', 'B', 'C'
 }
 ```
 
@@ -883,26 +892,26 @@ for (var x of a) {
 ```js
 // forEach Array
 a.forEach(function (element, index, array) {
-    // element: 指向当前元素的值
-    // index: 指向当前索引
-    // array: 指向Array对象本身
-    console.log(element + ', index = ' + index);
+ // element: 指向当前元素的值
+ // index: 指向当前索引
+ // array: 指向Array对象本身
+ console.log(element + ', index = ' + index);
 });
 // Set
 var s = new Set(['A', 'B', 'C']);
 s.forEach(function (element, sameElement, set) {
-    console.log(element);
+ console.log(element);
 });
 //Map
 var m = new Map([[1, 'x'], [2, 'y'], [3, 'z']]);
 m.forEach(function (value, key, map) {
-    console.log(value);
+ console.log(value);
 });
 
 // 函数调用的参数数量可以不一致
 var a = ['A', 'B', 'C'];
 a.forEach(function (element) {
-    console.log(element);
+ console.log(element);
 });
 ```
 
@@ -957,19 +966,19 @@ a.forEach(function (element) {
 
 ```js
 function abs(x) {
-    if (x >= 0) {
-        return x;
-    } else {
-        return -x;
-    }
+ if (x >= 0) {
+  return x;
+ } else {
+  return -x;
+ }
 }
 // 也可以这样定义函数
 var abs = function (x) {
-    if (x >= 0) {
-        return x;
-    } else {
-        return -x;
-    }
+ if (x >= 0) {
+  return x;
+ } else {
+  return -x;
+ }
 };
 ```
 
@@ -984,14 +993,14 @@ var abs = function (x) {
 ```js
 // 避免收到异常值或是 undefined
 function abs(x) {
-    if (typeof x !== 'number') {
-        throw 'Not a number';
-    }
-    if (x >= 0) {
-        return x;
-    } else {
-        return -x;
-    }
+ if (typeof x !== 'number') {
+  throw 'Not a number';
+ }
+ if (x >= 0) {
+  return x;
+ } else {
+  return -x;
+ }
 }
 ```
 
@@ -1001,20 +1010,20 @@ JavaScript还有一个免费赠送的关键字arguments，它只在函数内部�
 
 ```js
 function foo(x) {
-    console.log('x = ' + x); // 10
-    for (var i=0; i<arguments.length; i++) {
-        console.log('arg ' + i + ' = ' + arguments[i]); // 10, 20, 30
-    }
+ console.log('x = ' + x); // 10
+ for (var i=0; i<arguments.length; i++) {
+  console.log('arg ' + i + ' = ' + arguments[i]); // 10, 20, 30
+ }
 }
 foo(10, 20, 30);
 
 // 根据是否传入了该参数进行相应处理
 function abs() {
-    if (arguments.length === 0) {
-        return 0;
-    }
-    var x = arguments[0];
-    return x >= 0 ? x : -x;
+ if (arguments.length === 0) {
+  return 0;
+ }
+ var x = arguments[0];
+ return x >= 0 ? x : -x;
 }
 abs(); // 0
 abs(10); // 10
@@ -1044,9 +1053,9 @@ var myFunction = function (a, b) {return a * b};
 
 ```js
 function foo(a, b, ...rest) {
-    console.log('a = ' + a);
-    console.log('b = ' + b);
-    console.log(rest);
+ console.log('a = ' + a);
+ console.log('b = ' + b);
+ console.log(rest);
 }
 
 foo(1, 2, 3, 4, 5);
@@ -1071,11 +1080,11 @@ foo(1);
 
 ```js
 function foo() {
-    var x = 1;
-    function bar() {
-        var y = x + 1; // bar可以访问foo的变量x!
-    }
-    var z = y + 1; // ReferenceError! foo不可以访问bar的变量y!
+ var x = 1;
+ function bar() {
+  var y = x + 1; // bar可以访问foo的变量x!
+ }
+ var z = y + 1; // ReferenceError! foo不可以访问bar的变量y!
 }
 ```
 
@@ -1087,9 +1096,9 @@ JavaScript的函数定义有个特点，它会先扫描整个函数体的语句�
 'use strict';
 
 function foo() {
-    var x = 'Hello, ' + y;
-    console.log(x);
-    var y = 'Bob';
+ var x = 'Hello, ' + y;
+ console.log(x);
+ var y = 'Bob';
 }
 
 foo();
@@ -1099,14 +1108,14 @@ foo();
 
 ```js
 function foo() {
-    var
-        x = 1, // x初始化为1
-        y = x + 1, // y初始化为2
-        z, i; // z和i为undefined
-    // 其他语句:
-    for (i=0; i<100; i++) {
-        ...
-    }
+ var
+  x = 1, // x初始化为1
+  y = x + 1, // y初始化为2
+  z, i; // z和i为undefined
+ // 其他语句:
+ for (i=0; i<100; i++) {
+  ...
+ }
 }
 ```
 
@@ -1152,7 +1161,7 @@ MYAPP.version = 1.0;
 
 // 其他函数:
 MYAPP.foo = function () {
-    return 'foo';
+ return 'foo';
 };
 ```
 
@@ -1163,19 +1172,19 @@ MYAPP.foo = function () {
 
 ```js
 function foo() {
-    for (var i=0; i<100; i++) {
-        //
-    }
-    i += 100; // 仍然可以引用变量i
+ for (var i=0; i<100; i++) {
+  //
+ }
+ i += 100; // 仍然可以引用变量i
 }
 
 function foo() {
-    var sum = 0;
-    for (let i=0; i<100; i++) {
-        sum += i;
-    }
-    // SyntaxError:
-    i += 1;
+ var sum = 0;
+ for (let i=0; i<100; i++) {
+  sum += i;
+ }
+ // SyntaxError:
+ i += 1;
 }
 ```
 
@@ -1214,16 +1223,16 @@ z; // 'ES6'
 
 // 对象的解构赋值还可以嵌套
 var person = {
-    name: '小明',
-    age: 20,
-    gender: 'male',
-    passport: 'G-12345678',
-    school: 'No.4 middle school',
-    address: {
-        city: 'Beijing',
-        street: 'No.1 Road',
-        zipcode: '100001'
-    }
+ name: '小明',
+ age: 20,
+ gender: 'male',
+ passport: 'G-12345678',
+ school: 'No.4 middle school',
+ address: {
+  city: 'Beijing',
+  street: 'No.1 Road',
+  zipcode: '100001'
+ }
 };
 var {name, address: {city, zip}} = person;
 name; // '小明'
@@ -1238,11 +1247,11 @@ address; // Uncaught ReferenceError: address is not defined
 
 ```js
 var person = {
-    name: '小明',
-    age: 20,
-    gender: 'male',
-    passport: 'G-12345678',
-    school: 'No.4 middle school'
+ name: '小明',
+ age: 20,
+ gender: 'male',
+ passport: 'G-12345678',
+ school: 'No.4 middle school'
 };
 
 // 把passport属性赋值给变量id:
@@ -1291,7 +1300,7 @@ var {hostname:domain, pathname:path} = location;
 
 ```js
 function buildDate({year, month, day, hour=0, minute=0, second=0}) {
-    return new Date(year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second);
+ return new Date(year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second);
 }
 
 buildDate({ year: 2017, month: 1, day: 1 });
@@ -1332,12 +1341,12 @@ buildDate({ year: 2017, month: 1, day: 1, hour: 20, minute: 15 });
 
 ```js
 var xiaoming = {
-    name: '小明',
-    birth: 1990,
-    age: function () {
-        var y = new Date().getFullYear();
-        return y - this.birth;
-    }
+ name: '小明',
+ birth: 1990,
+ age: function () {
+  var y = new Date().getFullYear();
+  return y - this.birth;
+ }
 };
 
 xiaoming.age; // function xiaoming.age()
@@ -1346,14 +1355,14 @@ xiaoming.age(); // 今年调用是25,明年调用就变成26了
 
 ```js
 function getAge() {
-    var y = new Date().getFullYear();
-    return y - this.birth;
+ var y = new Date().getFullYear();
+ return y - this.birth;
 }
 
 var xiaoming = {
-    name: '小明',
-    birth: 1990,
-    age: getAge
+ name: '小明',
+ birth: 1990,
+ age: getAge
 };
 
 xiaoming.age(); // 25, 正常结果
@@ -1377,14 +1386,14 @@ fn(); // Uncaught TypeError: Cannot read property 'birth' of undefined
 
 ```js
 function getAge() {
-    var y = new Date().getFullYear();
-    return y - this.birth;
+ var y = new Date().getFullYear();
+ return y - this.birth;
 }
 
 var xiaoming = {
-    name: '小明',
-    birth: 1990,
-    age: getAge
+ name: '小明',
+ birth: 1990,
+ age: getAge
 };
 
 xiaoming.age(); // 25
@@ -1401,13 +1410,13 @@ Math.max.call(null, 3, 5, 4); // 5
 
 ```js
 var person = {
-    fullName: function() {
-        return this.firstName + " " + this.lastName;
-    }
+ fullName: function() {
+  return this.firstName + " " + this.lastName;
+ }
 }
 var person1 = {
-    firstName:"Bill",
-    lastName: "Gates",
+ firstName:"Bill",
+ lastName: "Gates",
 }
 person.fullName.call(person1);  // 将返回 "Bill Gates"
 ```
@@ -1423,8 +1432,8 @@ var count = 0;
 var oldParseInt = parseInt; // 保存原函数
 
 window.parseInt = function () {
-    count += 1;
-    return oldParseInt.apply(null, arguments); // 调用原函数
+ count += 1;
+ return oldParseInt.apply(null, arguments); // 调用原函数
 };
 
 // 测试:
@@ -1459,7 +1468,7 @@ JavaScript的函数其实都指向某个变量。既然变量可以指向函数�
 
 ```js
 function add(x, y, f) {
-    return f(x) + f(y);
+ return f(x) + f(y);
 }
 ```
 
@@ -1476,7 +1485,7 @@ function add(x, y, f) {
 ```js
 // map
 function pow(x) {
-    return x * x;
+ return x * x;
 }
 var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 var results = arr.map(pow); // [1, 4, 9, 16, 25, 36, 49, 64, 81]
@@ -1485,7 +1494,7 @@ console.log(results);
 // reduce
 var arr = [1, 3, 5, 7, 9];
 arr.reduce(function (x, y) {
-    return x + y;
+ return x + y;
 }); // 25
 ```
 
@@ -1498,7 +1507,7 @@ arr.reduce(function (x, y) {
 
 var arr = ['A', '', 'B', null, undefined, 'C', '  '];
 var r = arr.filter(function (s) {
-    return s && s.trim(); // 注意：IE9以下的版本没有trim()方法
+ return s && s.trim(); // 注意：IE9以下的版本没有trim()方法
 });
 r; // ['A', 'B', 'C']
 ```
@@ -1506,10 +1515,10 @@ r; // ['A', 'B', 'C']
 ```js
 /* 去除重复元素 */
 var
-    r,
-    arr = ['apple', 'strawberry', 'banana', 'pear', 'apple', 'orange', 'orange', 'strawberry'];
+ r,
+ arr = ['apple', 'strawberry', 'banana', 'pear', 'apple', 'orange', 'orange', 'strawberry'];
 r = arr.filter(function (element, index, self) {
-    return self.indexOf(element) === index;
+ return self.indexOf(element) === index;
 });
 ```
 
@@ -1530,28 +1539,28 @@ r = arr.filter(function (element, index, self) {
 ```js
 /* 按照数字大小排序 */
 arr.sort(function (x, y) {
-    if (x < y) {
-        return -1;
-    }
-    if (x > y) {
-        return 1;
-    }
-    return 0;
+ if (x < y) {
+  return -1;
+ }
+ if (x > y) {
+  return 1;
+ }
+ return 0;
 });
 console.log(arr); // [1, 2, 10, 20]
 
 /* 忽略大小写排序 */
 var arr = ['Google', 'apple', 'Microsoft'];
 arr.sort(function (s1, s2) {
-    x1 = s1.toUpperCase();
-    x2 = s2.toUpperCase();
-    if (x1 < x2) {
-        return -1;
-    }
-    if (x1 > x2) {
-        return 1;
-    }
-    return 0;
+ x1 = s1.toUpperCase();
+ x2 = s2.toUpperCase();
+ if (x1 < x2) {
+  return -1;
+ }
+ if (x1 > x2) {
+  return 1;
+ }
+ return 0;
 }); // ['apple', 'Google', 'Microsoft']
 ```
 
@@ -1580,13 +1589,13 @@ arr.forEach(console.log); // 依次打印每个元素
 /* 利用闭包实现私有变量
 例子: 计数器 */
 function create_counter(initial) {
-    var x = initial || 0;
-    return {
-        inc: function () {
-            x += 1;
-            return x;
-        },
-    };
+ var x = initial || 0;
+ return {
+  inc: function () {
+   x += 1;
+   return x;
+  },
+ };
 }
 var c1 = create_counter();
 c1.inc(); // 1
@@ -1604,9 +1613,9 @@ c2.inc(); // 13
 ```js
 /* 利用闭包包装多参数函数 */
 function make_pow(n) {
-    return function (x) {
-        return Math.pow(x, n);
-    }
+ return function (x) {
+  return Math.pow(x, n);
+ }
 }
 
 // 创建两个新函数:
@@ -1622,12 +1631,12 @@ console.log(pow3(7)); // 343
 ```js
 // 创建一个匿名函数并立刻执行
 (function (x) {
-    return x * x;
+ return x * x;
 })(3); // 9
 
 var add = (function () {
-    var counter = 0;
-    return function () {return counter += 1;}
+ var counter = 0;
+ return function () {return counter += 1;}
 })();
 
 add();
@@ -1661,52 +1670,52 @@ var age, obj;
 
 // 由于JavaScript函数对`this`绑定的错误处理，下面的例子无法得到预期结果
 obj = {
-    birth: 1990,
-    getAge: function () {
-        var b = this.birth; // 1990
-        var fn = function () {
-            return new Date().getFullYear() - this.birth; // this指向window或undefined
-        };
-        return fn();
-    },
+ birth: 1990,
+ getAge: function () {
+  var b = this.birth; // 1990
+  var fn = function () {
+   return new Date().getFullYear() - this.birth; // this指向window或undefined
+  };
+  return fn();
+ },
 };
 age = obj.getAge();
 console.log("由于this指向window而出错: ", age);
 
 obj = {
-    birth: 1990,
-    getAge: function () {
-        var b = this.birth; // 1990
-        var that = this; // 指向obj
-        var fn = function () {
-            return new Date().getFullYear() - that.birth;
-        };
-        return fn();
-    },
+ birth: 1990,
+ getAge: function () {
+  var b = this.birth; // 1990
+  var that = this; // 指向obj
+  var fn = function () {
+   return new Date().getFullYear() - that.birth;
+  };
+  return fn();
+ },
 };
 age = obj.getAge();
 console.log("保存this为that: ", age);
 
 // 箭头函数完全修复了`this`的指向，`this`总是指向词法作用域，也就是外层调用者`obj`
 obj = {
-    birth: 1990,
-    getAge: function () {
-        var b = this.birth; // 1990
-        var fn = () => new Date().getFullYear() - this.birth; // this指向obj对象
-        return fn();
-    },
+ birth: 1990,
+ getAge: function () {
+  var b = this.birth; // 1990
+  var fn = () => new Date().getFullYear() - this.birth; // this指向obj对象
+  return fn();
+ },
 };
 age = obj.getAge(); // 25
 console.log("采用箭头函数: ", age);
 
 // 由于`this`在箭头函数中已经按照词法作用域绑定了，所以，用`call()`或者`apply()`调用箭头函数时，无法对`this`进行绑定，即传入的第一个参数被忽略
 obj = {
-    birth: 1990,
-    getAge: function (year) {
-        var b = this.birth; // 1990
-        var fn = () => new Date().getFullYear() - this.birth; // this.birth仍是1990
-        return fn.call({ birth: 2000 }, year);
-    },
+ birth: 1990,
+ getAge: function (year) {
+  var b = this.birth; // 1990
+  var fn = () => new Date().getFullYear() - this.birth; // this.birth仍是1990
+  return fn.call({ birth: 2000 }, year);
+ },
 };
 age = obj.getAge(); 
 console.log("apply的第一个参数会被忽略", age);
@@ -1724,23 +1733,23 @@ console.log("apply的第一个参数会被忽略", age);
 ```js
 /* 语法 */
 function* foo(x) {
-    yield x + 1;
-    yield x + 2;
-    return x + 3;
+ yield x + 1;
+ yield x + 2;
+ return x + 3;
 }
 
 /* 两种调用方式 */
 function* fib(max) {
-    var t,
-        a = 0,
-        b = 1,
-        n = 0;
-    while (n < max) {
-        yield a;
-        [a, b] = [b, a + b];
-        n++;
-    }
-    return;
+ var t,
+  a = 0,
+  b = 1,
+  n = 0;
+ while (n < max) {
+  yield a;
+  [a, b] = [b, a + b];
+  n++;
+ }
+ return;
 }
 
 /* 注意, next() 方法返回的是一个对象 */
@@ -1753,7 +1762,7 @@ f.next(); // {value: 3, done: false}
 f.next(); // {value: undefined, done: true}
 
 for (var x of fib(10)) {
-    console.log(x); // 依次输出0, 1, 1, 2, 3, ...
+ console.log(x); // 依次输出0, 1, 1, 2, 3, ...
 }
 ```
 
@@ -1766,30 +1775,30 @@ for (var x of fib(10)) {
 /* 利用 generator 把异步回调代码变成“同步”代码 */
 // 不用 yield
 ajax('http://url-1', data1, function (err, result) {
-    if (err) {
-        return handle(err);
-    }
-    ajax('http://url-2', data2, function (err, result) {
-        if (err) {
-            return handle(err);
-        }
-        ajax('http://url-3', data3, function (err, result) {
-            if (err) {
-                return handle(err);
-            }
-            return success(result);
-        });
-    });
+ if (err) {
+  return handle(err);
+ }
+ ajax('http://url-2', data2, function (err, result) {
+  if (err) {
+   return handle(err);
+  }
+  ajax('http://url-3', data3, function (err, result) {
+   if (err) {
+    return handle(err);
+   }
+   return success(result);
+  });
+ });
 });
 // 用 generator
 try {
-    r1 = yield ajax('http://url-1', data1);
-    r2 = yield ajax('http://url-2', data2);
-    r3 = yield ajax('http://url-3', data3);
-    success(r3);
+ r1 = yield ajax('http://url-1', data1);
+ r2 = yield ajax('http://url-2', data2);
+ r3 = yield ajax('http://url-3', data3);
+ success(r3);
 }
 catch (err) {
-    handle(err);
+ handle(err);
 }
 ```
 
@@ -1802,11 +1811,11 @@ catch (err) {
 // }
 // 利用 generator
 function* next_id() {
-    var current_id = 0;
-    while (true) {
-        current_id++;
-        yield current_id;
-    }
+ var current_id = 0;
+ while (true) {
+  current_id++;
+  yield current_id;
+ }
 }
 ```
 
@@ -1967,9 +1976,9 @@ d.toUTCString(); // 'Wed, 24 Jun 2015 11:49:22 GMT'，UTC时间，与本地时�
 
 ```js
 if (Date.now) {
-    console.log(Date.now()); // 老版本IE没有now()方法
+ console.log(Date.now()); // 老版本IE没有now()方法
 } else {
-    console.log(new Date().getTime());
+ console.log(new Date().getTime());
 }
 ```
 
@@ -2032,9 +2041,9 @@ re.test('010 12345'); // false
 
 ```js
 console.log(
-    '  a b   c  '.split(' '),
-    '  a b   c  '.split(/\s+/),
-    '  a, b,   c  '.split(/[\s+,]+/)        //[ '', 'a', 'b', 'c', '' ]
+ '  a b   c  '.split(' '),
+ '  a b   c  '.split(/\s+/),
+ '  a, b,   c  '.split(/[\s+,]+/)        //[ '', 'a', 'b', 'c', '' ]
 )
 ```
 
@@ -2119,13 +2128,13 @@ JSON 语法规则
 
 ```js
 var xiaoming = {
-    name: '小明',
-    age: 14,
-    gender: true,
-    height: 1.65,
-    grade: null,
-    'middle-school': '\"W3C\" Middle School',
-    skills: ['JavaScript', 'Java', 'Python', 'Lisp']
+ name: '小明',
+ age: 14,
+ gender: true,
+ height: 1.65,
+ grade: null,
+ 'middle-school': '\"W3C\" Middle School',
+ skills: ['JavaScript', 'Java', 'Python', 'Lisp']
 };
 
 var s = JSON.stringify(xiaoming);
@@ -2140,10 +2149,10 @@ s = JSON.stringify(xiaoming, ['name', 'skills'], '  ');
 console.log(s);
 // 也可传入一个函数
 function convert(key, value){
-    if (typeof value === 'string'){
-        return value.toUpperCase();
-    }
-    return value;
+ if (typeof value === 'string'){
+  return value.toUpperCase();
+ }
+ return value;
 }
 s = JSON.stringify(xiaoming, convert, '\t');
 console.log(s)
@@ -2151,19 +2160,19 @@ console.log(s)
 
 // 3. 自定义
 xiaoming = {
-    name: '小明',
-    age: 14,
-    gender: true,
-    height: 1.65,
-    grade: null,
-    'middle-school': '\"W3C\" Middle School',
-    skills: ['JavaScript', 'Java', 'Python', 'Lisp'],
-    toJSON: function () {
-        return { // 只输出name和age，并且改变了key：
-            'Name': this.name,
-            'Age': this.age
-        };
-    }
+ name: '小明',
+ age: 14,
+ gender: true,
+ height: 1.65,
+ grade: null,
+ 'middle-school': '\"W3C\" Middle School',
+ skills: ['JavaScript', 'Java', 'Python', 'Lisp'],
+ toJSON: function () {
+  return { // 只输出name和age，并且改变了key：
+   'Name': this.name,
+   'Age': this.age
+  };
+ }
 };
 s = JSON.stringify(xiaoming);
 console.log(s);
@@ -2182,10 +2191,10 @@ JSON.parse('123.45'); // 123.45
 
 ```js
 var obj = JSON.parse('{"name":"小明","age":14}', function (key, value) {
-    if (key === 'name') {
-        return value + '同学';
-    }
-    return value;
+ if (key === 'name') {
+  return value + '同学';
+ }
+ return value;
 });
 console.log(JSON.stringify(obj)); // {name: '小明同学', age: 14}
 ```
@@ -2199,12 +2208,12 @@ console.log(JSON.stringify(obj)); // {name: '小明同学', age: 14}
 ```js
 var url = 'https://api.openweathermap.org/data/2.5/forecast?q=Beijing,cn&appid=800f49846586c3ba6e7052cfc89af16c';
 $.getJSON(url, function (data) {
-    var info = {
-        city: data.city.name,
-        weather: data.list[0].weather[0].main,
-        time: data.list[0].dt_txt
-    };
-    console.log(JSON.stringify(info, null, '  '));
+ var info = {
+  city: data.city.name,
+  weather: data.list[0].weather[0].main,
+  time: data.list[0].dt_txt
+ };
+ console.log(JSON.stringify(info, null, '  '));
 });    
 ```
 
@@ -2231,7 +2240,7 @@ $.getJSON(url, function (data) {
         - `class`的定义包含了构造函数 `constructor`和定义在原型对象上的方法（注意没有`function`关键字）
     - 继承: `class PrimaryStudent extends Student {}`; 记得在 constructor 函数中调用父类的构造方法 `super(name);`
 
-![](media/js%20note/2022-02-10-22-27-30.png)
+![](media/js-note/2022-02-10-22-27-30.png)
 
 ### 创建对象
 
@@ -2253,10 +2262,10 @@ $.getJSON(url, function (data) {
 ```js
 /* 构造函数 (就是个普通的函数, 但是通过 new 来调用会返回一个对象) */
 function Student(name) {
-    this.name = name;
-    this.hello = function () {
-        alert('Hello, ' + this.name + '!');
-    }
+ this.name = name;
+ this.hello = function () {
+  alert('Hello, ' + this.name + '!');
+ }
 }
 var xiaoming = new Student('小明'); // new !!
 xiaoming.name; // '小明'
@@ -2277,7 +2286,7 @@ Object.getPrototypeOf(xiaoming) === Student.prototype; // true
 xiaoming instanceof Student; // true
 ```
 
-![](media/js%20note/2022-02-10-16-16-07.png)
+![](media/js-note/2022-02-10-16-16-07.png)
 
 - 红色箭头是原型链。注意，`Student.prototype`指向的对象就是`xiaoming`、`xiaohong`的原型对象，这个原型对象自己还有个属性`constructor`，指向`Student`函数本身。
 - 另外，函数`Student`恰好有个属性`prototype`指向`xiaoming`、`xiaohong`的原型对象，但是`xiaoming`、`xiaohong`这些对象可没有`prototype`这个属性，不过可以用`__proto__`这个非标准用法来查看。
@@ -2285,15 +2294,15 @@ xiaoming instanceof Student; // true
 
 另外, 为了避免构造函数索构造出来的「实例」对象包含重复代码 (例如上例中的 hello 方法会绑定到各个实例上, 浪费内存), 可以将方法绑定在其原型上.
 
-![](media/js%20note/2022-02-10-16-22-43.png)
+![](media/js-note/2022-02-10-16-22-43.png)
 
 ```js
 function Student(name) {
-    this.name = name;
+ this.name = name;
 }
 
 Student.prototype.hello = function () {
-    alert('Hello, ' + this.name + '!');
+ alert('Hello, ' + this.name + '!');
 };
 ```
 
@@ -2307,20 +2316,20 @@ Student.prototype.hello = function () {
 
 ```js
 function Student(props) {
-    this.name = props.name || '匿名'; // 默认值为'匿名'
-    this.grade = props.grade || 1; // 默认值为1
+ this.name = props.name || '匿名'; // 默认值为'匿名'
+ this.grade = props.grade || 1; // 默认值为1
 }
 
 Student.prototype.hello = function () {
-    alert('Hello, ' + this.name + '!');
+ alert('Hello, ' + this.name + '!');
 };
 
 function createStudent(props) {
-    return new Student(props || {})
+ return new Student(props || {})
 }
 
 var xiaoming = createStudent({
-    name: '小明'
+ name: '小明'
 });
 xiaoming.grade; // 1
 ```
@@ -2350,23 +2359,23 @@ JavaScript的原型继承实现方式就是：
 ```js
 /* 实现 PrimaryStudent 继承 Student */
 function Student(props) {
-    this.name = props.name || "Unnamed";
+ this.name = props.name || "Unnamed";
 }
 Student.prototype.hello = function () {
-    alert("Hello, " + this.name + "!");
+ alert("Hello, " + this.name + "!");
 };
 
 // PrimaryStudent构造函数:
 function PrimaryStudent(props) {
-    Student.call(this, props); // 注意调用了 Student 构造函数, 传入 this
-    this.grade = props.grade || 1;
+ Student.call(this, props); // 注意调用了 Student 构造函数, 传入 this
+ this.grade = props.grade || 1;
 }
 
 /* 以下这块代码可以用下面实现的 inherits 函数替代
-    这里 F 函数的作用: 
-    1. 指定构造函数 F 的 prototype 属性(注意prototype为函数所特有的属性) 为 Student.prototype; 从而使得 new 出来的 F对象有属性 `(new F()).__proto__ === Student.prototype`
-    2. 构造一个 F对象 (记为 f), 这个对象就是我们要构造的 PrimaryStudent.prototype 原型, 通过 1 我们指定好了这一对象 `__proto__` 属性
-    3. 链接 对象f 和 构造函数PrimaryStudent, 使得它们互为 constructor, prototype
+ 这里 F 函数的作用: 
+ 1. 指定构造函数 F 的 prototype 属性(注意prototype为函数所特有的属性) 为 Student.prototype; 从而使得 new 出来的 F对象有属性 `(new F()).__proto__ === Student.prototype`
+ 2. 构造一个 F对象 (记为 f), 这个对象就是我们要构造的 PrimaryStudent.prototype 原型, 通过 1 我们指定好了这一对象 `__proto__` 属性
+ 3. 链接 对象f 和 构造函数PrimaryStudent, 使得它们互为 constructor, prototype
 */
 // 空函数F:
 function F() {}
@@ -2379,13 +2388,13 @@ PrimaryStudent.prototype.constructor = PrimaryStudent;
 
 // 继续在PrimaryStudent原型（就是new F()对象）上定义方法：
 PrimaryStudent.prototype.getGrade = function () {
-    return this.grade;
+ return this.grade;
 };
 
 // 创建xiaoming:
 var xiaoming = new PrimaryStudent({
-    name: "小明",
-    grade: 2,
+ name: "小明",
+ grade: 2,
 });
 xiaoming.name; // '小明'
 xiaoming.grade; // 2
@@ -2399,17 +2408,17 @@ xiaoming instanceof PrimaryStudent; // true
 xiaoming instanceof Student; // true
 ```
 
-![](media/js%20note/2022-02-10-16-42-39.png)
+![](media/js-note/2022-02-10-16-42-39.png)
 
 - 注意，函数`F`仅用于桥接，我们仅创建了一个`new F()`实例，而且，没有改变原有的`Student`定义的原型链。
 - 如果把继承这个动作用一个`inherits()`函数封装起来，还可以隐藏`F`的定义，并简化代码
 
 ```js
 function inherits(Child, Parent) {
-    var F = function () {};
-    F.prototype = Parent.prototype;
-    Child.prototype = new F();
-    Child.prototype.constructor = Child;
+ var F = function () {};
+ F.prototype = Parent.prototype;
+ Child.prototype = new F();
+ Child.prototype.constructor = Child;
 }
 ```
 
@@ -2425,21 +2434,21 @@ function inherits(Child, Parent) {
 ```js
 // 之前的写法
 function Student(name) {
-    this.name = name;
+ this.name = name;
 }
 Student.prototype.hello = function () {
-    alert('Hello, ' + this.name + '!');
+ alert('Hello, ' + this.name + '!');
 }
 
 // 用 class 关键词来写
 class Student {
-    constructor(name) {
-        this.name = name;
-    }
+ constructor(name) {
+  this.name = name;
+ }
 
-    hello() {
-        alert('Hello, ' + this.name + '!');
-    }
+ hello() {
+  alert('Hello, ' + this.name + '!');
+ }
 }
 
 var xiaoming = new Student('小明');
@@ -2453,14 +2462,14 @@ xiaoming.hello();
 
 ```js
 class PrimaryStudent extends Student {
-    constructor(name, grade) {
-        super(name); // 记得用super调用父类的构造方法!
-        this.grade = grade;
-    }
+ constructor(name, grade) {
+  super(name); // 记得用super调用父类的构造方法!
+  this.grade = grade;
+ }
 
-    myGrade() {
-        alert('I am at grade ' + this.grade);
-    }
+ myGrade() {
+  alert('I am at grade ' + this.grade);
+ }
 }
 ```
 
@@ -2520,9 +2529,9 @@ console.log('window inner size: ' + window.innerWidth + ' x ' + window.innerHeig
 ```js
 var width; 
 if (getIEVersion(navigator.userAgent) < 9) { 
-    width = document.body.clientWidth; 
+ width = document.body.clientWidth; 
 } else { 
-    width = window.innerWidth; 
+ width = window.innerWidth; 
 } 
 ```
 
@@ -2559,9 +2568,9 @@ location.hash; // 'TOP'
 
 ```js
 if (confirm('重新加载当前页' + location.href + '?')) {
-    location.reload();
+ location.reload();
 } else {
-    location.assign('/'); // 设置一个新的URL地址
+ location.assign('/'); // 设置一个新的URL地址
 }
 ```
 
@@ -2697,13 +2706,13 @@ p.style.paddingTop = '2em';
 ```js
 // 1. 这里的 js 节点是原本 DOM 就有的, 这样会将其移动到 list 节点下
 var
-    js = document.getElementById('js'),
-    list = document.getElementById('list');
+ js = document.getElementById('js'),
+ list = document.getElementById('list');
 list.appendChild(js);
 // 2. 新建节点
 var
-    list = document.getElementById('list'),
-    haskell = document.createElement('p');
+ list = document.getElementById('list'),
+ haskell = document.createElement('p');
 haskell.id = 'haskell';
 haskell.innerText = 'Haskell';
 list.appendChild(haskell);
@@ -2753,37 +2762,37 @@ HTML表单的输入控件主要有以下几种：
 
 ```js
 var
-    fileInput = document.getElementById('test-image-file'),
-    info = document.getElementById('test-file-info'),
-    preview = document.getElementById('test-image-preview');
+ fileInput = document.getElementById('test-image-file'),
+ info = document.getElementById('test-file-info'),
+ preview = document.getElementById('test-image-preview');
 // 监听change事件:
 fileInput.addEventListener('change', function () {
-    // 清除背景图片:
-    preview.style.backgroundImage = '';
-    // 检查文件是否选择:
-    if (!fileInput.value) {
-        info.innerHTML = '没有选择文件';
-        return;
-    }
-    // 获取File引用:
-    var file = fileInput.files[0];
-    // 获取File信息:
-    info.innerHTML = '文件: ' + file.name + '<br>' +
-                     '大小: ' + file.size + '<br>' +
-                     '修改: ' + file.lastModified;
-    if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif') {
-        alert('不是有效的图片文件!');
-        return;
-    }
-    // 读取文件:
-    var reader = new FileReader();
-    reader.onload = function(e) {
-        var
-            data = e.target.result; // 'data:image/jpeg;base64,/9j/4AAQSk...(base64编码)...'            
-        preview.style.backgroundImage = 'url(' + data + ')';
-    };
-    // 以DataURL的形式读取文件:
-    reader.readAsDataURL(file);
+ // 清除背景图片:
+ preview.style.backgroundImage = '';
+ // 检查文件是否选择:
+ if (!fileInput.value) {
+  info.innerHTML = '没有选择文件';
+  return;
+ }
+ // 获取File引用:
+ var file = fileInput.files[0];
+ // 获取File信息:
+ info.innerHTML = '文件: ' + file.name + '<br>' +
+      '大小: ' + file.size + '<br>' +
+      '修改: ' + file.lastModified;
+ if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif') {
+  alert('不是有效的图片文件!');
+  return;
+ }
+ // 读取文件:
+ var reader = new FileReader();
+ reader.onload = function(e) {
+  var
+   data = e.target.result; // 'data:image/jpeg;base64,/9j/4AAQSk...(base64编码)...'            
+  preview.style.backgroundImage = 'url(' + data + ')';
+ };
+ // 以DataURL的形式读取文件:
+ reader.readAsDataURL(file);
 });
 ```
 
@@ -2821,30 +2830,30 @@ fileInput.addEventListener('change', function () {
 
 ```js
 function success(text) {
-    var textarea = document.getElementById('test-response-text');
-    textarea.value = text;
+ var textarea = document.getElementById('test-response-text');
+ textarea.value = text;
 }
 
 function fail(code) {
-    var textarea = document.getElementById('test-response-text');
-    textarea.value = 'Error code: ' + code;
+ var textarea = document.getElementById('test-response-text');
+ textarea.value = 'Error code: ' + code;
 }
 
 var request = new XMLHttpRequest(); // 新建XMLHttpRequest对象
 
 request.onreadystatechange = function () { // 状态发生变化时，函数被回调
-    if (request.readyState === 4) { // 成功完成
-        // 判断响应结果:
-        if (request.status === 200) {
-            // 成功，通过responseText拿到响应的文本:
-            return success(request.responseText);
-        } else {
-            // 失败，根据响应码判断失败原因:
-            return fail(request.status);
-        }
-    } else {
-        // HTTP请求还在继续...
-    }
+ if (request.readyState === 4) { // 成功完成
+  // 判断响应结果:
+  if (request.status === 200) {
+   // 成功，通过responseText拿到响应的文本:
+   return success(request.responseText);
+  } else {
+   // 失败，根据响应码判断失败原因:
+   return fail(request.status);
+  }
+ } else {
+  // HTTP请求还在继续...
+ }
 }
 
 // 发送请求:
@@ -2906,7 +2915,7 @@ Access-Control-Max-Age: 86400
 ```js
 // 回调函数
 function callback() {
-    console.log('Done');
+ console.log('Done');
 }
 console.log('before setTimeout()');
 setTimeout(callback, 1000); // 1秒钟后调用callback函数
@@ -2917,32 +2926,32 @@ console.log('after setTimeout()');
 /* 我们把上一节的AJAX异步执行函数转换为Promise对象，看看用Promise如何简化异步处理 */
 // ajax函数将返回Promise对象:
 function ajax(method, url, data) {
-    var request = new XMLHttpRequest();
-    return new Promise(function (resolve, reject) {
-        request.onreadystatechange = function () {
-            if (request.readyState === 4) {
-                if (request.status === 200) {
-                    resolve(request.responseText);
-                } else {
-                    reject(request.status);
-                }
-            }
-        };
-        request.open(method, url);
-        request.send(data);
-    });
+ var request = new XMLHttpRequest();
+ return new Promise(function (resolve, reject) {
+  request.onreadystatechange = function () {
+   if (request.readyState === 4) {
+    if (request.status === 200) {
+     resolve(request.responseText);
+    } else {
+     reject(request.status);
+    }
+   }
+  };
+  request.open(method, url);
+  request.send(data);
+ });
 }
 function testAJAX() {
-    var log = document.getElementById("test-promise-ajax-result");
-    var p;
-    // p = ajax("GET", "http://www.baidu.com");
-    p = ajax("GET", "/test.json");
+ var log = document.getElementById("test-promise-ajax-result");
+ var p;
+ // p = ajax("GET", "http://www.baidu.com");
+ p = ajax("GET", "/test.json");
 
-    p.then(function (text) {
-        log.innerText = text;
-    }).catch(function (status) {
-        log.innerText = `Error: ${status}`;
-    });
+ p.then(function (text) {
+  log.innerText = text;
+ }).catch(function (status) {
+  log.innerText = `Error: ${status}`;
+ });
 }
 ```
 
@@ -2955,25 +2964,25 @@ function testAJAX() {
 ```js
 /* Promise.all */
 var p1 = new Promise(function (resolve, reject) {
-    setTimeout(resolve, 500, 'P1');
+ setTimeout(resolve, 500, 'P1');
 });
 var p2 = new Promise(function (resolve, reject) {
-    setTimeout(resolve, 600, 'P2');
+ setTimeout(resolve, 600, 'P2');
 });
 // 同时执行p1和p2，并在它们都完成后执行then:
 Promise.all([p1, p2]).then(function (results) {
-    console.log(results); // 获得一个Array: ['P1', 'P2']
+ console.log(results); // 获得一个Array: ['P1', 'P2']
 });
 
 /* Promise.race */
 var p1 = new Promise(function (resolve, reject) {
-    setTimeout(resolve, 500, 'P1');
+ setTimeout(resolve, 500, 'P1');
 });
 var p2 = new Promise(function (resolve, reject) {
-    setTimeout(resolve, 600, 'P2');
+ setTimeout(resolve, 600, 'P2');
 });
 Promise.race([p1, p2]).then(function (result) {
-    console.log(result); // 'P1'
+ console.log(result); // 'P1'
 });
 ```
 
@@ -3007,13 +3016,13 @@ Promise.race([p1, p2]).then(function (result) {
 ```js
 var r1, r2, s = null;
 try {
-    r2 = 1
-    r1 = s.length; // 此处应产生错误
-    r2 = 100; // 该语句不会执行
+ r2 = 1
+ r1 = s.length; // 此处应产生错误
+ r2 = 100; // 该语句不会执行
 } catch (e) {
-    console.log('出错了：' + e);
+ console.log('出错了：' + e);
 } finally {
-    console.log('finally');
+ console.log('finally');
 }
 console.log('r1 = ' + r1); // r1应为undefined
 console.log('r2 = ' + r2); // r2应为undefined
@@ -3023,30 +3032,30 @@ console.log('r2 = ' + r2); // r2应为undefined
 ```js
 // 访问 Error对象
 try {
-    ...
+ ...
 } catch (e) {
-    if (e instanceof TypeError) {
-        alert('Type error!');
-    } else if (e instanceof Error) {
-        alert(e.message);
-    } else {
-        alert('Error: ' + e);
-    }
+ if (e instanceof TypeError) {
+  alert('Type error!');
+ } else if (e instanceof Error) {
+  alert(e.message);
+ } else {
+  alert('Error: ' + e);
+ }
 }
 
 // 抛出错误
 var r, n, s;
 try {
-    s = prompt('请输入一个数字');
-    n = parseInt(s);
-    if (isNaN(n)) {
-        throw new Error('输入错误');
-    }
-    // 计算平方:
-    r = n * n;
-    console.log(n + ' * ' + n + ' = ' + r);
+ s = prompt('请输入一个数字');
+ n = parseInt(s);
+ if (isNaN(n)) {
+  throw new Error('输入错误');
+ }
+ // 计算平方:
+ r = n * n;
+ console.log(n + ' * ' + n + ' = ' + r);
 } catch (e) {
-    console.log('出错了：' + e);
+ console.log('出错了：' + e);
 }
 ```
 
@@ -3084,13 +3093,13 @@ try {
 // groupBy
 var scores = [20, 81, 75, 40, 91, 59, 77, 66, 72, 88, 99];
 var groups = _.groupBy(scores, function (x) {
-    if (x < 60) {
-        return 'C';
-    } else if (x < 80) {
-        return 'B';
-    } else {
-        return 'A';
-    }
+ if (x < 60) {
+  return 'C';
+ } else if (x < 80) {
+  return 'B';
+ } else {
+  return 'A';
+ }
 });
 // 结果:
 // {
@@ -3146,11 +3155,11 @@ cube(10); // 1000
 
 // memorize
 var factorial = _.memoize(function(n) {
-    console.log('start calculate ' + n + '!...');
-    if (n < 2) {
-        return 1;
-    }
-    return n * factorial(n - 1);
+ console.log('start calculate ' + n + '!...');
+ if (n < 2) {
+  return 1;
+ }
+ return n * factorial(n - 1);
 });
 
 factorial(10); // 3628800
@@ -3198,8 +3207,8 @@ _.delay(log, 2000, 'Hello,', 'world!');
 
 ```js
 function Student(name, age) {
-    this.name = name;
-    this.age = age;
+ this.name = name;
+ this.age = age;
 }
 Student.prototype.school = 'No.1 Middle School';
 var xiaoming = new Student('小明', 20);
@@ -3210,9 +3219,9 @@ var obj = { a: 1, b: 2, c: 3 };
 _.mapObject(obj, (v, k) => 100 + v); // { a: 101, b: 102, c: 103 }
 
 var obj = {
-    Adam: 90,
-    Lisa: 85,
-    Bart: 59
+ Adam: 90,
+ Lisa: 85,
+ Bart: 59
 };
 _.invert(obj); // { '59': 'Bart', '85': 'Lisa', '90': 'Adam' }
 
@@ -3224,9 +3233,9 @@ a; // {name: 'Bob', age: 88, city: 'Beijing'}
 
 /* clone */
 var source = {
-    name: '小明',
-    age: 20,
-    skills: ['JavaScript', 'CSS', 'HTML']
+ name: '小明',
+ age: 20,
+ skills: ['JavaScript', 'CSS', 'HTML']
 };
 var copied = _.clone(source);
 source.skills === copied.skills; // true
@@ -3247,12 +3256,12 @@ _.isEqual(o1, o2); // true
 ```js
 /* jQuery支持链式调用 */
 $('a').attr('target', '_blank')
-      .append(' <i class="uk-icon-external-link"></i>')
-      .click(function () {});
+   .append(' <i class="uk-icon-external-link"></i>')
+   .click(function () {});
 
 /* chain */
 var r = _.chain([1, 4, 9, 16, 25])
-         .map(Math.sqrt)
-         .filter(x => x % 2 === 1)
-         .value();
+   .map(Math.sqrt)
+   .filter(x => x % 2 === 1)
+   .value();
 ```

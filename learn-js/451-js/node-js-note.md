@@ -1,6 +1,9 @@
 
 ## Node.js
 
+!!! warning
+    下面的主体是廖雪峰教程的笔记的一部分
+
 !!! note
     - 如何运行?
         - 直接 node. `node app.js`
@@ -60,13 +63,13 @@
 
 - 因为JavaScript是单线程执行，根本不能进行同步IO操作，所以，JavaScript的这一“缺陷”导致了它只能使用异步IO。
 - 优势
-  - 最大的优势是借助JavaScript天生的事件驱动机制加V8高性能引擎，使编写高性能Web服务轻而易举。
-  - 在Node环境下，通过模块化的JavaScript代码，加上函数式编程，并且无需考虑浏览器兼容性问题，直接使用最新的ECMAScript 6标准，可以完全满足工程上的需求。
+    - 最大的优势是借助JavaScript天生的事件驱动机制加V8高性能引擎，使编写高性能Web服务轻而易举。
+    - 在Node环境下，通过模块化的JavaScript代码，加上函数式编程，并且无需考虑浏览器兼容性问题，直接使用最新的ECMAScript 6标准，可以完全满足工程上的需求。
 - <https://nodejs.org/zh-cn/>
 - npm
-  - npm其实是Node.js的包管理工具（package manager）
+    - npm其实是Node.js的包管理工具（package manager）
 - Node
-  - 命令行模式和Node交互模式
+    - 命令行模式和Node交互模式
 - [使用 VSCode 调试](https://www.liaoxuefeng.com/wiki/1022910821149312/1099503821472096)
 
 ### 模块
@@ -127,21 +130,21 @@ save(module, exported);
 
 ### 基本模块
 
-因为Node.js是运行在服务区端的JavaScript环境，服务器程序和浏览器程序相比，最大的特点是没有浏览器的安全限制了，而且，服务器程序必须能接收网络请求，读写文件，处理二进制内容，所以，Node.js内置的常用模块就是为了实现基本的服务器功能。这些模块在浏览器环境中是无法被执行的，因为它们的底层代码是用C/C++在Node.js运行环境中实现的。
+因为 Node.js 是运行在服务区端的 JavaScript 环境，服务器程序和浏览器程序相比，最大的特点是没有浏览器的安全限制了，而且，服务器程序必须能接收网络请求，读写文件，处理二进制内容，所以，Node.js内置的常用模块就是为了实现基本的服务器功能。这些模块在浏览器环境中是无法被执行的，因为它们的底层代码是用C/C++在Node.js运行环境中实现的。
 
 #### Node 模块基础
 
 - global
-  - JavaScript有且仅有一个全局对象，在浏览器中，叫`window`对象。而在Node.js环境中，也有唯一的全局对象，叫`global`，这个对象的属性和方法也和浏览器环境的`window`不同
-  - `global.console`
+    - JavaScript有且仅有一个全局对象，在浏览器中，叫`window`对象。而在Node.js环境中，也有唯一的全局对象，叫`global`，这个对象的属性和方法也和浏览器环境的`window`不同
+    - `global.console`
 - process
-  - `process`也是Node.js提供的一个对象，它代表当前Node.js进程。
-  - JavaScript程序是由事件驱动执行的单线程模型，Node.js也不例外。Node.js不断执行响应事件的JavaScript函数，直到没有任何响应事件的函数可以执行时，Node.js就退出了。
-  - 如果我们想要在下一次事件响应中执行代码，可以调用`process.nextTick()`
-  - Node.js进程本身的事件就由`process`对象来处理。如果我们响应`exit`事件，可以 `process.on('exit', function (code) {}`
+    - `process`也是Node.js提供的一个对象，它代表当前Node.js进程。
+    - JavaScript程序是由事件驱动执行的单线程模型，Node.js也不例外。Node.js不断执行响应事件的JavaScript函数，直到没有任何响应事件的函数可以执行时，Node.js就退出了。
+    - 如果我们想要在下一次事件响应中执行代码，可以调用`process.nextTick()`
+    - Node.js进程本身的事件就由`process`对象来处理。如果我们响应`exit`事件，可以 `process.on('exit', function (code) {}`
 - 判断 js 执行环境
-  - 常用的方式就是根据浏览器和Node环境提供的全局变量名称来判断
-  - `if (typeof(window) === 'undefined')` 则是 node 环境
+    - 常用的方式就是根据浏览器和Node环境提供的全局变量名称来判断
+    - `if (typeof(window) === 'undefined')` 则是 node 环境
 
 ```js
 > global.console
@@ -206,26 +209,26 @@ if (typeof(window) === 'undefined') {
 - Node.js内置的`fs`模块就是文件系统模块，负责读写文件。
 - 和所有其它JavaScript模块不同的是，`fs` 模块同时提供了异步和同步的方法。
 - 异步读取
-  - `fs.readFile('sample.txt', 'utf-8', function (err, data) {})`
-  - 第二个参数: 文件编码
-  - 异步读取时，传入的回调函数接收两个参数，当正常读取时，`err`参数为`null`，`data`参数为读取到的String。当读取发生错误时，`err`参数代表一个错误对象，`data`为`undefined`。这也是Node.js标准的回调函数：第一个参数代表错误信息，第二个参数代表结果。
-  - 当读取二进制文件时，不传入文件编码时，回调函数的`data`参数将返回一个`Buffer`对象。在Node.js中，`Buffer`对象就是一个包含零个或任意个字节的数组（注意和Array不同）。
-    - Buffer 对象可以和 String 转换,
-    - `data.toString('utf-8')` 和 `Buffer.from(text, 'utf-8')`
+    - `fs.readFile('sample.txt', 'utf-8', function (err, data) {})`
+    - 第二个参数: 文件编码
+    - 异步读取时，传入的回调函数接收两个参数，当正常读取时，`err`参数为`null`，`data`参数为读取到的String。当读取发生错误时，`err`参数代表一个错误对象，`data`为`undefined`。这也是Node.js标准的回调函数：第一个参数代表错误信息，第二个参数代表结果。
+    - 当读取二进制文件时，不传入文件编码时，回调函数的`data`参数将返回一个`Buffer`对象。在Node.js中，`Buffer`对象就是一个包含零个或任意个字节的数组（注意和Array不同）。
+        - Buffer 对象可以和 String 转换,
+        - `data.toString('utf-8')` 和 `Buffer.from(text, 'utf-8')`
 - 同步读取
-  - `var data = fs.readFileSync('sample.txt', 'utf-8');`
-  - 不传入回调函数, 直接返回
-  - 如果同步读取文件发生错误，则需要用`try...catch`捕获该错误
+    - `var data = fs.readFileSync('sample.txt', 'utf-8');`
+    - 不传入回调函数, 直接返回
+    - 如果同步读取文件发生错误，则需要用`try...catch`捕获该错误
 - 写文件
-  - `fs.writeFile('output.txt', data, function (err) {})`
-  - `writeFile()`的参数依次为文件名、数据和回调函数。如果传入的数据是String，默认按UTF-8编码写入文本文件，如果传入的参数是`Buffer`，则写入的是二进制文件。回调函数由于只关心成功与否，因此只需要一个`err`参数。
-  - `fs.writeFileSync('output.txt', data);`
+    - `fs.writeFile('output.txt', data, function (err) {})`
+    - `writeFile()`的参数依次为文件名、数据和回调函数。如果传入的数据是String，默认按UTF-8编码写入文本文件，如果传入的参数是`Buffer`，则写入的是二进制文件。回调函数由于只关心成功与否，因此只需要一个`err`参数。
+    - `fs.writeFileSync('output.txt', data);`
 - stat
-  - 如果我们要获取文件大小，创建时间等信息，可以使用`fs.stat()`，它返回一个`Stat`对象，能告诉我们文件或目录的详细信息
-  - 属性:
-    - `isFile, isDirectory`,
-    - `size`
-    - `birthtime, mtime`
+    - 如果我们要获取文件大小，创建时间等信息，可以使用`fs.stat()`，它返回一个`Stat`对象，能告诉我们文件或目录的详细信息
+    - 属性:
+        - `isFile, isDirectory`,
+        - `size`
+        - `birthtime, mtime`
 
 ##### 异步读文件
 
@@ -284,16 +287,16 @@ try {
 - `stream` 是Node.js提供的又一个仅在服务端可用的模块，目的是支持“流”这种数据结构。
 - 流的特点是数据是有序的，而且必须依次读取，或者依次写入，不能像Array那样随机定位。
 - 在Node.js中，流也是一个对象，我们只需要响应流的事件就可以了：`data`事件表示流的数据已经可以读取了，`end`事件表示这个流已经到末尾了，没有数据可以读取了，`error`事件表示出错了。
-  - `var rs = fs.createReadStream('sample.txt', 'utf-8');`
-  - 要注意，`data`事件可能会有多次，每次传递的`chunk`是流的一部分数据。
+    - `var rs = fs.createReadStream('sample.txt', 'utf-8');`
+    - 要注意，`data`事件可能会有多次，每次传递的`chunk`是流的一部分数据。
 - 写入: 要以流的形式写入文件，只需要不断调用`write()`方法 (可以传入字符串或 Buffer)，最后以`end()`结束
-  - `var ws1 = fs.createWriteStream('output1.txt', 'utf-8');`
+    - `var ws1 = fs.createWriteStream('output1.txt', 'utf-8');`
 - 所有可以读取数据的流都继承自`stream.Readable`，所有可以写入的流都继承自`stream.Writable`。
 - pipe
-  - 就像可以把两个水管串成一个更长的水管一样，两个流也可以串起来。一个`Readable`流和一个`Writable`流串起来后，所有的数据自动从`Readable`流进入`Writable`流，这种操作叫`pipe`。
-  - 在Node.js中，`Readable`流有一个`pipe()`方法, 可以进行复制
-  - `rs.pipe(ws);`
-  - 默认情况下，当`Readable`流的数据读取完毕，`end`事件触发后，将自动关闭`Writable`流。如果我们不希望自动关闭`Writable`流，需要传入参数 `readable.pipe(writable, { end: false });`
+    - 就像可以把两个水管串成一个更长的水管一样，两个流也可以串起来。一个`Readable`流和一个`Writable`流串起来后，所有的数据自动从`Readable`流进入`Writable`流，这种操作叫`pipe`。
+    - 在Node.js中，`Readable`流有一个`pipe()`方法, 可以进行复制
+    - `rs.pipe(ws);`
+    - 默认情况下，当`Readable`流的数据读取完毕，`end`事件触发后，将自动关闭`Writable`流。如果我们不希望自动关闭`Writable`流，需要传入参数 `readable.pipe(writable, { end: false });`
 
 ```js
 /* 从文件流读取文本内容 */
@@ -347,13 +350,13 @@ rs.pipe(ws);
 
 - 要理解Web服务器程序的工作原理，首先，我们要对HTTP协议有基本的了解。如果你对HTTP协议不太熟悉，先看一看 [HTTP协议简介](http://www.liaoxuefeng.com/wiki/1016959663602400/1017804782304672)。
 - 要开发HTTP服务器程序，从头处理TCP连接，解析HTTP是不现实的。这些工作实际上已经由Node.js自带的`http`模块完成了。应用程序并不直接和HTTP协议打交道，而是操作`http`模块提供的`request`和`response`对象。
-  - `request`对象封装了HTTP请求，我们调用`request`对象的属性和方法就可以拿到所有HTTP请求的信息；
-  - `response`对象封装了HTTP响应，我们操作`response`对象的方法，就可以把HTTP响应返回给浏览器。
+    - `request`对象封装了HTTP请求，我们调用`request`对象的属性和方法就可以拿到所有HTTP请求的信息；
+    - `response`对象封装了HTTP响应，我们操作`response`对象的方法，就可以把HTTP响应返回给浏览器。
 - `var server = http.createServer(function (request, response) {}` (直接去看示例代码)
 - 然后设置监听 `server.listen(8080);`
 - 其他模块
-  - 解析URL需要用到Node.js提供的`url`模块，它使用起来非常简单，通过`parse()` 将一个字符串解析为一个`Url`对象
-  - 处理本地文件目录需要使用Node.js提供的`path`模块，它可以方便地构造目录
+    - 解析URL需要用到Node.js提供的`url`模块，它使用起来非常简单，通过`parse()` 将一个字符串解析为一个`Url`对象
+    - 处理本地文件目录需要使用Node.js提供的`path`模块，它可以方便地构造目录
 
 用Node.js实现一个HTTP服务器程序非常简单。我们来实现一个最简单的Web程序`hello.js`，它对于所有请求，都返回`Hello world!`：
 
@@ -455,25 +458,25 @@ console.log('Server is running at http://127.0.0.1:8080/');
 
 - crypto模块的目的是为了提供通用的加密和哈希算法。用纯JavaScript代码实现这些功能不是不可能，但速度会非常慢。Nodejs用C/C++实现这些算法后，通过cypto这个模块暴露为JavaScript接口，这样用起来方便，运行速度也快。
 - hash
-  - `const hash = crypto.createHash('md5');` 可以是 md5, sha1, sha256, sha512
-  - 可以任意次 `hash.update('Hello, world!');`. 默认字符串编码为`UTF-8`，也可以传入Buffer
-  - 得到 hash 值 `hash.digest('hex')`
+    - `const hash = crypto.createHash('md5');` 可以是 md5, sha1, sha256, sha512
+    - 可以任意次 `hash.update('Hello, world!');`. 默认字符串编码为`UTF-8`，也可以传入Buffer
+    - 得到 hash 值 `hash.digest('hex')`
 - Hmac 算法也是一种 hash 算法, 不同的是需要一个密钥
-  - `const hmac = crypto.createHmac('sha256', 'secret-key');`
+    - `const hmac = crypto.createHmac('sha256', 'secret-key');`
 - AES
-  - AES是一种常用的对称加密算法，加解密都用同一个密钥.
-  - 包括 aes192, aes-128-ecb, aes-256-cbc 等
-  - `const cipher = crypto.createCipher('aes192', key);`
-  - `const decipher = crypto.createDecipher('aes192', key);`
+    - AES是一种常用的对称加密算法，加解密都用同一个密钥.
+    - 包括 aes192, aes-128-ecb, aes-256-cbc 等
+    - `const cipher = crypto.createCipher('aes192', key);`
+    - `const decipher = crypto.createDecipher('aes192', key);`
 - Diffie-Hellman
-  - DH算法是一种密钥交换协议，它可以让双方在不泄漏密钥的情况下协商出一个密钥来
-  - `crypto.createDiffieHellman`
+    - DH算法是一种密钥交换协议，它可以让双方在不泄漏密钥的情况下协商出一个密钥来
+    - `crypto.createDiffieHellman`
 - RSA
-  - RSA算法是一种非对称加密算法，即由一个私钥和一个公钥构成的密钥对，通过私钥加密，公钥解密，或者通过公钥加密，私钥解密
-  - 当小明给小红发送信息时，可以用小明自己的私钥加密，小红用小明的公钥解密，也可以用小红的公钥加密，小红用她自己的私钥解密，这就是非对称加密。相比对称加密，非对称加密只需要每个人各自持有自己的私钥，同时公开自己的公钥，不需要像AES那样由两个人共享同一个密钥。
-  - 使用私钥加密 `let enc_by_prv = crypto.privateEncrypt(prvKey, Buffer.from(message, 'utf8'));` 返回的是 Buffer
-  - 使用公钥解密 `let dec_by_pub = crypto.publicDecrypt(pubKey, enc_by_prv);`
-  - RSA加密的原始信息必须小于Key的长度。那如何用RSA加密一个很长的消息呢？实际上，RSA并不适合加密大数据，而是先生成一个随机的AES密码，用AES加密原始信息，然后用RSA加密AES口令，这样，实际使用RSA时，给对方传的密文分两部分，一部分是AES加密的密文，另一部分是RSA加密的AES口令。对方用RSA先解密出AES口令，再用AES解密密文，即可获得明文。
+    - RSA算法是一种非对称加密算法，即由一个私钥和一个公钥构成的密钥对，通过私钥加密，公钥解密，或者通过公钥加密，私钥解密
+    - 当小明给小红发送信息时，可以用小明自己的私钥加密，小红用小明的公钥解密，也可以用小红的公钥加密，小红用她自己的私钥解密，这就是非对称加密。相比对称加密，非对称加密只需要每个人各自持有自己的私钥，同时公开自己的公钥，不需要像AES那样由两个人共享同一个密钥。
+    - 使用私钥加密 `let enc_by_prv = crypto.privateEncrypt(prvKey, Buffer.from(message, 'utf8'));` 返回的是 Buffer
+    - 使用公钥解密 `let dec_by_pub = crypto.publicDecrypt(pubKey, enc_by_prv);`
+    - RSA加密的原始信息必须小于Key的长度。那如何用RSA加密一个很长的消息呢？实际上，RSA并不适合加密大数据，而是先生成一个随机的AES密码，用AES加密原始信息，然后用RSA加密AES口令，这样，实际使用RSA时，给对方传的密文分两部分，一部分是AES加密的密文，另一部分是RSA加密的AES口令。对方用RSA先解密出AES口令，再用AES解密密文，即可获得明文。
 
 ```js
 /* 封装 AES 函数便于使用 */
@@ -518,31 +521,31 @@ openssl rsa -in rsa-key.pem -outform PEM -pubout -out rsa-pub.pem
 
 - 最早的软件都是运行在大型机上的，软件使用者通过“哑终端”登陆到大型机上去运行软件。后来随着PC机的兴起，软件开始主要运行在桌面上，而数据库这样的软件运行在服务器端，这种Client/Server模式简称CS架构。
 - 随着互联网的兴起，人们发现，CS架构不适合Web，最大的原因是Web应用程序的修改和升级非常迅速，而CS架构需要每个客户端逐个升级桌面App，因此，Browser/Server模式开始流行，简称BS架构。
-  - 在BS架构下，客户端只需要浏览器，应用程序的逻辑和数据都存储在服务器端。浏览器只需要请求服务器，获取Web页面，并把Web页面展示给用户即可。
-  - 今天，除了重量级的软件如Office，Photoshop等，大部分软件都以Web形式提供。比如，新浪提供的新闻、博客、微博等服务，均是Web应用。
+    - 在BS架构下，客户端只需要浏览器，应用程序的逻辑和数据都存储在服务器端。浏览器只需要请求服务器，获取Web页面，并把Web页面展示给用户即可。
+    - 今天，除了重量级的软件如Office，Photoshop等，大部分软件都以Web形式提供。比如，新浪提供的新闻、博客、微博等服务，均是Web应用。
 - Web开发也经历了好几个阶段：
-  - ·CGI：由于静态Web页面无法与用户交互，比如用户填写了一个注册表单，静态Web页面就无法处理。要处理用户发送的动态数据，出现了Common Gateway Interface，简称CGI，用C/C++编写。
-  - ASP/JSP/PHP：由于Web应用特点是修改频繁，用C/C++这样的低级语言非常不适合Web开发，而脚本语言由于开发效率高，与HTML结合紧密，因此，迅速取代了CGI模式。ASP是微软推出的用VBScript脚本编程的Web开发技术，而JSP用Java来编写脚本，PHP本身则是开源的脚本语言。
-  - MVC：为了解决直接用脚本语言嵌入HTML导致的可维护性差的问题，Web应用也引入了Model-View-Controller的模式，来简化Web开发。ASP发展为ASP.Net，JSP和PHP也有一大堆MVC框架。
+    - ·CGI：由于静态Web页面无法与用户交互，比如用户填写了一个注册表单，静态Web页面就无法处理。要处理用户发送的动态数据，出现了Common Gateway Interface，简称CGI，用C/C++编写。
+    - ASP/JSP/PHP：由于Web应用特点是修改频繁，用C/C++这样的低级语言非常不适合Web开发，而脚本语言由于开发效率高，与HTML结合紧密，因此，迅速取代了CGI模式。ASP是微软推出的用VBScript脚本编程的Web开发技术，而JSP用Java来编写脚本，PHP本身则是开源的脚本语言。
+    - MVC：为了解决直接用脚本语言嵌入HTML导致的可维护性差的问题，Web应用也引入了Model-View-Controller的模式，来简化Web开发。ASP发展为ASP.Net，JSP和PHP也有一大堆MVC框架。
 - 由于Node.js把JavaScript引入了服务器端，因此，原来必须使用PHP/Java/C#/Python/Ruby等其他语言来开发服务器端程序，现在可以使用Node.js开发了！
-  - 在Node.js诞生后的短短几年里，出现了无数种Web框架、ORM框架、模版引擎、测试框架、自动化构建工具
-  - 常见的Web框架包括：[Express](http://expressjs.com/)，[Sails.js](http://sailsjs.org/)，[koa](http://koajs.com/)，[Meteor](https://www.meteor.com/)，[DerbyJS](http://derbyjs.com/)，[Total.js](https://www.totaljs.com/)，[restify](http://restify.com/)……
-  - ORM 框架比Web框架要少一些：[Sequelize](http://www.sequelizejs.com/)，[ORM2](http://dresende.github.io/node-orm2/)，[Bookshelf.js](http://bookshelfjs.org/)，[Objection.js](http://vincit.github.io/objection.js/)……
-  - 模版引擎PK：[Jade](http://jade-lang.com/)，[EJS](http://ejs.co/)，[Swig](https://github.com/paularmstrong/swig)，[Nunjucks](http://mozilla.github.io/nunjucks/)，[doT.js](http://olado.github.io/doT/)……
-  - 测试框架包括：[Mocha](http://mochajs.org/)，[Expresso](http://visionmedia.github.io/expresso/)，[Unit.js](http://unitjs.com/)，[Karma](http://karma-runner.github.io/)……
-  - 构建工具有：[Grunt](http://gruntjs.com/)，[Gulp](http://gulpjs.com/)，[Webpack](http://webpack.github.io/)……
+    - 在Node.js诞生后的短短几年里，出现了无数种Web框架、ORM框架、模版引擎、测试框架、自动化构建工具
+    - 常见的Web框架包括：[Express](http://expressjs.com/)，[Sails.js](http://sailsjs.org/)，[koa](http://koajs.com/)，[Meteor](https://www.meteor.com/)，[DerbyJS](http://derbyjs.com/)，[Total.js](https://www.totaljs.com/)，[restify](http://restify.com/)……
+    - ORM 框架比Web框架要少一些：[Sequelize](http://www.sequelizejs.com/)，[ORM2](http://dresende.github.io/node-orm2/)，[Bookshelf.js](http://bookshelfjs.org/)，[Objection.js](http://vincit.github.io/objection.js/)……
+    - 模版引擎PK：[Jade](http://jade-lang.com/)，[EJS](http://ejs.co/)，[Swig](https://github.com/paularmstrong/swig)，[Nunjucks](http://mozilla.github.io/nunjucks/)，[doT.js](http://olado.github.io/doT/)……
+    - 测试框架包括：[Mocha](http://mochajs.org/)，[Expresso](http://visionmedia.github.io/expresso/)，[Unit.js](http://unitjs.com/)，[Karma](http://karma-runner.github.io/)……
+    - 构建工具有：[Grunt](http://gruntjs.com/)，[Gulp](http://gulpjs.com/)，[Webpack](http://webpack.github.io/)……
 
 #### koa
 
 - koa是Express的下一代基于Node.js的web框架
 - 历史
-  - Express是第一代最流行的web框架，它对Node.js的http进行了封装
-    - 虽然Express的API很简单，但是它是基于ES5的语法，要实现异步代码，只有一个方法：回调。如果异步嵌套层次过多，代码写起来就非常难看
-  - koa 1.0
-    - 随着新版Node.js开始支持ES6，Express的团队又基于ES6的generator重新编写了下一代web框架koa。和Express相比，koa 1.0使用generator实现异步，代码看起来像同步的
-    - 用generator实现异步比回调简单了不少，但是generator的本意并不是异步。Promise才是为异步设计的，但是Promise的写法……想想就复杂。为了简化异步代码，ES7（目前是草案，还没有发布）引入了新的关键字`async`和`await`，可以轻松地把一个function变为异步模式
-  - koa2
-    - koa团队并没有止步于koa 1.0，他们非常超前地基于ES7开发了koa2，和koa 1相比，koa2完全使用Promise并配合`async`来实现异步。
+    - Express是第一代最流行的web框架，它对Node.js的http进行了封装
+        - 虽然Express的API很简单，但是它是基于ES5的语法，要实现异步代码，只有一个方法：回调。如果异步嵌套层次过多，代码写起来就非常难看
+    - koa 1.0
+        - 随着新版Node.js开始支持ES6，Express的团队又基于ES6的generator重新编写了下一代web框架koa。和Express相比，koa 1.0使用generator实现异步，代码看起来像同步的
+        - 用generator实现异步比回调简单了不少，但是generator的本意并不是异步。Promise才是为异步设计的，但是Promise的写法……想想就复杂。为了简化异步代码，ES7（目前是草案，还没有发布）引入了新的关键字`async`和`await`，可以轻松地把一个function变为异步模式
+    - koa2
+        - koa团队并没有止步于koa 1.0，他们非常超前地基于ES7开发了koa2，和koa 1相比，koa2完全使用Promise并配合`async`来实现异步。
 
 ##### 入门
 
@@ -550,24 +553,24 @@ openssl rsa -in rsa-key.pem -outform PEM -pubout -out rsa-pub.pem
 
 - 方法一：可以用npm命令直接安装koa。 `npm install koa@2.0.0`
 - 方法二：在`hello-koa`这个目录下创建一个`package.json`，这个文件描述了我们的`hello-koa`工程会用到哪些包。
-  - 最重要的是在 `dependencies` 中指定 `"koa": "2.0.0"`
-  - `npm install`
+    - 最重要的是在 `dependencies` 中指定 `"koa": "2.0.0"`
+    - `npm install`
 
 如何运行?
 
 - 点击 VSCode 上的运行按钮 (可以看到调用了 node 命令)
 - 直接用命令 `node app.js` 在命令行启动程序
 - 或者用`npm start`启动。`npm start` 命令会让npm执行定义在 `package.json` 文件中的start对应命令.
-  - 在 `scripts` 中指定 `"start": "node --use_strict app.js"`
+    - 在 `scripts` 中指定 `"start": "node --use_strict app.js"`
 
 ##### koa middleware
 
 - 核心代码
-  - `app.use(async (ctx, next) => {}`
-  - 每收到一个http请求，koa就会调用通过`app.use()`注册的async函数，并传入`ctx`和`next`参数。
-    - 参数`ctx`是由koa传入的封装了request和response的变量，我们可以通过它访问request和response，`next`是koa传入的将要处理的下一个异步函数。
-    - 由`async`标记的函数称为异步函数，在异步函数中，可以用`await`调用另一个异步函数，这两个关键字将在ES7中引入。
-  - koa把很多async函数组成一个处理链，每个async函数都可以做一些自己的事情，然后用`await next()`来调用下一个async函数。我们把每个async函数称为middleware，这些middleware可以组合起来，完成很多有用的功能。
+    - `app.use(async (ctx, next) => {}`
+    - 每收到一个http请求，koa就会调用通过`app.use()`注册的async函数，并传入`ctx`和`next`参数。
+        - 参数`ctx`是由koa传入的封装了request和response的变量，我们可以通过它访问request和response，`next`是koa传入的将要处理的下一个异步函数。
+        - 由`async`标记的函数称为异步函数，在异步函数中，可以用`await`调用另一个异步函数，这两个关键字将在ES7中引入。
+    - koa把很多async函数组成一个处理链，每个async函数都可以做一些自己的事情，然后用`await next()`来调用下一个async函数。我们把每个async函数称为middleware，这些middleware可以组合起来，完成很多有用的功能。
 
 ```js
 /* app.js */
@@ -615,18 +618,18 @@ app.use(async (ctx, next) => {
 ##### 处理URL
 
 - `koa-router`
-  - 为了处理URL，我们需要引入`koa-router`这个middleware，让它负责处理URL映射
-  - 注意, 导入的是一个函数 `const router = require('koa-router')();`
+    - 为了处理URL，我们需要引入`koa-router`这个middleware，让它负责处理URL映射
+    - 注意, 导入的是一个函数 `const router = require('koa-router')();`
 - get
-  - 使用`router.get('/path', async fn)`来注册一个GET请求。
-  - 可以在请求路径中使用带变量的`/hello/:name`，变量可以通过`ctx.params.name`访问。
+    - 使用`router.get('/path', async fn)`来注册一个GET请求。
+    - 可以在请求路径中使用带变量的`/hello/:name`，变量可以通过`ctx.params.name`访问。
 - `koa-bodyparser`
-  - post请求通常会发送一个表单，或者JSON，它作为request的body发送，但无论是Node.js提供的原始request对象，还是koa提供的request对象，都 不提供 解析request的body的功能！
-  - 因此, 需要另一个 middleware `koa-bodyparser`. 用它解析参数，然后把解析后的参数，绑定到`ctx.request.body`中
-  - 需要在合适的位置加上 `app.use(bodyParser());`
+    - post请求通常会发送一个表单，或者JSON，它作为request的body发送，但无论是Node.js提供的原始request对象，还是koa提供的request对象，都 不提供 解析request的body的功能！
+    - 因此, 需要另一个 middleware `koa-bodyparser`. 用它解析参数，然后把解析后的参数，绑定到`ctx.request.body`中
+    - 需要在合适的位置加上 `app.use(bodyParser());`
 - post
-  - `router.post('/path', async fn)`
-  - 然后可以用 `ctx.request.body` 得到解析好的 request的body
+    - `router.post('/path', async fn)`
+    - 然后可以用 `ctx.request.body` 得到解析好的 request的body
 - 类似的，put、delete、head请求也可以由router处理。
 
 ```js
@@ -691,33 +694,33 @@ router.post('/signin', async (ctx, next) => {
 
 - 对于不同 URL 的响应, 应该从 `app.js` 中分离出来, 也即 Controller Middleware
 - 因此, 对于代码重构
-  - 将处理 URL 的代码 (处理函数) 都放在一个 `controllers` 文件夹中
-  - 用专门的一个 `controller.js`, 扫描`controllers`目录和创建`router`, 作为一个简单的 middleware 使用
-  - 这样, `app.js`的代码得以简化.
+    - 将处理 URL 的代码 (处理函数) 都放在一个 `controllers` 文件夹中
+    - 用专门的一个 `controller.js`, 扫描`controllers`目录和创建`router`, 作为一个简单的 middleware 使用
+    - 这样, `app.js`的代码得以简化.
 - 经过重新整理后的工程 `url2-koa` 目前具备非常好的模块化，所有处理URL的函数按功能组存放在`controllers`目录，今后我们也只需要不断往这个目录下加东西就可以了，`app.js`保持不变。
 
 ##### Nunjucks
 
 - 模板引擎
-  - 模板引擎就是基于模板配合数据构造出字符串输出的一个组件。
+    - 模板引擎就是基于模板配合数据构造出字符串输出的一个组件。
 - 输出HTML有几个特别重要的问题需要考虑：
-  - 转义
-    - 对特殊字符要转义，避免受到XSS攻击。比如，如果变量`name`的值不是`小明`，而是`小明<script>...</script>`，模板引擎输出的HTML到了浏览器，就会自动执行恶意JavaScript代码。
-  - 格式化
-    - 对不同类型的变量要格式化，比如，货币需要变成`12,345.00`这样的格式，日期需要变成`2016-01-01`这样的格式。
-  - 简单逻辑
-    - 模板还需要能执行一些简单逻辑，比如，要按条件输出内容
+    - 转义
+        - 对特殊字符要转义，避免受到XSS攻击。比如，如果变量`name`的值不是`小明`，而是`小明<script>...</script>`，模板引擎输出的HTML到了浏览器，就会自动执行恶意JavaScript代码。
+    - 格式化
+        - 对不同类型的变量要格式化，比如，货币需要变成`12,345.00`这样的格式，日期需要变成`2016-01-01`这样的格式。
+    - 简单逻辑
+        - 模板还需要能执行一些简单逻辑，比如，要按条件输出内容
 - Nunjucks
-  - 我们选择Nunjucks作为模板引擎。Nunjucks是 Mozilla 开发的一个纯JavaScript编写的模板引擎，既可以用在Node环境下，又可以运行在浏览器端。但是，主要还是运行在Node环境下，因为浏览器端有更好的模板解决方案，例如MVVM框架。
-  - 就是用 js 重新实现了 Python的模板引擎[jinja2](https://www.liaoxuefeng.com/wiki/1016959663602400/1017806952856928)
+    - 我们选择Nunjucks作为模板引擎。Nunjucks是 Mozilla 开发的一个纯JavaScript编写的模板引擎，既可以用在Node环境下，又可以运行在浏览器端。但是，主要还是运行在Node环境下，因为浏览器端有更好的模板解决方案，例如MVVM框架。
+    - 就是用 js 重新实现了 Python的模板引擎[jinja2](https://www.liaoxuefeng.com/wiki/1016959663602400/1017806952856928)
 
 如何使用模板引擎?
 
 - 创建引擎对象
-  - `function render(view, model) {}`
-  - `view`是模板的名称（又称为视图），因为可能存在多个模板，需要选择其中一个。`model`就是数据，在JavaScript中，它就是一个简单的Object。`render`函数返回一个字符串，就是模板的输出。
-  - 创建`env`需要的参数可以查看文档获知。
-  - 下例中, 我们用`opts.noCache || false`这样的代码给每个参数加上默认值，最后使用`new nunjucks.FileSystemLoader('views')`创建一个文件系统加载器，从`views`目录读取模板。
+    - `function render(view, model) {}`
+    - `view`是模板的名称（又称为视图），因为可能存在多个模板，需要选择其中一个。`model`就是数据，在JavaScript中，它就是一个简单的Object。`render`函数返回一个字符串，就是模板的输出。
+    - 创建`env`需要的参数可以查看文档获知。
+    - 下例中, 我们用`opts.noCache || false`这样的代码给每个参数加上默认值，最后使用`new nunjucks.FileSystemLoader('views')`创建一个文件系统加载器，从`views`目录读取模板。
 
 ```js
 const nunjucks = require('nunjucks');
@@ -755,13 +758,13 @@ var env = createEnv('views', {
 ```
 
 - 使用就非常简单
-  - 例如, 写一个简单的 html 文件, 内容为 `<h1>Hello {{ name }}</h1>`
-  - 故意传入一个包含特殊符号的对象: `var s = env.render('hello.html', { name: '<script>alert("小明")</script>' });`
-  - 可以看到会对于特殊字符进行转移, 这样就避免了输出恶意脚本
+    - 例如, 写一个简单的 html 文件, 内容为 `<h1>Hello {{ name }}</h1>`
+    - 故意传入一个包含特殊符号的对象: `var s = env.render('hello.html', { name: '<script>alert("小明")</script>' });`
+    - 可以看到会对于特殊字符进行转移, 这样就避免了输出恶意脚本
 - 功能
-  - 条件判断、循环
-  - 继承
-    - Nunjucks模板引擎最强大的功能在于模板的继承。仔细观察各种网站可以发现，网站的结构实际上是类似的，头部、尾部都是固定格式，只有中间页面部分内容不同。如果每个模板都重复头尾，一旦要修改头部或尾部，那就需要改动所有模板。
+    - 条件判断、循环
+    - 继承
+        - Nunjucks模板引擎最强大的功能在于模板的继承。仔细观察各种网站可以发现，网站的结构实际上是类似的，头部、尾部都是固定格式，只有中间页面部分内容不同。如果每个模板都重复头尾，一旦要修改头部或尾部，那就需要改动所有模板。
 
 ```html
 <!-- 循环输出名字 -->
@@ -788,53 +791,53 @@ var env = createEnv('views', {
 ##### 使用MVC
 
 - MVC：Model-View-Controller，中文名“模型-视图-控制器”。
-  - 异步函数是C：Controller，Controller负责业务逻辑，比如检查用户名是否存在，取出用户信息等等；
-  - 包含变量`{{ name }}`的模板就是V：View，View负责显示逻辑，通过简单地替换一些变量，View最终输出的就是用户看到的HTML。
-  - Model是用来传给View的，这样View在替换变量的时候，就可以从Model中取出相应的数据。
+    - 异步函数是C：Controller，Controller负责业务逻辑，比如检查用户名是否存在，取出用户信息等等；
+    - 包含变量`{{ name }}`的模板就是V：View，View负责显示逻辑，通过简单地替换一些变量，View最终输出的就是用户看到的HTML。
+    - Model是用来传给View的，这样View在替换变量的时候，就可以从Model中取出相应的数据。
 
 具体而言
 
 - router 逻辑
-  - 在 `controller` 文件夹中, 实现 `async (ctx, next) => {}` 这些异步函数, 交给 koa 进行处理
-  - 这里直接写了 `ctx.render('index.html', {})`, 其中的 render 是我们定义在 ctx 上的函数, 用 nonjucks 渲染模板
+    - 在 `controller` 文件夹中, 实现 `async (ctx, next) => {}` 这些异步函数, 交给 koa 进行处理
+    - 这里直接写了 `ctx.render('index.html', {})`, 其中的 render 是我们定义在 ctx 上的函数, 用 nonjucks 渲染模板
 - 编写 view
-  - 写一个 base.html 作为骨架, 其他模板直接继承即可
+    - 写一个 base.html 作为骨架, 其他模板直接继承即可
 - 集成 Nunjucks
-  - 集成Nunjucks实际上也是编写一个middleware，这个middleware的作用是给`ctx`对象绑定一个`render(view, model)`的方法，这样，后面的Controller就可以调用这个方法来渲染模板了。
+    - 集成Nunjucks实际上也是编写一个middleware，这个middleware的作用是给`ctx`对象绑定一个`render(view, model)`的方法，这样，后面的Controller就可以调用这个方法来渲染模板了。
 - 编写 middleware
-  - 第一个middleware是记录URL以及页面执行时间
-  - 第二个middleware处理静态文件
-    - 如果是静态文件, 返回即可!
-    - 如果不是, `next()`
-  - 第三个middleware解析POST请求
-  - 第四个middleware负责给`ctx`加上`render()`来使用Nunjucks
-    - 注意, 这里对于每一个请求, 都需要加上 render 方法, 然后调用 `next()` (在下面的路有中决定渲染哪一个模板)
-  - 最后一个middleware处理URL路由
+    - 第一个middleware是记录URL以及页面执行时间
+    - 第二个middleware处理静态文件
+        - 如果是静态文件, 返回即可!
+        - 如果不是, `next()`
+    - 第三个middleware解析POST请求
+    - 第四个middleware负责给`ctx`加上`render()`来使用Nunjucks
+        - 注意, 这里对于每一个请求, 都需要加上 render 方法, 然后调用 `next()` (在下面的路有中决定渲染哪一个模板)
+    - 最后一个middleware处理URL路由
 - 开发/生产环境
-  - 可以定义一个常量 `isProduction` 根据环境变量 `process.env.NODE_ENV` 判断是否为开发环境
-  - 开发:
-    - Nonjucks: 开发环境下，关闭缓存后，我们修改View，可以直接刷新浏览器看到效果，否则，每次修改都必须重启Node程序，会极大地降低开发效率
-    - 开发环境下, 我们用 koa 处理静态文件, 而生产端直接交给 Nginx 处理
+    - 可以定义一个常量 `isProduction` 根据环境变量 `process.env.NODE_ENV` 判断是否为开发环境
+    - 开发:
+        - Nonjucks: 开发环境下，关闭缓存后，我们修改View，可以直接刷新浏览器看到效果，否则，每次修改都必须重启Node程序，会极大地降低开发效率
+        - 开发环境下, 我们用 koa 处理静态文件, 而生产端直接交给 Nginx 处理
 - 技巧: 拓展
-  - 注意到`ctx.render`内部渲染模板时，Model对象并不是传入的model变量，而是 `ctx.response.body = env.render(view, Object.assign({}, ctx.state || {}, model || {}));`
-  - 首先，`model || {}`确保了即使传入`undefined`，model也会变为默认值`{}`
-  - `ctx.state || {}` 目的是为了能把一些公共的变量放入`ctx.state`并传给View
-    - 例如，某个middleware负责检查用户权限，它可以把当前用户放入`ctx.state`中
-    - 这样就没有必要在每个Controller的async函数中都把user变量放入model中
-  - 使用 `Object.assign()` 将除了第一个参数意外的对象属性都复制到第一个参数中
+    - 注意到`ctx.render`内部渲染模板时，Model对象并不是传入的model变量，而是 `ctx.response.body = env.render(view, Object.assign({}, ctx.state || {}, model || {}));`
+    - 首先，`model || {}`确保了即使传入`undefined`，model也会变为默认值`{}`
+    - `ctx.state || {}` 目的是为了能把一些公共的变量放入`ctx.state`并传给View
+        - 例如，某个middleware负责检查用户权限，它可以把当前用户放入`ctx.state`中
+        - 这样就没有必要在每个Controller的async函数中都把user变量放入model中
+    - 使用 `Object.assign()` 将除了第一个参数意外的对象属性都复制到第一个参数中
 
 建议直接看代码, 注意 koa 添加 run 函数的执行逻辑.
 
 #### mysql
 
 - 开源数据库
-  - MySQL，大家都在用，一般错不了；
-  - PostgreSQL，学术气息有点重，其实挺不错，但知名度没有MySQL高；
-  - sqlite，嵌入式数据库，适合桌面和移动应用。
+    - MySQL，大家都在用，一般错不了；
+    - PostgreSQL，学术气息有点重，其实挺不错，但知名度没有MySQL高；
+    - sqlite，嵌入式数据库，适合桌面和移动应用。
 - 安装
-  - `brew install mysql`
-  - `brew services start mysql`
-  - `mysql -uroot`
+    - `brew install mysql`
+    - `brew services start mysql`
+    - `mysql -uroot`
 
 ##### Sequelize
 
@@ -892,14 +895,14 @@ create table pets (
 ```
 
 - 使用 sequelize
-  - 安装 `sequelize, mysql2`
-  - 第一步，创建一个sequelize对象实例
-  - 第二步，定义 **模型** Pet，告诉Sequelize如何映射数据库表
-    - 用 `sequelize.define()` 定义Model时，传入名称 `pet`，默认的表名就是 `pets`。第二个参数指定列名和数据类型，如果是主键，需要更详细地指定。第三个参数是额外的配置，我们传入`{ timestamps: false }`是为了关闭Sequelize的自动添加timestamp的功能。
-  - 操作
-    - `create` 插入数据
-    - `findAll` 查询
-      - 对查询到的实例调用 `save, destory`
+    - 安装 `sequelize, mysql2`
+    - 第一步，创建一个sequelize对象实例
+    - 第二步，定义 **模型** Pet，告诉Sequelize如何映射数据库表
+        - 用 `sequelize.define()` 定义Model时，传入名称 `pet`，默认的表名就是 `pets`。第二个参数指定列名和数据类型，如果是主键，需要更详细地指定。第三个参数是额外的配置，我们传入`{ timestamps: false }`是为了关闭Sequelize的自动添加timestamp的功能。
+    - 操作
+        - `create` 插入数据
+        - `findAll` 查询
+            - 对查询到的实例调用 `save, destory`
 
 ```js
 const Sequelize = require('sequelize');
@@ -932,13 +935,13 @@ var Pet = sequelize.define('pet', {
 ```
 
 - Model
-  - 我们把通过`sequelize.define()`返回的`Pet`称为 **Model**，它表示一个数据模型。
-  - 我们把通过`Pet.findAll()`返回的一个或一组对象称为Model **实例**，每个实例都可以直接通过`JSON.stringify`序列化为JSON字符串。但是它们和普通JSON对象相比，多了一些由Sequelize添加的方法，比如`save()`和`destroy()`。调用这些方法我们可以执行更新或者删除操作。
+    - 我们把通过`sequelize.define()`返回的`Pet`称为 **Model**，它表示一个数据模型。
+    - 我们把通过`Pet.findAll()`返回的一个或一组对象称为Model **实例**，每个实例都可以直接通过`JSON.stringify`序列化为JSON字符串。但是它们和普通JSON对象相比，多了一些由Sequelize添加的方法，比如`save()`和`destroy()`。调用这些方法我们可以执行更新或者删除操作。
 - 所以，使用Sequelize操作数据库的一般步骤就是：
-  - 首先，通过某个Model对象的`findAll()`方法获取实例；
-    - 注意`findAll()`方法可以接收`where`、`order`这些参数，这和将要生成的SQL语句是对应的。
-  - 如果要更新实例，先对实例属性赋新值，再调用`save()`方法
-  - 如果要删除实例，直接调用`destroy()`方法。
+    - 首先，通过某个Model对象的`findAll()`方法获取实例；
+        - 注意`findAll()`方法可以接收`where`、`order`这些参数，这和将要生成的SQL语句是对应的。
+    - 如果要更新实例，先对实例属性赋新值，再调用`save()`方法
+    - 如果要删除实例，直接调用`destroy()`方法。
 
 ```js
 // await 写法 create
@@ -1058,8 +1061,8 @@ function defineModel(name, attributes) {
 ```
 
 - 我们其实不需要创建表的SQL，因为Sequelize提供了一个`sync()`方法，可以自动创建数据库。
-  - 这个功能在开发和生产环境中没有什么用，但是在测试环境中非常有用。测试时，我们可以用`sync()`方法自动创建出表结构，而不是自己维护SQL脚本。这样，可以随时修改Model的定义，并立刻运行测试。
-  - 开发环境下，首次使用`sync()`也可以自动创建出表结构，避免了手动运行SQL的问题。
+    - 这个功能在开发和生产环境中没有什么用，但是在测试环境中非常有用。测试时，我们可以用`sync()`方法自动创建出表结构，而不是自己维护SQL脚本。这样，可以随时修改Model的定义，并立刻运行测试。
+    - 开发环境下，首次使用`sync()`也可以自动创建出表结构，避免了手动运行SQL的问题。
 
 ```js
 /* 暴露 sync 函数 */
@@ -1086,20 +1089,20 @@ console.log('init db ok.');
 
 - mocha是JavaScript的一种单元测试框架，既可以在浏览器环境下运行，也可以在Node.js环境下运行。
 - 特点
-  - 既可以测试简单的JavaScript函数，又可以测试异步代码，因为异步是JavaScript的特性之一；
-  - 可以自动运行所有测试，也可以只运行特定的测试；
-  - 可以支持before、after、beforeEach和afterEach来编写初始化代码。
+    - 既可以测试简单的JavaScript函数，又可以测试异步代码，因为异步是JavaScript的特性之一；
+    - 可以自动运行所有测试，也可以只运行特定的测试；
+    - 可以支持before、after、beforeEach和afterEach来编写初始化代码。
 
 如何执行测试?
 
 - 方法一 `node_modules\mocha\bin\mocha`
 - 方法二，我们在`package.json`中添加npm命令
-  - 在 scripts 中添加 `"test": "mocha"`
-  - 然后 `npm test` 即可
+    - 在 scripts 中添加 `"test": "mocha"`
+    - 然后 `npm test` 即可
 - 方法三，我们在VS Code中创建配置文件`.vscode/launch.json`
-  - `"program": "${workspaceRoot}/node_modules/mocha/bin/mocha"`
-  - `"type": "node",`
-  - 其实就是运行了 `node node_modules/mocha/bin/mocha` !
+    - `"program": "${workspaceRoot}/node_modules/mocha/bin/mocha"`
+    - `"type": "node",`
+    - 其实就是运行了 `node node_modules/mocha/bin/mocha` !
 
 ##### 编写测试
 
@@ -1139,14 +1142,14 @@ describe('#hello.js', () => {
 ##### 异步测试
 
 - 如果要测试同步函数，我们传入无参数函数即可
-  - `it(' description', function () {}`
-  - 然后在其中 assert 判断即可
+    - `it(' description', function () {}`
+    - 然后在其中 assert 判断即可
 - 如果要测试异步函数，我们要传入的函数需要带一个参数，通常命名为`done`
-  - `it(' description', function (done) {}`
-  - 然后在其中运行代测试的函数 f
-  - 手动调用`done()`表示测试成功，`done(err)`表示测试出错
+    - `it(' description', function (done) {}`
+    - 然后在其中运行代测试的函数 f
+    - 手动调用`done()`表示测试成功，`done(err)`表示测试出错
 - 对于 async 函数, 更方便的是直接将其转化为同步函数测试
-  - 例如, 传入 `async () => { assert.strictEqual(await f(), groundTruth) }`
+    - 例如, 传入 `async () => { assert.strictEqual(await f(), groundTruth) }`
 
 ```js
 // 如果要测试同步函数，我们传入无参数函数即可
@@ -1191,12 +1194,12 @@ it('#async function', async () => {
 ##### Http 测试
 
 - 从 `app.js` 中分离直接运行 (listen) 的代码, 令其只负责创建`app`实例，并不监听端口
-  - 从而可以在测试中导入 app 然后 `let server = app.listen(9900);`
+    - 从而可以在测试中导入 app 然后 `let server = app.listen(9900);`
 - 利用 `supertest` 简化 HTTP assertions
-  - `request = require('supertest')`
-  - 使用 `let res = await request(server).get('/');` 构造一个GET请求，发送给koa的应用，然后获得响应
-  - 可以手动检查响应对象，例如，`res.body`，还可以利用`supertest`提供的`expect()`更方便地断言响应的HTTP代码、返回内容和HTTP头。断言HTTP头时可用使用正则表达式
-    - 例如 `.expect('Content-Type', /text\/html/)` 可用成功匹配到`Content-Type`为`text/html`、`text/html; charset=utf-8`等值。
+    - `request = require('supertest')`
+    - 使用 `let res = await request(server).get('/');` 构造一个GET请求，发送给koa的应用，然后获得响应
+    - 可以手动检查响应对象，例如，`res.body`，还可以利用`supertest`提供的`expect()`更方便地断言响应的HTTP代码、返回内容和HTTP头。断言HTTP头时可用使用正则表达式
+        - 例如 `.expect('Content-Type', /text\/html/)` 可用成功匹配到`Content-Type`为`text/html`、`text/html; charset=utf-8`等值。
 
 参见 <https://www.npmjs.com/package/supertest> 中的 macha 部分
 
@@ -1233,14 +1236,14 @@ describe('#test koa app', () => {
 #### WebSocket
 
 - WebSocket是 HTML5 新增的协议，它的目的是在浏览器和服务器之间建立一个不受限的双向通信的通道，比如说，服务器可以在任意时刻发送消息给浏览器。
-  - HTTP协议是一个请求－响应协议，请求必须先由浏览器发给服务器，服务器才能响应这个请求，再把数据发送给浏览器。换句话说，浏览器不主动请求，服务器是没法主动发数据给浏览器的。
+    - HTTP协议是一个请求－响应协议，请求必须先由浏览器发给服务器，服务器才能响应这个请求，再把数据发送给浏览器。换句话说，浏览器不主动请求，服务器是没法主动发数据给浏览器的。
 - 也能实现, 但是效率低. 比如用轮询或者Comet。
-  - 轮询是指浏览器通过JavaScript启动一个定时器，然后以固定的间隔给服务器发请求，询问服务器有没有新消息。这个机制的缺点一是实时性不够，二是频繁的请求会给服务器带来极大的压力。
-  - Comet本质上也是轮询，但是在没有消息的情况下，服务器先拖一段时间，等到有消息了再回复。这个机制暂时地解决了实时性问题，但是它带来了新的问题：以多线程模式运行的服务器会让大部分线程大部分时间都处于挂起状态，极大地浪费服务器资源。另外，一个HTTP连接在长时间没有数据传输的情况下，链路上的任何一个网关都可能关闭这个连接，而网关是我们不可控的，这就要求Comet连接必须定期发一些ping数据表示连接“正常工作”。
+    - 轮询是指浏览器通过JavaScript启动一个定时器，然后以固定的间隔给服务器发请求，询问服务器有没有新消息。这个机制的缺点一是实时性不够，二是频繁的请求会给服务器带来极大的压力。
+    - Comet本质上也是轮询，但是在没有消息的情况下，服务器先拖一段时间，等到有消息了再回复。这个机制暂时地解决了实时性问题，但是它带来了新的问题：以多线程模式运行的服务器会让大部分线程大部分时间都处于挂起状态，极大地浪费服务器资源。另外，一个HTTP连接在长时间没有数据传输的情况下，链路上的任何一个网关都可能关闭这个连接，而网关是我们不可控的，这就要求Comet连接必须定期发一些ping数据表示连接“正常工作”。
 - 为什么WebSocket连接可以实现全双工通信而HTTP连接不行呢？实际上HTTP协议是建立在TCP协议之上的，TCP协议本身就实现了全双工通信，但是HTTP协议的请求－应答机制限制了全双工通信。WebSocket连接建立以后，其实只是简单规定了一下：接下来，咱们通信就不使用HTTP协议了，直接互相发数据吧。
-  - 安全的WebSocket连接机制和HTTPS类似。首先，浏览器用`wss://xxx`创建WebSocket连接时，会先通过HTTPS创建安全的连接，然后，该HTTPS连接升级为WebSocket连接，底层通信走的仍然是安全的SSL/TLS协议。
+    - 安全的WebSocket连接机制和HTTPS类似。首先，浏览器用`wss://xxx`创建WebSocket连接时，会先通过HTTPS创建安全的连接，然后，该HTTPS连接升级为WebSocket连接，底层通信走的仍然是安全的SSL/TLS协议。
 - 服务器
-  - 由于WebSocket是一个协议，服务器具体怎么实现，取决于所用编程语言和框架本身。Node.js本身支持的协议包括TCP协议和HTTP协议，要支持WebSocket协议，需要对Node.js提供的HTTPServer做额外的开发。已经有若干基于Node.js的稳定可靠的WebSocket实现，我们直接用npm安装使用即可。
+    - 由于WebSocket是一个协议，服务器具体怎么实现，取决于所用编程语言和框架本身。Node.js本身支持的协议包括TCP协议和HTTP协议，要支持WebSocket协议，需要对Node.js提供的HTTPServer做额外的开发。已经有若干基于Node.js的稳定可靠的WebSocket实现，我们直接用npm安装使用即可。
 
 ##### ws 协议
 
@@ -1308,8 +1311,8 @@ let wss = new WebSocketServer({
 - 一个简单可行的方案是把用户登录后的身份写入Cookie，在koa中，可以使用middleware解析Cookie，把用户绑定到`ctx.state.user`上。
 - WS请求也是标准的HTTP请求，所以，服务器也会把Cookie发送过来，这样，我们在用WebSocketServer处理WS请求时，就可以根据Cookie识别用户身份。
 - 处理逻辑
-  - 在 koa 中, (在 middleware 注册 parseUser 函数), 将 cookie 保存在 `ctx.state` 中. 由于处理的都是 http 请求, 可以容易得到
-  - 而对于 ws, 我们需要在初始建立 connection 的时候创建 cookie, 然后绑定到 WebSocket对象 上.
+    - 在 koa 中, (在 middleware 注册 parseUser 函数), 将 cookie 保存在 `ctx.state` 中. 由于处理的都是 http 请求, 可以容易得到
+    - 而对于 ws, 我们需要在初始建立 connection 的时候创建 cookie, 然后绑定到 WebSocket对象 上.
 
 ```js
 /* server 新用户登陆, 构造 user 对象, 生成 base64 编码的 cookie —— 然后发送给浏览器
@@ -1426,13 +1429,13 @@ wss.on('connection', function (ws) {
 
 - 我们要对每个创建成功的WebSocket绑定`message`、`close`、`error`等事件处理函数。对于聊天应用来说，每收到一条消息，就需要把该消息广播到所有WebSocket连接上。
 - 处理逻辑:
-  - 某个WebSocket收到消息, 广播到所有连接
+    - 某个WebSocket收到消息, 广播到所有连接
 
 ###### 页面端
 
 - 聊天室页面可以划分为左侧会话列表和右侧用户列表两部分
 - 在聊天室应用中, DOM需要动态更新，因此，状态管理是页面逻辑的核心。
-  - 为了简化状态管理，我们用 `Vue` 控制左右两个列表
+    - 为了简化状态管理，我们用 `Vue` 控制左右两个列表
 
 紧接着，创建WebSocket连接，响应服务器消息，并且更新会话列表和用户列表
 
@@ -1461,29 +1464,29 @@ ws.onmessage = function(event) {
 ###### 配置反向代理
 
 - 如果网站配置了反向代理，例如Nginx，则HTTP和WebSocket都必须通过反向代理连接Node服务器。
-  - HTTP的反向代理非常简单，但是要正常连接WebSocket，代理服务器必须支持WebSocket协议。
-  - Nginx 为例, 官方博客：[Using NGINX as a WebSocket Proxy](https://www.nginx.com/blog/websocket-nginx/)
+    - HTTP的反向代理非常简单，但是要正常连接WebSocket，代理服务器必须支持WebSocket协议。
+    - Nginx 为例, 官方博客：[Using NGINX as a WebSocket Proxy](https://www.nginx.com/blog/websocket-nginx/)
 
 #### REST
 
 - 自从Roy Fielding博士在2000年他的博士论文中提出[REST](http://zh.wikipedia.org/wiki/REST)（Representational State Transfer）风格的软件架构模式后，REST就基本上迅速取代了复杂而笨重的SOAP，成为Web API的标准了。
 - 编写API有什么好处呢？
-  - 由于API就是把Web App的功能全部封装了，所以，通过API操作数据，可以极大地把前端和后端的代码隔离，使得后端代码易于测试，前端代码编写更简单。
-  - 此外，如果我们把前端页面看作是一种用于展示的客户端，那么API就是为客户端提供数据、操作数据的接口。
-    - **这种设计可以获得极高的扩展性**。例如，当用户需要在手机上购买商品时，只需要开发针对iOS和Android的两个客户端，通过客户端访问API，就可以完成通过浏览器页面提供的功能，而后端代码基本无需改动。
+    - 由于API就是把Web App的功能全部封装了，所以，通过API操作数据，可以极大地把前端和后端的代码隔离，使得后端代码易于测试，前端代码编写更简单。
+    - 此外，如果我们把前端页面看作是一种用于展示的客户端，那么API就是为客户端提供数据、操作数据的接口。
+        - **这种设计可以获得极高的扩展性**。例如，当用户需要在手机上购买商品时，只需要开发针对iOS和Android的两个客户端，通过客户端访问API，就可以完成通过浏览器页面提供的功能，而后端代码基本无需改动。
 
 ##### 编写 REST API
 
 - 编写REST API，实际上就是编写处理HTTP请求的async函数，不过，REST请求和普通的HTTP请求有几个特殊的地方：
-  - REST请求仍然是标准的HTTP请求，但是，除了GET请求外，POST、PUT等请求的body是JSON数据格式，请求的`Content-Type` 为 `application/json`
-  - REST响应返回的结果是JSON数据格式，因此，响应的 `Content-Type`也是`application/json`。
+    - REST请求仍然是标准的HTTP请求，但是，除了GET请求外，POST、PUT等请求的body是JSON数据格式，请求的`Content-Type` 为 `application/json`
+    - REST响应返回的结果是JSON数据格式，因此，响应的 `Content-Type`也是`application/json`。
 - REST规范定义了资源的通用访问格式，虽然它不是一个强制要求，但遵守该规范可以让人易于理解。
-  - 获取资源, 使用 GET
-    - 资源还可以按层次组织
-    - 当我们只需要获取部分数据时，可通过参数限制返回的结果集
-  - 新建一个Product使用POST请求，JSON数据包含在body中
-  - 更新一个Product使用PUT请求
-  - 删除一个Product使用DELETE请求
+    - 获取资源, 使用 GET
+        - 资源还可以按层次组织
+        - 当我们只需要获取部分数据时，可通过参数限制返回的结果集
+    - 新建一个Product使用POST请求，JSON数据包含在body中
+    - 更新一个Product使用PUT请求
+    - 删除一个Product使用DELETE请求
 
 ```js
 GET /api/products // 获取所有商品
@@ -1503,27 +1506,27 @@ DELETE /api/products/123
 
 - 使用REST虽然非常简单，但是，设计一套合理的REST框架却需要仔细考虑很多问题。
 - 问题一：如何组织URL
-  - 在实际工程中，一个Web应用既有REST，还有MVC，可能还需要集成其他第三方系统。如何组织URL？
-  - 一个简单的方法是通过固定的前缀区分。例如，`/static/`开头的URL是静态资源文件，类似的，`/api/`开头的URL就是REST API，其他URL是普通的MVC请求。
+    - 在实际工程中，一个Web应用既有REST，还有MVC，可能还需要集成其他第三方系统。如何组织URL？
+    - 一个简单的方法是通过固定的前缀区分。例如，`/static/`开头的URL是静态资源文件，类似的，`/api/`开头的URL就是REST API，其他URL是普通的MVC请求。
 - 问题二：如何统一输出REST
-  - 注意到, 服务端每次返回的都是一个 json 内容, 需要固定设置 `ctx.response.type = 'application/json';`
-  - 回忆我们集成Nunjucks模板引擎的方法：通过一个middleware给`ctx`添加一个`render()`方法，Controller就可以直接使用`ctx.render('view', model)`来渲染模板，不必编写重复的代码。
-  - 类似的，我们也可以通过一个middleware给`ctx`添加一个`rest()`方法
+    - 注意到, 服务端每次返回的都是一个 json 内容, 需要固定设置 `ctx.response.type = 'application/json';`
+    - 回忆我们集成Nunjucks模板引擎的方法：通过一个middleware给`ctx`添加一个`render()`方法，Controller就可以直接使用`ctx.render('view', model)`来渲染模板，不必编写重复的代码。
+    - 类似的，我们也可以通过一个middleware给`ctx`添加一个`rest()`方法
 - 问题三：如何处理错误
-  - 第一，当REST API请求出错时，我们如何返回错误信息？
-    - 类似403，404，500等错误，这些错误实际上是HTTP请求可能发生的错误. 服务端不用管
-  - 第二，当客户端收到REST响应后，如何判断是成功还是错误？
-    - 返回错误信息, 一个JSON字符串
+    - 第一，当REST API请求出错时，我们如何返回错误信息？
+        - 类似403，404，500等错误，这些错误实际上是HTTP请求可能发生的错误. 服务端不用管
+    - 第二，当客户端收到REST响应后，如何判断是成功还是错误？
+        - 返回错误信息, 一个JSON字符串
 - 问题四：如何定义错误码
-  - 相较于用数字, 不如直接用字符串, 即设定 `"code": "错误代码",` 和 `"message": "错误描述信息"`
-  - 例如, 一个错误代码可以是 `auth:bad_password`
+    - 相较于用数字, 不如直接用字符串, 即设定 `"code": "错误代码",` 和 `"message": "错误描述信息"`
+    - 例如, 一个错误代码可以是 `auth:bad_password`
 - 问题五：如何返回错误
-  - 一个直观的想法是 (在控制流程的各个部分) 调用`ctx.rest()`
-  - 更好的方式是异步函数直接用`throw`语句抛出错误，让middleware去处理错误
-  - 下面实现一个 restify 中间层: 仅仅处理前缀为 `/api/` 的请求, 对于其他请求直接 next
-    - 绑定 `ctx.rest()` 方法 (问题二：如何统一输出REST)
-    - 用 `try...catch` 统一处理错误 (在 controller 部分直接抛出错误即可).
-    - 受益于async/await语法，我们在middleware中可以直接用`try...catch`捕获异常。如果是callback模式，就无法用`try...catch`捕获，代码结构将混乱得多。
+    - 一个直观的想法是 (在控制流程的各个部分) 调用`ctx.rest()`
+    - 更好的方式是异步函数直接用`throw`语句抛出错误，让middleware去处理错误
+    - 下面实现一个 restify 中间层: 仅仅处理前缀为 `/api/` 的请求, 对于其他请求直接 next
+        - 绑定 `ctx.rest()` 方法 (问题二：如何统一输出REST)
+        - 用 `try...catch` 统一处理错误 (在 controller 部分直接抛出错误即可).
+        - 受益于async/await语法，我们在middleware中可以直接用`try...catch`捕获异常。如果是callback模式，就无法用`try...catch`捕获，代码结构将混乱得多。
 
 ```js
 module.exports = {
@@ -1569,22 +1572,22 @@ module.exports = {
 
 - [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel)是Model-View-ViewModel的缩写。
 - 用JavaScript在浏览器中操作HTML，经历了若干发展阶段：
-  - 第一阶段，直接用JavaScript操作DOM节点，使用浏览器提供的原生API
-  - 第二阶段，由于原生API不好用，还要考虑浏览器兼容性，jQuery横空出世
-  - 第三阶段，MVC模式，需要服务器端配合，JavaScript可以在前端修改服务器渲染后的数据
+    - 第一阶段，直接用JavaScript操作DOM节点，使用浏览器提供的原生API
+    - 第二阶段，由于原生API不好用，还要考虑浏览器兼容性，jQuery横空出世
+    - 第三阶段，MVC模式，需要服务器端配合，JavaScript可以在前端修改服务器渲染后的数据
 - MVVM 的核心思路: 关注Model的变化，让MVVM框架去自动更新DOM的状态，从而把开发者从操作DOM的繁琐步骤中解脱出来！
 - MVVM
-  - MVVM最早由微软提出来，它借鉴了桌面应用程序的MVC思想，在前端页面中，把Model用纯JavaScript对象表示，View负责显示，两者做到了最大限度的分离。
-  - 把Model和View关联起来的就是ViewModel。ViewModel负责把Model的数据同步到View显示出来，还负责把View的修改同步回Model。
-  - ViewModel如何编写？需要用JavaScript编写一个通用的ViewModel，这样，就可以复用整个MVVM模型了。
+    - MVVM最早由微软提出来，它借鉴了桌面应用程序的MVC思想，在前端页面中，把Model用纯JavaScript对象表示，View负责显示，两者做到了最大限度的分离。
+    - 把Model和View关联起来的就是ViewModel。ViewModel负责把Model的数据同步到View显示出来，还负责把View的修改同步回Model。
+    - ViewModel如何编写？需要用JavaScript编写一个通用的ViewModel，这样，就可以复用整个MVVM模型了。
 - 如果是用jQuery实现修改DOM节点, 需要先定位出 DOM 节点, 然后修改其内容; 然而, 在 MVVM 中, 我们不关心DOM结构, 只关心数据是怎么存储的 —— 例如作为 js 对象, 因此直接在代码中修改对象值即可, DOM 同步修改!
-  - 例如, 对于 `var person = {name: 'Bart'}`, 我们把变量`person`看作Model，把HTML某些DOM节点看作View，并假定它们之间被关联起来了。
-  - 通过改变JavaScript对象的状态，会导致DOM结构作出对应的变化
+    - 例如, 对于 `var person = {name: 'Bart'}`, 我们把变量`person`看作Model，把HTML某些DOM节点看作View，并假定它们之间被关联起来了。
+    - 通过改变JavaScript对象的状态，会导致DOM结构作出对应的变化
 - 著名的 MVVM 框架
-  - [Angular](https://angularjs.org/)：Google出品，名气大，但是很难用；
-  - [Backbone.js](http://backbonejs.org/)：入门非常困难，因为自身API太多；
-  - [Ember](http://emberjs.com/)：一个大而全的框架，想写个Hello world都很困难。
-  - 最佳选择是[尤雨溪](http://weibo.com/p/1005051761511274)大神开发的MVVM框架：[Vue.js](http://vuejs.org/)
+    - [Angular](https://angularjs.org/)：Google出品，名气大，但是很难用；
+    - [Backbone.js](http://backbonejs.org/)：入门非常困难，因为自身API太多；
+    - [Ember](http://emberjs.com/)：一个大而全的框架，想写个Hello world都很困难。
+    - 最佳选择是[尤雨溪](http://weibo.com/p/1005051761511274)大神开发的MVVM框架：[Vue.js](http://vuejs.org/)
 
 ```js
 /* 第一阶段 */
@@ -1600,14 +1603,14 @@ $('#name').text('Homer').css('color', 'red');
 
 - 在Vue中，可以直接写`{{ name }}`绑定某个属性。如果属性关联的是对象，还可以用多个`.`引用，例如，`{{ address.zipcode }}`。
 - 另一种是把指令写在HTML节点的属性上，它会被Vue解析，该节点的文本内容会被绑定为Model的指定属性，注意不能再写双花括号`{{ }}`。
-  - `<p>Hello, <span v-text="name"></span>!</p>`
+    - `<p>Hello, <span v-text="name"></span>!</p>`
 
 要特别注意的是，在 `<head>` 内部编写的JavaScript代码，需要用jQuery把MVVM的初始化代码推迟到页面加载完毕后执行，否则，直接在 `<head>` 内执行MVVM代码时，DOM节点尚未被浏览器加载，初始化将失败。
 
 来看创建一个 VM 的核心代码:
 
 - `el` 指定了要把Model绑定到哪个DOM根节点上，语法和jQuery类似。这里的`'#vm'`对应ID为`vm`的一个`<div>`节点
-  - 在该节点以及该节点内部，就是Vue可以操作的View。Vue可以自动把Model的状态映射到View上，但是不能操作View范围之外的其他DOM节点。
+    - 在该节点以及该节点内部，就是Vue可以操作的View。Vue可以自动把Model的状态映射到View上，但是不能操作View范围之外的其他DOM节点。
 
 ```js
 <html>
@@ -1671,11 +1674,11 @@ function executeJs() {
 - 当用户提交表单时，传统的做法是响应`onsubmit`事件，用jQuery获取表单内容，检查输入是否有效，最后提交表单，或者用AJAX提交表单。
 - 现在，获取表单内容已经不需要了，因为双向绑定直接让我们获得了表单内容，并且获得了合适的数据类型。
 - 响应`onsubmit`事件也可以放到VM中。我们在`<form>`元素上使用指令
-  - `<form id="vm" v-on:submit.prevent="register">`
-  - 其中，`v-on:submit="register"`指令就会自动监听表单的`submit`事件，并调用`register`方法处理该事件。使用`.prevent`表示阻止事件冒泡，这样，浏览器不再处理`<form>`的`submit`事件。
-    - 补充: 1、prevent是preventDefault,阻止标签默认行为，有些标签有默认行为，例如a标签的跳转链接属性href等。 2、submit点击默认行为是提交表单，这里并不需要它提交，只需要执行register方法，故阻止为妙。 3、stop是stopPropagation，阻止事件冒泡，点击哪个元素，就只响应这个元素，父级就不会响应了
-  - 因为我们指定了事件处理函数是`register`，所以需要在创建VM时添加一个`register`函数
-    - 在`register()`函数内部，我们可以用AJAX把JSON格式的Model发送给服务器，就完成了用户注册的功能。
+    - `<form id="vm" v-on:submit.prevent="register">`
+    - 其中，`v-on:submit="register"`指令就会自动监听表单的`submit`事件，并调用`register`方法处理该事件。使用`.prevent`表示阻止事件冒泡，这样，浏览器不再处理`<form>`的`submit`事件。
+        - 补充: 1、prevent是preventDefault,阻止标签默认行为，有些标签有默认行为，例如a标签的跳转链接属性href等。 2、submit点击默认行为是提交表单，这里并不需要它提交，只需要执行register方法，故阻止为妙。 3、stop是stopPropagation，阻止事件冒泡，点击哪个元素，就只响应这个元素，父级就不会响应了
+    - 因为我们指定了事件处理函数是`register`，所以需要在创建VM时添加一个`register`函数
+        - 在`register()`函数内部，我们可以用AJAX把JSON格式的Model发送给服务器，就完成了用户注册的功能。
 
 ```js
 // 在 VM 中定义的 register 函数
@@ -1699,11 +1702,11 @@ var vm = new Vue({
 - 除了简单的单向绑定和双向绑定，MVVM还有一个重要的用途，就是让Model和DOM的结构保持同步。
 - `v-for`指令把数组和一组`<li>`元素绑定了。在`<li>`元素内部，用循环变量`t`引用某个属性，例如，`{{ t.name }}`。这样，我们只关心如何更新Model，不关心如何增删DOM节点，大大简化了整个页面的逻辑。
 - 需要注意的是，Vue之所以能够监听Model状态的变化，是因为JavaScript语言本身提供了[Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)或者[Object.observe()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/observe)机制来监听对象状态的变化。但是，对于数组元素的赋值，却没有办法直接监听
-  - `vm.todos[0] = {}` 这样的赋值无法被监听/同步修改, Vue无法更新View
-  - 而应该这样修改 `vm.todos[0].name = 'New name';`
-  - 或者，通过`splice()`方法，删除某个元素后，再添加一个元素，达到“赋值”的效果
-    - `vm.todos.splice(index, 1, {});`
-    - Vue可以监听数组的 `splice`、`push`、`unshift` 等方法调用
+    - `vm.todos[0] = {}` 这样的赋值无法被监听/同步修改, Vue无法更新View
+    - 而应该这样修改 `vm.todos[0].name = 'New name';`
+    - 或者，通过`splice()`方法，删除某个元素后，再添加一个元素，达到“赋值”的效果
+        - `vm.todos.splice(index, 1, {});`
+        - Vue可以监听数组的 `splice`、`push`、`unshift` 等方法调用
 
 ##### 集成 API
 
@@ -1713,16 +1716,16 @@ var vm = new Vue({
   2. 对TODO的增删改必须同步到服务器后端；
   3. 用户在View上必须能够修改TODO。
 - 第1个和第2个问题都是和API相关的。只要我们实现了合适的API接口，就可以在MVVM内部更新Model的同时，通过API把数据更新反映到服务器端，这样，用户数据就保存到了服务器端，下次打开页面时就可以读取TODO列表。
-  - 实现 API
-    - GET /api/todos：返回所有TODO列表；
-    - POST /api/todos：创建一个新的TODO，并返回创建后的对象；
-    - PUT /api/todos/:id：更新一个TODO，并返回更新后的对象；
-    - DELETE /api/todos/:id：删除一个TODO。
-  - 准备好API后，在Vue中，我们如何把Model的更新 **同步到服务器端**？
-    - 一是直接用jQuery的AJAX调用REST API，不过这种方式比较麻烦。
-    - 第二个方法是使用[vue-resource](https://github.com/vuejs/vue-resource)这个针对Vue的扩展，它可以给VM对象加上一个`$resource`属性，通过`$resource`来方便地操作API。
+    - 实现 API
+        - GET /api/todos：返回所有TODO列表；
+        - POST /api/todos：创建一个新的TODO，并返回创建后的对象；
+        - PUT /api/todos/:id：更新一个TODO，并返回更新后的对象；
+        - DELETE /api/todos/:id：删除一个TODO。
+    - 准备好API后，在Vue中，我们如何把Model的更新 **同步到服务器端**？
+        - 一是直接用jQuery的AJAX调用REST API，不过这种方式比较麻烦。
+        - 第二个方法是使用[vue-resource](https://github.com/vuejs/vue-resource)这个针对Vue的扩展，它可以给VM对象加上一个`$resource`属性，通过`$resource`来方便地操作API。
 - 如何实现修改?
-  - 用`contenteditable="true"` 让DOM节点变成可编辑的，用`v-on:blur="update(t, 'name', $event)"`在编辑结束时调用`update()`方法并传入参数，特殊变量`$event`表示DOM事件本身。
+    - 用`contenteditable="true"` 让DOM节点变成可编辑的，用`v-on:blur="update(t, 'name', $event)"`在编辑结束时调用`update()`方法并传入参数，特殊变量`$event`表示DOM事件本身。
 
 ```js
 <div id="vm">
@@ -1790,9 +1793,9 @@ var vm = new Vue({
 ##### 在线电子表格
 
 - 首先，我们定义Model的结构，它的主要数据就是一个二维数组，每个单元格用一个JavaScript对象表示
-  - 定义第一行 header `{ row: 0, col: 0, text: '' },`
-  - 从第二行开始为数据 `{ row: 1, col: 1, text: '' },`
-  - 记录当前活动单元格 (`selectedRowIndex, selectedColIndex`)
+    - 定义第一行 header `{ row: 0, col: 0, text: '' },`
+    - 从第二行开始为数据 `{ row: 1, col: 1, text: '' },`
+    - 记录当前活动单元格 (`selectedRowIndex, selectedColIndex`)
 - 紧接着，我们就可以把Model的结构映射到一个`<table>`上
 - 用Vue把Model和View关联起来，这个电子表格的原型已经可以运行了！
 
@@ -1852,11 +1855,11 @@ data: {
 ```
 
 - 下一步，我们想在单元格内输入一些文本. 需要判断: 首行和首列不能编辑
-  - 首行对应的是`<th>`，默认是不可编辑的，首列对应的是第一列的`<td>`，所以，需要判断某个`<td>`是否可编辑，我们用`v-bind`指令给某个DOM元素绑定对应的HTML属性
-  - 在Model中给每个单元格对象加上`contentEditable`属性，就可以决定哪些单元格可编辑。
-  - `<td v-for="cell in tr" v-bind:contenteditable="cell.contentEditable" v-text="cell.text"></td>`
+    - 首行对应的是`<th>`，默认是不可编辑的，首列对应的是第一列的`<td>`，所以，需要判断某个`<td>`是否可编辑，我们用`v-bind`指令给某个DOM元素绑定对应的HTML属性
+    - 在Model中给每个单元格对象加上`contentEditable`属性，就可以决定哪些单元格可编辑。
+    - `<td v-for="cell in tr" v-bind:contenteditable="cell.contentEditable" v-text="cell.text"></td>`
 - 最后，给`<td>`绑定click事件，记录当前活动单元格的row和col，再绑定blur事件，在单元格内容编辑结束后更新Model
-  - <td v-for="cell in tr" v-on:click="focus(cell)" v-on:blur="change" ...></td>
+    - <td v-for="cell in tr" v-on:click="focus(cell)" v-on:blur="change" ...></td>
 
 ```js
 var vm = new Vue({
@@ -1882,6 +1885,6 @@ var vm = new Vue({
 ```
 
 - 总结 MVVM 适用范围
-  - 从几个例子我们可以看到，MVVM最大的优势是编写前端逻辑非常复杂的页面，尤其是需要大量DOM操作的逻辑，利用MVVM可以极大地简化前端页面的逻辑。
-  - 对于以展示逻辑为主的页面，例如，新闻，博客、文档等，不能使用MVVM展示数据，因为这些页面需要被搜索引擎索引，而搜索引擎无法获取使用MVVM并通过API加载的数据。
-  - 所以，需要SEO（Search Engine Optimization）的页面，不能使用MVVM展示数据。不需要SEO的页面，如果前端逻辑复杂，就适合使用MVVM展示数据，例如，工具类页面，复杂的表单页面，用户登录后才能操作的页面等等。
+    - 从几个例子我们可以看到，MVVM最大的优势是编写前端逻辑非常复杂的页面，尤其是需要大量DOM操作的逻辑，利用MVVM可以极大地简化前端页面的逻辑。
+    - 对于以展示逻辑为主的页面，例如，新闻，博客、文档等，不能使用MVVM展示数据，因为这些页面需要被搜索引擎索引，而搜索引擎无法获取使用MVVM并通过API加载的数据。
+    - 所以，需要SEO（Search Engine Optimization）的页面，不能使用MVVM展示数据。不需要SEO的页面，如果前端逻辑复杂，就适合使用MVVM展示数据，例如，工具类页面，复杂的表单页面，用户登录后才能操作的页面等等。
