@@ -43,7 +43,10 @@ class Solution:
             ans = len(nums) - 1
         return ans
     
-    """ 6053. 统计网格图中没有被保卫的格子数 """
+    """ 6053. 统计网格图中没有被保卫的格子数
+grid 上有一组墙和一组guard, 守卫可以守护上下左右四个方向的格子, 遇到墙就停止. 要求累计grid中没有被守卫守护的格子数.
+思路: 对于每个guard 的四个方向遍历即可, 时间复杂度 O(m*n*4)
+"""
     def countUnguarded(self, m: int, n: int, guards: List[List[int]], walls: List[List[int]]) -> int:
         grid = [[0] * n for _ in range(m)]
         for x,y in guards:

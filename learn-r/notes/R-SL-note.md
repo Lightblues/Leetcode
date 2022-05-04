@@ -191,12 +191,13 @@ travel_dat %>% group_by(AllPlacesGroup) %>% summarise(mean(Price, na.rm=T))     
 library(jiebaRD)
 library(jiebaR)         # 加载包
 
-cutter = worker()        # 设置分词引擎
-words.seg = segment(hot.pot$字段1, cutter) # 对文本进行分词处理
+cutter <-  jiebaR::worker()  # 设置分词引擎
+words.seg <-  jiebaR::segment(a$course.name, cutter) # 对文本进行分词处理
 words.seg <- gsub("[0-9a-zA-Z]+?","",words.seg)  # 去除数字和英文
-stopwords = c('区','路','火锅','小区','分店','店')
+stopwords <- c('区','路','火锅','小区','分店','店')
 words.seg <- filter_segment(words.seg, stopwords)  # 去除中文停止词
 words.table = plyr::count(words.seg)
+words.table <- words.table[sort(words.table$freq, decreasing = T),]
 
 # 词云
 library(wordcloud2)
@@ -660,3 +661,23 @@ print(cumsum(eigen_values)/sum(eigen_values))
 evs = pca_model$explained_variance %>% unname()
 print(cumsum(evs)/sum(evs))
 ```
+
+### 树模型：CART&Random Forest&Boosting
+
+
+```r
+# 随机森林
+library(randomForest)
+# 决策树
+library(rpart)
+library(rpart.plot)
+# boosting 仅分类
+library(adabag)
+# boosting
+library(gbm)
+
+# 数据处理&模型评估
+library(caret)
+library(pROC)
+```
+
