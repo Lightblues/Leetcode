@@ -106,7 +106,7 @@ class Solution:
         res = [get_ith_palindrome(intLength, q) for q in queries]
         return [int(i) for i in res]
 
-    """ 5269. 从栈中取出 K 个硬币的最大面值和
+    """ 5269. 从栈中取出 K 个硬币的最大面值和 #hard #排列组合
 给定一组栈和可以取的硬币数量k, 要求取到的面值最大.
 
 输入：piles = [[100],[100],[100],[100],[100],[100],[1,1,1,1,1,1,700]], k = 7
@@ -115,10 +115,30 @@ class Solution:
 如果我们所有硬币都从最后一个栈中取，可以得到最大面值和。
 
 复杂度: 栈数量 n<=1000; 操作次数 k<=2000
+
+思路: 转化为 #背包问题 #DP
+dp[i][j] 表示从前 i 个栈中取出 j 个硬币的最大面值. 为了计算方便, 对于 piles 先取前缀和.
+遍历所用栈的数量. 对于第 i 个栈, 更新公式 `dp[i][j] = max(dp[i][j], dp[i-1][j-k] + piles[i][k])` 也即, 尝试从第 i 个栈中取出 k 个硬币.
+see [here](https://leetcode-cn.com/problems/maximum-value-of-k-coins-from-piles/solution/zhuan-hua-cheng-fen-zu-bei-bao-pythongoc-3xnk/)
+参见: https://oi-wiki.org/dp/knapsack/
  """
     def maxValueOfCoins(self, piles: List[List[int]], k: int) -> int:
-        pass
-
+        # 前缀和
+        for pile in piles:
+            for i in range(1, len(pile)):
+                pile[i] += pile[i-1]
+        # 初始化dp: 仅使用第一个栈的硬币
+        dp = [0] * (k+1) # dp[i]表示取i个硬币的最大面值
+        prefix = piles[0][:min(k, len(piles[0]))]
+        dp[1: len(prefix)+1] = prefix
+        
+        # 遍历更新 dp
+        for pile in piles[1:]:
+            # 更新 dp[], 从 k~1
+            for i in range(k, 0, -1):
+                for j in range(0, min(i, len(pile))):
+                    dp[i] = max(dp[i], dp[i-j-1] + pile[j])
+        return dp[k]
 
 
 sol = Solution()
@@ -129,8 +149,11 @@ result = [
     # sol.minDeletion([1,1,2,3,4]),
 
     # sol.kthPalindrome(queries = [1,2,3,4,5,90], intLength = 3),
-    sol.kthPalindrome(queries = [62], intLength = 4),
-    sol.kthPalindrome([696771750,62,47,14,17,192356691,209793716,23,220935614,447911113,5,4,72], 4),
+    # sol.kthPalindrome(queries = [62], intLength = 4),
+    # sol.kthPalindrome([696771750,62,47,14,17,192356691,209793716,23,220935614,447911113,5,4,72], 4),
+    
+    sol.maxValueOfCoins(piles = [[1,100,3],[7,8,9]], k = 2),
+    sol.maxValueOfCoins(piles = [[100],[100],[100],[100],[100],[100],[1,1,1,1,1,1,700]], k = 7),
 ]
 for r in result:
     print(r)

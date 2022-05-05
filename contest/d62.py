@@ -11,8 +11,8 @@ import functools, itertools
 from structures import ListNode, TreeNode
 
 """ 
-https://leetcode-cn.com/contest/biweekly-contest-71
-@20220223 补 """
+https://leetcode-cn.com/contest/biweekly-contest-62
+@20220506 补 """
 class Solution:
     """  """
 
