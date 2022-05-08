@@ -1,5 +1,10 @@
 {
-    "go.inferGopath": false
+    "go.inferGopath": false,
+    "[markdown]": {
+        "editor.cursorSurroundingLines": 0,
+        "editor.tabSize": 4,
+        "editor.wrappingIndent": "same"
+    }
     //   "pasteImage.defaultName": "Y-MM-DD-HH-mm-ss",
     //   "pasteImage.path": "${currentFileNameWithoutExt}",
     //   "files.associations": {

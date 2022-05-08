@@ -461,6 +461,29 @@
         - see [here](https://leetcode-cn.com/problems/total-appeal-of-a-string/solution/by-endlesscheng-g405/)
 
 
+### 292
+
+- 6056. 字符串中最大的 3 位相同数字
+- 6057. 统计值等于子树平均值的节点数
+    - 对于一棵二叉树, 统计「节点值 = 节点所定义的子树中所有节点值的平均值」的节点数量
+- 6058. 统计打字方案数
+    - 按照 0-9 到字母的键盘映射 (例如, 按 `'5'` 两次得到字母 `'k'`). 这样, `33` 可能表示 `dd` 或者 `e`.
+    - 给定按键的序列, 计算其映射出来的字母的方案数
+    - 思路: #DP + 累乘
+        - 首先, 对于一个数字, 比如 `2` 映射到 `abc`; 给一个长度为 i 的连续 2, 其可能的方案数是: `dp[i] = dp[i-1] + dp[i-2] + dp[i-3]`. 因此先用DP预先计算好所有的结果.
+        - 然后对于案件序列按照上述 DP 累乘即可
+        - 注意: 1) 一个数字可能对应 3/4 个字母, 需要区分; 2) 这样 DP 递归的数字很大, 要在计算过程进行 MOD, 自己提交时没有加, **Python 大整数计算超时**.
+- 6059. 检查是否有合法括号字符串路径 #括号匹配
+    - 给定一个仅包括 `()` 的grid, 要求判断从左上到右下是否存在一条路径, 使得括号序列合法.
+    - 思路0: DFS, 超时了! 因为grid搜索的复杂度为 2^n, 这里n=100还是会超.
+        - #cache
+        - 改进: 参考 [here](https://leetcode-cn.com/problems/check-if-there-is-a-valid-parentheses-string-path/solution/tian-jia-zhuang-tai-hou-dfscpythonjavago-f287/) 加了 cache 之后过了
+        - 离谱的是, 用默认的 `lru_cache(maxsize=128)` 会超时, 答案中用的是 Python 3.9 新的 `cache = lru_cache(maxsize=None)` 就可以过, 而且速度很快, 可能是 lru_cache 的实现太重了吧
+    - 思路1: #DP
+        - 从上往下一层一层遍历: 没一点可以由左侧或者上方的节点转移过来
+        - 用 `dp[i][j]` 记录从左上角遍历到 (i,j), 剩余的左括号的数量, 用 set 记录.
+        - 转移: 对于 (i,j), 取 `dp[i-1][j], dp[i][j-1]` 的 union, 然后根据 `grid[i][j]` 是左/右括号, 对于集合中的每个元素 +/-1, 注意不能出现负数
+
 ## 双周赛 D60-D100
 
 ### D60
@@ -510,6 +533,55 @@
         - see [here](https://leetcode-cn.com/problems/minimum-number-of-operations-to-make-array-continuous/solution/on-zuo-fa-by-endlesscheng-l7yi/) 对于 right 如果不用双指针还可以直接 bisect
 
 ### D62
+
+- 2022. 将一维数组转变成二维数组
+- 2023. 连接后等于目标字符串的字符串对
+    - 给定一组字符串 和一个目标字符串 target, 返回从这组字符串中选择两个拼接可以得到 target 的组合数量.
+- 2024. 考试的最大困扰度 #题型
+    - 给定一个包含两种元素的序列, 最大改动数量为 k, 尽可能使得出现的连续相同元素最大
+    - 思路: #双指针 #滑动窗口
+    - 针对每种元素遍历数组 (可以写成一个函数), 在双指针遍历过程中, 维护左右指针之间的修改数量不超过 k. 具体而言, 可以 for 循环 `right`, 在超出条件的时候步进 `left`
+    - 参 [here](https://leetcode-cn.com/problems/maximize-the-confusion-of-an-exam/solution/kao-shi-de-zui-da-kun-rao-du-by-leetcode-qub5/)
+- 2025. 分割数组的最多方案数 #题型
+    - 给定一个数组和一个数字k, 允许将数组中的某一个数字修改为k (也可以不修改), 要求最大化满足条件的分割数量.
+    - 条件: 给定一个 `1<=pivot<n`, 将数组分割为 nums[0:pivot-1] 和 nums[pivot:n-1] 两部分 (闭区间), 使得两部分的和相等.
+    - 思路: #双哈希表 #前缀和
+    - 计数组的前缀和为 cumsum, 总和为 total.
+    - 在不修改的情况下, 合法分割为 cumsum[i] = total-cumsum[i], 即 cumsum[i] = total/2.
+    - 考虑修改的情况: 将第i个元素进行修改, 记变化量为 `d = k-nums[i]`, 对于i之前的元素其累计和不变, 之后的元素累计和增加d.
+        - 因此, 1) 对于之前的元素, 合法条件变为 cumsum[j] = total+d-cumsum[j], 即 `cumsum[j] = (total+d)/2`; 2) 对i及其之后的元素, cumsum[j]+d = (total+d)-(cumsum[j]+d), 即 `cumsum[j] = (total-d)/2`
+    - 因此, 在遍历修改元素 i 的过程中, 用双哈希表记录前后的 cumsum 分布情况.
+    - 参 [前缀和+双哈希表+枚举修改元素](https://leetcode-cn.com/problems/maximum-number-of-ways-to-partition-an-array/solution/qian-zhui-he-ha-xi-biao-mei-ju-xiu-gai-y-l546/)
+    - 注意: 这里要求的分割点必须在数组的中间, 在维护双哈希表的时候应该去掉total的情况. (见代码)
+
+### D63
+
+- 2037. 使每位学生都有座位的最少移动次数
+    - 给定一组座位的位置和一组学生当前的位置, 要求对每个人匹配到合适的位置所需最少移动次数
+    - 思路: 直接按照排序的结果一一匹配
+- 2038. 如果相邻两个颜色均相同则删除当前颜色
+- 2039. 网络空闲的时刻 #网络
+    - 有 n 个节点, 0 号为服务器, 其他为数据节点. 节点之间通过网络连接, 经过一个时间段信息传递一条边.
+        - 现所有的数据节点需要向服务器发送信息, 服务器收到后发送反馈. 每个数据节点还有一个 `patience[i]`, 表示在经历这么长时间没有收到回复则重发消息.
+        - 要求计算经过多少时刻后, 网络上没有数据包 (空闲).
+    - 思路: #BFS + 遍历
+        - 每个数据节点和服务器的关系是独立的, 因此, 分别计算每个数据节点到服务器的距离, 遍历计算即可.
+        - 对于数据节点 i 来说, 其距离和等待时间为 distance[i], patience[i], 则收到最后一个数据包的时间为: `2*distance[i] + 1 + 2*distance[i]//patience[i]*patience[i]`
+        - 其中, `2*distance[i] + 1` 是第一个数据包发送到收到回复的时间, `2*distance[i]//patience[i]*patience[i]` 是可能有的接受不了重发数据包所需的额外时间.
+- 2040. 两个有序数组的第 K 小乘积 #hard
+    - 对于两个有序数组 nums1 和 nums2, 定义它们之间的交互乘积 `nums1[i] * nums2[j]`, 要求返回这些数中第 k 小的 (从1开始).
+    - 复杂度: 两数组的长度为 5e4, 数字范围为 -1e5~1e5.
+    - 思路 1: #二分查找 + #双指针 + #分类讨论
+        - 基本的思路是二分查找可能的范围 `[-1e10, 1e10]`
+        - 根据零将两个数组分别分为负数和非负数两部分, 然后分类统计两两组合之下, <= 待搜索的 m 的组合的数量; 由于采用双指针形式, 二分判断的复杂度为 O(L), 因此总复杂度为 O(Llog(N)), 这里 L为数组长度N为搜索空间大小.
+        - [解答](https://leetcode-cn.com/problems/kth-smallest-product-of-two-sorted-arrays/solution/yi-ti-san-jie-shuang-zhi-zhen-jie-bu-den-sqsu/) 还可以对于四种条件进行合并讨论
+    - 思路 2: 也是二分查找框架, 不过在组合 nums1, nums2 的时候, 直接利用不等式条件, 内部进行一次二分搜索.
+        - 这样, 内部二分的复杂度为 O(LlogL), 整体的复杂度为 O(NLlogL).
+        - 具体而言, 对于 nums1[i], 要求 nums1[i] * nums2[j] <= m, 根据 nums1[i] 与0 的关系, 可以直接计算出如 nums2[j]<=m/nums1[i], 基于这个条件进行二分搜索.
+    - 思路 3: 通过前缀和代替二分
+        - 在上一种解法中, 复杂度增加了, 实际上我们可以通过 #前缀和 来避免内部的二分. 注意到 nums 的元素范围为 `[-1e5, 1e5]`, 我们可以利用前缀和得到 `cumsum[m]` 表示数组中包括多少个小于等于 m 的元素.
+
+
 
 ### D68
 
