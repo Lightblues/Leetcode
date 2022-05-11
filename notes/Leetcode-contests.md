@@ -581,6 +581,67 @@
     - 思路 3: 通过前缀和代替二分
         - 在上一种解法中, 复杂度增加了, 实际上我们可以通过 #前缀和 来避免内部的二分. 注意到 nums 的元素范围为 `[-1e5, 1e5]`, 我们可以利用前缀和得到 `cumsum[m]` 表示数组中包括多少个小于等于 m 的元素.
 
+### D64
+
+- 2053. 数组中第 K 个独一无二的字符串
+- 2054. 两个最好的不重叠活动 #medium #题型
+    - 有一组活动 (start, end, value), 可以选择其中一个/两个不重叠的活动, 要求value最大化.
+        - 要求: 两个活动不重叠, 也即 end1 < start2
+        - 复杂度: 活动数量 1e5, 起止时间 1e9
+    - 思路1: #统一排序
+        - 将活动的s/e时间统一进行排序, 排序元素为 (time, type, value), 这里的time是活动的起止时间, type是0/1, 0表示s, 1表示e, value是活动的value.
+        - 维护 bestEnd 为截止到当前时间已经结束的单个事件的最大value. 这样在遍历排好序的数组的过程中: 1) type=0, 更新 `ans = max(ans, bestEnd+value)`; 2) 否则更新 `bestEnd = max(bestEnd, value)`
+        - 注意, 这里有效的排序是 time和type. 题目要求两活动不重叠, 因此将 start排在end 之前 —— 这样如果有s/e时间相同, 会先更新 ans, 此时用的是上一时刻的 bestEnd.
+        - [官方解答](https://leetcode.cn/problems/two-best-non-overlapping-events/solution/liang-ge-zui-hao-de-bu-zhong-die-huo-don-urq5/) 很优雅
+    - 思路2: 排序 + #最小堆
+        - 更为直观的思路: 先对于start进行排序. 在遍历的过程中, 如何得到早于该时刻的所有事件的最大value? 显然可以用一个最小堆来维护.
+        - 具体而言, 堆的元素为 `(end, value)`. 遍历过程中同样维护 bestEnd: 对于当前事件的 start, 从堆出取出所有 end_i < start 来更新 bestEnd.
+        - 参见 [here](https://leetcode.cn/problems/two-best-non-overlapping-events/solution/yong-you-xian-dui-lie-wei-hu-ling-yi-ge-8ld3x/)
+- 2055. 蜡烛之间的盘子
+    - 一个数组包括两种元素 (蜡烛、盘子). 给一个查询 [l,r], 要求返回在该子序列中, 被蜡烛包围的盘子数量.
+    - 思路: 二分搜索. 先抽取提取所有蜡烛的idx, 然后在这个数组中进行二分. 注意边界判断.
+- 2056. 棋盘上有效移动组合的数目 #hard
+    - 大小为 8*8 的棋盘上有三种类型的的棋子 车, 象, 后 (rook, bishop, queen), 分别可以按照横竖、斜, 以及两者的组合这些方向移动.
+        - 每个棋子可以在指定的方向上移动 k步, 然后停在该点. 若一个棋子先到达某点, 另一个棋子也需要经过该点, 则冲突.
+        - 已知棋盘上最多有四个棋子 (最多只有一个后), 要求返回最终所有棋子的组合中有效移动的组合的数目.
+    - 思路: #模拟 #product. 先根据棋子类型计算出其所有可能的 (direction, step) 组合, 然后模拟移动 (也即判断该组合是否合法).
+        - 见 [here](https://leetcode.cn/problems/number-of-valid-move-combinations-on-chessboard/solution/python-producthan-shu-de-yong-fa-by-9813-p0cp/) typing 写得很规范
+    - 总结: 可以充分 **利用 Python 的相关函数简化代码**, 例如这里用了两次 product 来 生成棋子的走法, 和生成所有棋子的走法组合.
+    - [这里](https://leetcode.cn/problems/number-of-valid-move-combinations-on-chessboard/solution/go-mo-ni-by-endlesscheng-kjpt/) 还用了 DFS 的思路, 但复杂度上应该差不多.
+        - 其实是更为「直觉」的想法 —— 用DFS来避免重复枚举, 然后DFS感觉上似乎比上面暴力组合可以降低一点计算? 但实际上代码会更复杂些.
+
+### 65
+
+- 2068. 检查两个字符串是否几乎相等
+- 2069. 模拟行走机器人 II #medium
+    - 模拟一个机器人沿着矩形的边缘行走, 每次下一步要出边界的时候, 进行右转. 要求实现一个类, 可以 1) 查询机器人的位置和方向; 2) 要求机器人前进 num步.
+        - 初始状态为 (0,0)点, 方向向右.
+    - 思路1: 直接模拟.
+        - 然后, 由于矩形的范围不是很大, 而前进的步数可能很高, 因此需要避免重复走圈 (`num = num%self.circleLen`)
+        - 这样就遇到一个边界情况: 当机器人到达边界点的时候方便不变, 要走下一步方向才会变化; 因此其实状态的方向为向右, 但下一次机器人到达该 (0,0) 点时的方向应该是向下. 需要特殊处理一下
+    - 思路2: 直接记录位置到方向的映射
+    - 如[官方答案](https://leetcode.cn/problems/walking-robot-simulation-ii/solution/mo-ni-xing-zou-ji-qi-ren-ii-by-leetcode-lhf24/) 所言, 可以直接得到位置到行动方向的映射
+        - 这样, 对于矩形的每一个位置建立 index, 然后在行动的时候根据前进方向整除得到机器人的 index 即可.
+- 2070. 每一个查询的最大美丽值 #题型 #medium
+    - 有一组 (price, beauty) 所定义的商品. 要求在小于 O(n) 的复杂度内查询价格在 p 以下的商品中, beauty 的最大值.
+    - 复杂度: 物品数量 1e5, price/beauty 值 1e9.
+    - 思路: #索引 + #二分
+        - 不能直接对于每一个价格建立到最大美丽值的映射, 因此考虑只对出现过的价格建立映射, 然后二分查找答案即可.
+        - 具体而言, 对于出现过的所有价格, 预计算 (price, maxBeauty) 的索引, 表示在price以下的所有价格中, 最大的美丽值.
+        - 查询时, 对于所要查询的 p, 在price中二分搜索 index, 然而返回对应的 maxBeauty 即可.
+- 2071. 你可以安排的最多任务数目 #题型 #二分
+    - 给定一组任务和工人, 当工人的分数高于任务分数时可以完成; 另外给 k 个药丸可以增加单个工人的 strength 点能力值 (一个人只能用一次). 求最多匹配的数量.
+    - 复杂度: n 个任务和 m 个工人为 5e4, 能力值大小 1e9
+    - 思路: #二分搜索.
+        - 匹配的数量范围为 [0, min(m,n)]. 关键在于如何检查是否可以得到 k 个匹配?
+        - 用贪心: 如果可以有 k 个匹配, 显然是 k个能力最大的工人和 k个所需点最小的任务. 排序, 然后对任务从高到低遍历: 1) 能力值最大工人可以胜任, 则直接匹配; 2) 否则, 从吃了药丸可以胜任的功能中找到能力值最小的, 小号一颗药丸.
+        - 终止条件: 药丸用完了, 或者加上 strength 也没有人可以胜任.
+    - 注意复杂度分析: 每一次检测, 最多需要再 min(m,n) 个候选工人中进行二分搜索, 因此为 `O(min(m,n) * log(min(m,n)))`. 整体二分的复杂度为 `O(min(m,n) * log^2(min(m,n)))`.
+    - 事实上可以优化: 用「双端队列」来维护所有可以（在使用药丸的情况下）完成任务的工人，此时要么队首的工人被选择（删除），要么队尾的工人被选择（删除），那么单次删除操作的时间复杂度由 O(log(min(m,n))) 降低为 O(1)
+    - see [here](https://leetcode.cn/problems/maximum-number-of-tasks-you-can-assign/solution/ni-ke-yi-an-pai-de-zui-duo-ren-wu-shu-mu-p7dm/)
+    - 技巧: **二分查找时, 可以额外用一个 ans 记录二分的结果, 而不需要纠结最后返回 l or l-1**
+
+
 
 
 ### D68
