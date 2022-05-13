@@ -1,6 +1,9 @@
 ## overall
 
 - 通过所给数据的复杂性判断方案是否可行
+- 有时候相较于更符合直觉的「优雅」解法, 可以通过更「暴力」的方式避免复杂判断
+    - sample: 2086. 从房屋收集雨水需要的最少水桶数
+    - 再如, 二分查找的时候用额外的变量记录符合条件的值, 而不必纠结是返回 l/l-1.
 
 ## 技巧: base模块
 
@@ -13,6 +16,43 @@ cache
 ### itertools
 
 - `product` 很好用
+
+### sortedcontainers
+
+- `SortedList` 插入、查询(`__getitem__`) 的时间复杂度约为 O(log(n))
+
+
+## Python 语法
+
+### 定义 `__gt__`
+
+例如, 在 heapq 或者 bisect 时, 需要判断元素大小, Python默认的大小比较不满足时可以自定义
+
+```python
+class MaxNode():
+    # 最大堆的节点. 
+    # 排序要求: 按照 score降序, name升序
+    def __init__(self, score, name) -> None:
+        super().__init__()
+        self.score = score
+        self.name = name
+    def __lt__(self, other):
+        # 注意 Python 中 heapq 只有最小堆, 因此需要取反: 分数越大, 优先级越高
+        return (-self.score, self.name) < (-other.score, other.name)
+class MinNode():
+    def __init__(self, score, name) -> None:
+        super().__init__()
+        self.score = score
+        self.name = name
+    def __gt__(self, other):
+        # 简单期间, 直接定义 __gt__ 即可
+        return (-self.score, self.name) < (-other.score, other.name)
+
+# 用例
+max_node = MaxNode(10, "alice")
+h = heapq.heapify(...)
+heapq.heappush(h, max_node)
+```
 
 
 ## 算法
