@@ -12,6 +12,142 @@ import functools, itertools
 
 """ 
 """
+
+
+
+class RangeModule:
+    """ 0715. Range 模块 #hard #题型
+要求实现对于 [) 形式的区间的 增删查操作.
+思路1: 关联 6066, 用两个数组分别记录左右边界. 在添加记录的时候, 注意进行区间的合并.
+思路2: [官方](https://leetcode.cn/problems/range-module/solution/range-mo-kuai-by-leetcode/) 答案中 #区间求交 #二分
+实现了一个通用的函数, 计算查询区间 [l,r) 与所存储的区间有交集, 实现更为方便的 add, remove.
+#技巧: 通过 (100, 10, 1) 这种形式的步长衰减来替代bisect
+
+输入
+["RangeModule", "addRange", "removeRange", "queryRange", "queryRange", "queryRange"]
+[[], [10, 20], [14, 16], [10, 14], [13, 15], [16, 17]]
+输出
+[null, null, null, true, false, true]
+
+解释
+RangeModule rangeModule = new RangeModule();
+rangeModule.addRange(10, 20);
+rangeModule.removeRange(14, 16);
+rangeModule.queryRange(10, 14); 返回 true （区间 [10, 14) 中的每个数都正在被跟踪）
+rangeModule.queryRange(13, 15); 返回 false（未跟踪区间 [13, 15) 中像 14, 14.03, 14.17 这样的数字）
+rangeModule.queryRange(16, 17); 返回 true （尽管执行了删除操作，区间 [16, 17) 中的数字 16 仍然会被跟踪）
+
+来源：力扣（LeetCode）
+链接：https://leetcode.cn/problems/range-module
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+"""
+    def __init__(self):
+        self.left = []
+        self.right = []
+
+    def addRange(self, left: int, right: int) -> None:
+        """ 增加区间.
+        注意, 如果已经有 [1,2), [3,4) 区间, 然后插入一个新区间 [2,3), 需要将其与相连的合并起来."""
+        if len(self.left)==0:
+            self.left.append(left)
+            self.right.append(right)
+            return
+        # 注意为了查找数组交叉关系, 需要用 right 查找维护的左区间, 用 left 查找维护的右区间
+        # 为了将相邻的数组合并 例如 [1,2) 和 [2,3), 需要分别 bisect_left, bisect_right
+        idxL = bisect.bisect_left(self.right, left)
+        idxR = bisect.bisect_right(self.left, right)
+        if idxL == idxR:
+            # 注意有 idxL<= idxR
+            # idxL == idxR 说明: 没有与其他区间的交叉, 插入
+            # 因此这里已经避免了 idxL==idxR == len() / 0 的边界情况, 下面的 idxL 和 idxR-1 可以不用判断越界
+            valL, valR = left, right
+        else:
+            # 因为有了上面的判断, 可以避免数组越界
+            valL = min(self.left[idxL], left)
+            valR = max(self.right[idxR-1], right)
+        # 用 slice 更新数组, 效率较高
+        self.left[idxL:idxR] = [valL]
+        self.right[idxL:idxR] = [valR]
+
+    def queryRange(self, left: int, right: int) -> bool:
+        """ 查询 [left, right) 区间是否被包含
+        例子: 已有区间 [16,20), 则对于查询 [16,17), [17,18), [16,20) 均返回 True
+        注意边界情况
+        !! 智障!! 由于必然是包含关系, 只需要bisect一个index即可!
+        """
+        # 剪枝, 可以避免数组越界
+        if len(self.left)==0: return False
+        idxL = bisect.bisect_left(self.left, left)
+        idxR = bisect.bisect_left(self.right, right)
+        # 完全被包含的情况
+        if idxL > idxR:
+            return True
+        # 这里用了 bisect_left, 说明超出了最大范围
+        # 主要是为了避免数组越界
+        if idxL>=len(self.left):
+            return False
+        return idxL==idxR and self.right[idxR]>=right and self.left[idxL]<=left
+
+    def removeRange(self, left: int, right: int) -> None:
+        """ 删除区间 """
+        if len(self.left)==0: return
+        idxL = bisect.bisect_left(self.right, left)
+        # 注意删除不需要 bisect_right
+        idxR = bisect.bisect_left(self.left, right)
+        if idxL==idxR: return
+        # 
+        l, r = [], []
+        if self.left[idxL] < left:
+            l.append(self.left[idxL])
+            r.append(left)
+        if self.right[idxR-1]>right:
+            l.append(right)
+            r.append(self.right[idxR-1])
+        self.right[idxL:idxR] = r
+        self.left[idxL:idxR] = l
+
+class RangeModule(object):
+    def __init__(self):
+        self.ranges = []
+
+    def _bounds(self, left, right):
+        """ 计算与 [left, right) 存在交集的区间有哪些
+        #技巧: 通过 (100, 10, 1) 这种形式的步长衰减来替代bisect """
+        i, j = 0, len(self.ranges) - 1
+        for d in (100, 10, 1):
+            while i + d - 1 < len(self.ranges) and self.ranges[i+d-1][1] < left:
+                i += d
+            while j >= d - 1 and self.ranges[j-d+1][0] > right:
+                j -= d
+        return i, j
+
+    def addRange(self, left, right):
+        i, j = self._bounds(left, right)
+        if i <= j:
+            left = min(left, self.ranges[i][0])
+            right = max(right, self.ranges[j][1])
+        self.ranges[i:j+1] = [(left, right)]
+
+    def queryRange(self, left, right):
+        i = bisect.bisect_left(self.ranges, (left, float('inf')))
+        if i: i -= 1
+        return (bool(self.ranges) and
+                self.ranges[i][0] <= left and
+                right <= self.ranges[i][1])
+
+    def removeRange(self, left, right):
+        i, j = self._bounds(left, right)
+        merge = []
+        for k in range(i, j+1):
+            if self.ranges[k][0] < left:
+                merge.append((self.ranges[k][0], left))
+            if right < self.ranges[k][1]:
+                merge.append((right, self.ranges[k][1]))
+        self.ranges[i:j+1] = merge
+
+
+
 class Solution:
     """ 0913. 猫和老鼠 #hard
 给定一张图, 老鼠和猫分别从 1和2 出发, 老鼠到的目标 0 则获胜 (猫不能到达0). 给定初始状态, 求在双方都是最优解的情况下, 哪一方获胜.
@@ -297,14 +433,156 @@ https://leetcode.cn/problems/cat-and-mouse/
         return a
 
 
+    """ 调用ACM格式输入 """
+    def test_class(self, inputs):
+        s_res = [None] # 第一个初始化类, 一般没有返回
+        methods, args = [eval(l) for l in inputs.split('\n')]
+        class_name = eval(methods[0])(*args[0])
+        for method_name, arg in list(zip(methods, args))[1:]:
+            r = (getattr(class_name, method_name)(*arg))
+            s_res.append(r)
+        return s_res
+
+    """ 0547. 省份数量 #medium
+给定一个矩阵形式的图结构, 计算其中的联通分量的个数.
+思路1: 并查集. 每次遇到一条边, 将两个集合 union.
+"""
+    def findCircleNum(self, isConnected: List[List[int]]) -> int:
+        n = len(isConnected)
+        # 初始化所有节点的 farther 为自己
+        parents = list(range(n))
+        
+        def find(x):
+            path = []
+            while parents[x] != x:
+                path.append(x)
+                x = parents[x]
+            for i in path:
+                parents[i] = x
+            return x
+        
+        def union(x,y):
+            rootx, rooty = find(x), find(y)
+            parents[rootx] = rooty
+            
+        for i in range(n):
+            for j in range(i+1, n):
+                if isConnected[i][j]:
+                    union(i,j)
+        # 所有 root 元素的数量
+        return sum(1 for i in range(n) if parents[i]==i)
+    
+    """ 399. 除法求值 #medium #并查集 #题型
+思路1: 采用并查集. 注意到, 这里需要维护集合之间的相对大小关系. 那么, 的时候, 如何记录这一关系?
+注意到, 在查询的时候, 只有root相同(在同一集合内)的两个数才能比较, 因此 **只需要记录节点与根节点的大小关系**, 在查询时不需要考虑不同集合的倍率.
+因此, 问题转为, 如何在合并时记录两集合的大小关系? 只需要记录在跟节点上, 在 find 的时候更新子节点即可!
+具体而言, 对于比例关系 a = v*b, 构建的时候我们令 b为根节点, 然后 `value[b]=1, value[a]=v`. 这样, 我们在同一颗树上, 跟节点的值为1, 并且有 value[a] = a/roota (后两者为真实值)
+这样, 在union过程中, 若有 x = v * y 在两个集合中; 我们求出两者的根节点, 然后令 `father[rootx] = rooty`. (根节点rooty的值仍为1)
+如何更新 rootx 的值? (注意, 这里我们仅关心 rootx 的值, x的值会在find的时候进行更新) 此时, 我们有两个参考系, 目标是将 rootx 转到y的参考系.
+下面用 value 表示参考系y, value' 表示参考系x. 则我们需要求 value[rootx].
+在y参考系下, 有 value[x] = v * value[y]
+另有 value[x] = value'[x] * value[rootx], 这是因为在不同参考系下, x/rootx 的比例关系是固定的.
+因此有, `value[rootx] = v * value[y] / value'[x]`
+"""
+    def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+        # https://leetcode.cn/problems/evaluate-division/solution/pythonbing-cha-ji-fu-mo-ban-by-milomusia-kfsu/
+        class UnionFind:
+            def __init__(self):
+                """
+                记录每个节点的父节点
+                记录每个节点到根节点的权重
+                """
+                self.father = {}
+                self.value = {}
+            
+            def find(self,x):
+                """
+                查找根节点
+                路径压缩
+                更新权重
+                """
+                root = x
+                # 节点更新权重的时候要放大的倍数
+                base = 1
+                while self.father[root] != None:
+                    root = self.father[root]
+                    base *= self.value[root]
+                
+                while x != root:
+                    original_father = self.father[x]
+                    ##### 离根节点越远，放大的倍数越高
+                    self.value[x] *= base
+                    base /= self.value[original_father]
+                    #####
+                    self.father[x] = root
+                    x = original_father
+                
+                return root
+            
+            def merge(self,x,y,val):
+                """
+                合并两个节点
+                """
+                root_x,root_y = self.find(x),self.find(y)
+                
+                if root_x != root_y:
+                    self.father[root_x] = root_y
+                    ##### 四边形法则更新根节点的权重
+                    self.value[root_x] = val * self.value[y] / self.value[x]
+
+            def is_connected(self,x,y):
+                """
+                两节点是否相连
+                """
+                return x in self.value and y in self.value and self.find(x) == self.find(y)
+            
+            def add(self,x):
+                """
+                添加新节点，初始化权重为1.0
+                """
+                if x not in self.father:
+                    self.father[x] = None
+                    self.value[x] = 1.0
+
+
+        uf = UnionFind()
+        for (a,b),val in zip(equations,values):
+            uf.add(a)
+            uf.add(b)
+            uf.merge(a,b,val)
+    
+        res = [-1.0] * len(queries)
+
+        for i,(a,b) in enumerate(queries):
+            if uf.is_connected(a,b):
+                res[i] = uf.value[a] / uf.value[b]
+        return res
+
 
 sol = Solution()
 result = [
     # sol.catMouseGame(graph = [[2,5],[3],[0,4,5],[1,4,5],[2,3],[0,2,3]]),
     # sol.catMouseGame(graph = [[1,3],[0],[3],[0,2]]),
     
-    sol.canMouseWin(grid = ["M.C...F"], catJump = 1, mouseJump = 4),
-    sol.canMouseWin(grid = ["####F","#C...","M...."], catJump = 1, mouseJump = 2),
+    # sol.canMouseWin(grid = ["M.C...F"], catJump = 1, mouseJump = 4),
+    # sol.canMouseWin(grid = ["####F","#C...","M...."], catJump = 1, mouseJump = 2),
+
+#     sol.test_class("""["RangeModule","addRange","queryRange","removeRange","removeRange","addRange","queryRange","addRange","queryRange","removeRange"]
+# [[],[5,8],[3,4],[5,6],[3,6],[1,3],[2,3],[4,8],[2,3],[4,9]]"""),
+#     sol.test_class("""["RangeModule","addRange","addRange","addRange","queryRange","queryRange","queryRange","removeRange","queryRange"]
+# [[],[10,180],[150,200],[250,500],[50,100],[180,300],[600,1000],[50,150],[50,100]]"""),
+#     sol.test_class("""["RangeModule", "addRange", "removeRange", "queryRange", "queryRange", "queryRange"]
+# [[], [10, 20], [14, 16], [10, 14], [13, 15], [16, 17]]"""),
+#     sol.test_class("""["RangeModule","addRange","addRange","addRange","queryRange","queryRange","queryRange","removeRange","queryRange"]
+# [[],[10,180],[150,200],[250,500],[50,100],[180,300],[600,1000],[50,150],[50,100]]"""),
+
+    # sol.findCircleNum(isConnected = [[1,1,0],[1,1,0],[0,0,1]]),
+    # sol.findCircleNum(isConnected = [[1,0,0],[0,1,0],[0,0,1]]),
+    
+    sol.calcEquation([["a","b"],["e","f"],["b","e"]],[3.4,1.4,2.3],[["b","a"],["a","f"],["f","f"],["e","e"],["c","c"],["a","c"],["f","e"]]),
+    sol.calcEquation(equations = [["a","b"],["b","c"]], values = [2.0,3.0], queries = [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]),
+    sol.calcEquation([["a","b"],["c","d"]],[1.0,1.0],[["a","c"],["b","d"],["b","a"],["d","c"]]),
+    
 ]
 for r in result:
     print(r)

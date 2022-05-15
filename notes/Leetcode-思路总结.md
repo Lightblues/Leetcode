@@ -4,6 +4,7 @@
 - 有时候相较于更符合直觉的「优雅」解法, 可以通过更「暴力」的方式避免复杂判断
     - sample: 2086. 从房屋收集雨水需要的最少水桶数
     - 再如, 二分查找的时候用额外的变量记录符合条件的值, 而不必纠结是返回 l/l-1.
+    - 如, 利用 for i in range(left, right) 避免数组越界的判断
 
 ## 技巧: base模块
 
@@ -55,6 +56,12 @@ heapq.heappush(h, max_node)
 ```
 
 
+### slice 语法
+
+要删(改) 数组中连续的一段元素, 可以采用切片语法, 效率较高.
+
+参见 [here](https://leetcode.cn/problems/count-integers-in-intervals/solution/chun-er-fen-by-migeater-t5kh/),
+
 ## 算法
 
 ### 二分查找
@@ -64,3 +71,10 @@ heapq.heappush(h, max_node)
 - 手工实现的时候
     - 由于 `mid = (r-l)>>1`, 因此如果需要修改 l时一定要更新为 `l  = mid+1`, 否则可能死循环
     - 技巧: 如果不确定结果是否为 `l` 或 `l-1`, 可以额外用一个 ans 来记录.
+
+### 线段树
+
+题目: 0715, 6066
+
+- 尝试直接用数组存储+二分解决
+- 注意采用Python列表的 slice 技巧进行修改, 否则 O(n) 的数组元素移动会超时
