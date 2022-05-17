@@ -25,6 +25,8 @@ cache
 
 ## Python 语法
 
+- 排序: <https://docs.python.org/zh-cn/3/howto/sorting.html>
+
 ### 定义 `__gt__`
 
 例如, 在 heapq 或者 bisect 时, 需要判断元素大小, Python默认的大小比较不满足时可以自定义
