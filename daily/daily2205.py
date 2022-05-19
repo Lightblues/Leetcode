@@ -557,6 +557,30 @@ https://leetcode.cn/problems/cat-and-mouse/
             if uf.is_connected(a,b):
                 res[i] = uf.value[a] / uf.value[b]
         return res
+    
+    """ 0316. 去除重复字母 #medium #题型 #单调栈 #stack
+要求得到一个字符串的子串, 1) 由原本字符串中的所有元素组成; 2) 所有字符不重复; 3) 字典序最小.
+思路: 单调栈
+去除限制条件, 我们如何得到一个尽可能小的字符串? 基本思路是 **维护一个单调栈**, 当遇到一个新的字符时, 如果栈顶元素小于当前字符, 则递归弹出栈顶元素, 然后再把这个字符入栈; 否则直接把当前字符压入栈 (注意当前字符总会入栈).
+这里要求 1) 保留原字符串中的所有元素, 因此用一个 counter 记录剩余的数量, 当剩余数量为0时, 我们不能将该元素弹出栈; 3) 字符不重复, 因此在入栈的时候判断该字符是否已经在栈内.
+[here](https://leetcode.cn/problems/remove-duplicate-letters/solution/qu-chu-zhong-fu-zi-mu-by-leetcode-soluti-vuso/)
+"""
+    def removeDuplicateLetters(self, s: str) -> str:
+        stack = []
+        # counter 记录字母剩余的数量
+        counter = collections.Counter(s)
+        for ch in s:
+            counter[ch] -= 1
+            # 字符已经用过了, 去重
+            if ch in stack: continue
+            while stack and ch < stack[-1]:
+                # 注意这里是 while, 例如 "bcabc" 需要将栈中的 bc 都弹出.
+                # 剩余字符还有, 可以弹出
+                if counter[stack[-1]] > 0: stack.pop()
+                else: break
+            # ch 在 ch < stack[-1] 与否两种情况下都会入栈
+            stack.append(ch)
+        return "".join(stack)
 
 
 sol = Solution()
@@ -579,10 +603,14 @@ result = [
     # sol.findCircleNum(isConnected = [[1,1,0],[1,1,0],[0,0,1]]),
     # sol.findCircleNum(isConnected = [[1,0,0],[0,1,0],[0,0,1]]),
     
-    sol.calcEquation([["a","b"],["e","f"],["b","e"]],[3.4,1.4,2.3],[["b","a"],["a","f"],["f","f"],["e","e"],["c","c"],["a","c"],["f","e"]]),
-    sol.calcEquation(equations = [["a","b"],["b","c"]], values = [2.0,3.0], queries = [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]),
-    sol.calcEquation([["a","b"],["c","d"]],[1.0,1.0],[["a","c"],["b","d"],["b","a"],["d","c"]]),
+    # sol.calcEquation([["a","b"],["e","f"],["b","e"]],[3.4,1.4,2.3],[["b","a"],["a","f"],["f","f"],["e","e"],["c","c"],["a","c"],["f","e"]]),
+    # sol.calcEquation(equations = [["a","b"],["b","c"]], values = [2.0,3.0], queries = [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]),
+    # sol.calcEquation([["a","b"],["c","d"]],[1.0,1.0],[["a","c"],["b","d"],["b","a"],["d","c"]]),
     
+    # sol.removeDuplicateLetters(s = "bcabc"),
+    # sol.removeDuplicateLetters(s = "cbacdcbc"),
+    
+
 ]
 for r in result:
     print(r)

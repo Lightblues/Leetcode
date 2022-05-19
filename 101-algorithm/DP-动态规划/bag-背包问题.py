@@ -29,9 +29,12 @@ from decimal import Decimal
 # from utils_leetcode import testClass
 # from structures import ListNode, TreeNode
 
-""" 
-https://leetcode.cn/contest/weekly-contest-261
-https://leetcode-cn.com/contest/biweekly-contest-71
+""" 背包问题
+- 01背包：`416. 分割等和子集 474. 一和零 494. 目标和 879. 盈利计划 1049. 最后一块石头的重量 II 1230. 抛掷硬币`
+- 完全背包：`1449. 数位成本和为目标值的最大数字 322. 零钱兑换 518. 零钱兑换 II 279. 完全平方数, 377. 组合总和 Ⅳ`
+- 分组背包: `1155. 掷骰子的N种方法` 每一组是一个骰子，每个骰子只能拿一个体积为1到6的物品
+
+see [here](https://leetcode.cn/problems/target-sum/solution/by-flix-rkb5/)
 @2022 """
 class Solution:
     """  """
