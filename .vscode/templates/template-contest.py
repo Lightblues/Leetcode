@@ -13,9 +13,11 @@ import functools
 from functools import lru_cache, cache, reduce, partial
 # cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
 import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement
+from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
 import string
 from string import ascii_lowercase, ascii_uppercase
+# s = ""
+# s.isdigit, s.islower, s.isnumeric
 import sys, os
 # sys.setrecursionlimit(10000)
 

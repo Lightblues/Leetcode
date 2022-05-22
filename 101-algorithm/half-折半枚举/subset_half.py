@@ -27,10 +27,22 @@ from sortedcontainers import SortedList, SortedSet, SortedDict
 # from utils_leetcode import testClass
 # from structures import ListNode, TreeNode
 
-""" 
-题目: 
-2035. 将数组分成两个数组并最小化数组和的差; 1755.最接近目标值的子序列和; 
-0805.数组的均值分割; 0416.分割等和子集; 0494.目标和 
+""" 利用折半枚举减少搜索空间
+
+=== 枚举、划分数组
+2035. 将数组分成两个数组并最小化数组和的差 #hard #题型
+    将长度为 2n 的数组分成等长的两部分, 要求两个数组和相差最小.
+1755. 最接近目标值的子序列和 #hard #折半枚举
+    给定一个数组, 要求找到一个子序列, 它的和最接近目标值. 返回这个最小 abs
+0805. 数组的均值分割 #hard #Fraction #题型 #折半枚举
+    给定一个数组, 将其分为两个子数组, 问能否使得两个数组的均值相同.
+0416. 分割等和子集 #背包 #medium
+    相较于 「0805. 数组的均值分割」这里要求两个数组的和相等.
+
+=== 简化DFS (类似双向搜索)
+0494. 目标和 #medium #背包
+    给定一个整数数组, 在它们之间加 +/- 组成表达式, 要求返回结果为 target 的表达式数量.
+
 见 [总结](https://leetcode.cn/problems/closest-subsequence-sum/solution/by-mountain-ocean-1s0v/)
 @2022 """
 
@@ -252,35 +264,6 @@ class Solution:
         return any(-ha in right and (ha, -ha) != (sleft, sright) for ha in left)
     
     
-    """ 0494. 目标和 #medium #背包
-给定一个整数数组, 在它们之间加 +/- 组成表达式, 要求返回结果为 target 的表达式数量.
-
-- 方法一, DFS
-    - 改进: #折半枚举 可以减少 DFS的复杂度
-- 方法二, DP, see [here](https://leetcode-cn.com/problems/target-sum/solution/mu-biao-he-by-leetcode-solution-o0cp/)
-    - `dp[i][j]` 为前 i 个数字中选取部分, 其和为 j 的组合数量
-    - 可知, 更新公式为 `dp[i][j] = dp[i-1][j] + dp[i-1][j-nums[i]]`, 当 `j<nums[i]` 不合法, 第二项取0.
-    - 优化空间, 可以用 **滚动数组**. 则更新公式为 `dp[j] += dp[j-nums[j]]`. 注意因为用了滚动数组, 内层循环需采用倒序遍历的方式.
-"""
-    def findTargetSumWays(self, nums: List[int], target: int) -> int:
-        n = len(nums)
-        if n==1:
-            return 1 if nums[0]==target or nums[0]==target else 0
-        
-        leftList = [0]
-        for i in range(n//2):
-            leftList = list(itertools.chain(*[(a+nums[i], a-nums[i]) for a in leftList]))
-        rightList = set([0])
-        for i in range(n//2, n):
-            rightList = list(itertools.chain(*[(a+nums[i], a-nums[i]) for a in rightList]))
-            # rightSet = rightSet | {j+nums[i] for j in rightSet} | {j-nums[i] for j in rightSet}
-        countLeft, countRight = collections.Counter(leftList), collections.Counter(rightList)
-        ans = 0
-        for a in countLeft:
-            ans += countLeft[a] * countRight[target-a]
-        return ans
-    
-    
     """ 0416. 分割等和子集 #背包 #medium
 相较于 「0805. 数组的均值分割」这里要求两个数组的和相等.
 复杂性: 数组长度 200, 每个元素大小 100.
@@ -332,6 +315,35 @@ https://leetcode.cn/problems/partition-equal-subset-sum/solution/fen-ge-deng-he-
                 dp[j] |= dp[j - num]
         
         return dp[target]
+
+
+    """ 0494. 目标和 #medium #背包
+给定一个整数数组, 在它们之间加 +/- 组成表达式, 要求返回结果为 target 的表达式数量.
+
+- 方法一, DFS
+    - 改进: #折半枚举 可以减少 DFS的复杂度
+- 方法二, DP, see [here](https://leetcode-cn.com/problems/target-sum/solution/mu-biao-he-by-leetcode-solution-o0cp/)
+    - `dp[i][j]` 为前 i 个数字中选取部分, 其和为 j 的组合数量
+    - 可知, 更新公式为 `dp[i][j] = dp[i-1][j] + dp[i-1][j-nums[i]]`, 当 `j<nums[i]` 不合法, 第二项取0.
+    - 优化空间, 可以用 **滚动数组**. 则更新公式为 `dp[j] += dp[j-nums[j]]`. 注意因为用了滚动数组, 内层循环需采用倒序遍历的方式.
+"""
+    def findTargetSumWays(self, nums: List[int], target: int) -> int:
+        n = len(nums)
+        if n==1:
+            return 1 if nums[0]==target or nums[0]==target else 0
+        
+        leftList = [0]
+        for i in range(n//2):
+            leftList = list(itertools.chain(*[(a+nums[i], a-nums[i]) for a in leftList]))
+        rightList = set([0])
+        for i in range(n//2, n):
+            rightList = list(itertools.chain(*[(a+nums[i], a-nums[i]) for a in rightList]))
+            # rightSet = rightSet | {j+nums[i] for j in rightSet} | {j-nums[i] for j in rightSet}
+        countLeft, countRight = collections.Counter(leftList), collections.Counter(rightList)
+        ans = 0
+        for a in countLeft:
+            ans += countLeft[a] * countRight[target-a]
+        return ans
 
 
 sol = Solution()

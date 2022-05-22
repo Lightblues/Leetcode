@@ -17,6 +17,7 @@ cache
 ### itertools
 
 - `product` 很好用
+- `accumulate` 计算 cumsum (注意 `initial` 参数)
 
 ### sortedcontainers
 
@@ -60,9 +61,11 @@ heapq.heappush(h, max_node)
 
 ### slice 语法
 
-要删(改) 数组中连续的一段元素, 可以采用切片语法, 效率较高.
+要删(改) 数组中连续的一段元素, 可以采用切片语法, 效率较高. (当然, 无法在数量级上提升, 只是一个卡常数的小技巧)
 
 参见 [here](https://leetcode.cn/problems/count-integers-in-intervals/solution/chun-er-fen-by-migeater-t5kh/),
+
+### 集合 set
 
 ## 算法
 
@@ -83,16 +86,34 @@ heapq.heappush(h, max_node)
 
 ### 单调栈
 
-题目: 2030, 0316
+参见 `stack.py`
 
-- 注意空栈 pop 的错误;
-- 限制子序列长度为 k: 1) 在push的时候判断时候超过限制; 2) pop时判断剩余的是否够, 即使 break;
-- 限制栈内元素数量 (比如要求ch的数量至少为repetition): 1) pop的时候检查剩余是否够; 2) 另外需要检查, 若栈内元素不足以放剩余的ch (repetition-countChInStack), 则需要push.
+- 注意
+    - 空栈 pop 的错误; 语法: `while s and s[-1] >= nums[i]: s.pop()`
+- 题型1: 得到指定条件的子序列
+    - 限制子序列长度为 k: 1) 在push的时候判断时候超过限制; 2) pop时判断剩余的是否够, 即使 break;
+    - 限制栈内元素数量 (比如要求ch的数量至少为repetition): 1) pop的时候检查剩余是否够; 2) 另外需要检查, 若栈内元素不足以放剩余的ch (repetition-countChInStack), 则需要push.
+- 题型2: 枚举所有的连续子数组
+    - 通过单调栈得到「数组中下一个比idx位置元素大/小的元素(位置)」
+    - 注意若有相同的数值出现, 为了避免重复枚举, 可以对左右边界分别用 严格小于和小于等于来约束.
+
 
 ### 折半枚举
 
-题目: 2035. 将数组分成两个数组并最小化数组和的差; 1755.最接近目标值的子序列和; 0805.数组的均值分割; 0416.分割等和子集; 0494.目标和 见 [总结](https://leetcode.cn/problems/closest-subsequence-sum/solution/by-mountain-ocean-1s0v/)
+参见 `subset_half.py`
 
-- 直接枚举所有子集的复杂度为 `O(2^n)`, 当 n=40 的时候数量级就到 12了
-- 折半枚举的思路是, 将数组等分成两部分, 这样每一半 n=20 数量级为 6.
-- 如何将两部分组合? 二分查找. 因此整体的复杂度为 `O(2^(n/2) * log(2^(n/2)))`
+- 折半枚举 & 复杂度分析
+    - 直接枚举所有子集的复杂度为 `O(2^n)`, 当 n=40 的时候数量级就到 12了
+    - 折半枚举的思路是, 将数组等分成两部分, 这样每一半 n=20 数量级为 6.
+    - 如何将两部分组合? 二分查找. 因此整体的复杂度为 `O(2^(n/2) * log(2^(n/2)))`
+- 题型1: 枚举、划分数组
+- 题型2: 简化DFS (类似双向搜索)
+
+### 前缀和
+
+itertools 包: `list(itertools.accumulate(arr, initial=0))`
+
+- 注意 `[l,r]` 闭区间内的和可以通过前缀和计算: `arr[l:r] = cumsum[r+1] - cumsum[l]` 这里在左侧添加了一项 (cumsum长度为n+1), 这是为了处理闭区间.
+    - 例如, 对于数组 [1,2,3], 通过 `itertools.accumulate(arr, initial=0))` 得到前缀和 [0,1,3,6], 则 `arr[0:2] = cumsum[3] - cumsum[0] = 6`
+- 「前缀和的前缀和」
+    - 例如6077题用到了, 注意这里和一般的前缀和没有区别, 也是 `s[l:r] = ss[r+1]-ss[l]` 这里是 ss 是 前缀和s的前缀和 (长度为 n+1). 只需要在推导的时候, 注意 s 的 l/r 是什么就好.

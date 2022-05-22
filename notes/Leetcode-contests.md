@@ -98,6 +98,48 @@
         - [here](https://leetcode.cn/problems/partition-array-into-two-arrays-to-minimize-sum-difference/solution/zhe-ban-mei-ju-pai-xu-er-fen-by-endlessc-04fn/)
     - 关联: 1755.最接近目标值的子序列和; 0805.数组的均值分割; 0416.分割等和子集; 0494.目标和 见 [总结](https://leetcode.cn/problems/closest-subsequence-sum/solution/by-mountain-ocean-1s0v/)
 
+### 263
+
+- 2042. 检查句子中的数字是否递增
+- 2043. 简易银行系统
+- 2044. 统计按位或能得到最大值的子集数目 #medium #题型
+    - 给定一组数字, 将它们依次 「按位或」 得到一个最大值 maxNum, 现要求 list 的所有子集中, 这些集合中的元素按位或可以得到该 maxNum 的组合数量.
+    - 复杂度: 数组长度 n<=16
+    - 思路1: 暴力遍历 #二进制枚举. 时间复杂度: O(2^n * n). 第二个因子n是指需要对于数组元素进行按位或操作.
+        - 之前想多了, 考虑到本题的数组长度有限, 暴力枚举所有可能的组合就行
+    - 思路2: 通过 #DFS 记录状态, 避免重复枚举
+        - 在上面的思路中, 例如计算 (1,2,3) 位的or 与计算 (1,2,3,4) 位的or 是相互独立的, 因此有重复计算.
+        - 可以采用DFS, 用空间来避免重复计算. `dfs(i, orVal)` 表示枚举第 i 个位置时的状态为 orVal.
+    - 思路3: 利用 #DP 来记录状态
+        - 用 dp[mask] 表示利用 mask 所表示的那些数字的 or 和
+        - 如何利用之前的数来帮助计算? 我们可以将 mask 分解成两部分然后对这两个数计算或. 如何划分? 可以利用 **位运算得到一个数字最低位1的位置 lowbit**.
+        - 例如, `6=0b0110` 的最低位为 `lowbit = 6 & -6 = 0b0010`, 因此,
+        - 递推公式: `dp[mask] = dp[mask-lowbit] | nums[lowbitIdx]`
+    - see [here](https://leetcode.cn/problems/count-number-of-maximum-bitwise-or-subsets/solution/by-ac_oier-dos6/)
+- 2045. 到达目的地的第二短时间
+    - 一月的每日一题, BFS即可
+
+### 264
+
+- 2047. 句子中的有效单词数
+    - 1月每日一题做过了, 要求的验证条件比较复杂.
+- 2048. 下一个更大的数值平衡数
+    - 定义「数值平衡数」为, 例如 3133, 包含了1个1, 3个3.
+    - 现在给定一个数字, 要求返回比这个数字大的下一个数值平衡数.
+    - 复杂度: 1e6
+    - 思路1: 暴力遍历. 要test一个数字是否为平衡数是简单的. 由于数字范围不大, 可以直接暴力遍历.
+    - 思路2: 整体的数量不多, 为了加速查询, 可以 #打表 预计算范围内的所有平衡数, 然后二分查找.
+- 2049. 统计最高分的节点数目 #medium #题型
+    - 有一棵二叉树, 定义一个节点的分数: 移除这个节点(和相邻边) 后, 其他部分节点数量的乘积.
+    - 要求返回分数最大的节点的数量.
+    - 思路1: #DFS
+    - 对于一个节点, 先探索子节点包含的节点数量, 剩余部分的节点数量为 `n-1-nChild1-nChild2` (注意需要排除为 0 的情况), 然后计算乘积.
+- 2050. 并行课程 III #hard #题型
+    - 课程之间存在DAG依赖关系, 每个课程修习需要一定的月份, 前序依赖满足的情况下, 不同课程可以同时修习. 求完成所有可能的最小时间.
+    - 复杂度: 节点/边数量 5e4,
+    - 关联: 1857. 有向图中最大颜色值
+    - 思路1: #拓扑排序 在遍历的过程中记录每个节点的timeLimit, 这样, 遍历每一条边的时候, 可以更新 `timeLimit[v]` 为 max(timeLimit[v], timeLimie[u]+time[v])`
+
 ### 268
 
 - 2078. 两栋颜色不同且距离最远的房子
@@ -570,6 +612,37 @@
         - 显然 `self.left[idxL:idxR] = [valueL]` 这样的效率更高, 直接 100% 了
         - see [here](https://leetcode.cn/problems/count-integers-in-intervals/solution/chun-er-fen-by-migeater-t5kh/)
     - 当然, 更优雅的方法是线段树?
+
+### 294
+
+- 6074. 字母在字符串中的百分比
+- 6075. 装满石头的背包的最大数量
+- 6076. 表示一个折线图的最少线段数
+- 6077. 巫师的总力量和 #hard #单调栈
+    - 对一个子数组, 定义score为 **最小元素 * 子数组元素和**, 现给定一个数组求所有子数组的score之和.
+        - 结合了 0907 和 1856
+        - 复杂度: 长度 1e5, 每个元素 1e9
+    - 思路1: #单调栈 #前缀和
+        - 考虑「一个元素在哪些子数组作为最小值」? 类似 0907, 利用单调栈求左右的边界.
+        - 这些子数组的和如何计算? 参见下面的公式分析, 通过「前缀和的前缀和」.
+        - 另外注意 cumsum的使用: 为了得到 arr[l:r] 的和, 可以使用 cumsum[r+1] - cumsum[l]
+            - 例如, 对于数组 [1,2,3], 通过 `itertools.accumulate(arr, initial=0))` 得到前缀和 [0,1,3,6], 则 arr[0:2] = cumsum[3] - cumsum[0] = 6
+    - 总结: 利用数学公式进行严谨的推导 (和思维方式).
+    - from [here](https://leetcode.cn/problems/sum-of-total-strength-of-wizards/solution/dan-diao-zhan-qian-zhui-he-de-qian-zhui-d9nki/)
+
+设子数组右端点为 $r$, 左端点为 $l$, 当前枚举的元素下标为 $i$, 那么有 $l \leq i \leq r$ 。 设 strength 数组的前缀和为 $s$, 在范围 $[L, R]$ 内的所有子数组的元素和的和为
+$$
+\begin{aligned}
+& \sum_{r=i+1}^{R+1} \sum_{l=L}^{i} s[r]-s[l] \\
+=& \sum_{r=i+1}^{R+1}\left((i-L+1) \cdot s[r]-\sum_{l=L}^{i} s[l]\right) \\
+=&(i-L+1) \cdot \sum_{r=i+1}^{R+1} s[r]-(R-i+1) \cdot \sum_{l=L}^{i} s[l]
+\end{aligned}
+$$
+因此我们还需要计算出前缀和 $s$ 的前缀和 $s s$, 上式即为
+$$
+(i-L+1) \cdot(s s[R+2]-s s[i+1])-(R-i+1) \cdot(s s[i+1]-s s[L])
+$$
+累加所有贡献即为答案。
 
 ## 双周赛 D60-D100
 
