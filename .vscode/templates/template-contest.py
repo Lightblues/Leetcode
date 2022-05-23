@@ -18,8 +18,11 @@ import string
 from string import ascii_lowercase, ascii_uppercase
 # s = ""
 # s.isdigit, s.islower, s.isnumeric
+import operator
+from operator import add, sub, xor, mul, truediv, floordiv, mod, pow, neg, pos
 import sys, os
 # sys.setrecursionlimit(10000)
+import re
 
 # https://github.com/grantjenks/python-sortedcontainers
 from sortedcontainers import SortedList, SortedSet, SortedDict
@@ -29,7 +32,7 @@ from fractions import Fraction
 from decimal import Decimal
 
 # from utils_leetcode import testClass
-# from structures import ListNode, TreeNode
+# from structures import ListNode, TreeNode, linked2list, list2linked
 
 """ 
 https://leetcode.cn/contest/weekly-contest-261

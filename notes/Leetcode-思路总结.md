@@ -8,6 +8,8 @@
 
 ## 技巧: base模块
 
+见 `template`
+
 ### functools
 
 cache
@@ -27,6 +29,14 @@ cache
 ## Python 语法
 
 - 排序: <https://docs.python.org/zh-cn/3/howto/sorting.html>
+
+### 性能上的说明
+
+- 避免使用 deepcopy
+    - 例如 2065 用了冗余的list复制没问题, 但用 deepcopy 会超时
+- lru_cache() 需要设置limit大一点, 不然性能也很糟糕
+    - Python3.9 新增的 cache 函数就是没有内存限制的语法糖
+- 奇巧淫技: numpy
 
 ### 定义 `__gt__`
 

@@ -1,65 +1,89 @@
-def bisect_right(a, x, lo=0, hi=None):
-    """在一个有序数组a中插入数字x的位置, 若数组中已有x则插入到最右边.
-    The return value i is such that all e in a[:i] have e <= x, and all e in
-    a[i:] have e > x.  So if x already appears in the list, a.insert(x) will
-    insert just after the rightmost x already there.
-    """
-    if lo < 0:
-        raise ValueError('lo must be non-negative')
-    if hi is None:
-        hi = len(a)
-    while lo < hi:
-        mid = (lo+hi)//2
-        if x < a[mid]: hi = mid
-        else: lo = mid+1
-    return lo
+import typing
+from typing import List, Optional, Tuple
+import copy
+from copy import deepcopy, copy
+import collections
+from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
+import math
+from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
+import bisect
+import heapq
+from heapq import heappush, heappop, heapify, heappushpop
+import functools
+from functools import lru_cache, cache, reduce, partial
+# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
+import itertools
+from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
+import string
+from string import ascii_lowercase, ascii_uppercase
+# s = ""
+# s.isdigit, s.islower, s.isnumeric
+import operator
+from operator import add, sub, xor, mul, truediv, floordiv, mod, pow, neg, pos
+import sys, os
+# sys.setrecursionlimit(10000)
 
-def bisect_left(a, x, lo=0, hi=None):
-    """区别在于, 出现相同元素时, 插入到最左边.
+# https://github.com/grantjenks/python-sortedcontainers
+from sortedcontainers import SortedList, SortedSet, SortedDict
+# help(SortedDict)
+# import numpy as np
+from fractions import Fraction
+from decimal import Decimal
 
-    The return value i is such that all e in a[:i] have e < x, and all e in
-    a[i:] have e >= x.  So if x already appears in the list, a.insert(x) will
-    insert just before the leftmost x already there.
-    """
-    if lo < 0:
-        raise ValueError('lo must be non-negative')
-    if hi is None:
-        hi = len(a)
-    while lo < hi:
-        mid = (lo+hi)//2
-        if a[mid] < x: lo = mid+1
-        else: hi = mid
-    return lo
+# from utils_leetcode import testClass
+# from structures import ListNode, TreeNode
 
-def get_last(arr, x):
-    # 返回最后一个满足条件, 即 arr[index] <= x 的index
-    return bisect_right(arr, x) - 1
+""" 二分查找总结
+技巧:
+bisect 包提供了已有的二分查找模板, 那么需要手动在 [left, right] 这一区间内查找呢? 
+    可以手动构造这一range, 然后在这一区间上查找即可 (使用 key 参数)
+    例如, `bisect.bisect_left(list(range(int(1e5))), 1, key=check)` 查找最后第一个符合条件的元素的索引
 
-def get_first(arr, x):
-    # 返回第一个满足条件, 即 arr[index] >= x 的index
-    return bisect_left(arr, x)
+ """
+class Solution:
+    """ 2064. 分配给商店的最多商品的最小值 #medium #二分
+将一组商品分配给n家商店, 每家店只能有一种商品 (也可以没有商品). 要求一种最「平均」的分配方式, 也即这些店中的商品数量最大值达到最小.
+限制: 商品种类 m = 1e5, 每一种的最大数量 a = 1e5
+思路1: #二分查找 每次检查的复杂度为 m, 二分的范围最大为 a, 因此时间复杂度为 O(m*log(a)).
+    左右边界: sum(quantities)/n), quantities[-1]+1
+    注意二分的边界: 这里的题型是「满足条件的最小值」. 因此不满足时缩小左边界 `left = mid+1`, 最后返回 `left`.
+说明: 出了手动写二分算法之外, [here](https://leetcode.cn/problems/minimized-maximum-of-products-distributed-to-any-store/solution/er-fen-da-an-by-endlesscheng-aape/)
+    直接调用了 go 中的 `sort.Search` 函数, 简化了代码. 
+    类似的, 在 Python 中可采用 `bisect.bisect_left`, 语法有所不同, 思路是一样的 (其实都是在一个range数组中二分查找).
+"""
+    def minimizedMaximum(self, n: int, quantities: List[int]) -> int:
+        quantities.sort()
+        left, right = math.ceil(sum(quantities)/n), quantities[-1]
+        def check(a):
+            remain = n
+            for q in quantities:
+                remain -= math.ceil(q/a)
+                if remain < 0: return False
+            return True
+        while left < right:
+            mid = (left+right)//2
+            if not check(mid):
+                left = mid+1
+            else:
+                right = mid
+        return left
 
-def get_last_man(arr, x):
-    """ 背最上面的两个模板比较通用, 而且这里多了一些判断条件 """
-    l, r = 0, len(arr)-1
-    while l<=r:
-        mid = (l+r)//2
-        if arr[mid] > x:
-            r = mid-1
-        elif arr[mid] < x:
-            l = mid+1
-        else:
-            if mid==len(arr)-1 or arr[mid+1] > x:
-                return mid
-            l = mid+1
-    return -1
+    def minimizedMaximum(self, n: int, quantities: List[int]) -> int:
+        """ 参考 [here](https://leetcode.cn/problems/minimized-maximum-of-products-distributed-to-any-store/solution/er-fen-da-an-by-endlesscheng-aape/)
+        相较于 go 中的 `sort.Search` 函数, 采用了 `bisect.bisect_left`, 语法有所不同, 思路是一样的. """
+        def check(a):
+            remain = n
+            for q in quantities:
+                remain -= math.ceil(q/a)
+                if remain < 0: return False
+            return True
+        # 直接在 [1, 1e5] 这一区间内查找
+        idx = bisect.bisect_left(list(1, range(int(1e5))), 1, key=check)
+        return idx+1
 
-arr = [1,2,2,2,3]
-res = [
-    bisect_left(arr, 2),
-    bisect_right(arr, 2),
-    get_last(arr, 2),
-    get_first(arr, 2),
-    get_last_man(arr, 2),
+sol = Solution()
+result = [
+    
 ]
-for r in res: print(r)
+for r in result:
+    print(r)
