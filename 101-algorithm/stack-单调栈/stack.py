@@ -52,6 +52,9 @@ from decimal import Decimal
 6077. 巫师的总力量和 #hard #单调栈 #前缀和
     对一个子数组, 定义score为 **最小元素 * 子数组元素和**, 现给定一个数组求所有子数组的score之和.
 
+6080. 使数组按非递减顺序排列 #medium #题型
+    给定一个数组经过若干次删除操作将其变为非递减数组. 每次操作定义为: 删除满足 `nums[i - 1] > nums[i]` 的位置的元素 i. 问经过多少次操作后得到最终结果 (非递减).
+    利用单调栈维护「该元素被删除的时刻」
 
 @2022 """
 class Solution:
@@ -393,6 +396,36 @@ $$
             ans += val * ((idx-l+1)*(ss[r+2] - ss[idx+1]) -  (r-idx+1)*(ss[idx+1] - ss[l]))
         return ans % MOD
 
+
+
+    """ 6080. 使数组按非递减顺序排列 #medium #题型
+给定一个数组经过若干次删除操作将其变为非递减数组. 每次操作定义为: 删除满足 `nums[i - 1] > nums[i]` 的位置的元素 i. 问经过多少次操作后得到最终结果 (非递减).
+尝试0: 一开始想到, 通过一次遍历可以得到最终保留的子序列. 这样只需要计算这些idx所分割的每一个连续序列中, 需要进行的操作次数即可. 
+    然而, 对于如何计算按照的删除方式「删除序列中的每一个元素」, 还是没想出来. 一开始想记录每一个递增序列的长度, 但是还需要考虑到 [1,2,3,1,2,3] 中, 第二个3 这样的情况.
+思路1: 单调栈
+    [here](https://leetcode.cn/problems/steps-to-make-array-non-decreasing/solution/by-endlesscheng-s2yc/)
+    对于每一个元素 i, (若会被删除), 其删除时间由什么决定? 由 `nums[i - 1] > nums[i]` 这一公式决定. 也即其左侧的第一个比它大的元素, 记为 j.
+    如何记录 j 的删除时间? 可以通过一个(严格)单调递减栈来解决.
+    具体而言, 栈内记录 `(num, delete_time)`, 后者为它被移除的时刻. 对于每一个元素, 移除所有满足 `stack[-1][0] <= num` 的栈顶元素 (注意是小于等于).
+        相等的时候, 1) 若num被保留, 下面的 `if stack` 语句确保了其移除时间的记录为 0; 2) num被移除, 则其被移除的时刻同样取决于上一个值为 num的元素. 例如 [3,1,2,1,2] 中两个2的移除时刻分别为 2,3.
+    若经过pop操作后栈空, 说明该元素会被保留到最后, 其 `delete_time` 为 0. 否则, 为出栈元素中  `delete_time` 最大值 +1. 也即, `if stack: maxt += 1`
+    """
+    def totalSteps(self, nums: List[int]) -> int:
+        """ [here](https://leetcode.cn/problems/steps-to-make-array-non-decreasing/solution/by-endlesscheng-s2yc/)
+        """
+        # 栈内元素为 (num, maxt) 其中第二个数字是它被移除的时刻
+        stack = []
+        ans = 0
+        for num in nums:
+            maxt = 0    # 记录num左侧的元素的小于等于num的元素的最大移除时间
+            # 注意这里是 <=. 相等的时候, 1) 若num被保留, 下面的 `if stack` 语句确保了其移除时间的记录为 0; 2) num被移除, 则其被移除的时刻同样取决于上一个值为 num的元素. 例如 [3,1,2,1,2] 中两个2的移除时刻分别为 2,3.
+            while stack and stack[-1][0] <= num:
+                maxt = max(maxt, stack.pop()[1])
+            # 若栈为空, 说明是新的最大元素, 其被移除的时刻为 0; 否则, 该元素会被移除, 其被移除的时刻为 maxt+1.
+            if stack: maxt += 1
+            ans = max(ans, maxt)
+            stack.append((num, maxt))
+        return ans
 
 sol = Solution()
 result = [

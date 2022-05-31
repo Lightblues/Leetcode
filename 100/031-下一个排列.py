@@ -32,8 +32,9 @@
 from typing import List
 class Solution:
     def nextPermutation(self, nums: List[int]) -> None:
-        """
+        """ 和下面的是一样的思路, 这里写得太烦了
         Do not return anything, modify nums in-place instead.
+        https://leetcode.cn/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/
         """
         l = len(nums)
         def sort(start,end):
@@ -74,6 +75,8 @@ class Solution:
         nums.sort()
 
     def nextPermutation2(self, nums: List[int]) -> None:
+        """ Do not return anything, modify nums in-place instead. """
+        # https://leetcode.cn/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/
         l = len(nums)
 
         # 从后向前，找出第一个非逆序的元素

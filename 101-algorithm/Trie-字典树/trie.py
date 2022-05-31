@@ -51,6 +51,9 @@ from decimal import Decimal
     给定一组树结构的「基因」, 每一个节点都是数字 (从 0到 n-1). 定义基因之前的差是两个数字的异或值. 然后给定一组查询 (node, val) 要求从树上的node节点及其祖先节点中国呢, 找到与val异或最大值.
     离线的思路; 需要对字典树实现「删除」操作
 
+1948. 删除系统中的重复文件夹 #hard
+    背景很有意思: 对于一棵目录树, 若两个节点所包含的目录结构(文件夹名字)相同, 则认为它们是重复的. 给定一棵目录树, 要求检测删除所有重复节点.
+    主体是对于树节点的序列化表达. 用 Trie 来处理从根目录到叶子节点的路径.
 
 """
 
@@ -540,6 +543,65 @@ class Solution:
         dfs(root)
         return [i[1] for i in sorted(results)]
         
+
+    """ 1948. 删除系统中的重复文件夹 #hard
+背景很有意思: 对于一棵目录树, 若两个节点所包含的目录结构(文件夹名字)相同, 则认为它们是重复的. 给定一棵目录树, 要求检测删除所有重复节点.
+约束: 目录树的节点数量 2e4, 路径最大深度 500, 文件夹名称不超过 10个字符.
+思路1: #字典树 + #括号表示法 + 哈希表
+    如何检测两棵子树结构相同? 对于树结构序列化为字符串, 判断两个字符串是否相同. (采用后续遍历DFS)
+    如何保证子节点之间的顺序? 利用Trie存储子节点, 对于key排序.
+    如何删除重复节点? 用一个哈希表存储节点表示到节点的映射, 将 1:n 映射的节点删除.
+    [官答](https://leetcode.cn/problems/delete-duplicate-folders-in-system/solution/shan-chu-xi-tong-zhong-de-zhong-fu-wen-j-ic32/)
+    复杂度: 见答案中的分析.
+
+"""
+    def deleteDuplicateFolder(self, paths: List[List[str]]) -> List[List[str]]:
+        class Trie:
+            def __init__(self, name) -> None:
+                self.name = name
+                self.children = {}  # name to node
+                self.duplicated = False
+        root = Trie("/")
+        for path in paths:
+            node = root
+            for d in path:
+                if d not in node.children:
+                    node.children[d] = Trie(d)
+                node = node.children[d]
+        # 存储节点的序列化表示到节点的映射
+        parse2node = defaultdict(list)
+        def dfs(node: Trie) -> str:
+            """ 后续遍历得到节点包含的子树的表示 """
+            if len(node.children)==0:
+                return ""
+            # s = node.name
+            s = ""
+            for child in sorted(node.children):
+                child = node.children[child]
+                p = dfs(child)
+                s += child.name + "("+p+")"
+            parse2node[s].append(node)
+            return s
+        dfs(root)
+        # 通过标记的方式删除重复节点
+        for p, nodes in parse2node.items():
+            if len(nodes)>1:
+                for n in nodes:
+                    n.duplicated = True
+        # DFS遍历所有保留的节点, 返回结果
+        res = []
+        path = []
+        def dfsOut(node: Trie):
+            for childName, childNode in node.children.items():
+                if childNode.duplicated: continue
+                path.append(childName)
+                # 对于每一个非duplicated目录都需要输出
+                res.append(path[:])
+                dfsOut(childNode)
+                path.pop()
+        dfsOut(root)
+        return res
+
 sol = Solution()
 result = [
 #     sol.testClass("""["Trie", "insert", "search", "search", "startsWith", "insert", "search"]
