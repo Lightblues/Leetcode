@@ -416,35 +416,6 @@ class Solution220127:
             return True
         return sum(valid(s) for s in sentence.split())
 
-    """ 1996. 游戏中弱角色的数量
-    定义“弱角色”：包括攻击和防御两个属性，两个指标都严格小于另一个角色的角色，返回一组人物中弱角色的数量
-    方法一：排序
-    可以按照攻击从大到小排序；题目中要求两个属性严格小于才成立，如何保证当 maxY>y 时，所对应的 maxX 是严格大于当前的 x？一种方式当然可以对 x 分组记录之前分组的 maxX，另一种方法是设定第二排序指标为 防御值Y 从小到大排序，这样遍历的时候仅需记录 maxY 即可
-    [here](https://leetcode-cn.com/problems/the-number-of-weak-characters-in-the-game/solution/you-xi-zhong-ruo-jiao-se-de-shu-liang-by-3d2g/)
-    方法二：单调栈
-    思路其实差不多，而且也要双指标排序；不过用了递增栈逻辑上清楚一点。
-     """
-    def numberOfWeakCharacters(self, properties: List[List[int]]) -> int:
-        properties.sort(key=lambda x: (-x[0], x[1]))
-        result = 0
-        maxY = 0
-        for x,y in properties:
-            if y<maxY:
-                result += 1
-            else:
-                maxY = y
-        return result
-    # 单调递增栈。(x[0], -x[1]) 排序。也即，按照递增次序遍历攻击值，栈内元素为尚无法成为弱角色的；为了处理相同攻击值的情况，采用防御值倒序作为第二排序指标
-    def numberOfWeakCharacters(self, properties: List[List[int]]) -> int:
-        properties.sort(key = lambda x: (x[0], -x[1]))
-        ans = 0
-        st = []
-        for _, def_ in properties:
-            while st and st[-1] < def_:
-                st.pop()
-                ans += 1
-            st.append(def_)
-        return ans
 
 
 sol2 = Solution220127()

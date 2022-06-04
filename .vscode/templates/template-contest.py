@@ -10,7 +10,8 @@ import bisect
 import heapq
 from heapq import heappush, heappop, heapify, heappushpop
 import functools
-from functools import lru_cache, cache, reduce, partial
+from functools import lru_cache, reduce, partial # cache
+cache = partial(lru_cache, maxsize=None)
 # cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
 import itertools
 from itertools import product, permutations, combinations, combinations_with_replacement, accumulate

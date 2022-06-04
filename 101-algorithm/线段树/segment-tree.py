@@ -48,7 +48,9 @@ TODO: https://leetcode.cn/problems/count-of-range-sum/solution/by-ac_oier-b36o/
 0731. 我的日程安排表 II
     相较于 0729, 这里的限制是三个课程不能同时进行, 也即重叠时间不能超过2.
 
-
+1964. 找出到每个位置为止最长的有效障碍赛跑路线 #hard #DP
+    问题定义: 给定一个序列, 对于其中的每一个值, 计算以其结尾的递增序列的最大长度
+    实际上可以用更为简单的思路; 但是线段树也能做, 注意代码书写.
 
 """
 class Solution:
@@ -114,6 +116,73 @@ see [官答](https://leetcode.cn/problems/count-of-range-sum/solution/qu-jian-he
             ans += t.query(1, 1, n, left, right)
             t.inc(1,1,n, kth[s])
         return ans
+
+
+    """ 1964. 找出到每个位置为止最长的有效障碍赛跑路线 #hard #DP
+问题定义: 给定一个序列, 对于其中的每一个值, 计算以其结尾的递增序列的最大长度
+思路1: #线段树
+    我们用一个哈希表记录num结尾的递增序列的最大长度
+    这样, 对于每一个元素, 我们需要查询「小于等于当前元素的数字中, 长度最大的那一个」. 因此可以用线段树来解决
+思路2: #DP
+    基本和 0300 「最长递增子序列」完全一致.
+    核心是: dp[i] 记录长度为 i+1 的序列中, 结尾元素的最小值
+"""
+    def longestObstacleCourseAtEachPosition(self, obstacles: List[int]) -> List[int]:
+        # 注意不能简单用单调栈: 例如 `[5,1,5,5,1,3,4,5,1,4]` 的最后一个值应该是 5 ([1,1,3,4,4]), 而单调栈因为要保证倒数第二个1, 会得到 4
+        # n = len(obstacles)
+        # s = []
+        # ans = [0] * n
+        # for i,height in enumerate(obstacles):
+        #     while s and s[-1] > height:
+        #         s.pop()
+        #     s.append(height)
+        #     ans[i] = len(s)
+        # return ans
+        
+        n = len(obstacles)
+        # 离散化
+        nums = list(set(obstacles))
+        nums.sort()
+        num2idx = {v:i+1 for i,v in enumerate(nums)}
+        obstacles = [num2idx[v] for v in obstacles]
+        
+        """ 定义线段树, 注意长度为所有数字(离散化之后)的数量 *4
+        这里的 seg 为统计每个数字结尾的递增序列的最大长度的哈希表
+        segMax 为统计每个数字结尾的递增序列的最大长度的线段树 """
+        ll = len(num2idx)
+        seg = defaultdict(int)
+        segMax = [0] * 4*ll
+        def update(idx, val, o=1, l=1,r=ll):
+            if l==r:
+                seg[idx] = max(seg[idx], val)
+                segMax[o] = seg[idx]
+                return
+            m = (l+r)//2
+            if m >= idx: update(idx, val, 2*o, l, m)
+            else: update(idx, val, 2*o+1, m+1, r)
+            # seg[o] = seg[2*o] + seg[2*o+1]
+            segMax[o] = max(segMax[2*o], segMax[2*o+1])
+        def query(L, R, o=1, l=1, r=ll):
+            # 查询区间 [L, R] 的最大值
+            if L <= l and r <= R: return segMax[o]
+            # from Coplit 居然如此简洁
+            if R < l or r < L: return 0
+            return max(query(L, R, 2*o, l, (l+r)//2), query(L, R, 2*o+1, (l+r)//2+1, r))
+            m = (l+r)//2
+            ans = 0
+            if m>=L: ans = max(ans, query(L, R, 2*o, l, m))
+            if m+1<=R: ans = max(ans, query(L, R, 2*o+1, m+1, r))
+            return ans
+        
+        ans = [0] * n
+        for i,height in enumerate(obstacles):
+            # 注意这里的查询更新逻辑: 每次查询height一下的最长递增序列; 然后+1, 并进行更新
+            hisHeight = query(1, height)
+            ans[i] = hisHeight + 1
+            update(height, hisHeight+1)
+        return ans
+
+
 
 class SegTree_0():
     """ 改写自 0327 题官答.

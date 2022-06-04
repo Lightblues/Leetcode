@@ -6,7 +6,7 @@
     - 再如, 二分查找的时候用额外的变量记录符合条件的值, 而不必纠结是返回 l/l-1.
     - 如, 利用 for i in range(left, right) 避免数组越界的判断
 
-## 技巧: base模块
+## Python 基本模块
 
 见 `template`
 
@@ -78,6 +78,22 @@ heapq.heappush(h, max_node)
 ### 集合 set
 
 ## 算法
+
+### 位运算
+
+- Python 3.10 新增了 `int.bit_count(a)` 函数统计 a 中非零位数量, 比 `bin(a).count('1')` 的效率高不少.
+
+#### 遍历所有子集 (状态压缩)
+
+对于一个 mask 所表示的集合, 遍历其所有非空子集可以采用下面的模板. 核心是 `subset = (subset - 1) & mask`
+
+```py
+subset = mask
+while subset:
+    ...
+    subset = (subset - 1) & mask
+```
+
 
 ### 二分查找
 
