@@ -304,62 +304,6 @@ class Solution2:
             n = n/2 if n%2 == 0 else n//2+1
         return int(result)
 
-""" 2013. 检测正方形
-实现一个类，实现 count：输入一个坐标，返回这个点和已有的点能够组成正方形（平行坐标轴的）的数量
-注意审题，因为是正方形所以遍历的复杂度不是很高，所以逻辑实现在 count 函数中即可
-用一个 `map{x:[ys]}` 记录每一行出现过的列（或者 [官答](https://leetcode-cn.com/problems/detect-squares/solution/jian-ce-zheng-fang-xing-by-leetcode-solu-vwzs/) 中直接 `map{[x][y]:count}` 记录每一个点出现的次数，数据结构 `defaultdict(Counter)`）遍历所有可能的正方形即可
-
-["DetectSquares", "add", "add", "add", "count", "count", "add", "count"]
-[[], [[3, 10]], [[11, 2]], [[3, 2]], [[11, 10]], [[14, 8]], [[11, 2]], [[11, 10]]]
- """
-
-class DetectSquares:
-    def __init__(self):
-        self.x2y = collections.defaultdict(list)
-    def add(self, point:List[int]):
-        xi,yi = point
-        self.x2y[xi].append(yi)
-    def count(self, point:List[int]):
-        # 理解错了，以为是长方形
-        # result = 0
-        # xi,yi = point
-        # possibleXj = [x for x,ys in self.x2y.items() if len(ys)>1 and yi in ys and x!=xi]
-        # for yj in self.x2y[xi]:
-        #     if yj==yi:
-        #         continue
-        #     for xj in possibleXj:
-        #         if yj in self.x2y[xj]:
-        #             count = self.x2y[xj].count(yi) * self.x2y[xj].count(yj)
-        #             result += count
-        # return result
-        # 正方形
-        result = 0
-        xi,yi = point
-        possibleYj = set([y for y in self.x2y[xi] if y!=yi])
-        for yj in possibleYj:
-            d = yj-yi
-            for d in [d, -d]:
-                if yi in self.x2y[xi+d] and yj in self.x2y[xi+d]:
-                    result += self.x2y[xi+d].count(yi) * self.x2y[xi+d].count(yj) * self.x2y[xi].count(yj)
-        return result
-
-def test2013():
-    obj = DetectSquares()
-    obj.add([3,10])
-    obj.add([11,2])
-    obj.add([3,2])
-    print(obj.count([11,10]))
-    print(obj.count([14,8]))
-    obj.add([11,2])
-    print(obj.count([11,10]))
-
-# test2013()
-
-# Your DetectSquares object will be instantiated and called as such:
-# obj = DetectSquares()
-# obj.add(point)
-# param_2 = obj.count(point)
-
 # sol = Solution()
 # rels = [
 #     sol.containsNearbyDuplicate(nums = [1,2,3,1], k = 3),

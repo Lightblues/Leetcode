@@ -10,16 +10,18 @@ import bisect
 import heapq
 from heapq import heappush, heappop, heapify, heappushpop
 import functools
-from functools import lru_cache, cache, reduce, partial
+functools.cache
+from functools import lru_cache, reduce, partial # cache
+cache = partial(lru_cache, maxsize=None)
 # cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
 import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
+from itertools import count, product, permutations, combinations, combinations_with_replacement, accumulate
 import string
 from string import ascii_lowercase, ascii_uppercase
 # s = ""
 # s.isdigit, s.islower, s.isnumeric
 import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, pow, neg, pos
+from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos
 import sys, os
 # sys.setrecursionlimit(10000)
 import re
@@ -35,63 +37,35 @@ from decimal import Decimal
 # from structures import ListNode, TreeNode, linked2list, list2linked
 
 """ 
-排列组合 https://oi-wiki.org/math/combinatorics/combination/
-数论: https://oi-wiki.org/math/number-theory/basic/
-
-0031. 下一个排列 #medium #题型
-    给定一个数组, 要求得到它的一个重排, 是「下一个字典序比它大的」排列.
-    例如, [1,3,2] 的下一个排列就是 [2,1,3].
-    应用: 1947. 最大兼容性评分和 #medium
-1830. 使字符串有序的最少操作次数 #hard #math
-    本质上是求一个序列是从小到大的第几个排列
-    关联: #组合数学 #乘法逆元
-
- """
+https://leetcode.cn/contest/weekly-contest-261
+https://leetcode-cn.com/contest/biweekly-contest-50
+@2022 """
 class Solution:
-    """ 0031. 下一个排列 #medium #题型
-给定一个数组, 要求得到它的一个重排, 是「下一个字典序比它大的」排列.
-    例如, [1,3,2] 的下一个排列就是 [2,1,3]. 注意最常用的就是排列的定义, 但对于任意数组都成立, 例如 [1,1,5] 的下一个排列是 [1,5,1]
-    约束: 长度100; 必须原地修改数组 (也即只允许使用额外常数空间).
-思路1: #两遍扫描
-    例如, 对于 [4,5,2,6,3,1] 我们如何考虑下一个排列? 顺序扫描过去, 我们会把2替换成3, 然后把剩余的[6,2,1]三个元素sort.
-    因此, 我们要找到一组下标 (i,j) 满足 `i<j; arr[i]<arr[j]` 并且这里的 **i尽可能右, arr[j] 尽可能小**, 这样直觉来看增长最小.
-    如何寻找? 从左往右查找第一个下标 i, 满足 `i<j; arr[i]<arr[j]` 的组合.
-    需要和i右边的所有元素比较吗? 实际上只需要比较 arr[i]<arr[i+1] 是否成立即可! 因为这样从右往左遍历下来, arr[i+1:] 是递减的.
-    如何找到j? 再一次从左往右遍历, 找到第一个 arr[i]<arr[j] 的位置j. 然后交换 ij, 对于 arr[i+1:] 进行排序
-    需要sort吗? 前面说到 arr[i+1:] 是递减的, 而交换ij之后性质不变, 因此 **只需要反转这一数组即可**.
-    [官答](https://leetcode.cn/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/)
-"""
-    def nextPermutation(self, nums: List[int]) -> None:
-        """
-        Do not return anything, modify nums in-place instead.
-        [官答](https://leetcode.cn/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/)
-        """
-        # 第一次, 找到 i
-        n = len(nums)
-        for i in range(n-2, -2, -1):
-            if nums[i] < nums[i+1]:
-                break
-        # 边界情况: 已经是最大的排列了
-        if i==-1:
-            nums.reverse()
-            return
-        # 第二次: 找到j
-        for j in range(n-1, i, -1):
-            if nums[i] < nums[j]: break
-        # 交换
-        nums[i], nums[j] = nums[j], nums[i]
-        # 反转
-        l,r = i+1, n-1
-        while l<r:
-            nums[l], nums[r] = nums[r], nums[l]
-            l,r = l+1, r-1
-            
-    def test_nextPermutation(self, nums):
-        pre = nums[:]
-        self.nextPermutation(nums)
-        print(f"{pre} -> {nums}")
-
-
+    """ 1827. 最少操作使数组递增 """
+    def minOperations(self, nums: List[int]) -> int:
+        last = nums[0]
+        ans = 0
+        for num in nums[1:]:
+            last = max(last+1, num)
+            if last > num:
+                ans += last-num
+        return ans
+    
+    """ 1828. 统计一个圆中点的数目 """
+    def countPoints(self, points: List[List[int]], queries: List[List[int]]) -> List[int]:
+        isInCircle = lambda x,y,r: x**2+y**2 <= r**2
+        return [sum(isInCircle(x1-x2, y1-y2, r) for x2,y2 in points) for x1,y1,r in queries]
+    
+    """ 1829. 每个查询的最大异或值 """
+    def getMaximumXor(self, nums: List[int], maximumBit: int) -> List[int]:
+        target = (1<<maximumBit) - 1
+        ans = []
+        acc = 0
+        for num in nums:
+            acc ^= num
+            ans.append(target ^ acc)
+        return ans[::-1]
+    
     """ 1830. 使字符串有序的最少操作次数 #hard #math
 定义了对于字符串一个复杂的操作, 问经过多少次操作后, 可以原字符串 s 变为递增的形式.
 操作定义为: 从后往前找到第一个 `s[i] < s[i - 1]` 的位置, 然后在 s[i:] 中找到最后一个 `s[i-1] > s[j]` 的位置. 然后 1) 将 i-1, j 两个位置的元素调换; 2) 反转 s[i:]
@@ -194,12 +168,28 @@ class Solution:
         return ans % mod
 
 
-sol = Solution()
-sol.test_nextPermutation(nums = [1,2,3]),
-sol.test_nextPermutation(nums = [3,2,1]),
-sol.test_nextPermutation([1,1,5])
-result = [
+    def testClass(self, inputs):
+        # 用于测试 LeetCode 的类输入
+        s_res = [None] # 第一个初始化类, 一般没有返回
+        methods, args = [eval(l) for l in inputs.split('\n')]
+        class_name = eval(methods[0])(*args[0])
+        for method_name, arg in list(zip(methods, args))[1:]:
+            r = (getattr(class_name, method_name)(*arg))
+            s_res.append(r)
+        return s_res
     
+sol = Solution()
+result = [
+    # sol.minOperations(nums = [1,5,2,4,1]),
+    # sol.countPoints(points = [[1,3],[3,3],[5,3],[2,2]], queries = [[2,3,1],[4,3,1],[1,1,2]]),
+    
+    # sol.getMaximumXor(nums = [0,1,1,3], maximumBit = 2),
+    # sol.getMaximumXor([0,1,2,2,5,7], maximumBit = 3),
+    
+    sol.makeStringSorted(s = "cba"),
+    sol.makeStringSorted(s = "cdbea"),
+    sol.makeStringSorted("aabaa"),
+    sol.makeStringSorted(s = "leetcodeleetcodeleetcode")
 ]
 for r in result:
     print(r)

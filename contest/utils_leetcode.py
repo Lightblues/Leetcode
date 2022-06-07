@@ -1,3 +1,4 @@
+import sys, os
 
 class testClass:
     """ 用于接受 ACM 形式的测试用例, 例如
@@ -12,3 +13,15 @@ class testClass:
             r = (getattr(class_name, method_name)(*arg))
             s_res.append(r)
         return s_res
+
+
+""" 用于读取stdin输入 """
+try:
+    while True:
+        line = sys.stdin.readline().strip()
+        if line == '':
+            break
+        lines = line.split()
+        print(int(lines[0]) + int(lines[1]))
+except:
+    pass

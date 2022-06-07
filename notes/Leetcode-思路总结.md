@@ -5,10 +5,19 @@
     - sample: 2086. 从房屋收集雨水需要的最少水桶数
     - 再如, 二分查找的时候用额外的变量记录符合条件的值, 而不必纠结是返回 l/l-1.
     - 如, 利用 for i in range(left, right) 避免数组越界的判断
+- 方法论
+    - 刷题量是必要的
+    - 关于题解: 如果是成体系的内容, 可以学一套的路子. 例如我刷周赛跟着 [灵神](https://leetcode.cn/u/endlesscheng/)
+    - 关于「重写」题目, 也是很有必要的
 
 ## Python 基本模块
 
 见 `template`
+
+### 默认环境函数
+
+- `str, ord` 转换
+- `pow(x,y, mod)`
 
 ### functools
 
@@ -18,8 +27,11 @@ cache
 
 ### itertools
 
+<https://docs.python.org/zh-cn/3/library/itertools.html>
+
 - `product` 很好用
 - `accumulate` 计算 cumsum (注意 `initial` 参数)
+- `permutations(iterable, r=None)` 从一个长度为n的数组中得到所有长度为r的排列
 
 ### sortedcontainers
 
@@ -36,6 +48,7 @@ cache
     - 例如 2065 用了冗余的list复制没问题, 但用 deepcopy 会超时
 - lru_cache() 需要设置limit大一点, 不然性能也很糟糕
     - Python3.9 新增的 cache 函数就是没有内存限制的语法糖
+- 字典的union操作: 1. 原地add操作; 2. 将小集合合并到大集合 (重复add) 的速度更快.
 - 奇巧淫技: numpy
 
 ### 定义 `__gt__`

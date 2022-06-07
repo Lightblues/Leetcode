@@ -16,6 +16,7 @@
 - CodeForces: <https://codeforces.com/problemset>
 - ACWing: <https://www.acwing.com/activity/1/competition/>
 - LeetCode 竞赛题打分: <https://github.com/zerotrac/leetcode_problem_rating/tree/gh-pages>
+- 主要是解法的复杂度分析: <https://github.com/hqztrue/LeetCodeSolutions>
 
 ## Notes
 
