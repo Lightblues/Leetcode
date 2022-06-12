@@ -67,7 +67,7 @@ grid 上有一组墙和一组guard, 守卫可以守护上下左右四个方向�
         return sum([sum([i==0 for i in r]) for r in grid])
         
     """ 6054. 逃离火灾 https://leetcode-cn.com/problems/escape-the-spreading-fire
-给定一个 grid, 有一组火源和一组墙, 每过一个时刻, 火网四周蔓延一圈, 但是不能穿过墙. 人要从左上角逃到右下角, 问人能够在起点等待的最长时间.
+给定一个 grid, 有一组火源和一组墙, 每过一个时刻, 火往四周蔓延一圈, 但是不能穿过墙. 人要从左上角逃到右下角, 问人能够在起点等待的最长时间.
 
 输入：grid = [[0,2,0,0,0,0,0],[0,0,0,2,2,1,0],[0,2,0,0,1,2,0],[0,0,2,2,2,0,2],[0,0,0,0,0,0,0]]
 输出：3
@@ -219,6 +219,49 @@ grid 上有一组墙和一组guard, 守卫可以守护上下左右四个方向�
                 visited.add((nx,ny))
         return ans
         
+
+    def maximumMinutes(self, grid: List[List[int]]) -> int:
+        """ 思路2: #二分
+        [灵神](https://leetcode.cn/problems/escape-the-spreading-fire/solution/er-fen-bfspythonjavacgo-by-endlesscheng-ypp1/)"""
+        m, n = len(grid), len(grid[0])
+
+        def check(t: int) -> bool:
+            f = [(i, j) for i, row in enumerate(grid) for j, v in enumerate(row) if v == 1]
+            fire = set(f)
+            def spread_fire():
+                nonlocal f
+                tmp = f
+                f = []
+                for i, j in tmp:
+                    for x, y in ((i, j - 1), (i, j + 1), (i - 1, j), (i + 1, j)):
+                        if 0 <= x < m and 0 <= y < n and grid[x][y] != 2 and (x, y) not in fire:
+                            fire.add((x, y))
+                            f.append((x, y))
+            while t and f:
+                spread_fire()  # 蔓延至多 t 分钟的火势
+                t -= 1
+            if (0, 0) in fire:  # 起点着火，寄
+                return True
+
+            q = [(0, 0)]
+            vis = set(q)
+            while q:
+                tmp = q
+                q = []
+                for i, j in tmp:
+                    if (i, j) not in fire:
+                        for x, y in ((i, j - 1), (i, j + 1), (i - 1, j), (i + 1, j)):
+                            if 0 <= x < m and 0 <= y < n and grid[x][y] != 2 and (x, y) not in fire and (x, y) not in vis:
+                                if x == m - 1 and y == n - 1:  # 我们安全了…暂时。
+                                    return False
+                                vis.add((x, y))
+                                q.append((x, y))
+                spread_fire()  # 蔓延 1 分钟的火势
+            return True  # 寄
+
+        ans = bisect.bisect_left(range(m * n + 1), True, key=check) - 1
+        return ans if ans < m * n else 10 ** 9
+
 
 sol = Solution()
 result = [
