@@ -49,7 +49,15 @@ class Solution:
         cc = list(c.values())
         return all(cc[i]==cc[i-1] for i in range(1, len(cc)))
     
-    """ 1942. 最小未被占据椅子的编号 """
+    """ 1942. 最小未被占据椅子的编号 #medium
+有n个朋友来派对, 每个人的到达和离开时间为 (arrival, leaving); 每个人到达时, 挑选位置最小的座位坐下. 问第 target 个朋友所坐的位置.
+思路0: 维护 #sortedlist 记录所有的空闲座位
+    将所有人的到达和离开时间作为两类事件, 统一排序. 然后暴力模拟.
+    用一个 sortedlist 维护所有空闲座位, 每到达一个人移除 available[0]; 离开一个人则将该座位号添加到 available 中.
+    注意, 同一时刻到达和离开, 需要先处理离开的人.
+    复杂度: O(n log(n)). 我们维护长度为n的有序列表, 每次操作复杂度为O(log(n)).
+思路1: 相较于有序列表这一复杂结构, 采用最小堆更为轻量.
+"""
     def smallestChair(self, times: List[List[int]], targetFriend: int) -> int:
         # 展开 arrival 和 leaving 时间
         allTimes = []
@@ -60,7 +68,7 @@ class Solution:
         allTimes.sort()
         # 模拟
         available = SortedList(range(len(times)))
-        f2idx = {}
+        f2idx = {}  # friend -> idx
         for t,ttype, f in allTimes:
             if ttype == 1:
                 idx = available.pop(0)
@@ -72,7 +80,16 @@ class Solution:
         return -1
     
     
-    """ 1943. 描述绘画结果 """
+    """ 1943. 描述绘画结果 #medium
+在数轴上有一组线段 (start, end, color) 表示该区间被涂上了 color. 当一个点被涂上多种颜色后, 颜色叠加, 简记为 sum(solors). 要求返回一个数组, 元素 (start, end, color) 表示绘画结果.
+限制: 题目中每个线段的颜色均不同
+思路1: #差分
+    如何表示累加的颜色信息, 还要记录线段位置? 不难想到 #差分数组. 也即在线段的开始位置分别 +/- color.
+    得到差分数组后, accumulate 即得到最后的每个点的颜色值.
+    注意到可能出现 1+4 == 2+3 的颜色记录, 但这表达的其实是两种颜色. 由于题目说明了每种颜色都只涂了一个线段. 因此可知交接点两侧的颜色值一定不同. 因此, 基于所有线段的边界划分输出结果即可.
+    细节: 一开始对于 sorted(pivots) 所定义的每一个线段都输出了, 但忽略了空白线段 (颜色为 0), 注意考虑这一情况.
+
+"""
     def splitPainting(self, segments: List[List[int]]) -> List[List[int]]:
         maxn = max(s[1] for s in segments)
         pivots = set()
@@ -93,8 +110,11 @@ class Solution:
         return ans
     
     """ 1944. 队列中可以看到的人数 #hard #单调栈
-思路1: #单调栈
-    
+给一个数组表示序列中每个人的身高. 一个位置为i的人只能看到其右边的满足条件的人: (i,j) 满足它们中间的人的身高要小于 `min(arr[i], arr[j])`. 要求返回每个人能看到的人数.
+思路1: #逆序 #单调栈
+    显然, 一个人向右能看到的人的身高呈递增, 并且看到的最远的一个人满足 `arr[i] < arr[j]`. 所以, 可以用单调栈来解决.
+    为此, 我们可以从右往左遍历, 维护一个单调栈. 一个人能够看到的人数为: 加入i时候其弹出栈的数量, 加上(如果有的话)栈顶那个人.
+
 """
     def canSeePersonsCount(self, heights: List[int]) -> List[int]:
         n = len(heights)

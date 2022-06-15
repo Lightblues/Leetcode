@@ -35,10 +35,17 @@ from decimal import Decimal
 # from structures import ListNode, TreeNode, linked2list, list2linked
 
 """ 
-300. 最长递增子序列 #medium #题型
+0300. 最长递增子序列 #medium #题型
     给定一个序列, 要求计算这个序列的最长递增子序列的长度.(严格)
 1964. 找出到每个位置为止最长的有效障碍赛跑路线 #hard #DP
     问题定义: 给定一个序列, 对于其中的每一个值, 计算以其结尾的递增序列的最大长度
+
+
+== 构造DP数组
+1959. K 次调整数组大小浪费的最小总空间 #medium #题型
+    题目的背景是动态内存分配: 对于一个数组, 可以在其中调整k的所分配的内存, 要求最小的总空间浪费.
+    抽象: 对于一个数组, 将其分成 k+1 个部分, 每个部分取最大值矩形进行覆盖, 要求所有矩形的面积和最小.
+    记 `dp[i][j]` 表示 **覆盖数组的前i个元素, 使用j次调整(j+1个区间)所浪费的最小空间**.
 
 == 子集遍历的动态规划 (遍历子集通过状压)
 1986. 完成任务的最少工作时间段 #medium
@@ -55,7 +62,7 @@ from decimal import Decimal
 
 """
 class Solution:
-    """ 300. 最长递增子序列 #medium #题型
+    """ 0300. 最长递增子序列 #medium #题型
 给定一个序列, 要求计算这个序列的最长递增子序列的长度.(严格)
 思路1: #DP #二分
     dp[i] 记录长度为 i+1 的序列中, 结尾元素的最小值
@@ -326,7 +333,47 @@ class Solution:
                         break
                     subset = (subset - 1) & mask
         return dp[m][(1<<n)-1]
-        
+
+
+    """ 1959. K 次调整数组大小浪费的最小总空间 #medium #题型
+题目的背景是动态内存分配: 对于一个数组, 可以在其中调整k的所分配的内存, 要求最小的总空间浪费.
+抽象: 对于一个数组, 将其分成 k+1 个部分, 每个部分取最大值矩形进行覆盖, 要求所有矩形的面积和最小.
+限制: 数组长度 n<=200, 调整次数 0<=k<n
+思路1: #DP
+    考虑采用动态规划求解. 每次利用之前状态的记录.
+    具体而言, 记 `dp[i][j]` 表示 **覆盖数组的前i个元素, 使用j次调整(j+1个区间)所浪费的最小空间**.
+        于是, 有 `dp[i][j] = min_ii { dp[ii][j] + g[ii+1][i] }`
+        对于每个 `dp[i][j]`, 我们将 0...i 区间根据 ii 进行拆分, 将右边分成一个区间, 左边进行 j-1 次调整.
+        这里的 `g[a][b]` 表示区间 [a,b] 分成一组的空间浪费, 可以预先双重遍历计算出来.
+        具体实现中, 可以将更新公式中的 j维度省略.
+    说明: 为了要求 num[0...ii] 被分成 j 个区间, 显然 ii 必须小于 j. 但实际上由于 ii<=j-1 时空间浪费必然为0, 因此在下面的代码中没有考虑这一边界情况.
+    [官答](https://leetcode.cn/problems/minimum-total-space-wasted-with-k-resizing-operations/solution/k-ci-diao-zheng-shu-zu-da-xiao-lang-fei-wxg6y/)
+"""
+    def minSpaceWastedKResizing(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+        # g[i][j] 表示 nums[i:j] 作为一个组需要多少代价
+        g = [[0] * n for _ in range(n)]
+        acc = list(accumulate(nums, initial=0))
+        for i in range(n):
+            mx = nums[i]
+            for j in range(i, n):
+                mx = max(mx, nums[j])
+                g[i][j] = mx * (j-i+1) - (acc[j+1] - acc[i])
+        # 初始化: 只有一个组 (k=0)
+        dp = g[0][:]
+        # 遍历 k = 1...k
+        for _ in range(1, k+1):
+            new = dp[:]
+            # update dp[i]
+            for i in range(n):
+                # dp[i][j] = min_ii { dp[ii][j] + g[ii+1][i] } 遍历 ii=0...i-1 尝试对于 nums[:i+1] 进行分割
+                # 这里将 j维度省略.
+                for ii in range(i):
+                    new[i] = min(new[i], dp[ii] + g[ii+1][i])
+            dp = new
+        return dp[-1]
+
+
 sol = Solution()
 result = [
     sol.minNumberOfSemesters(n = 4, dependencies = [[2,1],[3,1],[1,4]], k = 2),
