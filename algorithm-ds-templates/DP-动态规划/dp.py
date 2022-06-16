@@ -46,6 +46,12 @@ from decimal import Decimal
     题目的背景是动态内存分配: 对于一个数组, 可以在其中调整k的所分配的内存, 要求最小的总空间浪费.
     抽象: 对于一个数组, 将其分成 k+1 个部分, 每个部分取最大值矩形进行覆盖, 要求所有矩形的面积和最小.
     记 `dp[i][j]` 表示 **覆盖数组的前i个元素, 使用j次调整(j+1个区间)所浪费的最小空间**.
+1977. 划分数字的方案数 #hard #题型 #LCP
+    给定一个数字串, 问有多少种分割方式, 使其变为非递减的正数序列, 要求数字没有前导零.
+    约束: 数字长度 n<=3500. 注意最多支持 O(n^2) 复杂度.
+    形式: `f[i][j]` 表示对于序列nums[0...j]的分割方案中, 最后一个数字为 nums[i...j] 的方案数.
+    迭代: 既然最后一个数字为 nums[i...j] 其要满足条件要求上一个数字 nums[k...i-1] 更小, 因此迭代公式为 `f[i][j] = sum{ f[k][i-1] }` 这里的k的范围为上面的约束
+    除此之外, 还需要利用 LCP来快速判断 `nums[2i-j-1...i-1], nums[i...j]` 两个数字的大小
 
 == 子集遍历的动态规划 (遍历子集通过状压)
 1986. 完成任务的最少工作时间段 #medium
@@ -372,6 +378,73 @@ class Solution:
                     new[i] = min(new[i], dp[ii] + g[ii+1][i])
             dp = new
         return dp[-1]
+
+
+
+    """ 1977. 划分数字的方案数 #hard #题型
+给定一个数字串, 问有多少种分割方式, 使其变为非递减的正数序列, 要求数字没有前导零.
+约束: 数字长度 n<=3500. 注意最多支持 O(n^2) 复杂度.
+思路1:
+    DP框架
+        形式: `f[i][j]` 表示对于序列nums[0...j]的分割方案中, 最后一个数字为 nums[i...j] 的方案数.
+        迭代: 既然最有一个数字为 nums[i...j] 其要满足条件要求上一个数字 nums[k...i-1] 更小, 因此迭代公式为 `f[i][j] = sum{ f[k][i-1] }` 这里的k的范围为上面的约束
+            注意数字不包含前导零, 因此若 `j-i > i-1 - k` 则一定满足, 反之则不满足. 两者相等时的情况需要另外讨论 (见下).
+            因此, 求和范围为 `2i-j(or -1) ... i-1`.
+        边界: f[0][...] = 1; 要求的答案为 sum{f[...][n-1]}
+        前缀和优化: 直接求和复杂度 O(n^3) 不够. 可以采用前缀和计算. 记 pre[k][i-1] 为上一迭代中的前缀和, 则有 `f[i][j] = pre[i][i-1] - pre[2i-j(or -1)]` 其实是否有 2i-j-1 项根据 nums[2i-j-1...i-1] <=nums[i...j] 判断.
+            观察: 实际上不用前缀和利用迭代也可. 假如我们按照 i,j 的前后顺序来进行两次枚举, 根据 j, j+1 两个相邻状态的元素, 发现后者只多了1/2项, 因此用一个idx记录累计的元素即可.
+        LCP: 预计算 #最长公共前缀, 快速比较两个数的大小
+            上述过程中, 还需要比较 `nums[2i-j-1...i-1], nums[i...j]` 两个数字的大小, 但直接算的复杂度为 O(k), 会超时
+            用 DP 预计算LCP, 形式为: lcp[i][j] 表示分别从 i,j 位置出发向右的最长公共串长度.
+            显然有递推公式: 若num[i]==num[j] 则有 `lcp[i][j] = lcp[i+1][j+1] + 1`, 否则为 0.
+            在此基础上, 比较 `nums[2i-j-1...i-1], nums[i...j]` 的大小就很简单: 若 lcp[i][2i-j-1] >= j-i+1, 说明公共部分比比较的部分更长, 满足大于等于; 否则, 直接比较 num[i+ll], num[2i-j-1+ll] 即可.
+[官答](https://leetcode.cn/problems/number-of-ways-to-separate-numbers/solution/hua-fen-shu-zi-de-fang-an-shu-by-leetcod-env6/)
+总结: 想到DP迭代公式就挺难的; 更为复杂的是之后的LCP等技巧. 本题比较综合.
+"""
+    def numberOfCombinations(self, num: str) -> int:
+        """ [官答](https://leetcode.cn/problems/number-of-ways-to-separate-numbers/solution/hua-fen-shu-zi-de-fang-an-shu-by-leetcod-env6/) """
+        MOD = 10**9 + 7
+        # 边界: 第一个数字为0
+        if num[0] == '0': return 0
+        n = len(num)
+        
+        # DP计算 LCP矩阵
+        lcp = [[0]*n for _ in range(n)]
+        # 仅计算 i>j 的下三角部分
+        for j in range(n-1):
+            if num[j]==num[n-1]: lcp[n-1][j] = 1
+        for i in range(n-2, -1, -1):
+            for j in range(i):
+                if num[i]==num[j]:
+                    lcp[i][j] = lcp[i+1][j+1] + 1
+        # 封装比较 nums[2i-j-1...i-1], nums[i...j] 两数字大小的函数
+        def compare(a,b, c,d):
+            # test num[c...d] >= num[a...b]
+            assert b-a == d-c
+            ll = lcp[c][a]
+            if ll>=b-a+1: return True
+            return num[c+ll] >= num[a+ll]
+        
+        f = [[0] * n for _ in range(n)]
+        for j in range(n):
+            f[0][j] = 1
+        for i in range(1, n):
+            s = 0
+            # 边界情况: 不能有前缀 0
+            if num[i]=='0': continue
+            left = i
+            # range of sum: 2i-j(or -1) ... i-1
+            for j in range(i, n):
+                newLeft = max(2*i-j, 0)
+                if newLeft > 0:
+                    if compare(2*i-j-1,i-1, i,j):
+                        newLeft -= 1
+                for ii in range(newLeft, left):
+                    s += f[ii][i-1]
+                    s %= MOD
+                left = newLeft
+                f[i][j] = s
+        return sum(l[-1] for l in f) % MOD
 
 
 sol = Solution()

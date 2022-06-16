@@ -50,7 +50,13 @@ from decimal import Decimal
     思路1: 可以从火源出发, 预计算每个点着火的时间. 然后 **遍历从起点BFS到终点的每一条路径**, 计算这条路径上的最大等待时间.
     思路2: 相较于「遍历每条路径」, 可以利用二分查找简化逻辑.
 
-@2022 """
+== 最短路径数
+1976. 到达目的地的方案数 #medium #题型 #最短路径
+    求出从s到e的最短路径的数量.
+    约束: 节点数量 n为200, 题目确保了是连通图; 需要对答案取 MOD
+    思路: 1) 为了统计路径数量, 需要保证第一次访问节点(拓展节点, 累计最短路径数)的时候就是最短距离, 因此, 采用PQ结构; 2) 为了保证不重复统计边, 应该在第一次拓展节点后不进行拓展, 仅更新其最短路径数.
+
+"""
 class Solution:
     """ 1928. 规定时间内到达终点的最小花费 #hard
 给定一张地图, 要从0走到 n-1 号节点. 经过每一个节点需要交fee[i] 的费用. 每条边有距离. 需要在所有长度不超过 maxTime 的路径中, 计算最小的fee.
@@ -238,6 +244,50 @@ class Solution:
         ans = bisect.bisect_left(range(m * n + 1), True, key=check) - 1
         return ans if ans < m * n else 10 ** 9
 
+
+    """ 1976. 到达目的地的方案数 #medium #题型 #最短路径
+求出从s到e的最短路径的数量.
+约束: 节点数量 n为200, 题目确保了是连通图; 需要对答案取 MOD
+思路1: #BFS
+    题目中提示了要对答案取模, 说明了等长的路径数量可能很多, 不能暴力累计所有路径.
+    因此, 在BFS过程中维护一张哈希表 `cnt` 记录每个节点的最短路径数, 然后在到达v的时候增加计数 `cnt[v] + cnt[u]`
+    如何保证每次增加的计数都是正确/最短的? PQ中的元素为到达节点v的 cost 以及 (u,v) 信息. 也即, 每次取出的一定是到v的最短路径.
+    需要注意的是, 一个节点可能会被多次加入 PQ, 如何保证不会出现重复? 仅第一次拓展的时候入 PQ即可.
+思路2: 先计算所有节点的最短路径, 然后在构造的 #DAG 上 #DP 求解路径数量.
+    具体而言, 在计算到每个点的距离之后,构建一个DAG仅包含最短路径上的边, $\operatorname{dist}[v]-\operatorname{dist}[u]=\operatorname{length}(u \rightarrow v)$
+    然后在这张图上DP就比较直观了.
+    [官答](https://leetcode.cn/problems/number-of-ways-to-arrive-at-destination/solution/dao-da-mu-de-di-de-fang-an-shu-by-leetco-5ptp/)
+总结: 是计算「最短路径数量」的题型
+"""
+    def countPaths(self, n: int, roads: List[List[int]]) -> int:
+        # 思路1.2: 仅第一次拓展的时候入 PQ
+        MOD = 10**9+7
+        g = [list() for _ in range(n)]
+        for u,v,c in roads:
+            g[u].append((c,v))
+            g[v].append((c,u))
+        minCost = [inf] * n
+        cnt = [0] * n
+        minCost[0] = 0
+        cnt[0] = 1
+        visited = set() # 记录所有拓展过的节点
+        # (cost, v, u) 确保第一次更新的就是最短路径
+        # pq = [(c,u,0) for c,u in g[0]]
+        # heapify(pq)
+        pq = [(0,0,-1)]
+        while pq:
+            c, v, u = heappop(pq)
+            if c > minCost[v]: continue
+            minCost[v] = c
+            if u!=-1:   # 根节点
+                cnt[v] = (cnt[v] + cnt[u]) % MOD
+            # 仅第一次遍历到时拓展
+            if v in visited: continue
+            for c,w in g[v]:
+                if c+minCost[v] < minCost[w]:
+                    heappush(pq, (c+minCost[v], w, v))
+            visited.add(v)
+        return cnt[-1] % MOD
     
     
     
