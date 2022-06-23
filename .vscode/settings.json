@@ -4,7 +4,14 @@
         "editor.cursorSurroundingLines": 0,
         "editor.tabSize": 4,
         "editor.wrappingIndent": "same"
-    }
+    },
+    "grammarly.selectors": [
+        {
+            "language": "python",
+            "scheme": "file",
+            "pattern": "algorithm-ds-templates/BFS-DFS/search.py"
+        }
+    ]
     //   "pasteImage.defaultName": "Y-MM-DD-HH-mm-ss",
     //   "pasteImage.path": "${currentFileNameWithoutExt}",
     //   "files.associations": {
