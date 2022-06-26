@@ -53,6 +53,16 @@ from decimal import Decimal
     迭代: 既然最后一个数字为 nums[i...j] 其要满足条件要求上一个数字 nums[k...i-1] 更小, 因此迭代公式为 `f[i][j] = sum{ f[k][i-1] }` 这里的k的范围为上面的约束
     除此之外, 还需要利用 LCP来快速判断 `nums[2i-j-1...i-1], nums[i...j]` 两个数字的大小
 
+== 状压DP
+1931. 用三种不同颜色为网格涂色 #hard
+    给定一个 (m,n) 的网格, 用三种颜色涂, 要求相邻的颜色不同, 问有多少种方案.
+    约束: 1 <= m <= 5, 1 <= n <= 1000
+    用 `f[i][mask]` 表示遍历到第i行, 并且最后一行的颜色为mask的涂色方案数.
+    状态转移: `f[i+1][mask] = sum{ f[i][mask2] }` 这里要求 mask, mask2 所对应的行涂色都是合法的, 并且两者同一列的颜色都不同.
+6107. 不同骰子序列的数目 #hard
+    投骰子n次, 问满足条件的序列数量. 条件: 相邻数字的最大公约数为1, 两个相同数字之间的间距至少为3.
+    用 `f[i][mask]` 表示长度为i, 最后两位为mask的序列数量.
+
 == 子集遍历的动态规划 (遍历子集通过状压)
 1986. 完成任务的最少工作时间段 #medium
     有一组任务, 完成每个任务需要一定的时间. 你每次训练可以工作 `sessionTime` 个小时. 在一个session中, 你可以完成多个任务, 但一个任务不能分割到多个session中. 要求分配任务到不同的session, 使得session总数最小.
@@ -446,6 +456,84 @@ class Solution:
                 f[i][j] = s
         return sum(l[-1] for l in f) % MOD
 
+
+    """ 6107. 不同骰子序列的数目 #hard
+投骰子n次, 问满足条件的序列数量. 条件: 相邻数字的最大公约数为1, 两个相同数字之间的间距至少为3.
+约束: n的数量级1e4
+思路1: #状压 #DP
+    可知, 第idx位置的数字可取的值仅由前两个数字决定, 只需要满足上述条件即可.
+    考虑状态压缩, 用mask表示相邻两个数字, 采用6进制. 预计算: 所有合法的长度为2的序列, 合法的转移序列.
+    用 `f[i][mask]` 表示长度为i, 最后两位为mask的序列数量.
+    状态转移: `f[i+1][mask] = sum{ f[i][newmask] }`, 其中 newmask 表示第一位等于mask第二位并且符合条件的所有情况.
+"""
+    def distinctSequences(self, n: int) -> int:
+        MOD = 10**9 + 7
+        if n==1: return 6
+        def valid(mask):
+            a,b = divmod(mask, 6)
+            return a!=b and math.gcd(a+1, b+1)==1
+        def validTranstion(mask):
+            a,b = divmod(mask, 6)
+            ans = []
+            for c in range(6):
+                if c!=a and c!=b and math.gcd(b+1, c+1)==1:
+                    ans.append(6*b + c)
+            return ans
+        validPairs = [i for i in range(6**2) if valid(i)]
+        validTrans = {i:validTranstion(i) for i in validPairs}
+        # 
+        cnt = Counter(validPairs)
+        for _ in range(n-2):
+            newCnt = Counter()
+            for u,vs, in validTrans.items():
+                for v in vs:
+                    newCnt[v] += cnt[u]
+                    newCnt[v] %= MOD
+            cnt = newCnt
+        return sum(cnt.values()) % MOD
+
+    """ 1931. 用三种不同颜色为网格涂色 #hard
+给定一个 (m,n) 的网格, 用三种颜色涂, 要求相邻的颜色不同, 问有多少种方案.
+约束: 1 <= m <= 5, 1 <= n <= 1000
+思路1: #状压 #DP
+    重点是grid的维度一比较小: 这样我们可以枚举所有的涂色可能性. 这样, 再遍历每一行的过程中, 仅需要考虑和上一行每一列的相邻颜色不同即可.
+    考虑状压: 0,1,2 表示三种颜色, 则我们可以用 [0, 3^m) 范围内的数字表示每一行的涂色情况.
+    用 `f[i][mask]` 表示遍历到第i行, 并且最后一行的颜色为mask的涂色方案数.
+    状态转移: `f[i+1][mask] = sum{ f[i][mask2] }` 这里要求 mask, mask2 所对应的行涂色都是合法的, 并且两者同一列的颜色都不同.
+    预处理: 可以预先计算所有合法的行涂色方案 validLines; 并且计算合法的相邻行 transMap, 其中 transMap[mask] 是所有合法的相邻行列表.
+"""
+    def colorTheGrid(self, m: int, n: int) -> int:
+        MOD = 10**9 + 7
+        def valid(mask: int) -> bool:
+            pre = 3
+            # while mask:
+            for _ in range(m):
+                mask, color = divmod(mask, 3)
+                if color == pre: return False
+                pre = color
+            return True
+        def validNeihbour(mask1, mask2):
+            # while mask1 or mask2:
+            for _ in range(m):
+                mask1, color1 = divmod(mask1, 3)
+                mask2, color2 = divmod(mask2, 3)
+                if color1==color2: return False
+            return True
+        transMap = {}
+        validLines = [i for i in range(3**m) if valid(i)]
+        for line in validLines:
+            transMap[line] = [l for l in validLines if validNeihbour(line, l)]
+        # 
+        cnt = Counter(validLines)
+        for _ in range(n-1):
+            newCnt = Counter()
+            for line, nextLines in transMap.items():
+                for nextLine in nextLines:
+                    newCnt[nextLine] += cnt[line]
+                    newCnt[nextLine] %= MOD
+            cnt = newCnt
+        return sum(cnt.values()) % MOD
+    
 
 sol = Solution()
 result = [

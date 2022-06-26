@@ -13,7 +13,7 @@ RATING = 1600
 GUARDIAN = 0.05
 KNIGHT = 0.25
 # 查询的地址为全国还是全球？很关键
-GLOBAL = True
+GLOBAL = False
 # 二分查找的右端点(可自调)
 RIGHT = 3000
 
