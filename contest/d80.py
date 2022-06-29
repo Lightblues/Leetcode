@@ -81,34 +81,114 @@ class Solution:
             ans.append(n-bisect.bisect_left(potions, success/s))
         return ans
     
-    """ 2301. 替换字符后匹配 """
+    """ 2301. 替换字符后匹配 #hard #题型
+给定一个替换列表 mappings, 对于每一组字符 (old, new), 可以将待处理字符串中的任意字符 old 替换为 new. 现给定两个字符串 s, sub, 问能否通过替换操作将sub转化为s的某一子串?
+复杂度: 两个字符串长度 5e3, 映射数量 1e3
+思路1: 暴力枚举
+    直接用一个哈希表记录一个字符串所有可能的原始字符, 然后暴力枚举s所有可能的子串, 看是否匹配
+    复杂度: 每次检查是否可以替换得到的复杂度为 O(1), 因此总的复杂度为 O(n^2), 大概是1e7 够了
+思路2: #正则
+    暴力得到正则表达式, see [here]*(https://leetcode.cn/problems/match-substring-after-replacement/solution/-by-migeater-gdqi/)
+哈哈, 大佬认真考虑了这题[为什么标成了hard](https://leetcode.cn/problems/match-substring-after-replacement/solution/shu-ju-fan-wei-geng-da-de-hua-zen-yao-zu-d9es/), 是我不懂的
+"""
     def matchReplacement(self, s: str, sub: str, mappings: List[List[str]]) -> bool:
-        pass
+        new2olds = defaultdict(list)
+        for o,n in mappings:
+            new2olds[n].append(o)
+        for start in range(len(s)-len(sub)+1):
+            flag = True
+            for i,ch in enumerate(sub):
+                if ch!=s[start+i] and ch not in new2olds[s[start+i]]: 
+                    flag = False
+                    break
+            if flag: return True
+        return False
+    
+    def matchReplacement(self, s: str, sub: str, mappings: List[List[str]]) -> bool:
+        # 思路2, 暴力用 re
+        d = {}
+        for k,v in mappings:
+            d[k] = d.get(k, k) + v
+        return bool(re.search("".join(f"[{d.get(c, c)}]" for c in sub), s))
+
     
     """ 2302. 统计得分小于 K 的子数组数目 #hard 
-see [灵神](https://leetcode.cn/problems/count-subarrays-with-score-less-than-k/solution/by-endlesscheng-b120/)
+定义一个连续子数组的分数: 数组和*长度. 现给定一个数组, 求分数小于k的子数组数量.
+约束: 数组长度 1e5
+思路1: #双指针
+    遍历子数组的右端点 idx, 只需要求出最左边的满足条件的位置即可.
+    注意到: 维护一个全局的左端点left, 当 idx右移的过程中, left也一定是右移的.
+    因此, 双指针的复杂度为 O(n)
+    see [灵神](https://leetcode.cn/problems/count-subarrays-with-score-less-than-k/solution/by-endlesscheng-b120/)
+思路2: 傻叉的 #二分
+    一开始没考虑清楚双指针的复杂度, 仅仅利用了left是肯定不断右移的性质, 考虑每次在 [left, idx+1] 区间内二分找到满足条件的最有位置
+    结果, 采用了bisect库中的 `key` 参数, 结果用错了Orz, 浪费了好久...
+        因为, `bisect_right(a, x, lo=0, hi=None, *, key=None)` 中的key作用对象是 `key(a[mid])` 而不是idx!!!
+    后面手写了二分, 结果速度比思路1慢了很多. 因为这里的复杂度变为 O(n log(n))
+
 """
     def countSubarrays(self, nums: List[int], k: int) -> int:
-        """ 不知道为啥, bisect 老是越界 """
+        """ 一开始尝试二分, 不过用错了 bisect_right 函数, 会越界:
+        错了!!!"""
         n = len(nums)
         acc = list(accumulate(nums, initial=0))
         left = 0
         ans = 0
         for i in range(n):
-            idx = bisect_left(acc, i+1, lo=left, hi=i+1, 
+            idx = bisect_right(acc, 0, lo=left, hi=i+2, 
                               key=lambda x: 1 - ((acc[i+1] - acc[x]) * (i+1-x) >= k))
             ans += i-idx+1
             left = idx
         return ans
 
-    
+    def countSubarrays(self, nums: List[int], k: int) -> int:
+        """ 思路1: 双指针 """
+        n = len(nums)
+        acc = list(accumulate(nums, initial=0))
+        left = 0
+        ans = 0
+        for i in range(n):
+            while (acc[i+1]-acc[left]) * (i+1-left) >= k:
+                left += 1
+            ans += i-left+1
+        return ans
+
+    def countSubarrays(self, nums: List[int], k: int) -> int:
+        """ 思路2: 傻叉二分 """
+        n = len(nums)
+        acc = list(accumulate(nums, initial=0))
+        def test(l,r):
+            return (acc[r+1]-acc[l]) * (r-l+1) < k
+        def bisectRight(lo, hi, idx):
+            while lo<hi:
+                mid = (lo+hi)//2
+                if test(mid, idx):
+                    hi = mid
+                else:
+                    lo = mid+1
+            return lo
+        left = 0
+        ans = 0
+        for i in range(n):
+            # idx = bisect_right(acc, 0, lo=left, hi=i+2, 
+            #                   key=lambda x: 1 - ((acc[i+1] - acc[x]) * (i+1-x) >= k))
+            # 注意, 二分搜索的右边界是 i+1, 也即单独一个i也无法满足条件
+            idx = bisectRight(left, i+1, i)
+            ans += i-idx+1
+            left = idx
+        return ans
+
 sol = Solution()
 result = [
     # sol.strongPasswordCheckerII(password = "IloveLe3tcode!"),
     # sol.strongPasswordCheckerII(password = "Me+You--IsMyDream"),
     # sol.strongPasswordCheckerII(password = "1aB!"),
     # sol.successfulPairs(spells = [5,1,3], potions = [1,2,3,4,5], success = 7),
-    sol.countSubarrays(nums = [2,1,4,3,5], k = 10),
+    # sol.countSubarrays(nums = [2,1,4,3,5], k = 10),
+    # sol.countSubarrays(nums = [1,1,1], k = 5),
+    
+    sol.matchReplacement(s = "fool3e7bar", sub = "leet", mappings = [["e","3"],["t","7"],["t","8"]]),
+    sol.matchReplacement(s = "fooleetbar", sub = "f00l", mappings = [["o","0"]]),
 ]
 for r in result:
     print(r)
