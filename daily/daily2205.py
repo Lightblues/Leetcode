@@ -443,122 +443,6 @@ https://leetcode.cn/problems/cat-and-mouse/
             s_res.append(r)
         return s_res
 
-    """ 0547. 省份数量 #medium
-给定一个矩阵形式的图结构, 计算其中的联通分量的个数.
-思路1: 并查集. 每次遇到一条边, 将两个集合 union.
-"""
-    def findCircleNum(self, isConnected: List[List[int]]) -> int:
-        n = len(isConnected)
-        # 初始化所有节点的 farther 为自己
-        parents = list(range(n))
-        
-        def find(x):
-            path = []
-            while parents[x] != x:
-                path.append(x)
-                x = parents[x]
-            for i in path:
-                parents[i] = x
-            return x
-        
-        def union(x,y):
-            rootx, rooty = find(x), find(y)
-            parents[rootx] = rooty
-            
-        for i in range(n):
-            for j in range(i+1, n):
-                if isConnected[i][j]:
-                    union(i,j)
-        # 所有 root 元素的数量
-        return sum(1 for i in range(n) if parents[i]==i)
-    
-    """ 399. 除法求值 #medium #并查集 #题型
-思路1: 采用并查集. 注意到, 这里需要维护集合之间的相对大小关系. 那么, 的时候, 如何记录这一关系?
-注意到, 在查询的时候, 只有root相同(在同一集合内)的两个数才能比较, 因此 **只需要记录节点与根节点的大小关系**, 在查询时不需要考虑不同集合的倍率.
-因此, 问题转为, 如何在合并时记录两集合的大小关系? 只需要记录在跟节点上, 在 find 的时候更新子节点即可!
-具体而言, 对于比例关系 a = v*b, 构建的时候我们令 b为根节点, 然后 `value[b]=1, value[a]=v`. 这样, 我们在同一颗树上, 跟节点的值为1, 并且有 value[a] = a/roota (后两者为真实值)
-这样, 在union过程中, 若有 x = v * y 在两个集合中; 我们求出两者的根节点, 然后令 `father[rootx] = rooty`. (根节点rooty的值仍为1)
-如何更新 rootx 的值? (注意, 这里我们仅关心 rootx 的值, x的值会在find的时候进行更新) 此时, 我们有两个参考系, 目标是将 rootx 转到y的参考系.
-下面用 value 表示参考系y, value' 表示参考系x. 则我们需要求 value[rootx].
-在y参考系下, 有 value[x] = v * value[y]
-另有 value[x] = value'[x] * value[rootx], 这是因为在不同参考系下, x/rootx 的比例关系是固定的.
-因此有, `value[rootx] = v * value[y] / value'[x]`
-"""
-    def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
-        # https://leetcode.cn/problems/evaluate-division/solution/pythonbing-cha-ji-fu-mo-ban-by-milomusia-kfsu/
-        class UnionFind:
-            def __init__(self):
-                """
-                记录每个节点的父节点
-                记录每个节点到根节点的权重
-                """
-                self.father = {}
-                self.value = {}
-            
-            def find(self,x):
-                """
-                查找根节点
-                路径压缩
-                更新权重
-                """
-                root = x
-                # 节点更新权重的时候要放大的倍数
-                base = 1
-                while self.father[root] != None:
-                    root = self.father[root]
-                    base *= self.value[root]
-                
-                while x != root:
-                    original_father = self.father[x]
-                    ##### 离根节点越远，放大的倍数越高
-                    self.value[x] *= base
-                    base /= self.value[original_father]
-                    #####
-                    self.father[x] = root
-                    x = original_father
-                
-                return root
-            
-            def merge(self,x,y,val):
-                """
-                合并两个节点
-                """
-                root_x,root_y = self.find(x),self.find(y)
-                
-                if root_x != root_y:
-                    self.father[root_x] = root_y
-                    ##### 四边形法则更新根节点的权重
-                    self.value[root_x] = val * self.value[y] / self.value[x]
-
-            def is_connected(self,x,y):
-                """
-                两节点是否相连
-                """
-                return x in self.value and y in self.value and self.find(x) == self.find(y)
-            
-            def add(self,x):
-                """
-                添加新节点，初始化权重为1.0
-                """
-                if x not in self.father:
-                    self.father[x] = None
-                    self.value[x] = 1.0
-
-
-        uf = UnionFind()
-        for (a,b),val in zip(equations,values):
-            uf.add(a)
-            uf.add(b)
-            uf.merge(a,b,val)
-    
-        res = [-1.0] * len(queries)
-
-        for i,(a,b) in enumerate(queries):
-            if uf.is_connected(a,b):
-                res[i] = uf.value[a] / uf.value[b]
-        return res
-    
-
 
 sol = Solution()
 result = [
@@ -577,13 +461,6 @@ result = [
 #     sol.test_class("""["RangeModule","addRange","addRange","addRange","queryRange","queryRange","queryRange","removeRange","queryRange"]
 # [[],[10,180],[150,200],[250,500],[50,100],[180,300],[600,1000],[50,150],[50,100]]"""),
 
-    # sol.findCircleNum(isConnected = [[1,1,0],[1,1,0],[0,0,1]]),
-    # sol.findCircleNum(isConnected = [[1,0,0],[0,1,0],[0,0,1]]),
-    
-    # sol.calcEquation([["a","b"],["e","f"],["b","e"]],[3.4,1.4,2.3],[["b","a"],["a","f"],["f","f"],["e","e"],["c","c"],["a","c"],["f","e"]]),
-    # sol.calcEquation(equations = [["a","b"],["b","c"]], values = [2.0,3.0], queries = [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]),
-    # sol.calcEquation([["a","b"],["c","d"]],[1.0,1.0],[["a","c"],["b","d"],["b","a"],["d","c"]]),
-    
     # sol.removeDuplicateLetters(s = "bcabc"),
     # sol.removeDuplicateLetters(s = "cbacdcbc"),
     
