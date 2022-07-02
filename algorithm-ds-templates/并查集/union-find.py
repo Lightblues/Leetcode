@@ -51,6 +51,16 @@ from decimal import Decimal
     有一个正方形grid, 每一个单元可能是 ` /\` 三种情况表示三种分割方式. 求这些斜杠所定义的划分方式所分割出来的区域数量.
     思路1: 采用 #并查集 来记录节点之间的联通关系
     注意, 在本题中, 一个 (x,y) 应该被看成两个节点 (如果内部没有斜杠也即为 ` ` 则将两个节点连起来即可)
+1202. 交换字符串中的元素 #medium
+    对于一个字符串, 给定一组 [(i,j)] 位置可以进行交换. 问进行任意交换后, 可以得到的最小字典序结果.
+    思路1: 相连的idx之间的顺序可以任意决定, 因此用 #并查集 来记录联通性即可
+
+== 变体: 带权并查集
+0399. 除法求值 #medium 但实际上很 #hard #interest #star
+    给定一组变量等式, 例如 `["bc","cd"]; 5.0` 对就表示等式 `bc/cd = 5.0`. 另外给定一系列的查询数组, 例如 `["a","c"]` 就是要查询表达式 `a/c` 的值. 返回所有查询的结果.
+    限制: 等式数量 20, 等式中的常数大小 (0.0, 20.0]; 查询数量 20
+    思路1: 构建图, 在图上 #DFS 求解. 对于所给的变量等式, 将产生联系的两个节点连接, 注意边是有向的 (反向的话取倒数).
+    思路3: 利用 带权 #并查集 来记录连接以及节点之间的倍数关系. 比较细碎, 参见官答.
 
 == 其他: 问题转化; 其他更为匹配的解法等
 1631. 最小体力消耗路径 #medium #题型
@@ -73,14 +83,18 @@ from decimal import Decimal
 1998. 数组的最大公因数排序 #hard
     给定一个数组, 对于任意两个位置 i,j, 若他们存在公共因子 (`gcd(nums[i], nums[j]) > 1`) 则可进行交换. 问数组是否可以按照上述规则进行交换后, 变为递增数组.
     提示: 在一个并查集中的数字顺序可以任意调换.
+0947. 移除最多的同行或同列石头 #medium #interest #题型
+    坐标grid上有一些石子, 对于一颗石子若其同行/同列还有其他的石子, 则可将其移除. 问最多可以移除多少石子.
+    提示: 石子之间构成联通关系, 可以移除的条件是联通分量大于1; 因此, 问题等价于求联通分量的数量!
+    思路1: 采用 #并查集 来记录联通性. 具体而言, 本题需要用横轴和纵轴作为「虚拟节点」, 而一个 (x,y) 位置的石子就将x横轴和y纵轴所对应的节点进行了连接.
+0721. 账户合并 #medium
+    给定一组账号, 例如 `["John", "johnsmith@mail.com", "john00@mail.com"]` 第一个元素是名字后面是其所拥有的邮箱列表; 不同人的名字可能一样, 但邮箱是唯一的 (一个人可能出现在多次记录中). 任务要求合并这些账号.
+    思路1: 用 #并查集 记录所有的联通分量的信息.
 
 0399. 除法求值 #medium #并查集 #题型 但实际上很 #hard #interest #TODO
     给定一组变量等式, 例如 `["bc","cd"]; 5.0` 对就表示等式 `bc/cd = 5.0`. 另外给定一系列的查询数组, 例如 `["a","c"]` 就是要查询表达式 `a/c` 的值. 返回所有查询的结果.
 
 
-*   「力扣」第 1202 题：[交换字符串中的元素](https://leetcode-cn.com/problems/smallest-string-with-swaps)（中等）；
-*   「力扣」第 947 题：[移除最多的同行或同列石头](https://leetcode-cn.com/problems/most-stones-removed-with-same-row-or-column)（中等）；
-*   「力扣」第 721 题：[账户合并](https://leetcode-cn.com/problems/accounts-merge)（中等）；
 """
 
 class UnionSet:
@@ -89,19 +103,22 @@ class UnionSet:
         self.fa = list(range(n))
         self.sz = [1] * n
     def find0(self, x):
-        # 这写得好烂!!!
+        # 展开迭代
+        path = []
         while x != self.fa[x]:
-            self.fa[x] = self.find(self.fa[x])
-            self.sz[self.fa[x]] += self.sz[x]
+            path.append(x)
             x = self.fa[x]
+        for i in path: self.fa[i] = x
         return x
     def find(self, x):
+        # 迭代形式, 更为简洁
         if x != self.fa[x]:
             self.fa[x] = self.find(self.fa[x])
         return self.fa[x]
     def merge(self, x, y):
         fx, fy = self.find(x), self.find(y)
         if fx == fy: return
+        # 按秩作为启发合并
         if self.sz[fx] < self.sz[fy]:
             fx, fy = fy, fx
         self.fa[fy] = fx
@@ -444,11 +461,23 @@ class Solution:
             ans.append(c if flag else 0)
         return ans[::-1]
 
-    """ 0399. 除法求值 #medium #并查集 #题型 但实际上很 #hard #interest #TODO
+    """ 0399. 除法求值 #medium #并查集 #题型 但实际上很 #hard #interest #star
 给定一组变量等式, 例如 `["bc","cd"]; 5.0` 对就表示等式 `bc/cd = 5.0`. 另外给定一系列的查询数组, 例如 `["a","c"]` 就是要查询表达式 `a/c` 的值. 返回所有查询的结果.
 限制: 等式数量 20, 等式中的常数大小 (0.0, 20.0]; 查询数量 20
-[官答](https://leetcode.cn/problems/evaluate-division/solution/chu-fa-qiu-zhi-by-leetcode-solution-8nxb/)
-思路1: 采用并查集. 注意到, 这里需要维护集合之间的相对大小关系. 那么, 的时候, 如何记录这一关系?
+思路1: 构建图, 在图上 #DFS 求解.
+    对于所给的变量等式, 将产生联系的两个节点连接, 注意边是有向的 (反向的话取倒数).
+思路2: 利用 #Floyd 算法 预计算
+    如果查询的数量较多, 还可以考虑预计算所有节点之间的倍数关系, 然后对于查询直接返回结果. 具体而言, 利用 Floyd 算法计算每个点对于其他点的距离关系
+思路3: 利用 带权 #并查集 来记录连接以及节点之间的倍数关系
+    定义边权重为: `w[x] = v[x]/v[f[x]]`
+    find 操作: 原本有 `w[x] =  v[x]/v[f[x]]`; 而假如f[a]最终找到的父亲节点为root(直接父亲), 则有 `w[f[x]] = v[f[x]]/v[root]` (这里的root可以是本来的父亲节点, 也可以是递归更新后的结果)
+        则将x的父亲设置为root后, 应该更新 `w'[x] = v[x]/v[root] = w[x] * w[f[x]]` 这里的第一个等式是定义; w'[x]表示更新后的边权重
+    merge 操作: 对于查询的 x,y, 在完成两次find操作后, 他们指向 fx,fy 并且权重更新完毕; 接下来要将 fx的父亲指向fy, 而假设真实值的比例关系为 `v[x]/v[y] = k`. 
+        则根据 `w[x] = v[x]/v[fx]; w[y] = v[y]/v[fy]` 的定义, 可以得到 `w'[fx] = v[fx]/v[fy] = v[x]/w[x] / v[y]/w[y] = k * w[y]/w[x]`
+    from [官答](https://leetcode.cn/problems/evaluate-division/solution/chu-fa-qiu-zhi-by-leetcode-solution-8nxb/)
+
+=== 下面记录第一次看的并查集解法, 比较复杂.
+思路3.2: 采用并查集. 注意到, 这里需要维护集合之间的相对大小关系. 那么, 的时候, 如何记录这一关系?
     注意到, 在查询的时候, 只有root相同(在同一集合内)的两个数才能比较, 因此 **只需要记录节点与根节点的大小关系**, 在查询时不需要考虑不同集合的倍率.
     因此, 问题转为, 如何在合并时记录两集合的大小关系? 只需要记录在跟节点上, 在 find 的时候更新子节点即可!
     具体而言, 对于比例关系 a = v*b, 构建的时候我们令 b为根节点, 然后 `value[b]=1, value[a]=v`. 这样, 我们在同一颗树上, 跟节点的值为1, 并且有 value[a] = a/roota (后两者为真实值)
@@ -460,7 +489,7 @@ class Solution:
     因此有, `value[rootx] = v * value[y] / value'[x]`
 """
     def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
-        # https://leetcode.cn/problems/evaluate-division/solution/pythonbing-cha-ji-fu-mo-ban-by-milomusia-kfsu/
+        # 思路3.2, 比较繁琐. from https://leetcode.cn/problems/evaluate-division/solution/pythonbing-cha-ji-fu-mo-ban-by-milomusia-kfsu/
         class UnionFind:
             def __init__(self):
                 """
@@ -533,6 +562,74 @@ class Solution:
                 res[i] = uf.value[a] / uf.value[b]
         return res
     
+    
+    def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+        # 思路1: 构建图, 在图上 #DFS 求解.
+        vars = set(itertools.chain(*equations))
+        var2idx = {v:i for i,v in enumerate(vars)}
+        n = len(vars)
+        g = [[-1]*n for _ in range(n)]
+        for (u,v), q in zip(equations, values):
+            u,v = var2idx[u], var2idx[v]
+            g[u][v] = q
+            g[v][u] = 1/q
+        def dfs(u, target, value=1.0):
+            if u == target:
+                return value
+            nonlocal path
+            for v, q in enumerate(g[u]):
+                if v in path or q==-1: continue
+                path.append(v)
+                r = dfs(v, target, value*q)
+                if r!=-1: return r
+                path.pop()
+            return -1
+        ans = []
+        for u,v in queries:
+            if u not in vars or v not in vars:
+                ans.append(-1); continue
+            u,v = var2idx[u], var2idx[v]
+            path = [u]
+            ans.append(dfs(u, v))
+        return ans
+    
+    def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+        """ 思路3: 利用 带权 #并查集 来记录连接以及节点之间的倍数关系
+        自己重新写了一遍, 清楚了很多. """
+        vars = set(itertools.chain(*equations))
+        var2idx = {v:i for i,v in enumerate(vars)}
+        n = len(vars)
+        
+        class UnionSetWeighted:
+            def __init__(self, n):
+                self.fa = list(range(n))
+                self.w = [1]*n
+            def find(self, x):
+                if x != self.fa[x]:
+                    fx = self.fa[x]
+                    self.fa[x] = self.find(self.fa[x])
+                    self.w[x] *= self.w[fx]
+                return self.fa[x]
+            def merge(self, x, y, k):
+                fx, fy = self.find(x), self.find(y)
+                self.fa[fx] = fy
+                self.w[fx] = k * self.w[y] / self.w[x]
+            def is_connected(self, x, y):
+                return self.find(x) == self.find(y)
+        us = UnionSetWeighted(n)
+        for (u,v), q in zip(equations, values):
+            us.merge(var2idx[u], var2idx[v], q)
+        ans = []
+        for u,v in queries:
+            if u not in vars or v not in vars:
+                ans.append(-1); continue
+            u,v = var2idx[u], var2idx[v]
+            if not us.is_connected(u,v):
+                ans.append(-1); continue
+            ans.append(us.w[u] / us.w[v])
+        return ans
+
+    
     """ 1579. 保证图可完全遍历 #hard #题型
 有一个无向图有三种类型的边, 类型1仅能由A通过, 类型2仅能由B通过, 类型3均可. 已有了一组边的情况下, 问要保障A,B均能从图上某点到达任意一点的情况下, 最多可以删除多少条边
 提示:
@@ -565,6 +662,74 @@ class Solution:
         if usa.get_component_count()!=1 or usb.get_component_count()!=1: return -1
         return ans
 
+    """ 1202. 交换字符串中的元素 #medium
+对于一个字符串, 给定一组 [(i,j)] 位置可以进行交换. 问进行任意交换后, 可以得到的最小字典序结果.
+思路1: 相连的idx之间的顺序可以任意决定, 因此用 #并查集 来记录联通性即可
+"""
+    def smallestStringWithSwaps(self, s: str, pairs: List[List[int]]) -> str:
+        n = len(s)
+        us = UnionSet(n)
+        for u,v in pairs:
+            us.merge(u,v)
+        pairs = defaultdict(list)
+        for i in range(n):
+            pairs[us.find(i)].append(i)
+        ans = list(s)
+        for _, idxs in pairs.items():
+            idxs.sort()
+            chs = [ans[i] for i in idxs]
+            chs.sort()
+            for i,c in zip(idxs, chs):
+                ans[i] = c
+        return "".join(ans)
+
+    """ 0947. 移除最多的同行或同列石头 #medium #interest #题型
+坐标grid上有一些石子, 对于一颗石子若其同行/同列还有其他的石子, 则可将其移除. 问最多可以移除多少石子.
+约束: 石子数量 1e3; (x,y) 坐标范围 1e4
+提示: 石子之间构成联通关系, 可以移除的条件是联通分量大于1; 因此, 问题等价于求联通分量的数量!
+思路1: 采用 #并查集 来记录联通性. 具体而言, 本题需要用横轴和纵轴作为「虚拟节点」, 而一个 (x,y) 位置的石子就将x横轴和y纵轴所对应的节点进行了连接.
+总结: 本题代码量不大, 但整体的思维过程很有意思.
+"""
+    def removeStones(self, stones: List[List[int]]) -> int:
+        # 仅使用所给的石子所占用的坐标, 以节约空间
+        xs = set(x for x,y in stones)
+        ys = set(y for x,y in stones)
+        nx, ny = len(xs), len(ys)
+        # 将离散的 坐标 连续化
+        x2idx = {x:i for i,x in enumerate(xs)}
+        y2idx = {y:i+nx for i,y in enumerate(ys)}
+        us = UnionSet(nx+ny)
+        for x,y in stones:
+            us.merge(x2idx[x], y2idx[y])
+        return len(stones) - us.get_component_count()
+
+    """ 0721. 账户合并 #medium
+给定一组账号, 例如 `["John", "johnsmith@mail.com", "john00@mail.com"]` 第一个元素是名字后面是其所拥有的邮箱列表; 不同人的名字可能一样, 但邮箱是唯一的 (一个人可能出现在多次记录中). 任务要求合并这些账号.
+账号数量 1e3; 每个列表的长度 [2,10]
+思路1: 用 #并查集 记录所有的联通分量的信息.
+"""
+    def accountsMerge(self, accounts: List[List[str]]) -> List[List[str]]:
+        emails = set()
+        email2name = {}
+        for name, *emails_ in accounts:
+            for email in emails_:
+                emails.add(email)
+                email2name[email] = name
+        email2idx = {email:i for i,email in enumerate(emails)}
+        us = UnionSet(len(emails))
+        for name, *emails_ in accounts:
+            for i in range(1, len(emails_)):
+                us.merge(email2idx[emails_[i-1]], email2idx[emails_[i]])
+        groups = defaultdict(list)
+        for email, idx in email2idx.items():
+            groups[us.find(idx)].append(email)
+        ans = []
+        for _, emails in groups.items():
+            ans.append([email2name[emails[0]]] + sorted(emails))
+        return ans
+
+
+
 sol = Solution()
 result = [
     # sol.findRedundantConnection(edges = [[1,2], [1,3], [2,3]]),
@@ -580,13 +745,18 @@ result = [
     # sol.hitBricks([[1,0,1],[1,1,1]], [[0,0],[0,2],[1,1]]),
     # sol.regionsBySlashes(grid = ["/\\","\\/"]),
     # sol.regionsBySlashes([" /\\"," \\/","\\  "]),
-    # sol.calcEquation([["a","b"],["e","f"],["b","e"]],[3.4,1.4,2.3],[["b","a"],["a","f"],["f","f"],["e","e"],["c","c"],["a","c"],["f","e"]]),
-    # sol.calcEquation(equations = [["a","b"],["b","c"]], values = [2.0,3.0], queries = [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]),
-    # sol.calcEquation([["a","b"],["c","d"]],[1.0,1.0],[["a","c"],["b","d"],["b","a"],["d","c"]]),
+    sol.calcEquation([["a","b"],["e","f"],["b","e"]],[3.4,1.4,2.3],[["b","a"],["a","f"],["f","f"],["e","e"],["c","c"],["a","c"],["f","e"]]),
+    sol.calcEquation(equations = [["a","b"],["b","c"]], values = [2.0,3.0], queries = [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]),
+    sol.calcEquation([["a","b"],["c","d"]],[1.0,1.0],[["a","c"],["b","d"],["b","a"],["d","c"]]),
     # sol.maxNumEdgesToRemove(n = 4, edges = [[3,1,2],[3,2,3],[1,1,3],[1,2,4],[1,1,2],[2,3,4]]),
     # sol.maxNumEdgesToRemove(n = 4, edges = [[3,2,3],[1,1,2],[2,3,4]]),
-    sol.swimInWater(grid = [[0,2],[1,3]]),
-    sol.swimInWater(grid = [[0,1,2,3,4],[24,23,22,21,5],[12,13,14,15,16],[11,17,18,19,20],[10,9,8,7,6]]),
+    # sol.swimInWater(grid = [[0,2],[1,3]]),
+    # sol.swimInWater(grid = [[0,1,2,3,4],[24,23,22,21,5],[12,13,14,15,16],[11,17,18,19,20],[10,9,8,7,6]]),
+    # sol.smallestStringWithSwaps(s = "dcab", pairs = [[0,3],[1,2]]),
+    # sol.smallestStringWithSwaps(s = "dcab", pairs = [[0,3],[1,2],[0,2]]),
+    # sol.removeStones(stones = [[0,0],[0,1],[1,0],[1,2],[2,1],[2,2]]),
+    # sol.removeStones(stones = [[0,0],[0,2],[1,1],[2,0],[2,2]]),
+    # sol.accountsMerge(accounts = [["John", "johnsmith@mail.com", "john00@mail.com"], ["John", "johnnybravo@mail.com"], ["John", "johnsmith@mail.com", "john_newyork@mail.com"], ["Mary", "mary@mail.com"]]),
     
 ]
 for r in result:

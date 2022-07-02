@@ -32,6 +32,16 @@ cache
 - `product` 很好用
 - `accumulate` 计算 cumsum (注意 `initial` 参数)
 - `permutations(iterable, r=None)` 从一个长度为n的数组中得到所有长度为r的排列
+- `chain` 来将二维列表转为一维: `list(itertools.chain(*list2d))`;
+    - 也可以用 `list(itertools.chain.from_iterable(list2d))`
+
+```py
+list2d = [[1,2,3], [4,5,6], [7], [8,9]]
+merged = [i for i in line for line in list2d]
+merged = list(itertools.chain(*list2d))
+merged = list(itertools.chain.from_iterable(list2d))
+```
+
 
 ### sortedcontainers
 
