@@ -7,3 +7,6 @@
 [submodule "z-rust-by-practice"]
 	path = learn-rust/rust-by-practice
 	url = https://github.com/sunface/rust-by-practice.git
+[submodule "rust-algos"]
+	path = learn-rust/rust-algos
+	url = https://github.com/rustlang-cn/rust-algos
