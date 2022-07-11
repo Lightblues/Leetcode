@@ -48,7 +48,7 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-261
+https://leetcode.cn/contest/weekly-contest-301
 
 题解: https://leetcode.cn/circle/discuss/5t4W96/view/kJ2FEW/
 @2022 """
@@ -68,7 +68,9 @@ class SmallestInfiniteSet:
 class Solution:
     """ 6112. 装满杯子需要的最短总时长 #easy
 有三种类型的物品, 各需要一定数量, 每次操作可以 1) 获得两种物品各一; 或 2) 或者一种物品. 问最少需要多少次操作才能得到所有的物品?
-思路: #归纳 分析
+思路1: #归纳 分析
+    三种类型的数量排序, 假如分别是 a,b,c. 对于a+b与c的关系进行分类讨论记录. 复杂度 O(1)
+思路2: #贪心 每次选择剩余数字较大的两个进行操作.
 """
     def fillCups(self, amount: List[int]) -> int:
         amount.sort()
@@ -102,42 +104,47 @@ class Solution:
 思路0: #DP
     定义 `f[i][j]` 为长度为i的数组, 最后一个值为j的理想数组的数量.则有递推 `f[i][j] = sum{ f[i-1][k] }`, 其中k为j的因子.
     但显然复杂度不够, 需要 O(n^3).
+思路1: 将数字分解 #因子, 然后利用 #排列 公式计算
+    定义 `f[k]` 表示已k结尾的长度为n的合法数组数量. 则答案为 `sum{ f[k] }`.
+    将问题定义为排列问题: 对于每一个质因子计算重复数, 然后进行放置. 注意, 不是 `comb(n, ...)`.
+        先考虑所有的因子都相同的情况. 例如有2个因子2, 长度n=2, 可以有的排列为 `[2,4], [1,4], [4,4]`, 注意两个因子可以放在一个slot中! 因此, 实际上是将2个相同的球放在2个袋子中的数量. 可以用「挡板法」考虑, 也即将k个球放在n个篮子里, 等价在k+n-1个位置选k-1个位置放挡板, `comb(k+n-1, k-1)`
+        对于不同的因子, 注意它们之间是独立的! (直观理解, 在上面的例子中加入一个重复数为1的因子3, 则答案数*2).
+    总之, 对于结尾数字k, 假如k不同因子的分别有 [m1,m2,...] 个重复, 则以k结尾的合法数组数量为 `prod{ comb(n+m_i-1, m_i) }`.
+    复杂度: 在遍历n的每一步, 计算质因子 O(log n), 计算组合数 O(log n) (这里直接用了math.comb, 在比较小的情况下是线性的), 因此复杂度最多 `O(n log^2(n))`
+    from [灵神](https://leetcode.cn/problems/count-the-number-of-ideal-arrays/solution/shu-lun-zu-he-shu-xue-zuo-fa-by-endlessc-iouh/)
 """
     def idealArrays(self, n: int, maxValue: int) -> int:
         mod = 10**9 + 7
-    
+        ans = 1
+        for i in range(2, maxValue+1):
+            factors = getPrimeFactors(i)
+            a = 1
+            for f in factors:
+                a = (a * math.comb(n+f-1, f)) % mod
+            ans = (ans + a) % mod
+        return ans
 
-def matrix_multiply(matrix_a, matrix_b):
-    n_row = len(matrix_a)
-    n_col = len(matrix_b[0])
-    n_tmp = len(matrix_a[0])
-    matrix_c = [[0 for _ in range(n_col)] for _ in range(n_row)]
-    for i in range(n_row):
-        for j in range(n_col):
-            for k in range(n_tmp):
-                matrix_c[i][j] += matrix_a[i][k] * matrix_b[k][j]
-    return matrix_c
+# 计算所有的质数
+ps = [2,3]
+for i in range(5, 10**4+1):
+    flag = True
+    for j in range(len(ps)):
+        if ps[j]**2 > i: break
+        if i % ps[j] == 0: flag = False; break
+    if flag: ps.append(i)
+# 将一个数n分解为质因子
+def getPrimeFactors(n):
+    idx = 0
+    factors = []
+    while n>1:
+        cnt = 0
+        while n%ps[idx]==0:
+            n //= ps[idx]
+            cnt += 1
+        idx += 1
+        if cnt: factors.append(cnt)
+    return factors
 
-def get_unit_matrix(n):
-    # matrix I 生成单位矩阵
-    unit_matrix = [[0 for _ in range(n)] for _ in range(n)]
-    for _ in range(n):
-        unit_matrix[_][_] = 1
-    return unit_matrix
-
-def quick_matrix_pow(matrix_a, n):
-    # A ^ n
-    l = len(matrix_a)
-    res = get_unit_matrix(l)
-    while n:
-        if n & 1:
-            # 调用矩阵乘法
-            res = matrix_multiply(res, matrix_a)
-        matrix_a = matrix_multiply(matrix_a, matrix_a)
-        n >>= 1
-    return res
-
-    
 sol = Solution()
 result = [
     # sol.fillCups(amount = [1,4,2]),
@@ -147,7 +154,10 @@ result = [
     # sol.canChange(start = "_L__R__R_", target = "L______RR"),
     # sol.canChange(start = "R_L_", target = "__LR"),
     # sol.canChange(start = "_R", target = "R_"),
-    quick_matrix_pow([[1,1],[1,0]], 3)
+    # quick_matrix_pow([[1,1],[1,0]], 3),
+    # getPrimeFactors(6),
+    sol.idealArrays(n = 2, maxValue = 5),
+    sol.idealArrays(n = 5, maxValue = 3),
 ]
 for r in result:
     print(r)

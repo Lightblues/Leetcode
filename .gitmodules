@@ -4,3 +4,6 @@
 [submodule "z-codeforces-go"]
 	path = z-codeforces-go
 	url = https://github.com/EndlessCheng/codeforces-go.git
+[submodule "z-rust-by-practice"]
+	path = learn-rust/rust-by-practice
+	url = https://github.com/sunface/rust-by-practice.git

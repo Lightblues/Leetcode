@@ -49,7 +49,6 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-261
 https://leetcode-cn.com/contest/biweekly-contest-82
 @2022 """
 
@@ -144,7 +143,14 @@ class Solution:
 给定一个整数数组和一个threshold, 要求找到一个整数k, 使得数组中包括一个长度为k的所有元素都大于 threshold / k 的子数字. (找到任意一个)
 思路1: 找到每一个元素作为最小值的左右边界. 这样, 我们可以得到哈希表 len2max, 记录每一个长度限制下, 子数组最小值的最大值.
     为了求左右边界, 可以利用 #单调栈 求解.
-关联: 「6077. 巫师的总力量和」
+    复杂度: O(n)
+    关联: 「6077. 巫师的总力量和」
+思路2: #并查集
+    直觉: 对于数组中的元素, 从大到小考虑他们所在的以其为最小值的连续子数组 (满足当前元素是最小值), 依次判断是否满足条件即可.
+    如何记录连接关系? 采用并查集. 但题目要求是相邻的两个才能连接, 如何做? 下面的思路是: 每次将被遍历的元素连接到其右侧节点上 (在最右侧加一个哨兵). 这样, **对于第i个节点, 合并到i+1节点之后, i元素的值是 `sz[j] - 1` 个元素只最小的那个**! 这是因为, 由于从大到小访问, 第i节点的大小必然是1. 若i+1节点更小, 则其大小也为1; 若i+1节点更大, 则它是一条链并且最右侧一定连着一个更小的点, 也符合上述论述.
+    复杂度: 排序 O(n logn)
+    from [灵神](https://leetcode.cn/problems/subarray-with-elements-greater-than-varying-threshold/solution/by-endlesscheng-j6pp/)
+总结: 思路1是更为清晰的, 关键是要想到「某一元素最为最小值的左右边界」, 之前做过巫师题的情况下, 一开始没有想到有点可惜. 思路2用到并查集, 灵神的代码很简洁, 但实际上的思维量还挺大的.
 """
     def validSubarraySize(self, nums: List[int], threshold: int) -> int:
         n = len(nums)
@@ -171,6 +177,25 @@ class Solution:
         for l, v in len2max.items():
             if threshold/l < v: return l
         return -1
+
+    def validSubarraySize(self, nums: List[int], threshold: int) -> int:
+        # 思路2 from https://leetcode.cn/problems/subarray-with-elements-greater-than-varying-threshold/solution/by-endlesscheng-j6pp/
+        n = len(nums)
+        fa = list(range(n + 1))
+        sz = [1] * (n + 1)  # 最后一位哨兵
+        def find(x: int) -> int:
+            if fa[x] != x:
+                fa[x] = find(fa[x])
+            return fa[x]
+        for num, i in sorted(zip(nums, range(n)), reverse=True):
+            j = find(i + 1)
+            fa[i] = j  # 将元素i(由于从大到小遍历, 此时一定是单个点) 合并到 i+1 个位置. 注意, 此时num是 sz[j] - 1 个元素只最小的那个!
+            sz[j] += sz[i]
+            # num是 sz[j] - 1 个元素只最小的那个!
+            if num > threshold // (sz[j] - 1):
+                return sz[j] - 1
+        return -1
+
 
 
     def f(self, nums: list):
@@ -219,7 +244,7 @@ result = [
     # sol.f([1,3,4,3,1]),
     
     sol.validSubarraySize(nums = [1,3,4,3,1], threshold = 6),
-    sol.validSubarraySize(nums = [6,5,6,5,8], threshold = 7),
+    # sol.validSubarraySize(nums = [6,5,6,5,8], threshold = 7),
 ]
 for r in result:
     print(r)
