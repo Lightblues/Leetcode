@@ -38,6 +38,7 @@ from decimal import Decimal
 排列组合 https://oi-wiki.org/math/combinatorics/combination/
 数论: https://oi-wiki.org/math/number-theory/basic/
 
+== 下一个排列, 第几个排列
 0031. 下一个排列 #medium #题型
     给定一个数组, 要求得到它的一个重排, 是「下一个字典序比它大的」排列.
     例如, [1,3,2] 的下一个排列就是 [2,1,3].
@@ -45,6 +46,17 @@ from decimal import Decimal
 1830. 使字符串有序的最少操作次数 #hard #math
     本质上是求一个序列是从小到大的第几个排列
     关联: #组合数学 #乘法逆元
+
+== 建模为排列问题
+6115. 统计理想数组的数目 #hard
+    定义「理想数组」: 所有元素都在 `[1...maxValue]`, `arr[i]` 都是` arr[i-1]` 的倍数 (1,2,3...倍)
+    限制: n,maxVal 1e4
+
+== 进阶
+1866. 恰有 K 根木棍可以看到的排列数目 #hard
+    对于1...n的所有排列, 问其中能从左侧正好看到k根木棍 (能看到要求没有遮挡) 的排列数目.
+    等价问题: 第一类斯特灵数. (题解可以作为第一类 #斯特灵数 的计算模板)
+    思路: 用DP做即可
 
  """
 class Solution:
@@ -192,6 +204,81 @@ class Solution:
                 freq.pop(s[i])
         
         return ans % mod
+
+
+    """ 1866. 恰有 K 根木棍可以看到的排列数目 #hard
+对于1...n的所有排列, 问其中能从左侧正好看到k根木棍 (能看到要求没有遮挡) 的排列数目.
+限制: n 1e3
+思路1: #DP
+    形式: `f[i][j]` 表示用 1...i 进行排列, 能够看到 j 个的排列数量.
+    递归: 若能够看到第i个位置, 则其一定高为i, 在剩余的 i-1 根中可以看到 j-1 个, 也即 `f[i-1][j-1]`; 否则, 其为 1...i-1 中的某一个数字, 剩余的 i-1 个中可以看到 j根; 注意, 假设位置i的数字为k, **由于能否看到仅依赖于相对大小关系, 我们可以直接将它们看成是 1...i-1**, 因此, 等价于 `f[i-1][j]`.
+    综上, 有 `f[i][j] = f[i-1][j-1] + (i-1) * f[i-1][j]`
+    约束: 0<j<=i. 因此边界情况 `f[i][0] = 0`. 但由于 `f[1][1] = f[0][0]+0` 要等于1, 我们初始化 `f[0][0]=1`
+    复杂度: O(nk)
+思路2: 建模为 #排列 问题.
+    对于可见的k个木棍, 将其和后面不可见的看成一个整体, 则n个数字被划分成了k组, 并且 **每组中的第一个数字正是其中最大的那个数, 其他数字任意排列** (注意到, 这恰好是一个 **圆排列**, 数量等于 `(len-1)!`); 而不同组之间的顺序是固定的, 因为要求从小到大.
+    综上, 问题转化为: 将n个数字分成k组, 对每个组求「循环排列数」 —— 恰好是「把n个元素排列成k个非空圆圈（循环排列）的方法数目」这一[第一类斯特灵数](https://zh.wikipedia.org/wiki/%E6%96%AF%E7%89%B9%E7%81%B5%E6%95%B0) 的直观理解.
+    在具体的递推公式上, 完全和思路1一致, 只不过在理解上更深了一层.
+    见 [灵神](https://leetcode.cn/problems/number-of-ways-to-rearrange-sticks-with-k-sticks-visible/solution/zhuan-huan-cheng-di-yi-lei-si-te-lin-shu-2y1k/).
+"""
+    def rearrangeSticks(self, n: int, k: int) -> int:
+        # 思路 1/2
+        mod = 10**9+7
+        # 只需要递归到 k 即可
+        f = [[0] * (k+1) for _ in range(n+1)]
+        f[0][0] = 1     # 初始化
+        for i in range(1, n+1):
+            # 注意 >i 之后是无意义的 (虽然算下来的结果也为0)
+            for j in range(1, min(i+1, k+1)):
+                f[i][j] = (f[i-1][j-1] + (i-1) * f[i-1][j]) % mod
+        return f[n][k]
+
+    """ 6115. 统计理想数组的数目 #hard
+定义「理想数组」: 所有元素都在 `[1...maxValue]`, `arr[i]` 都是` arr[i-1]` 的倍数 (1,2,3...倍)
+限制: n,maxVal 1e4
+思路0: #DP
+    定义 `f[i][j]` 为长度为i的数组, 最后一个值为j的理想数组的数量.则有递推 `f[i][j] = sum{ f[i-1][k] }`, 其中k为j的因子.
+    但显然复杂度不够, 需要 O(n^3).
+思路1: 将数字分解 #因子, 然后利用 #排列 公式计算
+    定义 `f[k]` 表示已k结尾的长度为n的合法数组数量. 则答案为 `sum{ f[k] }`.
+    将问题定义为排列问题: 对于每一个质因子计算重复数, 然后进行放置. 注意, 不是 `comb(n, ...)`.
+        先考虑所有的因子都相同的情况. 例如有2个因子2, 长度n=2, 可以有的排列为 `[2,4], [1,4], [4,4]`, 注意两个因子可以放在一个slot中! 因此, 实际上是将2个相同的球放在2个袋子中的数量. 可以用「挡板法」考虑, 也即将k个球放在n个篮子里, 等价在k+n-1个位置选k-1个位置放挡板, `comb(k+n-1, k-1)`
+        对于不同的因子, 注意它们之间是独立的! (直观理解, 在上面的例子中加入一个重复数为1的因子3, 则答案数*2).
+    总之, 对于结尾数字k, 假如k不同因子的分别有 [m1,m2,...] 个重复, 则以k结尾的合法数组数量为 `prod{ comb(n+m_i-1, m_i) }`.
+    复杂度: 在遍历n的每一步, 计算质因子 O(log n), 计算组合数 O(log n) (这里直接用了math.comb, 在比较小的情况下是线性的), 因此复杂度最多 `O(n log^2(n))`
+    from [灵神](https://leetcode.cn/problems/count-the-number-of-ideal-arrays/solution/shu-lun-zu-he-shu-xue-zuo-fa-by-endlessc-iouh/)
+"""
+    def idealArrays(self, n: int, maxValue: int) -> int:
+        # 预先计算所有的质数, 实际上应该放到class外面去
+        ps = [2,3]
+        for i in range(5, 10**4+1):
+            flag = True
+            for j in range(len(ps)):
+                if ps[j]**2 > i: break
+                if i % ps[j] == 0: flag = False; break
+            if flag: ps.append(i)
+        # 将一个数n分解为质因子
+        def getPrimeFactors(n):
+            idx = 0
+            factors = []
+            while n>1:
+                cnt = 0
+                while n%ps[idx]==0:
+                    n //= ps[idx]
+                    cnt += 1
+                idx += 1
+                if cnt: factors.append(cnt)
+            return factors
+
+        mod = 10**9 + 7
+        ans = 1
+        for i in range(2, maxValue+1):
+            factors = getPrimeFactors(i)
+            a = 1
+            for f in factors:
+                a = (a * math.comb(n+f-1, f)) % mod
+            ans = (ans + a) % mod
+        return ans
 
 
 sol = Solution()

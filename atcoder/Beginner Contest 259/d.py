@@ -64,6 +64,7 @@ def union(x, y):
     fa[x] = y; sz[y] += sz[x]
 def is_same(x, y):
     return find(x)==find(y)
+
 for i in range(n):
     (x1,y1,r1) = circles[i]
     for j in range(i+1,n):
@@ -72,13 +73,14 @@ for i in range(n):
         if is_same(i,j): continue
         
         (x2,y2,r2) = circles[j]
+        # 注意避免浮点数误差!!!
         # d = math.sqrt((x1-x2)**2+(y1-y2)**2)
         # if r1<r2: r1,r2 = r2,r1
         # # if d<=(r1+r2) and r2>=r1-d:
         # if r1-r2 <= d <= r1+r2:
         #     us.union(i,j)
-        d2 = (x1-x2)**2+(y1-y2)**2
-        if r1<r2: r1,r2 = r2,r1
+        d2 = (x1-x2)**2 + (y1-y2)**2
+        # if r1<r2: r1,r2 = r2,r1
         if (r1-r2)**2 <= d2 <= (r1+r2)**2:
             # us.union(i,j)
             union(i,j)
