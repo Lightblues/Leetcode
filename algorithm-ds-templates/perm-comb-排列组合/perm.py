@@ -67,7 +67,7 @@ class Solution:
 思路1: #两遍扫描
     例如, 对于 [4,5,2,6,3,1] 我们如何考虑下一个排列? 顺序扫描过去, 我们会把2替换成3, 然后把剩余的[6,2,1]三个元素sort.
     因此, 我们要找到一组下标 (i,j) 满足 `i<j; arr[i]<arr[j]` 并且这里的 **i尽可能右, arr[j] 尽可能小**, 这样直觉来看增长最小.
-    如何寻找? 从左往右查找第一个下标 i, 满足 `i<j; arr[i]<arr[j]` 的组合.
+    如何寻找? 从右往左查找第一个下标 i, 满足 `i<j; arr[i]<arr[j]` 的组合.
     需要和i右边的所有元素比较吗? 实际上只需要比较 arr[i]<arr[i+1] 是否成立即可! 因为这样从右往左遍历下来, arr[i+1:] 是递减的.
     如何找到j? 再一次从左往右遍历, 找到第一个 arr[i]<arr[j] 的位置j. 然后交换 ij, 对于 arr[i+1:] 进行排序
     需要sort吗? 前面说到 arr[i+1:] 是递减的, 而交换ij之后性质不变, 因此 **只需要反转这一数组即可**.
@@ -98,6 +98,28 @@ class Solution:
             nums[l], nums[r] = nums[r], nums[l]
             l,r = l+1, r-1
             
+    def nextPermutation(self, nums: List[int]) -> None:
+        # 0031. 下一个排列. 按照wiki的算法: https://en.wikipedia.org/wiki/Permutation#Generation_in_lexicographic_order
+        n = len(nums)
+        k = n-2
+        # 从右往左找到第一个 nums[k]<nums[k+1] 的位置. 注意 nums[k+1...n-1] 是递减的.
+        while k>=0 and nums[k]>=nums[k+1]:
+            k -= 1
+        if k>=0:
+            # 若 k==-1, 说明已经是最大排列
+            # 从k出发找到最后一个 nums[k] < nums[l] 的位置
+            l = k+1
+            while l<n-1 and nums[l+1]>nums[k]:
+                l += 1
+            # 交换. 注意, 此时 nums[k...l...n-1] 是递减的.
+            nums[k], nums[l] = nums[l], nums[k]
+        # 找到了一个次大的元素放到位置k, 然后 nums[k+1...n-1] 需要是最小排列: 反转即可
+        l,r = k+1, n-1
+        while l<r:
+            nums[l], nums[r] = nums[r], nums[l]
+            l,r = l+1, r-1
+        
+        
     def test_nextPermutation(self, nums):
         pre = nums[:]
         self.nextPermutation(nums)

@@ -23,13 +23,34 @@ curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
 rustup self uninstall   # 卸载
 ```
 
-VSCode
+### VSCode
 
+- VSCode: <https://code.visualstudio.com/docs/languages/rust>
 - 插件
     - `rust-analyzer` 社区驱动替代了官方的支持插件
     - `CodeLLDB`, Debugger 程序
     - `Even Better TOML`，支持 .toml 文件完整特性
     - `Error Lens`, 更好的获得错误展示
+
+所提供的一些功能
+
+- IntelliSense
+    - Inlay hints 推断变量类型
+    - Hover information 鼠标停留查看信息
+    - Auto completions
+- Semantic syntax highlighting
+    - 例如mut变量是有下划线的. 可以在 `editor.semanticTokenColorCustomizations` 设置
+- Linting
+    - provided by rustc and clippy, to detect issues with your source code
+    - 可以通过以下开启 [clippy](https://github.com/rust-lang/rust-clippy): change the **Rust-analyzer \> Check on Save: Command** (`rust-analyzer.checkOnSave.command`) setting to `clippy` instead of the default `check`
+- Formatting
+    - 通过 [rustfmt](https://github.com/rust-lang/rustfmt),
+    - 快捷键 `Shift+Option+F`
+
+Debug
+
+注意需要安装插件 `Microsoft C++` (ms-vscode.cpptools) 或 `CodeLLDB` (vadimcn.vscode-lldb)
+
 
 ## Cargo
 
@@ -456,7 +477,7 @@ fn print_str(s: String)  {
 
 #### 不可变引用
 
-引用默认是不可变的
+引用默认是不可变的. 因此, 我们无需放弃指向对象的所有权.
 
 ```rust
 fn main() {
@@ -477,7 +498,7 @@ fn calculate_length(s: &String) -> usize {
 
 - 语法: 用 `mut T` 声明
 - 可变引用只能存在一个 (不可变可以多个); 可变和不可变引用不能同时存在.
-- 注意, 不同于变量作用域, 引用的作用域是直到「最后一次使用的位置」 (这样可以方便代码).
+- 注意, 不同于变量作用域, 引用的作用域是直到「最后一次使用的位置」 (方便写代码).
     - 叫做: Non-Lexical Lifetimes(NLL)，专门用于找到某个引用在作用域(})结束前就不再被使用的代码位置
 
 ```rust
@@ -603,3 +624,170 @@ fn borrow_object(s: &String) {}
 
 
 ### 复合类型
+
+!!! todo
+
+- String: <https://doc.rust-lang.org/std/string/struct.String.html>
+
+#### 字符串和切片
+
+和Go语言类似; 注意切片就是部分引用 (可变/不可变).
+
+##### 切片语法
+
+切片语法: `&s[0..5]`. 注意其中包含了一个 range (因此 `&s[0..=5]` 也是可以的).
+
+```rust
+let s = String::from("hello world");
+
+let hello = &s[0..5];
+let world = &s[6..11];
+```
+
+上面创建了一个不可变切片 (类型为 `&str`); 若s为 `mut String`, 则可通过 `&mut s[0..5]` 创建可变切片.
+
+##### 什么是字符串
+
+顾名思义，字符串是由字符组成的连续集合，但是在上一节中我们提到过，**Rust 中的字符是 Unicode 类型，因此每个字符占据 4 个字节内存空间，但是在字符串中不一样，字符串是 UTF-8 编码，也就是字符串中的字符所占的字节数是变化的(1 - 4)**，这样有助于大幅降低字符串所占用的内存空间。
+
+Rust 在语言级别，只有一种字符串类型： `str`，它通常是以引用类型出现 `&str`，也就是上文提到的字符串切片。虽然语言级别只有上述的 `str` 类型，但是在标准库里，还有多种不同用途的字符串类型，其中使用最广的即是 `String` 类型。
+
+`str` 类型是硬编码进可执行文件，也无法被修改，但是 `String` 则是一个可增长、可改变且具有所有权的 UTF-8 编码字符串，**当 Rust 用户提到字符串时，往往指的就是 `String` 类型和 `&str` 字符串切片类型，这两个类型都是 UTF-8 编码**。
+
+除了 `String` 类型的字符串，Rust 的标准库还提供了其他类型的字符串，例如 `OsString`， `OsStr`， `CsString` 和 `CsStr` 等，注意到这些名字都以 `String` 或者 `Str` 结尾了吗？它们分别对应的是具有所有权和被借用的变量。
+
+###### 字符串字面量是切片
+
+字面量类型为 `&str`, 也即 `let s: &str = "Hello, world!";`. 它是一个 **不可变引用**.
+
+#### String 与 &str 之间的转化
+
+```rust
+// &str 转 String
+String::from("hello,world")
+"hello,world".to_string()
+
+// String 转 &str
+fn string_str_trans() {
+    let mut s = String::from("hello,world!");
+    // 取引用转为 &str 类型
+    say_hello(&s);
+    say_hello(&mut s[..5]); // 切片也是一种引用
+    say_hello(s.as_str());
+}
+fn say_hello(s: &str) {
+    println!("{}", s);
+}
+```
+
+
+##### 字符串操作
+
+```rust
+let mut s = String::from("Hello ");
+```
+
+
+- 追加 (Push): `push, push_str` 原地操作 (因此需要 mut)
+    - `s.push('r');`
+- 插入 (Insert): `insert, insert_str`
+    - `s.insert(5, ',');`
+- 替换 (Replace)
+    - 下面两个返回新的字符串 (因此支持 Srtring 和 &str)
+        - `s.replace("rust", "RUST");`; 替换所有匹配
+        - `s.replacen("rust", "RUST", 1);` 替换指定数量
+    - 将指定位置进行替换 (原地操作)
+        - `s.replace_range(7..8, "R");`
+- 删除 (Delete) 原地操作
+    - `pop` —— 删除并返回字符串的最后一个字符
+    - `remove` —— 删除并返回字符串中指定位置的字符
+    - `truncate` —— 删除字符串中从指定位置开始到结尾的全部字符
+    - `clear` —— 清空字符串
+- 连接 (Catenate)
+    - 使用 `+` 或者 `+=` 连接字符串，要求右边的参数必须为字符串的切片引用（Slice)类型
+        - 注意实际上 add 的函数签名为 `fn add(self, s: &str) -> String`. 在下面的第二个例子中, s1 的所有权发生了转移
+    - 使用 `format!` 连接字符串. 类似 println
+
+```rust
+fn string_catenate() {
+    let string_append = String::from("hello ");
+    let string_rust = String::from("rust");
+    // &string_rust会自动解引用为 &str
+    let result = string_append + &string_rust;
+    // 必须是 mut
+    let mut result = result + "!";
+    result += "!!!";
+
+    println!("连接字符串 + -> {}", result);
+}
+```
+
+```rust
+fn string_add() {
+    let s1 = String::from("hello,");
+    let s2 = String::from("world!");
+    // 在下句中，s1的所有权被转移走了，因此后面不能再使用s1
+    let s3 = s1 + &s2;
+    assert_eq!(s3, "hello,world!");
+    // 下面的语句如果去掉注释，就会报错
+    // println!("{}",s1);
+}
+```
+
+##### 字符串转义 (escape)
+
+用 `\`  输出 ASCII, `\u{211D}` 的形式输出 Unicode.
+
+```rust
+fn main() {
+    // 通过 \ + 字符的十六进制表示，转义输出一个字符
+    let byte_escape = "I'm writing \x52\x75\x73\x74!";
+    println!("What are you doing\x3F (\\x3F means ?) {}", byte_escape);
+
+    // \u 可以输出一个 unicode 字符
+    let unicode_codepoint = "\u{211D}";
+    let character_name = "\"DOUBLE-STRUCK CAPITAL R\"";
+
+    println!(
+        "Unicode character {} (U+211D) is called {}",
+        unicode_codepoint, character_name
+    );
+
+    // 换行了也会保持之前的字符串格式
+    let long_string = "String literals
+                        can span multiple lines.
+                        The linebreak and indentation here ->\
+                        <- can be escaped too!";
+    println!("{}", long_string);
+}
+```
+
+禁止转义
+
+```rust
+fn main() {
+    println!("{}", "hello \\x52\\x75\\x73\\x74");
+    let raw_str = r"Escapes don't work here: \x3F \u{211D}";
+    println!("{}", raw_str);
+
+    // 如果字符串包含双引号，可以在开头和结尾加 #
+    let quotes = r#"And then I said: "There is no escape!""#;
+    println!("{}", quotes);
+
+    // 如果还是有歧义，可以继续增加，没有限制
+    let longer_delimiter = r###"A string with "# in it. And even "##!"###;
+    println!("{}", longer_delimiter);
+}
+```
+
+
+##### 操作UTF-8字符串
+
+chars 依次获取字符串; bytes 得到每一个底层字节数组的值. 而要按照char来获取子串, 标准库中没有, 或许可以用 [utf8\_slice](https://crates.io/crates/utf8_slice).
+
+```rust
+for c in "中国人".chars() {}
+for b in "中国人".bytes() {
+    println!("{}", b);
+}
+```

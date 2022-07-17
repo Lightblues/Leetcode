@@ -31,9 +31,12 @@ from decimal import Decimal
 # from utils_leetcode import testClass
 # from structures import ListNode, TreeNode
 
-""" 
+""" 拓扑排序
+
 2050. 并行课程 III
 1857. 有向图中最大颜色值
+    给定一张图 (可认定为是 DAG), 每个节点有一个颜色. 对于每一条路径, 定义其值为相同颜色数量的最大值. 要求计算图上路径分数的最大值.
+    如何记录分数? 对于每一个节点记录「以该节点结束的路径中, 各个颜色的最大值」, 根据上一个节点进行状态转移.
  """
 class Solution:
     """ 2050. 并行课程 III #hard #题型
@@ -61,7 +64,7 @@ class Solution:
                     q.append(v)
         return max(timeLimit)
     
-    """ 1857. 有向图中最大颜色值 #hard #题型 #DAG
+    """ 1857. 有向图中最大颜色值 #hard #题型 #DAG #拓扑排序 #DP
 给定一张图 (可认定为是 DAG), 每个节点有一个颜色. 对于每一条路径, 定义其值为相同颜色数量的最大值. 要求计算图上路径的最大值.
 若图上出现环, 则返回 -1.
 思路1: #拓扑排序

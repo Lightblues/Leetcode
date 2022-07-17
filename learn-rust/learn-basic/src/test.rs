@@ -1,3 +1,4 @@
+#![allow(unused)]
 fn char_size() {
     let x = '中';
     println!("字符'中'占用了{}字节的内存大小",std::mem::size_of_val(&x));
@@ -14,6 +15,15 @@ fn forever() -> ! {
     };
 }
 
+fn test_str() {
+    let s = String::from("hello world");
+
+    // 创建索引
+    let hello = &s[0..5];
+    let world = &s[6..11];
+    println!("{} {}!", hello, world);
+}
+
 // fn main() {
 //     char_size();
 //     // dead_end();
@@ -21,8 +31,10 @@ fn forever() -> ! {
 // }
 
 fn main() {
-    get_option(1);
-    println!("Success!");
+    // get_option(1);
+    // println!("Success!");
+
+    test_str();
 }
 
 fn get_option(tp: u8) -> Option<i32> {

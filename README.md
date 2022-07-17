@@ -5,10 +5,14 @@
 - 代码随想录 <https://github.com/youngyangyang04/leetcode-master>
 - Labuladong <https://labuladong.github.io/algo/>; Github <https://github.com/labuladong/fucking-algorithm>
 - 宫水三叶 <https://github.com/SharingSource/LogicStack-LeetCode> Index/wiki 中对于题型进行了总结
+- 其他
+    - bigsai: <https://github.com/javasmall/bigsai-algorithm>
 
-- 编程语言
-    - JAVA 廖雪峰课程 <https://www.liaoxuefeng.com/wiki/1252599548343744>
-    - Python 库 LearnKu <https://learnku.com/docs/pymotw>
+
+编程语言
+
+- JAVA 廖雪峰课程 <https://www.liaoxuefeng.com/wiki/1252599548343744>
+- Python 库 LearnKu <https://learnku.com/docs/pymotw>
 
 提高
 

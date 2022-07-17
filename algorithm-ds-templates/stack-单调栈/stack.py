@@ -1,3 +1,4 @@
+from mimetypes import init
 from re import A
 import typing
 from typing import List, Optional, Tuple
@@ -14,7 +15,7 @@ import functools
 from functools import lru_cache, cache, reduce, partial
 # cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
 import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement
+from itertools import accumulate, product, permutations, combinations, combinations_with_replacement
 import string
 from string import ascii_lowercase, ascii_uppercase
 # s = ""
@@ -43,10 +44,15 @@ from decimal import Decimal
 === 枚举子数组
 0496. 下一个更大元素 I #easy #题型 #单调栈 
     要求 O(n) 时间内计算数组中每个元素的下一个更大元素
+0503. 下一个更大元素 II #medium
+    相较于 0496, 这里是一个「循环数组」, 也即需要考虑一个环中, 比当前元素更大的下一个元素值.
+    思路: 仅需要「循环遍历」两次即可
 0907. 子数组的最小值之和 #medium #题型 #单调栈
     求所有子数组的最小值的和
 1856. 子数组最小乘积的最大值 #medium 
     定义一个子数组的score: 为 **数组元素和 * 最小元素**. 现给定一个数组, 要求返回最大的score.
+    思路1: #单调栈 #前缀和 类似 0907 寻找左右边界; 子数组和可以通过前缀和求得.
+    代码: 可以将寻找左右边界合并到一个单调栈上, 但注意一个是开一个是比区间.
 2104. 子数组范围和 #medium
     定义子数组的score为 **最大最小元素的差值**. 要求返回一个数组中所有子数组score和.
 6077. 巫师的总力量和 #hard #单调栈 #前缀和
@@ -184,6 +190,22 @@ class Solution:
         num2idx = {num: i for i, num in enumerate(nums2)}
         return [nextGreater[num2idx[num]] for num in nums1]
     
+    """ 0503. 下一个更大元素 II #medium
+相较于 0496, 这里是一个「循环数组」, 也即需要考虑一个环中, 比当前元素更大的下一个元素值.
+例子: [1,2,1] 的结果应该是 [2, -1, 2]
+思路1: 还是用 #单调栈, 不过需要循环两次
+"""
+    def nextGreaterElements(self, nums: List[int]) -> List[int]:
+        n = len(nums)
+        s = []
+        ans = [-1] * n
+        for i,a in enumerate(nums+nums):
+            while s and s[-1][0]<a: # 要找的是严格大的元素
+                v, idx = s.pop()
+                ans[idx%n] = a
+            s.append((a,i))
+        return ans
+    
     """ 0907. 子数组的最小值之和 #medium #题型 #单调栈
 对于一个数组的所有(连续)子数组定义一个分数: 为这一子数组中的最小元素的值. 要求返回该数组所有子数组的分数之和.
 思路1: #单调栈 记录每一个元素作为最小值的(左右)边界.
@@ -249,6 +271,11 @@ class Solution:
     """ 1856. 子数组最小乘积的最大值 #medium 
 定义一个子数组的score: 为数组元素和 * 最小元素. 现给定一个数组, 要求返回最大的score.
 思路1: #单调栈 #前缀和 类似 0907 寻找左右边界; 子数组和可以通过前缀和求得.
+    通过单调栈来计算每一个元素作为最小值的左右边界
+思路2: 在代码层面, 除了用两次单调栈来得到所有边界, 实际上只需要一个单调栈即可同时求出
+    具体来说, 若在遍历位置i的过程中, 假如遵循的是 `nums[s[-1]] >= nums[i]`, 则对于每一个栈顶元素来说, 其下一个更小元素为位置i; 而对于while循环后将i入栈, 则此时的栈顶元素 j 是左侧第一个满足大于等于 nums[i] 的元素.
+    注意, 这里求的 right是严格小于 nums[i] 的元素位置, 而left则是小于等于 nums[i] 的元素位置. 但 **这不影响结果, 因为左右边界中总有一个得到了最长的数组**.
+关联: 「6077. 巫师的总力量和」
 
 输入：nums = [1,2,3,2]
 输出：14
@@ -285,6 +312,20 @@ class Solution:
             ans = max(ans, a * (cumsum[r] - cumsum[l+1]))
         return ans%MOD
     
+    def maxSumMinProduct(self, nums: List[int]) -> int:
+        n = len(nums)
+        left = [0]*n; right = [n-1]*n
+        s = []
+        for i, num in enumerate(nums):
+            # 注意下面的 right, left 都不包含边界点
+            while s and nums[s[-1]] >= num:
+                j = s.pop()
+                right[j] = i-1   # nums[j] < nums[j+1,...,i-1]
+            if s:
+                left[i] = s[-1] + 1  # nums[i] >= nums[s[-1]+1,...,i-1]
+            s.append(i)
+        acc = list(accumulate(nums, initial=0))
+        return max(v * (acc[r+1]-acc[l]) for v,l,r in zip(nums, left, right)) % (10**9 + 7)
     
     """ 2104. 子数组范围和 #medium
 定义子数组的score为 **最大最小元素的差值**. 要求返回一个数组中所有子数组score和.
@@ -430,19 +471,21 @@ $$
 sol = Solution()
 result = [
     # sol.nextGreaterElement(nums1 = [4,1,2], nums2 = [1,3,4,2]),
+    # sol.nextGreaterElements(nums = [1,2,1]),
+    # sol.nextGreaterElements(nums = [1,2,3,4,3]),
     
     # sol.sumSubarrayMins(arr = [3,1,2,4]),
     # sol.sumSubarrayMins(arr = [11,81,94,43,3]),
     
-    # sol.maxSumMinProduct(nums = [1,2,3,2]),
-    # sol.maxSumMinProduct(nums = [2,3,3,1,2]),
+    sol.maxSumMinProduct(nums = [1,2,3,2]),
+    sol.maxSumMinProduct(nums = [2,3,3,1,2]),
     
     # sol.subArrayRanges(nums = [1,2,3]),
     # sol.subArrayRanges(nums = [1,3,3]),
     # sol.subArrayRanges(nums = [4,-2,-3,4,1]),
     
-    sol.totalStrength(strength = [1,3,1,2]),
-    sol.totalStrength(strength = [5,4,6]),
+    # sol.totalStrength(strength = [1,3,1,2]),
+    # sol.totalStrength(strength = [5,4,6]),
 ]
 for r in result:
     print(r)

@@ -36,4 +36,4 @@
         - 复杂度: 具体的实现上, 用了dict来存储数字到位置的映射. 若哈希表的操作复杂度为 O(1), 则时间复杂度为 O(n).
             - 但实际上被hack了😭. 因为发生哈希冲突的情况下, 复杂度可能上升为 `O(n^2)` ! 另外的答案中, 所有的数字都用的是 str 就可以过 (理论上也可以被hack 只不过还没有).
         - 参见: [哈希冲突及解决方法](https://blog.csdn.net/qq_41963107/article/details/107849048) 以及 [Python的字典实现](https://harveyqing.gitbooks.io/python-read-and-write/content/python_advance/python_dict_implementation.html), 另外 [这篇](https://zhuanlan.zhihu.com/p/74003719) 更加直观一些.
-  - 思路2: 也是因为上述原因? 所以官答用了 #线段树 来解的.
+    - 思路2: 也是因为上述原因? 所以官答用了 #线段树 来解的.
