@@ -41,6 +41,7 @@ from decimal import Decimal
 0208. 实现 Trie (前缀树) #medium #题型 #Trie
     请你实现 Trie 类
 
+== 异或
 0421. 数组中两个数的最大异或值 #medium
     给定一组数字, 要求返回这组数字中, 两个数字的最大异或值.
     思路: 从高到低位检查最大可能的异或值
@@ -50,6 +51,10 @@ from decimal import Decimal
 1938. 查询最大基因差 #hard #trie #DFS
     给定一组树结构的「基因」, 每一个节点都是数字 (从 0到 n-1). 定义基因之前的差是两个数字的异或值. 然后给定一组查询 (node, val) 要求从树上的node节点及其祖先节点中国呢, 找到与val异或最大值.
     离线的思路; 需要对字典树实现「删除」操作
+
+1803. 统计异或值在范围内的数对有多少 #hard #字典树 #题型
+    给定一个长n的数组, 要求对于所有 (i,j) 的数对, 其XOR值在 `[low, high]` 范围内的数量.
+    转化问题: 统计「**字典树中与value的异或值小于等于limit的数量**」
 
 1948. 删除系统中的重复文件夹 #hard
     背景很有意思: 对于一棵目录树, 若两个节点所包含的目录结构(文件夹名字)相同, 则认为它们是重复的. 给定一棵目录树, 要求检测删除所有重复节点.
@@ -176,7 +181,7 @@ class Solution:
                         node.right = TrieBit()
                     node = node.right
         def query(root, num):
-            
+            # 查询最大异或值
             node = root
             x = 0   # 存储最大异或值. 初始化为 0, 由于是从高位到低位的遍历, 在每次更新是 <<1 进行更新
             for k in range(MAXBIT-1, -1, -1):
@@ -207,6 +212,7 @@ class Solution:
         return x
 
     def findMaximumXOR(self, nums: List[int]) -> int:
+        # 思路2
         """ 利用哈希集合存储按位前缀 """
         L = len(bin(max(nums)))-2
         max_xor = 0
@@ -601,6 +607,66 @@ class Solution:
                 path.pop()
         dfsOut(root)
         return res
+
+    """ 1803. 统计异或值在范围内的数对有多少 #hard #字典树 #题型
+给定一个长n的数组, 要求对于所有 (i,j) 的数对, 其XOR值在 `[low, high]` 范围内的数量.
+限制: 数组长度和元素大小 2e4; 
+思路1: 采用 #字典树 
+    我们顺序的进行 查询、插入操作.
+    对于某一位置的元素x, 题目要求另一个匹配数字的异或满足 `x^y` 在limit范围内的数量. 对于这样的区间问题, 我们拆解为「`x^y` 的值小于等于limit的数量」, 这样 `ans = query(high) - query(low-1)`. 如何统计这一数量? 利用字典树.
+        具体而言, 我们用函数 `query(value, limit)` 来查询查询树中与 value异或的结果 <= limit 的数量. 我们从高位遍历, 分别记两个位bit是 `a = (v>>i)&1; b = (limit>>i)&1`. #分类 讨论: 1) 若b=0, 则异或结果的该位只能也为0, 字典树的遍历bit和a相同; 2) 若b=1, 则异或结果位若为0, 则显然小于, 该子树下的数字都成立 (直接加到答案中); 对于另一个分支, 我们继续遍历.
+        总之: 由于在每种情况下我们仅需要递归一个路径, **我们在遍历过程中仅需要记录一个与 limit^value 相应的一条路径即可**. 因此, 查询复杂度为 `O(height)`.
+    复杂度: O(n log(n)), 第二项为查询树的高度.
+    总结: #字典树 可以做什么? 检索某一序列是否出现过; 统计出现次数. 而在本题中, 需要统计「**字典树中与value的异或值小于等于limit的数量**」, 这可以通过一定的修改得到.
+
+"""
+    def countPairs(self, nums: List[int], low: int, high: int) -> int:
+        # 思路1: 字典树
+        bit_len = (2*10**4).bit_length()
+        class Trie:
+            def __init__(self) -> None:
+                self.left = self.right = None
+                self.cnt = 0
+        def insert(root: Trie, val: int):
+            # 遍历 bit_len 次 (根节点 val=0)
+            for i in range(bit_len-1, -1, -1):
+                if (val>>i)&1:
+                    if root.right is None:
+                        root.right = Trie()
+                    root = root.right
+                    root.cnt += 1
+                else:
+                    if root.left is None:
+                        root.left = Trie()
+                    root = root.left
+                    root.cnt += 1
+        def query(root:Trie, v:int, limit: int):
+            # 查询树中与v异或的结果 <= limit 的数量
+            ans = 0
+            for i in range(bit_len-1, -1, -1):
+                a = (v>>i)&1; b = (limit>>i)&1
+                if i==3:
+                    print("", end="")
+                if b==0:
+                    # 仅允许异或结果位为 0
+                    root = root.right if a==1 else root.left
+                else:
+                    # 当前 limit 位为 1, 若 1) 异或结果位为0, 显然子树下的数字都成立; 2) 另一侧继续遍历
+                    p = root.right if a==1 else root.left
+                    ans += p.cnt if p is not None else 0
+                    
+                    root = root.left if a==1 else root.right
+                if root is None: break
+            if root is not None: ans += root.cnt
+            return ans
+        
+        root = Trie()
+        ans = 0
+        for num in nums:
+            ans += query(root, num, high) - query(root, num, low-1)
+            insert(root, num)
+        return ans
+
 
 sol = Solution()
 result = [
