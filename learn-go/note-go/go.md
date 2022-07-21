@@ -1,4 +1,4 @@
-from <<https://www.cnblogs.com/f-ck-need-u/p/9832538.html>
+from <https://www.cnblogs.com/f-ck-need-u/p/9832538.html>
 
 ## 简介
 
@@ -12,7 +12,7 @@ from <<https://www.cnblogs.com/f-ck-need-u/p/9832538.html>
 - import
 - 关于Go文档
     - `go doc fmt`
-    - `godoc -http=:6060`
+    - `godoc -http=:6060` (`go install golang.org/x/tools/cmd/godoc`)
 - 变量和变量声明
 - 函数定义
 
@@ -200,7 +200,7 @@ func main() {
 - Go通过包的方式管理程序，每个Go源代码文件都必须声明自己所在的包
 - 每个程序都必须有一个main包，main包作为整个程序的编译入口包，main包中的main()函数作为程序的执行入口。
 
-Go中有**两种类型的包**，或者说有两种类型的文件：
+Go中有 **两种类型的包**，或者说有两种类型的文件：
 
 - 编译后成为可执行文件的包，也就是main包编译后的得到的文件
 - 编译后成为共享库的包，只要go程序文件中声明的不是main包，就是**库文件**

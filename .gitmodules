@@ -10,3 +10,6 @@
 [submodule "rust-algos"]
 	path = learn-rust/rust-algos
 	url = https://github.com/rustlang-cn/rust-algos
+[submodule "learn-go/z-gopl"]
+	path = learn-go/z-gopl
+	url = https://github.com/adonovan/gopl.io.git
