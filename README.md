@@ -8,6 +8,9 @@
 - 其他
     - bigsai: <https://github.com/javasmall/bigsai-algorithm>
 
+技巧
+
+- 根据数据范围推测可能的算法: [here](https://www.acwing.com/blog/content/32/)
 
 编程语言
 

@@ -1,11 +1,13 @@
 package main
 
+// https://yar999.gitbook.io/gopl-zh/ch4/ch4-01
+
 import (
 	"fmt"
 	// "popcount"
 	"math/bits"
-
-	"github.com/tmthrgd/go-popcount"
+	// 不知道怎么引用
+	// "github.com/tmthrgd/go-popcount"
 )
 
 func testCount() {
@@ -13,8 +15,8 @@ func testCount() {
 	c := bits.OnesCount(3)
 	fmt.Println(c)
 
-	c = popcount.CountBytes(3)
-	fmt.Print(c)
+	// c = popcount.CountBytes8(3)
+	// fmt.Print(c)
 }
 
 func main() {

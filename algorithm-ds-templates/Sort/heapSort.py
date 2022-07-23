@@ -12,3 +12,4 @@ def heap_sort(lst):
 data = [1,5,3,2,8,5]
 print(data)
 print(heap_sort(data))
+

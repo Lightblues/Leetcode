@@ -106,7 +106,7 @@ class Solution:
         return ans
             
 
-    """ 1755. 最接近目标值的子序列和 #hard #折半枚举
+    """ 1755. 最接近目标值的子序列和 #hard #折半枚举 #题型
 给定一个数组, 要求找到一个子序列, 它的和最接近目标值. 返回这个最小 abs
 复杂度: 长度为 len<=40. 直接暴力枚举的复杂度为 O(2^n) 会超时.
 思路: 折半枚举. 先枚举前一半数组的子序列可能组成的和, 排好序 sums. 然后再枚举右侧一半的和, 然后和 sums 匹配, 二分找到最接近目标的
@@ -114,6 +114,8 @@ class Solution:
     def minAbsDifference(self, nums: List[int], goal: int) -> int:
         half = len(nums)//2
         left, right = nums[:half], nums[half:]
+        
+        # 枚举左半部分的子序列所有可能的和值
         sums = set()
         def dfs_left(s, i):
             if i==len(left):
@@ -127,6 +129,7 @@ class Solution:
         ans = math.inf
         def dfs_right(s, i):
             if i==len(right):
+                # 在枚举所有的组合的同时在另一半中二分搜索
                 target = goal - s
                 idx = bisect.bisect_left(sums, target)
                 nonlocal ans
