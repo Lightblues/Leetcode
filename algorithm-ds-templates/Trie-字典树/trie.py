@@ -155,6 +155,7 @@ class Solution:
     递推公式: 假如最高的 k位可以异或为 cur, 则最高 k+1 位可能构成 curr<<1 或者 (curr<<1)+1. 也即第 k+1位能否构成1.
     每次检查这一位即可. 为此, 可以用一个 #哈希表 `prefixed` 来所有 nums 的前 k+1位, 然后进行检查:
         当前待检查的目标值为 `x=(curr<<1)+1`, 利用 `a^b=x` 等价于 `a^x=b` 的性质, 可以 O(m) 复杂度检查是否存在二元组构成目标前缀, 其中 m为哈希表长度.
+    复杂度: `O(n log(C))`, C 是数组中的元素范围
     参见官方, 下面搬运的实现异常简洁, 很 Pythonic.
 """
     def findMaximumXOR(self, nums: List[int]) -> int:
@@ -214,7 +215,8 @@ class Solution:
     def findMaximumXOR(self, nums: List[int]) -> int:
         # 思路2
         """ 利用哈希集合存储按位前缀 """
-        L = len(bin(max(nums)))-2
+        # L = len(bin(max(nums)))-2
+        L = 31
         max_xor = 0
         for i in range(L)[::-1]:
             max_xor <<= 1
@@ -231,12 +233,12 @@ class Solution:
 有一组固定的数字 nums. 然后给定一组查询 queries, 对于每个查询 (x,m) 要求返回x与nums中不大于m的元素的最大异或值.
 约束: 数组和查询长度 1e5, 数组元素 1e9 (2^30)
 参见「0421. 数组中两个数的最大异或值」
-    一开始的时候, 直接沿用 0421 的思路, TrieBit 非常简介, 用了naive的方式DFS检索.
+思路0: 一开始的时候, 简单沿用 0421 的思路, 用了naive的方式DFS检索超时..
     [官方](https://leetcode.cn/problems/maximum-xor-with-an-element-from-array/solution/yu-shu-zu-zhong-yuan-su-de-zui-da-yi-huo-7erc/)
-    这里的思路有意思: 区分所给的查询是 在线/离线查询. **若为离线的, 可以进行排序** 然后在检索!
 思路1: #离线询问 + 字典树
     在 0421中已经实现了基于字典树的最大异或, 差别仅在于约束m.
     利用这里给的查询是静态的这一特点, 可以对于 nums, queries 排序, 维护双指针, 对于每次查询仅将小于m的数字插入字典树.
+    在 221.py 中重新写了一份 @220726
 思路2: #在线询问 + 字典树
     对于在线查询而言, 如何满足约束该路径对应的数字不大于m? 自己之前的思路是从高到低位进行比较, 到需要标记为, 因此采用了DFS, 超时.
     官答中, 相较于之前基本的 TrieBit 结构, 每个节点上存储了 `min_val` 属性, 也即该节点下的最小元素. 这样按照 0421 题中搜索思路即可.
@@ -259,11 +261,13 @@ class Solution:
                         root.left = TrieBit()
                     root = root.left
             root.val = num
+        
         # 就用上一题的仅有左右子树的字典树
         root = TrieBit()
         for num in nums:
             add(root, num)
         
+        @lru_cache(None)
         def query(root, x, m):
             """ 检查root树中, 不大于m的元素与x的最大异或值
             思路: 在遍历到树上的每个点的时候, 看是否满足小于等于m"""

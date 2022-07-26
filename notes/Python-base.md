@@ -1,3 +1,114 @@
+
+
+## Python 基本模块
+
+见 `template`
+
+### 默认环境函数
+
+- `str, ord` 转换
+- `pow(x,y, mod)`
+
+### functools
+
+cache
+
+- 注意默认的 `lru_cache(maxsize=128)` 性能可能不高? 直接用可能会超时. Python 3.9 中引入的 `@cache = lru_cache(maxsize=None)` 也即不对于 cache size 进行限制性能会好一点.
+
+### itertools
+
+<https://docs.python.org/zh-cn/3/library/itertools.html>
+
+- `product` 很好用
+- `accumulate` 计算 cumsum (注意 `initial` 参数)
+- `permutations(iterable, r=None)` 从一个长度为n的数组中得到所有长度为r的排列
+- `chain` 来将二维列表转为一维: `list(itertools.chain(*list2d))`;
+    - 也可以用 `list(itertools.chain.from_iterable(list2d))`
+
+```py
+list2d = [[1,2,3], [4,5,6], [7], [8,9]]
+merged = [i for i in line for line in list2d]
+merged = list(itertools.chain(*list2d))
+merged = list(itertools.chain.from_iterable(list2d))
+```
+
+
+### sortedcontainers
+
+- `SortedList` 插入、查询(`__getitem__`) 的时间复杂度约为 O(log(n))
+
+
+## Python 语法
+
+- 排序: <https://docs.python.org/zh-cn/3/howto/sorting.html>
+
+### 性能上的说明
+
+- 避免使用 deepcopy
+    - 例如 2065 用了冗余的list复制没问题, 但用 deepcopy 会超时
+- lru_cache() 需要设置limit大一点, 不然性能也很糟糕
+    - Python3.9 新增的 cache 函数就是没有内存限制的语法糖
+- 字典的union操作: 1. 原地add操作; 2. 将小集合合并到大集合 (重复add) 的速度更快.
+- 奇巧淫技: numpy
+
+### 定义 `__gt__`
+
+例如, 在 heapq 或者 bisect 时, 需要判断元素大小, Python默认的大小比较不满足时可以自定义
+
+```python
+class MaxNode():
+    # 最大堆的节点. 
+    # 排序要求: 按照 score降序, name升序
+    def __init__(self, score, name) -> None:
+        super().__init__()
+        self.score = score
+        self.name = name
+    def __lt__(self, other):
+        # 注意 Python 中 heapq 只有最小堆, 因此需要取反: 分数越大, 优先级越高
+        return (-self.score, self.name) < (-other.score, other.name)
+class MinNode():
+    def __init__(self, score, name) -> None:
+        super().__init__()
+        self.score = score
+        self.name = name
+    def __gt__(self, other):
+        # 简单期间, 直接定义 __gt__ 即可
+        return (-self.score, self.name) < (-other.score, other.name)
+
+# 用例
+max_node = MaxNode(10, "alice")
+h = heapq.heapify(...)
+heapq.heappush(h, max_node)
+```
+
+### for/else 语法
+
+当for循环正常退出 (而非break的时候执行), [doc](https://docs.python.org/3/tutorial/controlflow.html)
+
+```py
+for n in range(2, 10):
+    for x in range(2, n):
+        if n % x == 0:
+            print( n, 'equals', x, '*', n/x)
+            break
+    else:
+        # loop fell through without finding a factor
+        print(n, 'is a prime number')
+```
+
+
+
+### slice 语法
+
+要删(改) 数组中连续的一段元素, 可以采用切片语法, 效率较高. (当然, 无法在数量级上提升, 只是一个卡常数的小技巧)
+
+参见 [here](https://leetcode.cn/problems/count-integers-in-intervals/solution/chun-er-fen-by-migeater-t5kh/),
+
+### 集合 set
+
+
+## Python Summarization
+
 from [here](https://github.com/jindongwang/awesome-leetcode/blob/master/docs/Leetcode_Solutions/Summarization/), 超赞!
 
 ```python
