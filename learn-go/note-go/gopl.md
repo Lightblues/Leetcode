@@ -1323,8 +1323,101 @@ func endElement(n *html.Node) {
 
 ### 匿名函数
 
+拥有函数名的函数只能在包级语法块中被声明，通过 **函数字面量（function literal）**，我们可绕过这一限制，在任何表达式中表示一个函数值。函数字面量的语法和函数声明相似，区别在于func关键字后没有函数名。函数值字面量 是一种表达式，它的值被称为匿名函数（anonymous function）。
+
+更为重要的是，**通过这种方式定义的函数可以访问完整的词法环境（lexical environment）**，这意味着在函数中定义的内部函数可以引用该函数的变量
+
+```go
+// squares返回一个匿名函数。
+// 该匿名函数每次被调用时都会返回下一个数的平方。
+func squares() func() int {
+    var x int
+    return func() int {
+        x++
+        return x * x
+    }
+}
+func main() {
+    f := squares()
+    fmt.Println(f()) // "1"
+    fmt.Println(f()) // "4"
+    fmt.Println(f()) // "9"
+    fmt.Println(f()) // "16"
+}
+```
+
+squares的例子证明，**函数值不仅仅是一串代码，还记录了状态**。在squares中定义的匿名内部函数可以访问和更新squares中的局部变量，这意味着匿名函数和squares中，存在变量引用。这就是 **函数值属于引用类型和函数值不可比较** 的原因。Go使用闭包（closures）技术实现函数值，Go程序员也把函数值叫做闭包。
+
+通过这个例子，我们看到 **变量的生命周期不由它的作用域决定**：squares返回后，变量x仍然隐式的存在于f中。
+
+#### 申明函数变量后, 将函数值(匿名函数)绑定到上面
+
+例子: 拓扑排序.
+
+这里, 函数需要被递归调用, 因此就需要用一个变量来绑定到我们所定义的匿名函数值 `func(items []string)` 上去, 因此我们需要先声明函数变量 `var visitAll func(items []string)`, 然后进行绑定.
+
+```go
+func main() {
+    for i, course := range topoSort(prereqs) {
+        fmt.Printf("%d:\t%s\n", i+1, course)
+    }
+}
+
+func topoSort(m map[string][]string) []string {
+    var order []string
+    seen := make(map[string]bool)
+    var visitAll func(items []string)
+    visitAll = func(items []string) {
+        for _, item := range items {
+            if !seen[item] {
+                seen[item] = true
+                visitAll(m[item])
+                order = append(order, item)
+            }
+        }
+    }
+    var keys []string
+    for key := range m {
+        keys = append(keys, key)
+    }
+    sort.Strings(keys)
+    visitAll(keys)
+    return order
+}
+```
+
 
 ### 可变参数
+
+在声明 **可变参数函数** 时，需要在参数列表的最后一个参数类型之前加上省略符号“...”，这表示该函数会接收任意数量的该类型参数
+
+```go
+func sum(vals...int) int {
+    total := 0
+    for _, val := range vals {
+        total += val
+    }
+    return total
+}
+
+fmt.Println(sum())           // "0"
+fmt.Println(sum(3))          // "3"
+fmt.Println(sum(1, 2, 3, 4)) // "10"
+// 对于 []int, 类型, 通过在后面加 `...` 来传入
+values := []int{1, 2, 3, 4}
+fmt.Println(sum(values...)) // "10"
+```
+
+函数的标识符
+
+
+```go
+func f(...int) {}
+func g([]int) {}
+fmt.Printf("%T\n", f) // "func(...int)"
+fmt.Printf("%T\n", g) // "func([]int)"
+```
+
 
 
 ### Deferred 函数
@@ -1367,3 +1460,22 @@ fmt.Println(geometry.Path.Distance(perim)) // "12", standalone function
 fmt.Println(perim.Distance())             // "12", method of geometry.Path
 ```
 
+
+## 接口 interface
+
+接口类型是对其它类型行为的抽象和概括；因为接口类型不会和特定的实现细节绑定在一起，通过这种抽象的方式我们可以让我们的函数更加灵活和更具有适应能力。
+
+很多面向对象的语言都有相似的接口概念，但Go语言中接口类型的独特之处在于它是满足隐式实现的。也就是说，我们没有必要对于给定的具体类型定义所有满足的接口类型；简单地拥有一些必需的方法就足够了。这种设计可以让你创建一个新的接口类型满足已经存在的具体类型却不会去改变这些类型的定义；当我们使用的类型来自于不受我们控制的包时这种设计尤其有用。
+
+在本章，我们会开始看到接口类型和值的一些基本技巧。顺着这种方式我们将学习几个来自标准库的重要接口。很多Go程序中都尽可能多的去使用标准库中的接口。最后,我们会在(§7.10)看到类型断言的知识，在(§7.13)看到类型开关的使用并且学到他们是怎样让不同的类型的概括成为可能。
+
+
+## 测试
+
+我们说测试的时候一般是指自动化测试，也就是写一些小的程序用来检测被测试代码（产品代码）的行为和预期的一样，这些通常都是精心设计的执行某些特定的功能或者是通过随机性的输入要验证边界的处理。
+
+软件测试是一个巨大的领域。测试的任务可能已经占据了一些程序员的部分时间和另一些程序员的全部时间。和软件测试技术相关的图书或博客文章有成千上万之多。对于每一种主流的编程语言，都会有一打的用于测试的软件包，同时也有大量的测试相关的理论，而且每种都吸引了大量技术先驱和追随者。这些都足以说服那些想要编写有效测试的程序员重新学习一套全新的技能。
+
+Go语言的测试技术是相对低级的。它依赖一个go test测试命令和一组按照约定方式编写的测试函数，测试命令可以运行这些测试函数。编写相对轻量级的纯测试代码是有效的，而且它很容易延伸到基准测试和示例文档。
+
+在实践中，编写测试代码和编写程序本身并没有多大区别。我们编写的每一个函数也是针对每个具体的任务。我们必须小心处理边界条件，思考合适的数据结构，推断合适的输入应该产生什么样的结果输出。编程测试代码和编写普通的Go代码过程是类似的；它并不需要学习新的符号、规则和工具。

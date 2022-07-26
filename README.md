@@ -1,16 +1,21 @@
 
-参考
+参考/题单
 
 - LeetCode Cookbook <https://books.halfrost.com/leetcode/>
+- [算法通关手册（LeetCode）](https://algo.itcharge.cn/); 题单部分很赞!
+    - [repo](https://github.com/itcharge/LeetCode-Py)
 - 代码随想录 <https://github.com/youngyangyang04/leetcode-master>
-- Labuladong <https://labuladong.github.io/algo/>; Github <https://github.com/labuladong/fucking-algorithm>
-- 宫水三叶 <https://github.com/SharingSource/LogicStack-LeetCode> Index/wiki 中对于题型进行了总结
+- Labuladong <https://labuladong.github.io/algo/>; [repo](https://github.com/labuladong/fucking-algorithm)
+- [宫水三叶](https://github.com/SharingSource/LogicStack-LeetCode); Index/wiki 中对于题型进行了总结
 - 其他
-    - bigsai: <https://github.com/javasmall/bigsai-algorithm>
+    - [bigsai](https://github.com/javasmall/bigsai-algorithm): bigsai的数据结构与算法、LeetCode图解、剑指offer图解文章专栏
 
 技巧
 
 - 根据数据范围推测可能的算法: [here](https://www.acwing.com/blog/content/32/)
+- [C++ 模板](https://github.com/old-yan/CP-template)
+- DP
+    - [DP问题分类汇总](https://chengzhaoxi.xyz/42296.html)
 
 编程语言
 
@@ -21,9 +26,12 @@
 
 - 参见灵神的 [经验分享](https://www.bilibili.com/video/BV1RY4y157nW)
 - CodeForces: <https://codeforces.com/problemset>
+- 洛谷: <https://www.luogu.com.cn/>
+    - [题单](https://github.com/SFOI-Team/luogu-problem-list)
 - ACWing: <https://www.acwing.com/activity/1/competition/>
-- LeetCode 竞赛题打分: <https://github.com/zerotrac/leetcode_problem_rating/tree/gh-pages>
-- 主要是解法的复杂度分析: <https://github.com/hqztrue/LeetCodeSolutions>
+- LeetCode 相关
+    - [竞赛题打分](https://github.com/zerotrac/leetcode_problem_rating/tree/gh-pages)
+- hqztrue 大佬的 [LeetCode分析](https://github.com/hqztrue/LeetCodeSolutions) 主要是解法的复杂度分析
 
 ## Notes
 

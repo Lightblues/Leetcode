@@ -72,24 +72,6 @@ class Solution:
             result += 1
         return result
 
-    """ 1725. 可以形成最大正方形的矩形数目 easy
-给一组矩阵, 每个矩阵最大可以切出一个正方形, 求所有矩阵能切出的最大正方形的个数.
-输入：rectangles = [[5,8],[3,9],[5,12],[16,5]]
-输出：3
-解释：能从每个矩形中切出的最大正方形边长分别是 [5,3,5,5] 。
-最大正方形的边长为 5 ，可以由 3 个矩形切分得到。
- """
-    def countGoodRectangles(self, rectangles: List[List[int]]) -> int:
-        result, maxL = 0, 0
-        for a,b in rectangles:
-            l = min(a,b)
-            if l > maxL:
-                result = 1
-                maxL = l
-            elif l == maxL:
-                result += 1
-        return result
-                
     """ 1219. 黄金矿工 medium
 找到矩阵中非零路径中累积和最大的
 

@@ -1,6 +1,8 @@
 还没过的: 1016...
 直接看洛谷的列表即可.
 
+- 洛谷综合题单: <https://github.com/SFOI-Team/luogu-problem-list>
+
 
 ## 入门
 
