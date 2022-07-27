@@ -7,6 +7,7 @@ from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
 import math
 from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
 import bisect
+from bisect import bisect_left, bisect_right, insort_left, insort_right
 import heapq
 from heapq import heappush, heappop, heapify, heappushpop
 import functools

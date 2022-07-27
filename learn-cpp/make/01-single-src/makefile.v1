@@ -1,0 +1,14 @@
+all: app
+
+app: app.o
+	gcc -o app app.o
+
+app.o: main.c
+	gcc -c -o app.o main.c
+
+clean:
+	rm app *o
+
+run:
+	./app
+
