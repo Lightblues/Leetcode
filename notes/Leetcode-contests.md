@@ -39,6 +39,47 @@ T3, T4 都是做过的... T2也TLE了一回... 质量很高的一期.
     - 参见 trie, 这里自己重新写一遍
     - 思路: 离线查询. 根据查询动态插入字典树
 
+### 222
+
+又是质量很高的一次周赛. T3的二分边界问题搞了好久好久... T4的等价转换太赞了!
+
+- 1712. 将数组分成三个子数组的方案数 #medium #题型 #反思
+    - 要将一个数组分成三部分, 使得三部分的和依次满足 a<=b<=c, 求分割数.
+    - 思路: 利用 #前缀和 加速, 用 #二分 搜索.
+        - 假设数组和为 s, 给定a, 则a+b需要满足 2*a<=a+b<=(s+a)/2
+        - 注意: #debug 这里需要明确左右边界. 假设数组分成 [0...l], [l+1...m], [m...n-1] 三部分, 都要求非空.
+            - 则在遍历数组的过程中 (左部分 l), 我们查询的 **中间部分的 m指针的搜索范围为 `[l+1...n-2]`**
+        - 参见 [灵神](https://leetcode.cn/problems/ways-to-split-array-into-three-subarrays/solution/golang-jian-ji-xie-fa-by-endlesscheng-xaad/)
+    - 总结: 推导很简单, 但实际上 #边界 分析搞了半天. 值得 #反思
+- 1713. 得到子序列的最少操作次数 #hard #转化 #题型
+    - 问题等价于, 找到 s,t 两数组之间的最长公共子序列. 注意原本s中的所有整数互不相同.
+    - 限制: 两者长度 1e5
+    - 思路0: 计算 #最长公共子序列 的基本方案是 DP, 但这里的复杂度不够.
+    - 思路1: 利用这里某一「序列s中的元素互不相同」的性质, 可以将s中的元素值重新赋值为 0,1,2..., 然后t序列替换为这些重标的值. 则, 问题等价于在t中找到最长递增子序列.
+        - 解法: 用一个数组 dp[i] 记录长度为i的子序列的结尾最小数字. 在遍历t的过程中, 若元素大于 dp[-1] 则拓展, 否则二分查找, 更新最小数字. 复杂度: `O(n logn)`
+        - 参见 「0300. 最长递增子序列」, 见 [官答](https://leetcode.cn/problems/longest-increasing-subsequence/solution/zui-chang-shang-sheng-zi-xu-lie-by-leetcode-soluti/)
+        - [本题官答](https://leetcode.cn/problems/minimum-operations-to-make-a-subsequence/solution/de-dao-zi-xu-lie-de-zui-shao-cao-zuo-ci-hefgl/)
+
+### 223
+
+前三题做起来还可以, T4之前做了5289, 但重新看到居然还是没有思路... 另外对于Python时间卡得有些过分了, 还好看到灵神的题解, 学到了一些优化方法 (虽然具体工作中可能没啥用...)
+
+- 1723. 完成所有工作的最短时间 #hard #题型 #Python #优化
+    - 给定一组数组, 要求分成k组, 使得组内的数字之和的最大值最小化
+    - 限制: k, 数组长度 <=12
+    - 思路1: 同「5289. 公平分发饼干」, 但时间要求更为苛刻. 采用 #子集遍历 #状态压缩 #DP
+        - `f[i][mask]` 表示给前i个工人分配, 并且已分配的工作是mask情况下的最优值.
+        - 递推: `f[i+1][mask] = min{ max{sum(sub), f[i][mask\sub]} }` 也即经典的子集遍历问题 (可以通过 `sub = (sub-1)&mask` 来实现).
+        - 复杂度: 子集遍历的复杂度为 O(3^n), 因此总复杂度为 O(n 3^n)
+        - 思路是这样的, 但此题卡时间非常紧, 下面来说 [灵神](https://leetcode.cn/problems/find-minimum-time-to-finish-all-jobs/solution/by-endlesscheng-d2oa/) 的优化
+    - 优化: 1) 首先, 相较于 `sub = (sub-1)&mask` 的子集遍历方式, 在全局预计算好每一个mask的所有子集形式; 2) 把 `min` 和 `max` 拆开，改为手写，避免额外的函数调用开销
+    - 思路2: #二分 查找 + #回溯 + #剪枝
+        - 对于一个数字, 通过DFS来判定是否可行. 但暴力回溯的复杂度高达 O(k^n), 因此采取了一系列的剪枝策略.
+            - 优先分配工作量大的工作. 因为「更容易」找到解.
+            - 顺序给工人分配. 因为工人之间没有差异.
+            - 在遍历过程中, 假如任务i分配给j恰好使得j的工作量达到limit (没有浪费), 若递归函数还返回了false, 则可以直接返回false不必继续遍历.
+        - 参见 [官答](https://leetcode.cn/problems/find-minimum-time-to-finish-all-jobs/solution/wan-cheng-suo-you-gong-zuo-de-zui-duan-s-hrhu/)
+
 ### 224
 
 这次的难度好高! 猫和老鼠只有22个人[做出来](https://leetcode.cn/contest/weekly-contest-224/ranking/). T3也很有意思, 关联两道相关题.

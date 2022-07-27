@@ -35,11 +35,14 @@ from decimal import Decimal
 # from structures import ListNode, TreeNode, linked2list, list2linked
 
 """ 
+== 最长递增子序列 LIS
 0300. 最长递增子序列 #medium #题型
     给定一个序列, 要求计算这个序列的最长递增子序列的长度.(严格)
 1964. 找出到每个位置为止最长的有效障碍赛跑路线 #hard #DP
     问题定义: 给定一个序列, 对于其中的每一个值, 计算以其结尾的递增序列的最大长度
-
+1713. 得到子序列的最少操作次数 #hard #转化 #题型
+    问题等价于, 找到 s,t 两数组之间的最长公共子序列. 注意原本s中的所有整数互不相同.
+    表面上是求LCS, 但本题的复杂度不够, 仔细分析可以等价转换为求LIS.
 
 == 构造DP数组
 1959. K 次调整数组大小浪费的最小总空间 #medium #题型
@@ -75,7 +78,15 @@ from decimal import Decimal
 1494. 并行课程 II #hard
     有DAG课程序列, 每学期最后可修k门, 要求最少时间.
     注意有简单的剪枝策略: `numLessons = min(k, todo.bit_count())`, 也即在可选课程中, 尽量选择最多数量的课程.
-
+=== 最小化分组和的最大值
+5289. 公平分发饼干 #medium 同 1723. 完成所有工作的最短时间
+    有一组饼干数组 cookies, 要分给k个孩子, 定义分配的不公平程度为所分配数的最大值. 要求所有分配方式中, 不公平程度最小化.
+    约束: 数组长度 n<=8; 分配数 k<=m
+    思路: 定义 `f[i][mask]` 表示分配完前i个孩子, 当前分配的饼干集合为mask, 时的最小不公平程度.
+1723. 完成所有工作的最短时间 #hard #题型 #Python #优化
+    给定一组数组, 要求分成k组, 使得组内的数字之和的最大值最小化.
+    限制: k, 数组长度 <=12
+    优化: 1) 首先, 相较于 `sub = (sub-1)&mask` 的子集遍历方式, 在全局预计算好每一个mask的所有子集形式; 2) 把 `min` 和 `max` 拆开，改为手写，避免额外的函数调用开销
 """
 class Solution:
     """ 0300. 最长递增子序列 #medium #题型
@@ -123,6 +134,34 @@ class Solution:
                 ans.append(idx+1)
                 dp[idx] = height
         return ans
+
+
+    """ 1713. 得到子序列的最少操作次数 #hard #转化 #题型
+问题等价于, 找到 s,t 两数组之间的最长公共子序列. 注意原本s中的所有整数互不相同.
+限制: 两者长度 1e5
+思路0: 计算 #最长公共子序列 的基本方案是 DP, 但这里的复杂度不够.
+思路1: 利用这里某一「序列s中的元素互不相同」的性质, 可以将s中的元素值重新赋值为 0,1,2..., 然后t序列替换为这些重标的值. 则, 问题等价于在t中找到最长递增子序列.
+    解法: 用一个数组 dp[i] 记录长度为i的子序列的结尾最小数字. 在遍历t的过程中, 若元素大于 dp[-1] 则拓展, 否则二分查找, 更新最小数字. 复杂度: `O(n logn)`
+    参见 「0300. 最长递增子序列」, 见 [官答](https://leetcode.cn/problems/longest-increasing-subsequence/solution/zui-chang-shang-sheng-zi-xu-lie-by-leetcode-soluti/)
+    [本题官答](https://leetcode.cn/problems/minimum-operations-to-make-a-subsequence/solution/de-dao-zi-xu-lie-de-zui-shao-cao-zuo-ci-hefgl/)
+
+"""
+    def minOperations(self, target: List[int], arr: List[int]) -> int:
+        # 思路1: 最长递增子序列
+        t2i = dict(zip(target, range(len(target))))
+        arr = [t2i[a] for a in arr if a in t2i]
+        def lengthOfLIS(nums: List[int]) -> int:
+            dp = []
+            for num in nums:
+                # 例如 dp = [1,3,7], 若遇到 num=4, 则更新 dp = [1,3,4]
+                i = bisect_left(dp, num)
+                if i==len(dp): dp.append(num)
+                else: dp[i] = num
+            return len(dp)
+        return len(target)-lengthOfLIS(arr)
+
+
+
 
     """ 1986. 完成任务的最少工作时间段 #medium
 有一组任务, 完成每个任务需要一定的时间. 你每次训练可以工作 `sessionTime` 个小时. 在一个session中, 你可以完成多个任务, 但一个任务不能分割到多个session中. 要求分配任务到不同的session, 使得session总数最小.
