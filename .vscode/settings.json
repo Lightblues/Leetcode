@@ -11,7 +11,13 @@
             "scheme": "file",
             "pattern": "algorithm-ds-templates/BFS-DFS/search.py"
         }
-    ]
+    ],
+    "files.associations": {
+        "*.jsonl": "jsonc",
+        "iosfwd": "cpp",
+        "vector": "cpp",
+        "algorithm": "cpp"
+    }
     //   "pasteImage.defaultName": "Y-MM-DD-HH-mm-ss",
     //   "pasteImage.path": "${currentFileNameWithoutExt}",
     //   "files.associations": {

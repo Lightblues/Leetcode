@@ -1,246 +1,363 @@
 
-Make 参见 [[cpp-make.md]]
+## 从C语言到C++
 
-## C++ STL
+### 类和对象简介
 
-- CPP reference: <https://zh.cppreference.com/w/cpp/container> #3 速查, 表格很完全
-- biancheng.net: <http://c.biancheng.net/stl/sequence_container/>
+- **类**（Class）和 **对象**（Object）
+    - 也称对象是类的一个 实例（Instance）
+    - 类的成员变量称为属性（Property），将类的成员函数称为方法（Method）
 
-STL 最初由惠普实验室开发，于 1998 年被定为国际标准，正式成为 C++ 程序库的重要组成部分。值得一提的是，如今 STL 已完全被内置到支持 C++ 的编译器中，无需额外安装，这可能也是 STL 被广泛使用的原因之一。
+### 编译和运行
 
+!!! note
+    源代码 - 编译器 - 目标代码 - 链接器(启动代码, 库代码) - 可执行文件
 
-- 序列容器: 主要包括 vector 向量容器、list 列表容器以及 deque 双端队列容器。之所以被称为序列容器，是因为元素在容器中的位置同元素的值无关，即容器不是排序的。将元素插入容器时，指定在什么位置，元素就会位于什么位置。
-- 排序容器: 包括 set 集合容器、multiset多重集合容器、map映射容器以及 multimap 多重映射容器。排序容器中的元素默认是由小到大排序好的，即便是插入元素，元素也会插入到适当位置。所以关联容器在查找时具有非常好的性能。
-- 哈希容器: C++ 11 新加入 4 种关联式容器，分别是 unordered_set 哈希集合、unordered_multiset 哈希多重集合、unordered_map 哈希映射以及 unordered_multimap 哈希多重映射。和排序容器不同，哈希容器中的元素是未排序的，元素的位置由哈希函数确定。
+```sh
+# gcc
+gcc main.c module.c
+# `gcc`命令在链接时默认使用C的库，只有添加了`-lstdc++`选项才会使用 C++ 的库。
+gcc main.cpp module.cpp -lstdc++
 
-### STL序列式容器
+# g++
+g++ main.cpp module.cpp
+g++ main.cpp -o demo    # 使用`-o`选项可以指定可执行文件的名称
+```
 
-#### 迭代器
+### 命名空间 namespace
 
-既然类似，完全可以利用泛型技术，将它们设计成适用所有容器的通用算法，从而将容器和算法分离开。但实现此目的需要有一个类似中介的装置，它除了要具有对容器进行遍历读写数据的能力之外，还要能对外隐藏容器的内部差异，从而以统一的界面向算法传送数据。
+命名空间内部不仅可以声明或定义变量，对于其它能在命名空间以外声明或定义的名称，同样也都能在命名空间内部进行声明或定义，例如类、函数、`typedef`、`#define` 等都可以出现在命名空间中。
 
-这是泛型思维发展的必然结果，于是迭代器就产生了。简单来讲，迭代器和 C++ 的指针非常类似，它可以是需要的任意类型，通过迭代器可以指向容器中的某个元素，如果需要，还可以对该元素进行读/写操作。
+另参考 [C++头文件和std命名空间](http://c.biancheng.net/view/2193.html)
 
-1) 前向迭代器（forward iterator）  
-假设 p 是一个前向迭代器，则 p 支持 `++p，p++，*p` 操作，还可以被复制或赋值，可以用 == 和 != 运算符进行比较。此外，两个正向迭代器可以互相赋值。  
+```cpp
+namespace name{
+    //variables, functions, classes
+}
+```
+
+e.g.
+
+```cpp
+namespace Li{  //小李的变量定义
+    FILE* fp = NULL;
+}
+namespace Han{  //小韩的变量定义
+    FILE* fp = NULL;
+}
+
+// `::`是一个新符号，称为域解析操作符，在C++中用来指明要使用的命名空间。
+Li::fp = fopen("one.txt", "r");  //使用小李定义的变量 fp
+Han::fp = fopen("two.txt", "rb+");  //使用小韩定义的变量 fp
+
+// 采用 using 关键字声明
+using namespace Li; // 声明整个命名空间
+using Li::fp;       // 针对命名空间中的一个变量
+fp = fopen("one.txt", "r");  //使用小李定义的变量 fp
+Han :: fp = fopen("two.txt", "rb+");  //使用小韩定义的变量 fp
+```
+
+### 输入输出（cin和cout）
+
+cout 和 cin 都是 C++ 的内置对象，而不是关键字。C++ 库定义了大量的类（Class），程序员可以使用它们来创建对象，cout 和 cin 就分别是 ostream 和 istream 类的对象，只不过它们是由标准库的开发者提前创建好的，可以直接拿来使用。这种在 C++ 中提前创建好的对象称为内置对象。  
   
-2) 双向迭代器（bidirectional iterator）  
-双向迭代器具有正向迭代器的全部功能，除此之外，假设 p 是一个双向迭代器，则还可以进行 --p 或者 p-- 操作（即一次向后移动一个位置）。  
-  
-3) 随机访问迭代器（random access iterator）  
-随机访问迭代器具有双向迭代器的全部功能。除此之外，假设 p 是一个随机访问迭代器，i 是一个整型变量或常量，则 p 还支持以下操作：
+使用 cout 进行输出时需要紧跟`<<`运算符，使用 cin 进行输入时需要紧跟`>>`运算符，这两个运算符可以自行分析所处理的数据类型，因此无需像使用 scanf 和 printf 那样给出格式控制字符串。
 
-- p+=i：使得 p 往后移动 i 个元素。
-- p-=i：使得 p 往前移动 i 个元素。
-- p+i：返回 p 后面第 i 个元素的迭代器。
-- p-i：返回 p 前面第 i 个元素的迭代器。
-- `p[i]`：返回 p 后面第 i 个元素的引用。
+### 布尔类型（bool）
 
-此外，两个随机访问迭代器 p1、p2 还可以用 `<、>、<=、>=` 运算符进行比较。另外，表达式 `p2-p1` 也是有定义的，其返回值表示 p2 所指向元素和 p1 所指向元素的序号之差（也可以说是 p2 和 p1 之间的元素个数减一）。
+C语言并没有彻底从语法上支持“真”和“假”，只是用 0 和非 0 来代表。这点在 C++ 中得到了改善，C++ 新增了 `bool` 类型（布尔类型），它一般占用 1 个字节长度。bool 类型只有两个取值，`true` 和 `false`：true 表示“真”，false 表示“假”。
 
-分类
+### new和delete运算符简介
 
-- 随机访问迭代器: `array, vector, deque`
-- 双向迭代: `list, set/multiset, map/multimap,`
-- 前向迭代器: `forward_list, unordered_map/unodered_multimap, unordered_set/unordered_umltiset,`
-- 不支持迭代器: `stack, queue`
 
-##### 遍历迭代器
+
+
+
+## 类和对象
+
+- 与结构体一样，类只是一种复杂数据类型的声明，不占用内存空间。而对象是类这种数据类型的一个变量，或者说是通过类这种数据类型创建出来的一份实实在在的数据，所以占用内存空间。
+- 创建对象以后，可以使用点号 `.` 来访问成员变量和成员函数，这和通过结构体变量来访问它的成员类似
 
 ```cpp
-//遍历 vector 容器。
-    vector<int> v{1,2,3,4,5,6,7,8,9,10}; //v被初始化成有10个元素
-    
-    cout << "第一种遍历方法：" << endl;
-    //size返回元素个数
-    for (int i = 0; i < v.size(); ++i)
-        cout << v[i] <<" "; //像普通数组一样使用vector容器
-    //创建一个正向迭代器，当然，vector也支持其他 3 种定义迭代器的方式
-    
-    cout << endl << "第二种遍历方法：" << endl;
-    vector<int>::iterator i;
-    //用 != 比较两个迭代器
-    for (i = v.begin(); i != v.end(); ++i)
-        cout << *i << " ";
-    
-    cout << endl << "第三种遍历方法：" << endl;
-    for (i = v.begin(); i < v.end(); ++i) //用 < 比较两个迭代器
-        cout << *i << " ";
-   
-    cout << endl << "第四种遍历方法：" << endl;
-    i = v.begin();
-    while (i < v.end()) { //间隔一个输出
-        cout << *i << " ";
-        i += 2; // 随机访问迭代器支持 "+= 整数"  的操作
+class Student{
+public:
+    //成员变量
+    char *name;
+    int age;
+    float score;
+    //成员函数
+    void say(){
+        cout<<name<<"的年龄是"<<age<<"，成绩是"<<score<<endl;
     }
+};
+
+// 创建单个对象
+class Student stu;      //正确
+Student LiLei;          //同样正确
+// 创建对象数组
+Student allStu[100];
+
+stu.name = "小明";
+stu.say();
+
 ```
 
-#### C++序列式容器（STL序列式容器）
+### 对象指针
 
-- [biancheng](http://c.biancheng.net/view/409.html)
-
-所谓序列容器，即以线性排列（类似普通数组的存储方式）来存储某一指定类型（例如 int、double 等）的数据，需要特殊说明的是，该类容器并不会自动对存储的元素按照值的大小进行排序。
-
-- `array<T,N>`（**数组容器**）：表示可以存储 N 个 T 类型的元素，是 C++ 本身提供的一种容器。此类容器一旦建立，其长度就是固定不变的，这意味着不能增加或删除元素，只能改变某个元素的值；
-- `vector<T>`（**向量容器**）：用来存放 T 类型的元素，是一个长度可变的序列容器，即在存储空间不足时，会自动申请更多的内存。使用此容器，在尾部增加或删除元素的效率最高（时间复杂度为 O(1) 常数阶），在其它位置插入或删除元素效率较差（时间复杂度为 O(n) 线性阶，其中 n 为容器中元素的个数）；
-- `deque<T>`（**双端队列容器**）：和 vector 非常相似，区别在于使用该容器不仅尾部插入和删除元素高效，在头部插入或删除元素也同样高效，时间复杂度都是 O(1) 常数阶，但是在容器中某一位置处插入或删除元素，时间复杂度为 O(n) 线性阶；
-- `list<T>`（**链表容器**）：是一个长度可变的、由 T 类型元素组成的序列，它以双向链表的形式组织元素，在这个序列的任何地方都可以高效地增加或删除元素（时间复杂度都为常数阶 O(1)），但访问容器中任意元素的速度要比前三种容器慢，这是因为 list<T> 必须从第一个元素或最后一个元素开始访问，需要沿着链表移动，直到到达想要的元素。
-- `forward_list<T>`（**正向链表容器**）：和 list 容器非常类似，只不过它以单链表的形式组织元素，它内部的元素只能从第一个元素开始访问，是一类比链表容器快、更节省内存的容器。
-
-#### array
-
-- `begin()` 返回指向容器中第一个元素的随机访问迭代器。
-- `end()` 返回指向容器**最后一个元素之后一个位置**的随机访问迭代器，通常和 begin() 结合使用。
-- `rbegin()` 返回指向最后一个元素的随机访问迭代器。
-- rend() 返回指向第一个元素之前一个位置的随机访问迭代器。
-- `size()` 返回容器中当前元素的数量，其值始终等于初始化 array 类的第二个模板参数 N。
-- `max_size()` 返回容器可容纳元素的最大数量，其值始终等于初始化 array 类的第二个模板参数 N。
-- empty() 判断容器是否为空，和通过 size()==0 的判断条件功能相同，但其效率可能更快。
-- `at(n)` **返回容器中 n 位置处元素的引用**，该函数自动检查 n 是否在有效的范围内，如果不是则抛出 out_of_range 异常。
-- `front()` 返回容器中第一个元素的直接引用，该函数不适用于空的 array 容器。
-- `back()` 返回容器中最后一个元素的直接应用，该函数同样不适用于空的 array 容器。
-- data() 返回一个指向容器首个元素的指针。利用该指针，可实现复制容器中所有元素等类似功能。
-- `fill(val)` 将 val 这个值赋值给容器中的每个元素。
-- `array1.swap(array2)` 交换 array1 和 array2 容器中的所有元素，但前提是它们具有相同的长度和类型。
+通过对象名字访问成员使用点号`.`，通过对象指针访问成员使用箭头`->`，这和结构体非常类似。
 
 ```cpp
-std::array<double, 10> values;      // 未初始化
-std::array<double, 10> values {};   // 初始化为 0.0
-std::array<double, 10> values {0.5,1.0,1.5,,2.0}; // 部分初始化 (其他为 0.0)
+// 上面代码中创建的对象 stu 在栈上分配内存，需要使用`&`获取它的地址
+Student stu;
+Student *pStu = &stu;
+// 在堆上创建对象: new, delete
+Student *pStu = new Student;
+delete pStu;        //删除对象
 
-// 方法
-    std::array<int, 4> values{};
-    //初始化 values 容器为 {0,1,2,3}
-    for (int i = 0; i < values.size(); i++) {
-        values.at(i) = i;
+// 有了对象指针后，可以通过箭头`->`来访问对象的成员变量和成员函数
+pStu -> score = 92.5f;
+pStu -> say();
+```
+
+
+在栈上创建出来的对象都有一个名字，比如 stu，使用指针指向它不是必须的。但是通过 `new` 创建出来的对象就不一样了，它在堆上分配内存，没有名字，只能得到一个指向它的指针，所以必须使用一个指针变量来接收这个指针，否则以后再也无法找到这个对象了，更没有办法使用它。也就是说，**使用 `new` 在堆上创建出来的对象是匿名的，没法直接使用，必须要用一个指针指向它，再借助指针来访问它的成员变量或成员函数**。
+
+栈内存是程序自动管理的，不能使用 delete 删除在栈上创建的对象；堆内存由程序员管理，对象使用完毕后可以通过 delete 删除。在实际开发中，new 和 delete 往往成对出现，以保证及时删除不再使用的对象，防止无用内存堆积。
+
+### 成员函数 (inline)
+
+```cpp
+class Student{
+public:
+    char *name;
+    int age;
+    float score;
+    // 函数声明
+    void say();  //内联函数声明，可以增加 inline 关键字，但编译器会忽略
+};
+//函数定义
+inline void Student::say(){
+    cout<<name<<"的年龄是"<<age<<"，成绩是"<<score<<endl;
+}
+```
+
+当成员函数定义在类外时，就必须在函数名前面加上类名予以限定。`::` 被称为 **域解析符**（也称作用域运算符或作用域限定符），用来连接类名和函数名，指明当前函数属于哪个类。
+
+成员函数必须先在类体中作原型声明，然后在类外定义，也就是说类体的位置应在函数定义之前。
+
+
+### 类成员的访问权限
+
+C++通过 `public、protected、private` 三个关键字来控制成员变量和成员函数的访问权限，它们分别表示公有的、受保护的、私有的，被称为成员访问限定符。所谓访问权限，就是你能不能使用该类中的成员。
+
+
+### 构造函数
+
+- 在栈上创建对象时，实参位于对象名后面，例如`Student stu("小明", 15, 92.5f)`；在堆上创建对象时，实参位于类名后面，例如`new Student("李华", 16, 96)`。
+- 构造函数的调用是强制性的，**一旦在类中定义了构造函数，那么创建对象时就一定要调用，不调用是错误的**。如果有多个重载的构造函数，那么创建对象时提供的实参必须和其中的一个构造函数匹配；反过来说，创建对象时只有一个构造函数会被调用。
+- 一个类必须有构造函数，要么用户自己定义，要么编译器自动生成。一旦用户自己定义了构造函数，不管有几个，也不管形参如何，编译器都不再自动生成。
+- **调用没有参数的构造函数也可以省略括号**。对于示例的代码，在栈上创建对象可以写作`Student stu()`或`Student stu`，在堆上创建对象可以写作`Student *pstu = new Student()`或`Student *pstu = new Student`，它们都会调用构造函数 Student()。
+
+```cpp
+class Student{
+private:
+    char *m_name;
+    int m_age;
+    float m_score;
+public:
+    // 构造函数的重载
+    Student();
+    Student(char *name, int age, float score);
+    void setname(char *name);
+    void setage(int age);
+    void setscore(float score);
+    void show();
+};
+Student::Student(){
+    m_name = NULL;
+    m_age = 0;
+    m_score = 0.0;
+}
+Student::Student(char *name, int age, float score){
+    m_name = name;
+    m_age = age;
+    m_score = score;
+}
+void Student::setname(char *name){
+    m_name = name;
+}
+void Student::setage(int age){
+    m_age = age;
+}
+void Student::setscore(float score){
+    m_score = score;
+}
+void Student::show(){
+    if(m_name == NULL || m_age <= 0){
+        cout<<"成员变量还未初始化"<<endl;
+    }else{
+        cout<<m_name<<"的年龄是"<<m_age<<"，成绩是"<<m_score<<endl;
     }
-    //使用 get() 重载函数输出指定位置元素
-    cout << get<3>(values) << endl;
-    //如果容器不为空，则输出容器中所有的元素
-    if (!values.empty()) {
-        for (auto val = values.begin(); val < values.end(); val++) {
-            cout << *val << " ";
-        }
+}
+
+    //调用构造函数 Student(char *, int, float)
+    Student stu("小明", 15, 92.5f);
+    stu.show();
+    //调用构造函数 Student()
+    Student *pstu = new Student();
+    pstu -> show();
+    pstu -> setname("李华");
+    pstu -> setage(16);
+    pstu -> setscore(96);
+    pstu -> show();
+```
+
+#### 构造函数初始化列表
+
+构造函数的一项重要功能是对成员变量进行初始化，为了达到这个目的，可以在构造函数的函数体中对成员变量一一赋值，还可以采用初始化列表。
+
+```cpp
+// m_name(name) 采用初始化列表的形式进行初始化
+Student::Student(char *name, int age, float score): m_name(name), m_age(age) {
+    m_score = score;
+}
+```
+
+- 构造函数初始化列表还有一个很重要的作用，那就是 **初始化 const 成员变量**。初始化 const 成员变量的唯一方法就是使用初始化列表。
+
+
+```cpp
+// VLA 类，用于模拟变长数组
+class VLA{
+private:
+    const int m_len;
+    int *m_arr;
+public:
+    VLA(int len);
+};
+//必须使用初始化列表来初始化 m_len
+VLA::VLA(int len): m_len(len){
+    // m_len = len; // ERROR
+    m_arr = new int[len];
+}
+```
+
+#### (构造) 函数默认值
+
+- 注意加了默认值之后, 多个构造函数 (重构) 可能发生冲突!
+
+```cpp
+class complex
+{
+public:
+
+    // 构造函数, 给定了默认值的情况下, 支持不同的参数传递方式
+    complex(double r = 0, double i = 0) : re(r), im(i){};
+    // 再写下面的构造函数和默认值形式的冲突了!
+    // complex(): re(5), im(5){};
+
+    void show()
+    {
+        cout << re << " + " << im << "i" << endl;
     }
+
+    // const member function 常数成员函数
+    // 在函数 () 后面加 const, 说明不会概念成员变量
+    // 作用: `const complex c(2,1)` 来创建一个常量复数, 再调用 `c.real()` 会报错 reference to overloaded function could not be resolved;!!
+    double real () const { return re; }
+    double imag () const { return im; }
+    // 函数重载: 设置值
+    void real (double r) { re = r; }
+
+private:
+    double re, im;
+};
+
+int main(int argc, char const *argv[])
+{
+    complex c1(1, 2), c2(2), c3;
+    c1.show();
+    c2.show();
+    c3.show();
+}
 ```
 
+### 析构函数 Destructor
+
+析构函数（Destructor）也是一种特殊的成员函数，没有返回值，不需要程序员显式调用（程序员也没法显式调用），而是在销毁对象时自动执行。构造函数的名字和类名相同，而析构函数的名字是在类名前面加一个`~`符号。
 
 
-#### vector
+#### 析构函数的执行时机
 
-```cpp
-std::vector<double> values;     // 空
-values.reserve(20);             // 分配 capacity
-std::vector<int> primes {2, 3, 5, 7, 11, 13, 17, 19};
-std::vector<double> values(20);         // 指定开始时元素数量, 都是默认值 0.0
-std::vector<double> values(20, 1.0);    // 指定初始值为 1.0
-// 区别于 array, 可以采用变量进行初始化
-int num=20;
-double value =1.0;
-std::vector<double> values(num, value);
-```
+析构函数在对象被销毁时调用，而对象的销毁时机与它所在的内存区域有关。
 
-除了array中的 `begin, end` 等, 方法包括
+- 在所有函数之外创建的对象是全局对象，它和全局变量类似，位于内存分区中的全局数据区，程序在结束执行时会调用这些对象的析构函数。
+- 在函数内部创建的对象是局部对象，它和局部变量类似，位于栈区，函数执行结束时会调用这些对象的析构函数。
+- new 创建的对象位于堆区，通过 delete 删除时才会调用析构函数；如果没有 delete，析构函数就不会被执行。
 
-- size() 返回实际元素个数。
-- max_size() 返回元素个数的最大值。这通常是一个很大的值，一般是 232-1，所以我们很少会用到这个函数。
-- resize() 改变实际元素的个数。
-- capacity() 返回当前容量。
-- empty() 判断容器中是否有元素，若无元素，则返回 true；反之，返回 false。
-- reserve() 增加容器的容量。
-- shrink _to_fit() 将内存减少到等于当前元素实际所使用的大小。
-- operator[ ] 重载了 [ ] 运算符，可以向访问数组中元素那样，通过下标即可访问甚至修改 vector 容器中的元素。
-- at() 使用经过边界检查的索引访问元素。
-- front() 返回第一个元素的引用。
-- back() 返回最后一个元素的引用。
-- data() 返回指向容器中第一个元素的指针。
-- assign() 用新元素替换原有内容。
-- `push_back()` 在序列的尾部添加一个元素。
-- `pop_back()` 移出序列尾部的元素。
-- `insert()` 在指定的位置插入一个或多个元素。
-- erase() 移出一个元素或一段元素。
-- clear() 移出所有的元素，容器大小变为 0。
-- `swap()` 交换两个容器的所有元素。
-- emplace() 在指定的位置直接生成一个元素。
-- `emplace_back()` 在序列尾部生成一个元素。
+
+#### e.g. VLA 类来模拟变长数组
+
+定义了一个 VLA 类来模拟变长数组，它使用一个构造函数为数组分配内存，这些内存在数组被销毁后不会自动释放，所以非常有必要再添加一个析构函数，专门用来释放已经分配的内存
 
 ```cpp
-    //初始化一个空vector容量
-    vector<char>value;
-    //向value容器中的尾部依次添加 S、T、L 字符
-    value.push_back('S');
-    value.push_back('T');
-    value.push_back('L');
-    //调用 size() 成员函数容器中的元素个数
-    printf("元素个数为：%d\n", value.size());
-    //使用迭代器遍历容器
-    for (auto i = value.begin(); i < value.end(); i++) {
-        cout << *i << " ";
+class VLA{
+public:
+    // C++ 中的 new 和 delete 分别用来分配和释放内存，它们与C语言中 malloc()、free() 最大的一个不同之处在于：
+    // 用 new 分配内存时会调用构造函数，用 delete 释放内存时会调用析构函数。
+    VLA(int len);   //构造函数
+    ~VLA();         //析构函数
+public:
+    void input();   //从控制台输入数组元素
+    void show();    //显示数组元素
+
+private:
+    // at() 函数只在类的内部使用，所以将它声明为 private 属性
+    int *at(int i);  //获取第i个元素的指针
+private:
+    // m_len 变量不允许修改，所以用 const 进行了限制，这样就只能使用初始化列表来进行赋值
+    const int m_len;  //数组长度
+    int *m_arr;     //数组指针
+    int *m_p;       //指向数组第i个元素的指针
+};
+VLA::VLA(int len): m_len(len){  //使用初始化列表来给 m_len 赋值
+    if(len > 0){ m_arr = new int[len];  /*分配内存*/ }
+    else{ m_arr = NULL; }
+}
+VLA::~VLA(){
+    delete[] m_arr;  //释放内存
+}
+void VLA::input(){
+    for(int i=0; m_p=at(i); i++){ cin>>*at(i); }
+}
+void VLA::show(){
+    for(int i=0; m_p=at(i); i++){
+        if(i == m_len - 1){ cout<<*at(i)<<endl; }
+        else{ cout<<*at(i)<<", "; }
     }
-    cout << endl;
-    //向容器开头插入字符
-    value.insert(value.begin(), 'C');
-    cout << "首个元素为：" << value.at(0) << endl;
+}
+int * VLA::at(int i){
+    if(!m_arr || i<0 || i>=m_len){ return NULL; }
+    else{ return m_arr + i; }
+}
+
+int main(){
+    //创建一个有n个元素的数组（对象）
+    int n;
+    cout<<"Input array length: ";
+    cin>>n;
+    VLA *parr = new VLA(n);
+    //输入数组元素
+    cout<<"Input "<<n<<" numbers: ";
+    parr -> input();
+    //输出数组元素
+    cout<<"Elements: ";
+    parr -> show();
+    //删除数组（对象）
+    delete parr;
+    return 0;
+}
 ```
 
-##### vector添加元素（push_back()和emplace_back()）
-
-`emplace_back()` 和 `push_back()` 的区别，就在于底层实现的机制不同。push_back() 向容器尾部添加元素时，首先会创建这个元素，然后再将这个元素拷贝或者移动到容器中（如果是拷贝的话，事后会自行销毁先前创建的这个元素）；而 emplace_back() 在实现时，则是直接在容器尾部创建这个元素，省去了拷贝或移动元素的过程。
-
-参见 [here](http://c.biancheng.net/view/6826.html) 例子
-
-
-### STL关联式容器
-
-也就是说，使用关联式容器存储的元素，都是一个一个的“键值对”（ `<key,value>` ），这是和序列式容器最大的不同。除此之外，序列式容器中存储的元素默认都是未经过排序的，而使用关联式容器存储的元素，默认会根据各元素的键值的大小做升序排序。
-
-底层是 **红黑树**. (C++ 11 还新增了 4 种哈希容器，即 unordered_map、unordered_multimap 以及 unordered_set、unordered_multiset。严格来说，它们也属于关联式容器，但由于哈希容器底层采用的是哈希表，而不是红黑树)
-
-- `map` 定义在 <map> 头文件中，使用该容器存储的数据，其各个元素的键必须是唯一的（即不能重复），该容器会根据各元素键的大小，默认进行升序排序（调用 std::less<T>）。
-- `set` 定义在 <set> 头文件中，使用该容器存储的数据，各个元素键和值完全相同，且各个元素的值不能重复（保证了各元素键的唯一性）。该容器会自动根据各个元素的键（其实也就是元素值）的大小进行升序排序（调用 std::less<T>）。
-- `multimap` 定义在 <map> 头文件中，和 map 容器唯一的不同在于，multimap 容器中存储元素的键可以重复。
-- `multiset` 定义在 <set> 头文件中，和 set 容器唯一的不同在于，multiset 容器中存储元素的值可以重复（一旦值重复，则意味着键也是重复的）。
-
-#### pair 类模板
-
-考虑到“键值对”并不是普通类型数据，C++ STL 标准库提供了 pair 类模板，其专门用来将 2 个普通元素 first 和 second（可以是 C++ 基本数据类型、结构体、类自定的类型）创建成一个新元素 `<first, second>`。
-
-- 注意，pair 类模板定义在`<utility>`头文件中
-
-```cpp
-// 1) 默认构造函数，即创建空的 pair 对象
-pair();
-// 2) 直接使用 2 个元素初始化成 pair 对象
-pair (const first_type& a, const second_type& b);
-// 3) 拷贝（复制）构造函数，即借助另一个 pair 对象，创建新的 pair 对象
-template<class U, class V> pair (const pair<U,V>& pr);
-
-// 在 C++ 11 标准中，在引入右值引用的基础上，pair 类模板中又增添了如下 2 个构造函数
-// 4) 移动构造函数
-template<class U, class V> pair (pair<U,V>&& pr);
-// 5) 使用右值引用参数，创建 pair 对象
-template<class U, class V> pair (U&& a, V&& b);
-```
-
-e.g. 几种创建 pair 对象的方法
-
-```cpp
-    // 调用构造函数 1，也就是默认构造函数
-    pair <string, double> pair1;
-    // 调用第 2 种构造函数
-    pair <string, string> pair2("STL教程","http://c.biancheng.net/stl/");  
-    // 调用拷贝构造函数
-    pair <string, string> pair3(pair2);
-    //调用移动构造函数
-    pair <string, string> pair4(make_pair("C++教程", "http://c.biancheng.net/cplus/"));
-    // 调用第 5 种构造函数
-    pair <string, string> pair5(string("Python教程"), string("http://c.biancheng.net/python/"));  
-   
-    cout << "pair1: " << pair1.first << " " << pair1.second << endl;
-    // ...
-```
-
-- `<utility>`头文件中除了提供创建 pair 对象的方法之外，还为 pair 对象重载了 `<、<=、>、>=、==、!=` 这 6 的运算符，其运算规则是：对于进行比较的 2 个 pair 对象，先比较 pair.first 元素的大小，如果相等则继续比较 pair.second 元素的大小。
 
 
 
@@ -251,7 +368,10 @@ e.g. 几种创建 pair 对象的方法
 
 
 
-### STL无序关联式容器
+
+
+
+
 
 
 
