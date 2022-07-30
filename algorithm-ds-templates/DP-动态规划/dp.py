@@ -88,6 +88,12 @@ from decimal import Decimal
     给定一组数组, 要求分成k组, 使得组内的数字之和的最大值最小化.
     限制: k, 数组长度 <=12
     优化: 1) 首先, 相较于 `sub = (sub-1)&mask` 的子集遍历方式, 在全局预计算好每一个mask的所有子集形式; 2) 把 `min` 和 `max` 拆开，改为手写，避免额外的函数调用开销
+=== 等大小的分组
+1681. 最小不兼容性 #hard
+    将数组nums分成 **大小相等的** k组, 要求每组的数字都不相同. score定义为所有组最大最小差值的和, 要求score最小.
+    限制: 数组长度 n 16
+    递推公式 `f[mask] = min{ f[mask\sub] + s(sub) }` 其中mask的大小为size整数倍, sub为所有大小为k的mask的子集.
+
 """
 class Solution:
     """ 0300. 最长递增子序列 #medium #题型

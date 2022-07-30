@@ -1,5 +1,8 @@
 
+CPP 基础 见 [[cpp-note.md]]
 Make 参见 [[cpp-make.md]]
+
+ref: <http://c.biancheng.net/stl/>
 
 ## C++ STL
 

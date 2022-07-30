@@ -16,7 +16,8 @@
         "*.jsonl": "jsonc",
         "iosfwd": "cpp",
         "vector": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "unordered_map": "cpp"
     }
     //   "pasteImage.defaultName": "Y-MM-DD-HH-mm-ss",
     //   "pasteImage.path": "${currentFileNameWithoutExt}",

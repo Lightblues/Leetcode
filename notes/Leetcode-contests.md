@@ -2,6 +2,42 @@
 
 ## 周赛 200-249
 
+### 218
+
+- 1680. 连接连续二进制数字 #medium
+    - 技巧: 如何判断是2的整数次幂?
+        - 一种方式是计算 `i & (i-1) == 0`, 参见 [zero](https://leetcode.cn/problems/concatenation-of-consecutive-binary-numbers/solution/lian-jie-lian-xu-er-jin-zhi-shu-zi-by-ze-t40j/)
+- 1681. 最小不兼容性 #hard
+    - 将数组nums分成 **大小相等的** k组, 要求每组的数字都不相同. score定义为所有组最大最小差值的和, 要求score最小.
+    - 限制: 数组长度 n 16
+    - 思路0: 没有看到分组大小相同的限制, #error 记录
+        - 记 `f(i,mask)` 表示将mask分成前i个组, 当前score最小值. 则有递归 `f(i,mask) = min{ f(i-1,sub) + s(mask\sub) }` 其中sub为所有符合条件的子集.
+        - 子集遍历: `sub = {mask & (sub-1)}`
+        - 复杂度: O(k 3^n) 这样显然会超时
+    - 思路1: #状压 #子集遍历
+        - 事实上, 于之前遍历子数组不同的是, 这里限制了分组大小相同, 因此仅需要遍历所有符合条件的分组即可.
+        - 如何做? 每组大小为size, 则我们可以遍历所有大小为size的整数倍的组. 则递推公式 `f[mask] = min{ f[mask\sub] + s(sub) }` 其中mask的大小为size整数倍, sub为所有大小为k的mask的子集.
+        - see [zero](https://leetcode.cn/problems/minimum-incompatibility/solution/zui-xiao-bu-jian-rong-xing-by-zerotrac2-rwje/)
+        - 在具体的实现上, 还可以直接通过 #DFS 来解决, see [here](https://leetcode.cn/problems/minimum-incompatibility/solution/python-zhuang-ya-dfs-by-qin-qi-shu-hua-2-lwff/)
+
+### 219
+
+- 1690. 石子游戏 VII #medium
+    - 有一排石子表示不同的分数, AB轮流选择从左右两侧取石子, 得到的分数为剩余石子的分数之和. 可知A总会获胜. 会两者都在最优决策下分数差值.
+    - 提示: AB两人是「对称」的, 因此对于 stones[i...j], 我们可以用 f[i,j] 表示最优分数即可
+    - 思路1: 推导分数递归关系, 采用 #DP
+        - 根据上述f的定义, 考虑递推式: `f[i,j] = max{ s[i,j-1] - f[i,j-1], s[i+1,j] - f[i+1,j] }` 分表表示取左右石子的情况. 边界: i==j 时分数为0.
+        - 复杂度: O(n^2)
+- 1691. 堆叠长方体的最大高度 #hard
+    - 有一组长方体 `(w,l,h)` 要进行堆叠. 当i的三个长度都小于j时, 可以将其叠在上面. 问最大堆叠高度. 长方体可以旋转.
+    - 限制: 数量 100.
+    - 提示: 根据提示可以推测, 最优的方案时把高度为度用最长的一组. 证明: 假设有一种最优排列每个块表示为 `(wi,li,hi)`, 我们对于这些纬度按照从小到大顺序重排列得到 `(wi',lj',hi')`, 可以证明对于任意的 i,j, 重排列后的三元组仍然符合要求. 而重排列之后的高度显然不会减少.
+        - 核心证明: 对于任意一组 `(wi,li,hi)<(wj,lj,hj)` 都可以证明重排列之后也是成立的. 任取一种情况, 不妨假设i的内部顺序为 `hi<wi<li`, j的顺序为 `lj<hj<wj`. 则重排列之后, `hi<li<lj, wi<li <lj<hj, li<lj<wj`. 因此调换之后的三元组也成立
+    - 思路1: 根据上述提示, 可以确定长方体的方向. 然后 #DP 来求 f[i] 表示第i个长方体作为底的最大高度
+        - 则有递推关系 `f[i] = max{ f[j] } + hi` 其中j是所有满足可堆叠条件 `(wi,li,hi)>(wj,lj,hj)` 的长方体.
+        - 如何保证顺序? 可以对于 (w,l,h) 进行排序. 也可以 (w+l,h) 等. 只需要「保证枚举关系的拓扑性即可」.
+        - 见 [zero](https://leetcode.cn/problems/maximum-height-by-stacking-cuboids/solution/dui-die-chang-fang-ti-de-zui-da-gao-du-b-qzgy/)
+
 ### 220
 
 中规中矩, 难度不大.
