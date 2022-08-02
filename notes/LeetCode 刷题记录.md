@@ -2534,11 +2534,9 @@ s 和 t 由英文字母组成
 2. 然后移动 left 指针，直到 left 指向最后一个可满足的地方，则此时 [left, right] 之间是一个可能的最小子串；
     * 在右移 left，此时不满足左右指针之间的子串可覆盖 t，回到步骤（1）中搜索 right；
 
-实现如下，有点冗杂，有机会再优化。
 
 ```python
-def minWindow2(self, s: str, t: str) -> str:
-
+    def minWindow2(self, s: str, t: str) -> str:
         from collections import Counter
         target = Counter(t)
         keys = target.keys()

@@ -14,67 +14,6 @@ s 和 t 由英文字母组成
 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 """
 class Solution:
-    """
-    理解错题意了
-    下面的解法中，我还以为只要求 t 中重复字符出现一次即可
-    """
-    def minWindow_try(self, s: str, t: str) -> str:
-        c2bin = lambda c: ord(c) - ord('A')
-        from collections import defaultdict
-        # def s2bin(string):
-        #     binmask = 0
-        #     for c in string:
-        #         binmask |= 1<<c2bin(c)
-        #     return binmask
-        # tbin = s2bin(t)
-        # left = len(set(t))
-        # right = len(s)
-
-        s_bins = [c2bin(c) for c in s]
-        t_bins = [c2bin(c) for c in t]
-        n = len(s)
-        target = set(t_bins)
-
-        def search(k):
-            # 判断字符串 s 中是否有满足条件的 k 长子串
-            now = defaultdict(int)
-            for b in s_bins[:k]:
-                now[b] += 1
-            diff = target - set(now.keys()) # 不满足的元素
-            if len(diff)==0:
-                return 0
-            for i in range(k, n):
-                now[s_bins[i-k]] -= 1
-                if s_bins[i-k] in target and now[s_bins[i-k]] == 0:
-                    diff.add(s_bins[i-k])
-                now[s_bins[i]] += 1
-                if s_bins[i] in target and now[s_bins[i]] == 1:
-                    diff.remove(s_bins[i])
-                if len(diff) == 0:
-                    return i-k+1
-            return -1
-
-        left = len(target)-1
-        right = n
-        # 保持 right 为搜索成功的 k 再加一
-        # 保持 left 为搜索失败的k
-        # 但这时要注意，计算的 mid 应该是 left right 中靠右的
-        while left != right:
-            mid = left + (right-left)//2
-            if (right-left) % 2:
-                mid += 1
-            res = search(mid)
-            if res == -1: # 搜索失败
-                left = mid
-            else:
-                right = mid - 1
-
-        if right == n:
-            return ''
-        k = right + 1
-        res = search(k)
-        return s[res: res+k]
-
 
     """
     自己写的，基于二分查找的思路
