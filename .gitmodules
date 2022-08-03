@@ -13,3 +13,6 @@
 [submodule "learn-go/z-gopl"]
 	path = learn-go/z-gopl
 	url = https://github.com/adonovan/gopl.io.git
+[submodule "z-MassDataProcessing"]
+	path = z-MassDataProcessing
+	url = https://github.com/ncghost1/MassDataProcessingLab.git
