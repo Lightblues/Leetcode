@@ -37,10 +37,13 @@ from decimal import Decimal
 
 """ [单点更新, 区间查询, 就可以考虑线段树]
 https://oi-wiki.org/ds/seg/
+[wiki](https://zh.wikipedia.org/wiki/%E7%B7%9A%E6%AE%B5%E6%A8%B9)
+[zero 如何学习可以解决本题的算法与数据结构](https://leetcode.cn/problems/count-of-range-sum/solution/xian-ren-zhi-lu-ru-he-xue-xi-ke-yi-jie-jue-ben-ti-/)
+
 
 TODO: https://leetcode.cn/problems/count-of-range-sum/solution/by-ac_oier-b36o/
 
-0327. 区间和的个数 #hard
+0327. 区间和的个数 #hard #题型 #线段树
     给定一个数组, 要求其所有的子区间中, 区间和在 [lower, upper] 范围内的数量
 
 0729. 我的日程安排表 I #medium
@@ -67,28 +70,19 @@ class Solution:
 给定一个数组, 要求其所有的子区间中, 区间和在 [lower, upper] 范围内的数量
 限制: 数组长度 1e5, 元素大小 32bit
 see [官答](https://leetcode.cn/problems/count-of-range-sum/solution/qu-jian-he-de-ge-shu-by-leetcode-solution/)
+提示: 我们从小到大遍历j, 要使得 `sum[i...j] = acc[j]-acc[i-1]` 在 [lower, upper] 范围内, 需要 acc[i-1] 在 `[acc[j]-upper, acc[j]-lower]` 范围内. 
+    因此需要一个DS能够插入数据, 并查询在某一范围内的元素数量. (偷懒的话可以直接调用 SortedList)
 思路0: 归并排序
 思路1: #线段树
-    区间和问题, 考虑采用前缀和, preSum. 一个 [i,j] 区间和为 `preSum[j+1]-preSum[i]`
-    我们需要遍历所有的区间. 为此, 每次仅考虑位置为j结尾的区间可以构成多少个符合条件的?
-    因为区间和需要在 `[lower, upper]`, 则该对于j位置, 假设 `preSum[j+1]=a`, 则位置i的 **前缀和 preSum[i] 需要在 [a-upper, a-lower] 范围内**.
     求在一个范围内的数字有多少, 显然可以用 #线段树 来做.
-    具体而言, 对于每一个位置的元素, 先按照上式统计满足条件的以j结尾的区间数量, 然后将 preSum[j+1] 加入线段树.
     另外, 本题的数字上限很大, 需要将其转为连续整数 (#离散化), 也即, 将线段树中所有出现过的数字 (包括需要查询的 left, right) 变为 0~n-1 的连续整数.
 思路2: 动态增加节点的线段树
 思路3: 树状数组
 思路4: 平衡二叉搜索树
 
-输入：nums = [-2,5,-1], lower = -2, upper = 2
-输出：3
-解释：存在三个区间：[0,0]、[2,2] 和 [0,2] ，对应的区间和分别是：-2 、-1 、2 。
-
-来源：力扣（LeetCode）
-链接：https://leetcode.cn/problems/count-of-range-sum
-著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 """
     def countRangeSum(self, nums: List[int], lower: int, upper: int) -> int:
-        """ [官答](https://leetcode.cn/problems/count-of-range-sum/solution/qu-jian-he-de-ge-shu-by-leetcode-solution/) 
+        """ 思路1 线段树
         改成了 Python版本, 下面的 SegTree_0 居然超时了, 重新实现了 SegTree 过"""
         # 利用哈希表将所有可能出现的整数，映射到连续的整数区间内
         preSum = list(accumulate(nums, initial=0)) 

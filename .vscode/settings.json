@@ -17,7 +17,9 @@
         "iosfwd": "cpp",
         "vector": "cpp",
         "algorithm": "cpp",
-        "unordered_map": "cpp"
+        "unordered_map": "cpp",
+        "chrono": "cpp",
+        "limits": "cpp"
     }
     //   "pasteImage.defaultName": "Y-MM-DD-HH-mm-ss",
     //   "pasteImage.path": "${currentFileNameWithoutExt}",

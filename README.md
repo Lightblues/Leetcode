@@ -17,6 +17,10 @@
 - DP
     - [DP问题分类汇总](https://chengzhaoxi.xyz/42296.html)
 
+实际考虑/项目
+
+- [Mass Data Processing Lab](https://github.com/ncghost1/MassDataProcessingLab) 海量数据处理经典面试题的 Go 语言实现，此外还提供 lab 来亲身实践
+
 编程语言
 
 - JAVA 廖雪峰课程 <https://www.liaoxuefeng.com/wiki/1252599548343744>

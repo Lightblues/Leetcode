@@ -131,3 +131,4 @@ class RangeModule(object):
             if right < self.ranges[k][1]:
                 merge.append((right, self.ranges[k][1]))
         self.ranges[i:j+1] = merge
+

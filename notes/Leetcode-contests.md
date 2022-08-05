@@ -2,6 +2,27 @@
 
 ## 周赛 200-249
 
+### 215
+
+T3有意思; T4对于一个很常见的问题建模, 但实际上却是复杂度爆炸. 抄了一个很复杂的DP, 算是学习学习思路吧.
+
+- 1658. 将 x 减到 0 的最小操作数 #medium #题型
+    - 给定一个整数x, 可以从数组两端选择数组, 求两端之和为x的最小数字数量.
+    - 提示: 可以等价转换为, 求和为 `sum-x` 的子数组
+    - 思路1: 简单起见, 计算acc之后每次 #二分 搜索对应的差值. 复杂度 O(n logn)
+    - 思路2: 可以 #双指针 从两侧计算, 也可以利用提示 #滑动窗口. 复杂度 O(n)
+- 1659. 最大化网格幸福感 #hard 非常复杂的DP, 不必掌握
+    - 给一个 (m,n) 网格, 有 in,ex 个内向/外向的人可选择. score定义为: 内向的人初始120, 每一个邻居-30; 外向的人初始40, 每一个邻居+20. 不必填入所有人, 要求 score最大.
+    - 限制: m,n [1,5]; in,ex [0,6]
+    - 思路1: 暴力按行 #DP, 用 #预处理 进行加速. DP转移需要用 #记忆化 搜索求解.
+        - 数量级较小, 考虑采用 #状压 进行记录. 0/1/2 分别记录三种情况.
+        - 记 `f(maskB,row, inL,exL)` 表示当前row行, 上一行为maskB, 内外向剩余人数分别为 inL,exL 时的最大score. 则有转移 `f(maskB,row, inL,exL) = max_mask{ f(mask,row+1, inL-cntIn,exL-cntIn) + score_inner(mask) + score_outer(mask, maskB) }`
+            - 其中 cntIn, cntIn 为当前mask中内外向人的数量; `score_inner, score_outer` 分别计算当前行的分数, 以及相邻行的分数.
+        - 复杂度: 状态数 `3^n*n*6*6`, 每次转移 `3^n`, 因此总时间复杂度 `O(3^2n *n *6*6)`
+        - see [zero](https://leetcode.cn/problems/maximize-grid-happiness/solution/zui-da-hua-wang-ge-xing-fu-gan-by-zerotrac2/)
+    - 思路2: 拓展解法, 叫做 #轮廓线动态规划 见zero
+
+
 ### 216
 
 题型都比较新颖. 难度都不大, 但T3写的很脏, T4的理论证明比较难.

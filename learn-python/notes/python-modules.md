@@ -1,4 +1,6 @@
 
+see [[Python-advanced.md]]
+
 ## functools
 
 - `lru_cache`
