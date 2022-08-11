@@ -48,11 +48,15 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-261
-https://leetcode-cn.com/contest/biweekly-contest-71
+
+== 变体
+1585. 检查字符串是否可以通过排序子字符串得到另一个字符串 #hard #题型 #冒泡排序
+    对于一个字符串, 每次可以对于某一子字符串进行排序操作. 问能否经过若干操作变为目标字符串.
+    考虑逆向从t到s的变换: 对于当前考察的t的第一个字符x, 假设其在s中的位置为idx, 则要求s中剩余的比x小的字符的首位位置都应该比idx大, 这样才能顺利将s[idx]调换到首位.
 @2022 """
 class Solution:
-    pass
+    """  """
+    
     
     
     
@@ -62,7 +66,7 @@ class Solution:
     
 sol = Solution()
 result = [
-
+    
 ]
 for r in result:
     print(r)

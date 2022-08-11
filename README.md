@@ -9,6 +9,8 @@
 - [宫水三叶](https://github.com/SharingSource/LogicStack-LeetCode); Index/wiki 中对于题型进行了总结
 - 其他
     - [bigsai](https://github.com/javasmall/bigsai-algorithm): bigsai的数据结构与算法、LeetCode图解、剑指offer图解文章专栏
+- lucifer1004 [CP-Wiki](https://cp-wiki.vercel.app/) 又一份挺全的题解
+
 
 技巧
 
