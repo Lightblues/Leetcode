@@ -47,28 +47,33 @@ tarjan算法找桥 (连通分量之间的连接边 / 桥)
         tarjan(0, -1)
         return res
 
-    """ 1568. 使陆地分离的最少天数 `hard`
-给定一个 grid, 1表示陆地, 0表示水域, 只有一个岛屿则认为是连在一起的陆地, 否则就是分离的多个岛屿.
-现在要求你将陆地分离, 将陆地分离成两个不相交的区域, 返回分离后的最小天数.
-
-输入：grid = [[0,1,1,0],[0,1,1,0],[0,0,0,0]]
-输出：2
-解释：至少需要 2 天才能得到分离的陆地。
-将陆地 grid[1][1] 和 grid[0][2] 更改为水，得到两个分离的岛屿。
- """
-
-    """ from https://leetcode-cn.com/problems/minimum-number-of-days-to-disconnect-island/solution/shi-lu-di-fen-chi-de-zui-shao-tian-shu-by-leetcode/
-观察可知, 结果只能是 0,1,2: 因为对于一块陆地, 必然可以通过分割其角落的两个点分离角落的陆地.
-那么我们只要依次检查 00 或 11 的答案是否存在即可。00 的情况对应于一开始的二维网格已经是陆地分离的状态，而对于11 的情况，我们只要枚举每一个存在的陆地单元，将其修改为水单元，再去看是否为陆地分离的状态即可。如果都不能变为陆地分离的状态，那么答案即为 22。
+    """ 1568. 使陆地分离的最少天数 #hard #题型
+给定一个 grid, 1表示陆地, 0表示水域, 只有一个岛屿则认为是连在一起的陆地, 否则就是分离的多个岛屿. 现在要求你将陆地分离, 将陆地分离成至少两个不相交的区域, 返回最少操作数.
+限制: grid 长宽 30
+提示: 观察可知, 结果只能是 0,1,2.  因为对于一块陆地, 必然可以通过分割其角落的两个点分离角落的陆地.
+思路1: #分类 讨论. 用DFS来计算 #连通分量
+    根据提示, 只需要判断 0/1 的情况即可, 否则为2.
+    为此, 实现一个 `count` 函数记录当前状态下的联通分量数量. 一开始就超过一个分量则返回0; 否则尝试将每一块陆地变为海洋, 重新count, 若某一块可以将陆地分割, 则返回1; 否则返回2.
+    复杂度: O(m^2 n^2) 每次计算联通分量 mn; 陆地数量 mn.
+    from [official](https://leetcode-cn.com/problems/minimum-number-of-days-to-disconnect-island/solution/shi-lu-di-fen-chi-de-zui-shao-tian-shu-by-leetcode/)
+思路2: #Tarjan 算法找割点
+    如果我们将每一块陆地看成无向图中的一个节点，每一组相邻的陆地之间连接一条无向边，那么得到的图 G：
+    - 如果图 G 中没有节点，那么答案为 0；
+    - 如果连通分量个数大于 1，那么说明陆地已经分离，答案为 0；
+    - 如果连通分量个数为 1：
+        - 如果图 G 中仅有一个节点，那么答案为 1；
+        - 如果图 G 中存在割点，那么将割点对应的陆地变成水，就可以使得陆地分离，答案为 1；
+        - 如果图 G 中不存在割点，那么答案为 2。
  """
     def minDays(self, grid: List[List[int]]) -> int:
+        # 思路1: #分类 讨论. 用DFS来计算 #连通分量
         def dfs(x: int, y: int):
             grid[x][y] = 2
             for tx, ty in [(x, y + 1), (x + 1, y), (x, y - 1), (x - 1, y)]:
                 if 0 <= tx < n and 0 <= ty < m and grid[tx][ty] == 1:
                     dfs(tx, ty)
-        
         def count():
+            # 计算当前状态下的联通分量数量. 利用 DFS 实现, 方便起见对于搜索过的路径原地修改数值为2.
             cnt = 0
             for i in range(n):
                 for j in range(m):
@@ -99,18 +104,8 @@ tarjan算法找桥 (连通分量之间的连接边 / 桥)
         
         return 2
 
-    """ from https://leetcode-cn.com/problems/minimum-number-of-days-to-disconnect-island/solution/shi-lu-di-fen-chi-de-zui-shao-tian-shu-by-leetcode/
-Tarjan 算法找割点
-
-如果我们将每一块陆地看成无向图中的一个节点，每一组相邻的陆地之间连接一条无向边，那么得到的图 G：
-- 如果图 G 中没有节点，那么答案为 0；
-- 如果连通分量个数大于 1，那么说明陆地已经分离，答案为 0；
-- 如果连通分量个数为 1：
-    - 如果图 G 中仅有一个节点，那么答案为 1；
-    - 如果图 G 中存在割点，那么将割点对应的陆地变成水，就可以使得陆地分离，答案为 1；
-    - 如果图 G 中不存在割点，那么答案为 2。
-"""
     def minDays2(self, grid: List[List[int]]) -> int:
+        # 思路2: Tarjan 算法找割点
         def getCuttingVertex(u: int, parent: int, ans: List[int]) -> None:
             nonlocal timestamp
             low[u] = dfn[u] = timestamp

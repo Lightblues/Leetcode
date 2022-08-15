@@ -1,4 +1,17 @@
-from re import S
+
+def prefix_function(s):
+    # 前缀函数, 注意和一般教材不同, 这里下标从1开始!
+    # from https://oi-wiki.org/string/kmp/
+    n = len(s)
+    pi = [0] * n
+    for i in range(1, n):
+        j = pi[i - 1]
+        while j > 0 and s[i] != s[j]:
+            j = pi[j - 1]
+        if s[i] == s[j]:
+            j += 1
+        pi[i] = j
+    return pi
 
 
 class KMP:
@@ -28,6 +41,7 @@ class KMP:
         i, j = 0, 0
         res = []
         while i < len(self.b):
+            """ 也注意这里迭代计算下一个匹配的过程! """
             while j != -1 and self.b[i] != self.a[j + 1]:
                 j = self.nxt[j]
             if self.b[i] == self.a[j + 1]:
@@ -45,3 +59,4 @@ kmp = KMP(full_word, pattern)
 res = kmp.search()
 print(res)
 print(kmp.nxt)
+print(prefix_function(pattern))
