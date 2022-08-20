@@ -38,6 +38,11 @@ from decimal import Decimal
 # from structures import ListNode, TreeNode, linked2list, list2linked
 
 """ 
+[BDF vs DFS]
+注意: DFS 若要不重复访问节点, 就要用visited记录访问的点; 但第一次访问不一定是最短, 因此无法得到最短路径; 若要得到最短路径, 就只能记录当前路径经过的点, 会带来重复访问的问题!
+用BFS 同样可以记录路径: 只需要记录当前路径经过的点即可, 增加少量的存储开销
+
+
 1928. 规定时间内到达终点的最小花费 #hard
     给定一张地图, 要从0走到 n-1 号节点. 经过每一个节点需要交fee[i] 的费用. 每条边有距离. 需要在所有长度不超过 maxTime 的路径中, 计算最小的fee.
     思路: 根据题意, 建立针对fee的最小堆.
@@ -49,6 +54,11 @@ from decimal import Decimal
     给定一个 grid, 有一组火源和一组墙, 每过一个时刻, 火往四周蔓延一圈, 但是不能穿过墙. 人要从左上角逃到右下角, 问人能够在起点等待的最长时间.
     思路1: 可以从火源出发, 预计算每个点着火的时间. 然后 **遍历从起点BFS到终点的每一条路径**, 计算这条路径上的最大等待时间.
     思路2: 相较于「遍历每条路径」, 可以利用二分查找简化逻辑.
+
+== Dijkstra
+1514. 概率最大的路径 #medium #题型 #Dijkstra 算法
+    等价于, 经典的「单源最短路径路径」, 在带权图上求 (s,e) 之间的最短距离.
+
 
 == 最短路径数
 1976. 到达目的地的方案数 #medium #题型 #最短路径
@@ -289,17 +299,31 @@ class Solution:
             visited.add(v)
         return cnt[-1] % MOD
     
-    
-    
-    def testClass(self, inputs):
-        # 用于测试 LeetCode 的类输入
-        s_res = [None] # 第一个初始化类, 一般没有返回
-        methods, args = [eval(l) for l in inputs.split('\n')]
-        class_name = eval(methods[0])(*args[0])
-        for method_name, arg in list(zip(methods, args))[1:]:
-            r = (getattr(class_name, method_name)(*arg))
-            s_res.append(r)
-        return s_res
+
+
+    """ 1514. 概率最大的路径 #medium #题型 #Dijkstra 算法
+等价于, 经典的「单源最短路径路径」, 在带权图上求 (s,e) 之间的最短距离.
+思路1: #Dijkstra 算法
+    回顾 Dijkstra算法的核心思想: 1) 将节点分成两类: 「未确定节点」和「已确定节点」; 2) (「松弛」过程) 每次从「未确定节点」中取一个与起点距离最短的点，将它归类为「已确定节点」，并用它「更新」从起点到其他所有「未确定节点」的距离。直到所有点都被归类为「已确定节点」。
+    细节: 1) 如何找到「未确定节点」中最小距离点? 例如可以用最小堆实现. 2) 如何分离两类节点? 一种方式是用 `visited` 字典标记已确定节点; 另一种方式是, 用一个 `minDist` 记录当前的距离, 更新过程中只有当v的距离比minDist小时才更新, 入栈. 实验下来两种方式没有复杂度上的区别.
+    [官答](https://leetcode.cn/problems/path-with-maximum-probability/solution/gai-lu-zui-da-de-lu-jing-by-leetcode-solution/)
+"""
+    def maxProbability(self, n: int, edges: List[List[int]], succProb: List[float], start: int, end: int) -> float:
+        # 一种方式是用 `visited` 字典标记已确定节点
+        g = [[] for _ in range(n)]
+        for (u,v),p in zip(edges, succProb):
+            g[u].append((v,p)); g[v].append((u,p))
+        h = [(-1, start)]
+        visited = set()     # 已确定的点
+        while h:
+            prob,u = heappop(h)
+            if u==end: return -prob
+            if u in visited: continue
+            visited.add(u)  # 注意, visited 中的点的距离已确定为最小值.
+            for v,p in g[u]:
+                if v not in visited:
+                    heappush(h, (prob*p, v))
+        return 0
     
 sol = Solution()
 result = [
