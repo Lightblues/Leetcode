@@ -48,8 +48,8 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-261
-https://leetcode-cn.com/contest/biweekly-contest-71
+杭州未来科技城X 力扣编程大赛集
+see https://leetcode.cn/circle/article/LYt7tg/
 @2022 """
 class Solution:
     """ zj-future01. 信号接收 """

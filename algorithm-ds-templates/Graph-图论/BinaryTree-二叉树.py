@@ -47,6 +47,8 @@ def testClass(inputs):
         s_res.append(r)
     return s_res
 
+
+
 # 二叉树
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
@@ -133,14 +135,22 @@ class Solution:
         return None
     
     
-    
-    
-    
 
-    
+
+
+
+
+
+
+
+
 sol = Solution()
 result = [
-    
+    # sol.numSub(s = "0110111"),
+    # sol.numSub(s = "000111"),
+    sol.maxProbability(n = 3, edges = [[0,1],[1,2],[0,2]], succProb = [0.5,0.5,0.2], start = 0, end = 2),
+    sol.maxProbability(n = 3, edges = [[0,1],[1,2],[0,2]], succProb = [0.5,0.5,0.3], start = 0, end = 2),
+    # sol.getMinDistSum(positions = [[0,1],[1,0],[1,2],[2,1]]),
 ]
 for r in result:
     print(r)
