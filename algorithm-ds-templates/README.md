@@ -1,3 +1,6 @@
+根据 [OIwiki](https://oi-wiki.org/) 的结构整理
+
+---
 TODO: 数据结构整理: KMP, ...
 
 - 背包问题

@@ -48,6 +48,8 @@ def testClass(inputs):
     return s_res
 
 """ 
+这里总结如何从问题出发, 来去思考应该用什么DS.
+
 @2022 """
 class Solution:
     """ 0327. 区间和的个数 #hard #题型 #线段树

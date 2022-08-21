@@ -179,7 +179,7 @@ class Solution:
         return -1
 
     def validSubarraySize(self, nums: List[int], threshold: int) -> int:
-        # 思路2 from https://leetcode.cn/problems/subarray-with-elements-greater-than-varying-threshold/solution/by-endlesscheng-j6pp/
+        # 思路2 并查集
         n = len(nums)
         fa = list(range(n + 1))
         sz = [1] * (n + 1)  # 最后一位哨兵

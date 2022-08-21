@@ -11,6 +11,11 @@
     - [bigsai](https://github.com/javasmall/bigsai-algorithm): bigsai的数据结构与算法、LeetCode图解、剑指offer图解文章专栏
 - lucifer1004 [CP-Wiki](https://cp-wiki.vercel.app/) 又一份挺全的题解
 
+book, see [zhihu](https://www.zhihu.com/question/22299710)
+
+- 《算法竞赛进阶指南》 灵神强推
+- 《算法竞赛入门经典》 (第二版) 刘汝佳
+- 《算法》
 
 技巧
 

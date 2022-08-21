@@ -35,10 +35,16 @@ from decimal import Decimal
 # from utils_leetcode import testClass
 # from structures import ListNode, TreeNode, linked2list, list2linked
 
-""" [单点更新, 区间查询, 就可以考虑线段树]
+""" 线段树
+[单点更新, 区间查询, 就可以考虑线段树]
 https://oi-wiki.org/ds/seg/
 [wiki](https://zh.wikipedia.org/wiki/%E7%B7%9A%E6%AE%B5%E6%A8%B9)
 [zero 如何学习可以解决本题的算法与数据结构](https://leetcode.cn/problems/count-of-range-sum/solution/xian-ren-zhi-lu-ru-he-xue-xi-ke-yi-jie-jue-ben-ti-/)
+
+基本思想: 通过更多的空间来存储区间信息(区间长度以二进制增长), 从而对于一个查询, 可以快速分解为多个子查询.
+核心: 将一个区间查询切分到子区间上. 这里的切分方式是固定的, 例如当前节点o管辖 [l,r] 区间, 则o的两个子节点分别管辖 `[l,m], [m+1,r]`, 其中 `m = (l+r)//2`. 
+    对于第o个节点, 其子节点的位置是 2*o, 2*o+1; 显然这里要求o的计数从1开始. 因此, 线段树一般的查询都是 `f(1, n,1, args)` 的形式, 第1个节点管辖 [1,n] 整个区间.
+函数写法: `f(o,l,r, args)` 这里的o是当前管辖 [l,r] 的节点, 后面的 args可以是 对idx位置元素增加value, 也可以是统计 [left, right] 区间内的元素个数等.
 
 
 TODO: https://leetcode.cn/problems/count-of-range-sum/solution/by-ac_oier-b36o/
@@ -54,6 +60,11 @@ TODO: https://leetcode.cn/problems/count-of-range-sum/solution/by-ac_oier-b36o/
 1964. 找出到每个位置为止最长的有效障碍赛跑路线 #hard #DP
     问题定义: 给定一个序列, 对于其中的每一个值, 计算以其结尾的递增序列的最大长度
     实际上可以用更为简单的思路; 但是线段树也能做, 注意代码书写.
+
+2213. 由单个字符重复的最长子字符串 #hard #线段树
+    给定一个长n的字符串, 每次操作中, 对某一位置的元素修改为另一字符, 问每次操作后字符串中有的最长重复子字符串的长度.
+    思路1: 利用线段树来记录每一个区间中, pre,suf,mx 的连续最大长度. 
+    关联: [洛谷 P4513 小白逛公园](https://leetcode.cn/link/?target=https%3A%2F%2Fwww.luogu.com.cn%2Fproblem%2FP4513) 就是线段路记录动态更新的区间最大值.
 
 """
 class Solution:
@@ -222,7 +233,7 @@ class SegTree_0():
     
 class SegTree:
     """ 
-    更为简洁的线段树实现
+    更为简洁的线段树实现, 可以查询在 [left, right] 区间元素个数
     调用的时候需要输入 o,l,r, 即当前的位置 o 的节点及其所管辖的区间 [l,r]. 一般而言, 对于一个总长度为 n的线段树而言, 调用形式都是 (1,1,n), 也即从根节点出发, 其所管辖的范围为 [1,n]
     from [灵神](https://leetcode.cn/problems/booking-concert-tickets-in-groups/solution/by-endlesscheng-okcu/)
     """
@@ -239,7 +250,7 @@ class SegTree:
         self.t[o] = self.t[2*o] + self.t[2*o+1]
         
     def query(self, o,l,r, left, right):
-        """ 查询 [left, right] 区间元素个数
+        """ 查询 [left, right] 区间内的元素个数
         注意, 在递归过程中不需要考虑修改查询区间 [left, right] """
         if l>=left and r<=right: return self.t[o]
         m = (l+r)>>1
@@ -247,7 +258,67 @@ class SegTree:
         if m>=left: sum += self.query(2*o, l, m, left, right)
         if m+1<=right: sum += self.query(2*o+1, m+1, r, left, right)
         return sum
-    
+
+
+
+
+
+    """ 2213. 由单个字符重复的最长子字符串 #hard #线段树
+给定一个长n的字符串, 每次操作中, 对某一位置的元素修改为另一字符, 问每次操作后字符串中有的最长重复子字符串的长度.
+限制: n 12e5, 操作次数 k 1e5
+思路1: 采用 #线段树 维护「pre, suf, mx」表示前缀/后缀 和 区间内的最长连续字符数量.
+    如何初始化? 假设递归函数 `build(o: int, l: int, r: int)` 初始化 [l,r] 区间. 1) 边界: l==r; 2) 当处理好两个子区间后, 用一个 `maintain(o: int, l: int, r: int)` 为更新父区间o的属性.
+    如何实现更新操作? 假设 `update(o: int, l: int, r: int, i: int)` 将i个字符进行替换. 1) 边界: l==r; 2) 当处理好两个子区间后, 同样需要用一个 `maintain(o: int, l: int, r: int)` 为更新父区间o的属性 —— 复用上面的那个函数.
+[灵神](https://leetcode.cn/problems/longest-substring-of-one-repeating-character/solution/by-endlesscheng-qpbw/)
+"""
+    def longestRepeating(self, s: str, queryCharacters: str, queryIndices: List[int]) -> List[int]:
+        s = list(s)
+        n = len(s)
+        # 距离 [l,r] 区间的最大连续前缀/后缀/最大连续字符数量
+        pre, suf, mx = [0]*(4*n), [0]*(4*n), [0]*(4*n)
+        def build(o,l,r):
+            # 构建线段树过程
+            if l==r:        # 边界
+                pre[o] = suf[o] = mx[o] = 1
+                return
+            m = (l+r)//2    # 分治
+            build(o*2,l,m)
+            build(o*2+1,m+1,r)
+            # 更新o节点自身
+            maintain(o,l,r)
+        def update(o,l,r, i):
+            # 更新第i个字符
+            if l==r:        # 边界
+                # pre[o] = suf[o] = mx[o] = 1 # 本来就是1
+                return
+            m = (l+r)//2
+            # 更新包含i的那个子区间
+            if i<=m: update(o*2,l,m,i)
+            else: update(o*2+1,m+1,r,i)
+            # 更新o节点自身
+            maintain(o,l,r)
+        def maintain(o,l,r):
+            # 两子节点属性已正确, 更新o节点的属性
+            # init
+            pre[o] = pre[o*2]; suf[o] = suf[o*2+1]
+            mx[o] = max(mx[o*2],mx[o*2+1])
+            # 
+            m = (l+r)//2
+            # if s[m]==s[m+1]:    # 只有当中间的两个字符相同的时候, 才会被更新.
+            # 注意字符串位置从 0开始
+            if s[m-1]==s[m]:
+                mx[o] = max(mx[o], suf[o*2]+pre[o*2+1])
+                if pre[o*2]==m-l+1: pre[o] += pre[o*2+1]
+                if suf[o*2+1]==r-m: suf[o] += suf[o*2]
+        build(1,1,n)
+        ans = []
+        for c,i in zip(queryCharacters, queryIndices):
+            s[i] = c
+            update(1,1,n,i+1)   # 始终需要注意idx差距1
+            ans.append(mx[1])
+        return ans
+
+
 """ 0729. 我的日程安排表 I #medium
 给定一组左开右闭的区间表示课程. 对于一个课程序列, 依次判断是否会与之前的产生冲突 (不冲突的就加入课程集合).
 思路1: 维护一个有序的列表, 二分判断当前课程是否会与之前的冲突.
@@ -305,8 +376,10 @@ result = [
 #     sol.testClass("""["MyCalendar","book","book","book","book","book","book","book","book","book","book"]
 # [[],[48,50],[0,6],[6,13],[8,13],[15,23],[49,50],[45,50],[29,34],[3,12],[38,44]]"""),
 
-    sol.countRangeSum(nums = [-2,5,-1], lower = -2, upper = 2),
-    sol.countRangeSum([-3,1,2,-2,2,-1],-3,-1),
+    # sol.countRangeSum(nums = [-2,5,-1], lower = -2, upper = 2),
+    # sol.countRangeSum([-3,1,2,-2,2,-1],-3,-1),
+    sol.longestRepeating(s = "babacc", queryCharacters = "bcb", queryIndices = [1,3,3]),
+    sol.longestRepeating(s = "abyzz", queryCharacters = "aa", queryIndices = [2,1]),
 ]
 for r in result:
     print(r)
