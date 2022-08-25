@@ -49,7 +49,7 @@ def testClass(inputs):
 
 """ 
 from 官方的 [二叉树](https://leetcode.cn/leetbook/read/data-structure-binary-tree/)
-
+== 基本
 二叉树的遍历: 前序, 中序, 后序; 层序;
     前序, 中序, 后序 分别可以写成递归和迭代的形式, 后者用到栈存储;
     层序遍历, 需要用到队列来记录同层的节点
@@ -113,7 +113,8 @@ class Solution:
             stack.append(p.left)
         return ans
     
-    """ 中序遍历 """
+    """ 中序遍历
+    注意迭代形式需要用到栈记录历史路径, 并且终止条件是 `while p or stack` """
     def inorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
         # 中序, 递归
         ans = []
@@ -125,7 +126,7 @@ class Solution:
         f(root)
         return ans
     def inorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
-        # 中序, 用stack记录待遍历右侧的节点
+        # 中序, 用stack记录待遍历右侧的节点. 参见 二叉搜索树中的 BSTIterator 类
         ans = []
         stack = []
         p = root    # p 指向当前节点
