@@ -1,4 +1,9 @@
 
+
+
+
+
+
 - [pypy真的能让python比c还快？](https://juejin.cn/post/6961053856104972325) 介绍了 强/弱类型, 静态/动态语言 等的区别, 介绍了 PyPy 与 CPython 在性能上的差异, 几个代码测试实例很赞.
     - 参见 PyPy: <https://doc.pypy.org/en/latest/introduction.html>
 

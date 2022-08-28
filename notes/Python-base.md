@@ -1,5 +1,11 @@
 
 
+## Python 性能
+
+- 基本DS的时间复杂度: <https://wiki.python.org/moin/TimeComplexity/>
+
+
+
 ## Python 基本模块
 
 见 `template`
