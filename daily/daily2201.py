@@ -13,21 +13,6 @@ start from 20220119
  """
 
 class Solution:
-    """ 219. 存在重复元素 II
-给你一个整数数组 nums 和一个整数 k ，判断数组中是否存在两个 不同的索引 i 和 j ，满足 nums[i] == nums[j] 且 abs(i - j) <= k 。如果存在，返回 true ；否则，返回 false 。
-输入：nums = [1,2,3,1], k = 3
-输出：true """
-    def containsNearbyDuplicate(self, nums: List[int], k: int) -> bool:
-        num2idx = collections.defaultdict(list)
-        for i,num in enumerate(nums):
-            num2idx[num].append(i)
-        for num, idxs in num2idx.items():
-            for i in range(len(idxs)-1):
-                if idxs[i+1]-idxs[i] <= k:
-                    return True
-        return False
-
-
     """ 2029. 石子游戏 IX
 Alice 和 Bob 再次设计了一款新的石子游戏。现有一行 n 个石子，每个石子都有一个关联的数字表示它的价值。给你一个整数数组 stones ，其中 stones[i] 是第 i 个石子的价值。
 Alice 和 Bob 轮流进行自己的回合，Alice 先手。每一回合，玩家需要从 stones 中移除任一石子。
