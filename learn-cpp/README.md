@@ -2,6 +2,13 @@ tags: #3 #list
 
 另见 [[cpp-roadmap.md]]
 
+
+M1 配置!!!
+
+- `xcode-select` 会安装 `clang`, 所以其实已经可以用了. 参见 [官方教程](https://code.visualstudio.com/docs/cpp/config-clang-mac), [m1 MacBook配置VS code的C++环境(2021年8月)](https://www.cnblogs.com/BYGAO/p/15135609.html)
+- GeeksforGeeks [C++ Installation on MacBook M1 for VS Code](https://www.geeksforgeeks.org/c-installation-on-macbook-m1-for-vs-code/) 利用code的套件 + brew 安装的 mingw-w64
+    - 可以直接用 `#include<bits/stdc++.h>`
+
 教程
 
 - C语言中文网 <http://c.biancheng.net/> 比较有体系, 并且讲了 GCC, GDB, Makefile 等 #3

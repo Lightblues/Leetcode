@@ -39,9 +39,7 @@ from decimal import Decimal
 2058. 找出临界点之间的最小和最大距离 #medium #链表
     给定一个链表, 定义关键点为局部(严格的)极小/极大值, 要求返回这些关键点之间距离的最小和最大值.
 
-=== 反转
-0206. 反转链表 #easy #题型
-    给定一个链表, 将其反转.
+
 2074. 反转偶数长度组的节点 #medium #链表 #题型
     给定一个链表, 将其分割成 1,2,3... 长的子序列 (最后一个剩余的长度可以不符合). 对于这些子序列, 反转其中长度为偶数的.
 
@@ -110,23 +108,15 @@ class Solution:
 
     """ 0206. 反转链表 #easy #题型
 给定一个链表, 将其反转.
-思路1: 迭代. 经典实现
-思路2: 能否再减少一个指针? 在 #双指针 思路中, 不移动 head 而在遍历过程中修改 head.next 所指向的节点.
+思路1: 迭代. 经典实现. 维护 pre,cur,next 三个指针会比较清晰.
+思路2: 递归 实现
+思路3: 能否再减少一个指针? 在 #双指针 思路中, 不移动 head 而在遍历过程中修改 head.next 所指向的节点.
     参见 2074
-思路3: 递归
+    from [here](https://leetcode.cn/problems/reverse-linked-list/solution/fan-zhuan-lian-biao-shuang-zhi-zhen-di-gui-yao-mo-/) 
+[官答](https://leetcode.cn/problems/reverse-linked-list/solution/fan-zhuan-lian-biao-by-leetcode-solution-d1k2/)
 """
     def reverseList(self, head: ListNode) -> ListNode:
-        pre, cur = None, head
-        while cur:
-            next = cur.next
-            cur.next = pre
-            pre, cur = cur, next
-        return pre
-    
-    def reverseList(self, head: ListNode) -> ListNode:
-        """ 思路2: 双指针
-        [here](https://leetcode.cn/problems/reverse-linked-list/solution/fan-zhuan-lian-biao-shuang-zhi-zhen-di-gui-yao-mo-/) 
-        """
+        # 思路3: 只有两个指针
         cur = head
         while head.next:
             # 一般写法
@@ -151,7 +141,6 @@ class Solution:
     总体来看, 只需要维护 pre, cur 两个指针即可. 1) 若当前长度 i 为奇数, 将两者都前进i步即可; 2) 若为偶数, 则需要实现「将从cur开始的i个节点进行翻转」, 见下代码.
     [官方](https://leetcode.cn/problems/reverse-nodes-in-even-length-groups/solution/fan-zhuan-ou-shu-chang-du-zu-de-jie-dian-owra/) 
     """
-
     def reverseEvenLengthGroups(self, head: Optional[ListNode]) -> Optional[ListNode]:
         """ [官方](https://leetcode.cn/problems/reverse-nodes-in-even-length-groups/solution/fan-zhuan-ou-shu-chang-du-zu-de-jie-dian-owra/) 
         采用了两次遍历

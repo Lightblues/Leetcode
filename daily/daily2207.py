@@ -48,21 +48,48 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-261
-https://leetcode-cn.com/contest/biweekly-contest-71
 @2022 """
 class Solution:
-    pass
-    
-    
-    
-    
-    
+    """ 0719. 找出第 K 小的数对距离 #hard #题型 #二分
+给定一个数组, 每个数对构成「绝对差值」. 问第k小的差值. 限制: 长度 n 1e4. 数字大小 C 1e6.  
+思路0: #二分. 一个比较蠢的实现
+    考虑问题「对于给定的d问差值小于d的数对有多少」, 可以通过排序+bisct解决. 每次检查的复杂度为 `O(n log(n))`.
+    搜索空间为 [0,C]. 因此可以用二分来查找, 总体复杂度 `O(log(C) * n log(n))`.
+    注意: 本题二分的特殊性在于, 搜索的值可能无法取到! 可以通过检查函数返回一个flag来标记数组中是否存在该差值.
+"""
+    def smallestDistancePair(self, nums: List[int], k: int) -> int:
+        # 思路0: #二分. 一个比较蠢的实现
+        nums.sort(); n = len(nums)
+        def f(d):
+            # 统计nums中差值 <d 的组数
+            # 返回: (cnt, flag) 后者标记是否存在该差值
+            cnt = 0; flag = False
+            for i,a in enumerate(nums):
+                lmt = bisect_left(nums, a+d, i)
+                cnt += lmt - i - 1
+                if lmt<n and nums[lmt]==a+d: flag=True
+            return cnt,flag
+        # 二分
+        l,r = 0,max(nums) - min(nums)
+        ans = 0
+        while l<=r:
+            m = (l+r)>>1
+            cnt,flag = f(m)
+            if cnt<k:
+                l = m+1
+                # 只有存在时才更新
+                if flag: ans = m
+            else: r = m-1
+        return ans
+
 
     
 sol = Solution()
 result = [
-
+    sol.smallestDistancePair([1,3,1], 1),
+    sol.smallestDistancePair(nums = [1,1,1], k = 2),
+    sol.smallestDistancePair(nums = [1,6,1], k = 3),
+    sol.smallestDistancePair([9,10,7,10,6,1,5,4,9,8], 18),
 ]
 for r in result:
     print(r)

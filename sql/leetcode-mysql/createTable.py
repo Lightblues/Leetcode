@@ -10,7 +10,9 @@ from easonsi import utils
 
 # 注意修改数据库配置
 conn: MySQLConnection = mysql.connector.connect(
-    host="10.88.3.55", user='root', password='root',
+    # host="10.88.3.55", 
+    host='100.111.213.48',
+    user='root', password='root',
     database="test")
 
 def execute(sql: str):
