@@ -1,21 +1,9 @@
 /* @2208 重温一下mysql
 主要 from [50到数据库题](https://blog.csdn.net/qq_44186838/article/details/120499317)
-进度: 10/50
+进度: 50/50
 
-todo
-
-- [LeetCode Database习题 && MySQL基础](https://cgiirw.github.io/2018/07/01/MySQL-Getting-Start/)
  */
 
-
-/* 0175. 组合两个表
-给定 Person, Address 两张表, 根据 personId 进行连接. 
-注意要求无论 address表中是否有该人, 都要返回该人的信息, 因此对Person进行左连接.
- */
--- 因为题目要求无论 person 是否有地址信息，所以不能用join，要用left join
-select FirstName, LastName, City, State 
-from Person 
-left join Address on Person.PersonId=Address.PersonId
 
 
 /* 0184. 部门工资最高的员工 #medium
@@ -234,14 +222,6 @@ SELECT
 FROM products
 GROUP BY product_id
 
-/* 1795. 每个产品在不同商店的价格 #easy #题型
-1777 的反操作, 宽表转长表.
- */
-SELECT product_id, 'store1' store, store1 price FROM products WHERE store1 IS NOT NULL
-UNION
-SELECT product_id, 'store2' store, store2 price FROM products WHERE store2 IS NOT NULL
-UNION
-SELECT product_id, 'store3' store, store3 price FROM products WHERE store3 IS NOT NULL;
 
 /* 0178. 分数排名 #medium
 给定一组分数, 要求降序排列, 并且计算rank (重复值的rank相同, 连续rank).
@@ -390,7 +370,7 @@ where w.Temperature>w2.Temperature;
 
 /* 0626. 换座位 #medium #题型
 对于id从 1,2,...n, 两两交换座位. 若n为奇数则最后一个不交换.
-思路1: 根据座位号进行条件判断: 奇数位+1, 偶数位-1.
+思路1: 根据座位号进行条件判断: 奇数位+1, 偶数位-1. 可以用 #CASE 进行条件判断.
 思路2: 采用 #位运算 修改学号
     注意到, `(id+1)^1-1` 可以进行奇偶的交换.
     如何处理总数为奇数时的最后一个人? 可以通过 IF来进行判断
@@ -398,6 +378,7 @@ where w.Temperature>w2.Temperature;
     将位运算之后的表与原表进行连接, 采用原来的表的编号. 可理解为「修改名字」
     观察 `seat s1 LEFT JOIN seat s2 ON ((s1.id + 1) ^ 1) - 1 = s2.id`, 对于奇数总数的情况, 最后一条记录为空, 因此用 `COALESCE(s2.student, s1.student)` 进行填充.
  */
+-- 思路1: 根据座位号进行条件判断
 SELECT
     (CASE
         WHEN MOD(id, 2) != 0 AND counts != id THEN id + 1
@@ -409,13 +390,23 @@ FROM
     -- 给 seat 添加一列 counts, 记录所有的座位数量.
     seat, (SELECT COUNT(*) AS counts FROM seat) AS seat_counts
 ORDER BY id ASC;
+-- 另一种写法. 但这样复杂度会高一点?
+SELECT
+    CASE
+        WHEN id % 2 = 1 AND id != (SELECT COUNT(*) FROM seat) THEN id + 1
+        WHEN id % 2 = 1 AND id = (SELECT COUNT(*) FROM seat) THEN id
+        ELSE id - 1
+    END id, student
+FROM seat, count01
+ORDER BY id;
+
 -- 思路2: 采用 #位运算 修改学号
 SELECT IF(
     (SELECT COUNT(*) FROM seat)=id AND id%2<>0, id, (id+1)^1-1
 ) AS id, student
 FROM seat
 ORDER BY id;
--- 
+-- 思路2.2 「修改名字」
 SELECT
     s1.id, COALESCE(s2.student, s1.student) AS student
 FROM
@@ -432,10 +423,12 @@ from cinema
 where description!='boring' and mod(id,2)=1
 order by rating desc;
 
+
 /* 0511. 游戏玩法分析 I #easy
 给定一张记录玩家登陆时间的表, 要求查询每个玩家最早的登陆时间
  */
 select player_id, min(event_date) first_login from Activity group by player_id;
+
 
 /* 1097. 游戏玩法分析 V #hard #题型
 给定主键为 `(player_id，event_date)` 的游玩记录表. 安装日期定义为玩家第一天登陆游戏的日期. 要求统计「第一天留存率」, 也即在安装日第二天也登陆游戏的玩家比率.
@@ -468,6 +461,7 @@ from (
     on a.player_id=b.player_id and DATEDIFF(b.event_date, a.install_dt)=1
 ) group by install_dt;
 
+
 /* 0569. 员工薪水中位数 #hard #题型
 每个公司有一组薪水记录, 得到每家公司的薪水中位数. 注意如果人数为偶数, 则返回中间的两个数字.
 思路1: 利用 #窗口函数 分别统计每个公司中的薪水排名 rk 和公司人数 cnt.
@@ -487,7 +481,8 @@ from (
 -- 中位数必定大于一半数同时小于一半数+1
 where rk>=cnt/2 and rk<=cnt/2+1;
 
-/* 1841. 联赛信息统计 #medium #题型
+
+/* 1841. 联赛信息统计 #medium #题型 League Statistics
 有 Matches 表记录了主/客场队得球数. 对于一个赛季的数据, 要求统计每个球队的 比赛次数、得分总数、总进球数、对手球队的所有进球数. 其中分数计算为, 0/1平局/3
 排序方式: points 降序, goal_for - goal_against 降序, team_name 字典序.
 思路1: 关键点在于 **连接的时候可以用or**, 即 `JOIN ... ON...OR ` 语法
@@ -519,3 +514,436 @@ SELECT team_name,
 FROM Teams t JOIN Matches m ON t.team_id=m.home_team_id OR t.team_id=m.away_team_id
 GROUP BY team_id
 ORDER BY points DESC, goal_diff DESC, team_name;
+
+
+/* 0571. 给定数字的频率查询中位数 #hard #题型
+给定一张频次统计表, 要求计算这些数字中的中位数.
+思路1: 对于总数为n的数字, 中位数是什么? [n/2, n/2+1] 中的数字的均值 (可能包含 1/2 个数字).
+    在本题中, 数字重复出现按照频次计数. 何时是中位数? 我们记 「小于x的数字数量为 buttom, 小于等于x的数量为 top」, 则条件为 `top>=n/2 AND bottom<=n/2`. 这样 [bottom+1, top] 就一定会包含上述区间的某一个数字.
+思路2: 计算每个数字的正序和逆序累计
+    更简单地, 考虑对称性, 假设一个数字正和倒序计数都要 >=n/2, 则一定是中位数.
+    因此, 我们可以利用 #窗口函数 计算每个数字的 「正序和逆序累计」
+    from [here](https://leetcode.cn/problems/find-median-given-frequency-of-numbers/solution/sum-over-order-by-by-fugue-s/)
+*/
+-- 「小于x的数字数量为 buttom, 小于等于x的数量为 top」
+SELECT AVG(num) AS median
+FROM (
+    -- 利用自连接的方法，求出小于等于该数字的数量top，再求出小于该数字的数量bottom
+    SELECT n1.num, 
+        SUM(n2.Frequency) AS top, 
+        SUM(n2.Frequency)-n1.Frequency AS bottom
+    FROM Numbers n1 JOIN Numbers n2 ON n1.num >= n2.num
+    GROUP BY n1.num
+) AS t
+WHERE top>=(SELECT SUM(Frequency) FROM Numbers) / 2 
+    AND bottom<=(SELECT SUM(Frequency) FROM Numbers) / 2
+-- 思路2: 计算每个数字的正序和逆序累计
+select avg(num) as median
+from (
+    -- 计算每个数字的正序和逆序累计
+    (select num,
+        sum(frequency) over(order by num) as asc_acc,
+        sum(frequency) over(order by num desc) as desc_acc
+    from Numbers) t1, 
+    -- 还需要总数
+    (select sum(frequency) as total
+        from Numbers
+    ) t2
+)
+where t1.asc_acc >= t2.total/2 and t1.desc_acc >= t2.total/2;
+
+
+/* 0618. 学生地理信息报告 #hard #题型
+班级包括 <name, continent> 列. 包括 America, Asia, Europe 洲的学生. 要求生成列为三个洲, 包括每个洲的学生 (按照名字顺序排列) 的透视表.
+思路1: 关键是如何得到每个学生的序号? 可以利用 #ROW_NUMBER 得到每个洲的学生分组编号.
+思路2: 分别得到每个洲的学生序号 (利用 WHERE + ROW_NUMBER)
+    如何合并? 题目中给定了「America人数最多这一限制」, 因此分别连接 America, Asia, Europe 即可.
+    注意需要采用 `LEFT JOIN`! 因为要保留最长的部分.
+    三种不同的连接, 见 [here](https://segmentfault.com/a/1190000017369618)
+ */
+-- 核心思想是将最终生成表中的对应行数提前生成，方便后续按此来分组。MAX没有什么实际含义，只是可以用来聚合，MIN函数也行，而其他聚合函数如SUM函数的话会进行计数，所以不能用。
+SELECT 
+    MAX(IF(continent='America', name, NULL)) AS 'America',
+    MAX(IF(continent='Asia', name, NULL)) AS 'Asia',
+    MAX(IF(continent='Europe', name, NULL)) AS 'Europe'
+FROM
+    -- 关键是这里计算得到的 ROW_NUMBER
+    (SELECT *, ROW_NUMBER() OVER(PARTITION BY continent ORDER BY name) AS rn FROM student) AS t
+GROUP BY rn;
+-- 
+select America,Asia,Europe
+from (
+    select name America, ROW_NUMBER() OVER(order by name) rn from student where continent='America'
+) tmp1 LEFT JOIN (
+    select name Asia, ROW_NUMBER() OVER(order by name) rn from student where continent='Asia'
+) tmp2 on tmp1.rn=tmp2.rn LEFT JOIN (
+    select name Europe, ROW_NUMBER() OVER(order by name) rn from student where continent='Europe'
+) tmp3 on tmp1.rn=tmp3.rn;
+
+
+/* 1083. 销售分析 II #easy
+给定两张表, 要求查询「购买了 S8 手机却没有购买 iPhone 的买家」
+思路1: JOIN 之后通过 #HAVING 进行判断
+思路2: 分别得到两个用户集合, 求差集.
+ */
+select buyer_id
+from Sales s left join Product p on s.product_id=p.product_id
+group by buyer_id
+having (
+    -- 'S8' in product_name and 'iPhone' not in product_name
+    COUNT(IF(product_name='S8', 1, NULL))>0 and
+    COUNT(IF(product_name='iPhone', 1, NULL))=0
+);
+
+/* 1205. 每月交易II #medium
+需要构造两张表, 然后 #UNION, 最后计算一些统计量.
+ */
+select month, country,
+    SUM(IF(state='approved', 1, 0)) approved_count,
+    SUM(IF(state='approved', amount, 0)) approved_amount,
+    SUM(IF(state='chargeback', 1, 0)) chargeback_count,
+    SUM(IF(state='chargeback', amount, 0)) chargeback_amount
+from (
+    select DATE_FORMAT(trans_date, '%Y-%m') month, country, state, amount
+    from Transactions where state='approved'
+    -- 注意, 基于上面的列得到的结果可能有重复行! 需要 UNION ALL. 当然, 也可以加入 id 列, 这样也可以 UNION
+    UNION ALL
+    select DATE_FORMAT(c.trans_date, '%Y-%m') month, country, 'chargeback' as state, amount
+    from Chargebacks c left join Transactions t on c.trans_id=t.id
+) as tmp
+group by month,country;
+-- #WITH 写法
+with base as (
+    select 'approved' tag, country, date_format(trans_date, '%Y-%m') month, amount
+    from Transactions where state = 'approved'
+    union all
+    select 'chargeback' tag, t.country, date_format(c.trans_date, '%Y-%m') month, t.amount
+    from Chargebacks c join Transactions t on c.trans_id = t.id
+)
+select month, country, 
+       sum(if(tag = 'approved', 1, 0)) approved_count,
+       sum(if(tag = 'approved', amount, 0)) approved_amount,
+       sum(if(tag = 'chargeback', 1, 0)) chargeback_count,
+       sum(if(tag = 'chargeback', amount, 0)) chargeback_amount
+from base 
+group by month, country;
+
+
+/* 1501. 可以放心投资的国家 #medium
+有 Person, Country, Calls 表. 要求统计平均通话时长严格大于全球平均的国家. 其中, 通话分为 caller, callee 可以在不同的国家; 用户所在国家通过电话号码前三位确定.
+思路1: 将三张表进行连接, 再进行统计.
+    注意calls表 <caller_id, callee_id, duration> 要分别连接 拨号和接听的人. 需要采用 #OR 连接.
+    然后对于联合的表, 通过 group by 对于国家分类统计.
+ */
+select country
+from (
+    select co.name country, duration
+    from person p join country co on LEFT(phone_number, 3)=country_code -- 连接 person, country
+        join calls ca on (ca.caller_id=p.id OR ca.callee_id=p.id)       -- 连接 calls. 重点是 OR
+) as t
+group by country
+HAVING SUM(duration)/COUNT(duration) > (
+    select sum(duration)/count(duration) from calls
+);
+
+
+
+
+/* ============================================ 第 31+  ============================== */
+/* 1821. 寻找今年具有正收入的客户 #easy */
+select customer_id from customers where year=2021 and revenue>0;
+
+/* 1204. 最后一个能进入电梯的人 #medium
+一批人按照turn的顺序上电梯, 电梯限重1000, 求最后一个能上电梯的人.
+ */
+select q1.person_name
+from queue q1, queue q2
+where q1.turn>=qq.turn -- 已经上的
+group by q1.turn
+having SUM(q2.weight)<=1000
+-- 选择最后一位可以上的.
+order by q1.turn DESC LIMIT 1;
+
+
+/* 1082. 销售分析 I #easy #题型
+有 product, sales 表, 找到 总销售额最高的销售者，如果有并列的，就都展示出来。
+注意审题, sales 表中的 price列就是每一单的总销售额, 因此并不需要 product表! 先通过子查询得到最大的销售额, 然后在外层查询中, 将总销售额等于该值的销售员输出.
+https://leetcode.cn/problems/sales-analysis-i/
+ */
+select seller_id
+from Sales s -- left join Product p on s.product_id=p.product_id
+group by seller_id
+having sum(price) = (
+    select MAX(total) from (
+        select SUM(price) total from Sales group by seller_id
+    ) t1
+);
+
+/* 1098. 小众书籍 #medium #题型
+筛选去年订单少于10本的书籍. 需要加上限制: 不考虑上架不满一个月的书籍.
+思路1: 从Books表中筛选, 条件1是上架时间, 条件2是订单数量
+    如何从Orders中找到少于10本的记录? 注意! 这里必须用 NOT IN 而不能反过来 IN: 因为可能这些在过去一年内没有销售记录!
+https://leetcode.cn/problems/unpopular-books/
+ */
+-- 今天是 '2019-06-23'
+select b.book_id, name
+from Books b
+-- 去掉刚上架不到一个月的书
+where b.available_from < "2019-05-23" 
+AND b.book_id NOT IN (  -- 注意! 这里必须用 NOT IN 而不能反过来 IN: 因为可能这些在过去一年内没有销售记录!
+    select book_id
+    from (
+        -- 计算过去一年的销售量
+        select book_id, SUM(quantity) total
+        from Orders o
+        where o.dispatch_date BETWEEN "2018-06-23" AND "2019-06-23"
+        group by book_id
+    ) t
+    where t.total>=10
+);
+
+/* 1270. 向公司CEO汇报工作的所有人 #medium
+有表 <employee_id, manager_id> 的汇报关系. employee_id=1 的是CEO. 找到所有直接或间接向CEO汇报的人. 题目保证了不会出现3层以上的汇报关系.
+思路1: 三重自连接.
+思路2: 三重查询, 分别找到 CEO的员工,CEO的员工的员工，CEO的员工的员工的员工
+https://leetcode.cn/problems/all-people-report-to-the-given-manager/
+ */
+select e.employee_id
+from employees e left join employees e2 on e.manager_id=e2.employee_id
+    left join employees e3 on e2.manager_id=e3.employee_id
+    left join employees e4 on e3.manager_id=e4.employee_id
+where e4.employee_id=1 and e.employee_id!=1;
+
+-- # CEO的员工,CEO的员工的员工，CEO的员工的员工的员工
+SELECT employee_id FROM
+    (SELECT employee_id FROM Employees WHERE manager_id IN
+        (SELECT employee_id FROM Employees WHERE manager_id IN
+            (SELECT employee_id FROM Employees WHERE manager_id=1)
+        )        
+    ) AS t
+WHERE employee_id!=1;
+
+
+/* 0597. 好友申请 I：总体通过率 #easy #题型
+分别有 好友申请和申请通过的表, 计算好友通过率. 对于结果取2位小数, 若申请数为空则返回 0.
+思路1: 写两个子查询分别得到两个计数, 然后计算通过率.
+    注意, 对于两个 SELEC COUNT 语句得到的数字, 数字需要用括号包裹, 也即 (SELECT COUNT(*) ... as t1) / (SELECT COUNT(*) ... as t2) 的形式, 否则会 #语法 错误.
+    细节: 需要 IFNULL, ROUND 函数.
+https://leetcode.cn/problems/friend-requests-i-overall-acceptance-rate/
+ */
+select ROUND(
+    IFNULL(
+        (select count(*) from (select DISTINCT requester_id,accepter_id from RequestAccepted) as t1) / 
+        (select count(*) from (select DISTINCT sender_id,send_to_id from FriendRequest) as t2), 
+        0
+    ), 2
+) as accept_rate;
+
+/* 1193. 每月交易 I #medium 基本分组统计.
+给定Transactions表, 要求根据月份和国家分组统计「事务数及其总金额、已批准的事务数及其总金额」.
+ */
+select month,country,
+    count(state) as trans_count,
+    sum(IF(state="approved", 1,0)) as approved_count,
+    sum(amount) as trans_total_amount,
+    sum(IF(state="approved", amount,0)) as approved_total_amount
+from (
+    select *, LEFT(trans_date, 7) as month
+    from Transactions
+) as tmp
+group by month,country;
+-- 思路2: 不创建临时表
+-- 先将日期改成年月的形式，然后按时期和国家来分组即可。
+SELECT DATE_FORMAT(trans_date,'%Y-%m') as month,    -- 生成 month 列
+    country, 
+    COUNT(*) AS 'trans_count',  
+    COUNT(IF(state='approved', 1, NULL)) AS 'approved_count',
+    SUM(amount) AS 'trans_total_amount',
+    SUM(IF(state='approved', amount, 0)) AS 'approved_total_amount'
+FROM Transactions
+GROUP BY month, country     -- 这里 group by 可以直接调用 month 列了!!
+
+
+/* 1280. 学生们参加各科测试的次数 #easy
+需要用到外积, 也即 CROSS JOIN #笛卡尔积.
+https://leetcode.cn/problems/students-and-examinations/
+*/
+SELECT s.student_id,student_name,b.subject_name, 
+    -- 求attended_exams时记得用e.subject_name而不是b.subject_name，因为用count函数可以把那些null视为0
+    -- COUNT(IFNULL(e.subject_name, NULL)) AS attended_exams
+    COUNT(e.subject_name) AS attended_exams  -- 直接这样, NULL会自动计数为0.
+from 
+    -- (SELECt * from Students, Subjects) s
+    -- 实际上是 cross join #笛卡尔积. 等价下面的:
+    Students s CROSS JOIN Subjects b
+    left join Examinations e on s.student_id=e.student_id and b.subject_name=e.subject_name
+group by student_id,subject_name
+order by student_id,subject_name;
+
+
+/* 1715. 苹果和橘子的个数 #medium #IFNULL
+需要将两张表左连接, 然后求和. 
+注意: 由于在mysql中 NULL 参与的运算都会变为空. 而在连接中可能产生NULL, 需要用 #IFNULL 将其转为0.
+https://leetcode.cn/problems/count-apples-and-oranges/
+ */
+select 
+    SUM(b.apple_count) + SUM(IFNULL(c.apple_count, 0)) as apple_count,
+    SUM(b.orange_count) + SUM(IFNULL(c.orange_count ,0)) as orange_count
+from Boxes b left join Chests c on b.chest_id=c.chest_id
+
+
+
+/* 1809. 没有广告的剧集 #easy 简单的连接筛选问题.
+https://leetcode.cn/problems/ad-free-sessions/
+ */
+select p.session_id
+from Playback p left join Ads a on p.start_time<=a.timestamp and p.end_time>=a.timestamp
+    and p.customer_id=a.customer_id
+group by p.session_id
+having COUNT(a.customer_id)=0;
+
+/* ============================================ 第 41+  ============================== */
+/* 0577. 员工奖金 #easy 注意对于左连接为空的也要输出. */
+select name,bonus
+from employee e left join bonus b on e.empid=b.empid
+where bonus<1000 or ISNULL(bonus);
+
+/* 0603. 连续空余座位 #easy 找到所有连续的空的位子.
+思路1: 连接 + 条件判断. 如何判断相邻? 可以用 #ABS 函数
+ */
+SELECT DISTINCT c1.seat_id
+FROM cinema c1, cinema c2
+WHERE ABS(c1.seat_id-c2.seat_id)=1 AND c1.free = 1 AND c2.free=1
+ORDER BY c1.seat_id;
+-- 写成 JOIN.
+select distinct c.seat_id
+from cinema c join cinema c2 
+    on c.seat_id=c2.seat_id-1 and c2.free=1 or c.seat_id=c2.seat_id+1 and c2.free=1
+-- 注意这里用了默认的内join, 若用左连接还需要判断非空!
+where c.free=1 -- and NOT ISNULL(c2.seat_id)
+order by c.seat_id
+
+
+/* 1112. 每位学生的最高成绩 #medium
+有一组学生成绩, 得到每个学生的最高分和对应的那门课, 若有同分取 courseid 最小的.
+思路1: 对于每个学生, 利用 #窗口函数 计算参加的科目的rank. 也即 `OVER(partition by student_id order by grade desc, course_id)` 进行分组和两级排序.
+ */
+select student_id, min(course_id) course_id, grade
+from (
+    select *, DENSE_RANK() OVER(partition by student_id order by grade desc) as rk
+    from Enrollments
+) as tmp
+where rk=1
+group by student_id
+order by student_id;
+-- 两重排序直接放在 DENSE_RANK 中
+select student_id, course_id course_id, grade
+from (
+    select *, DENSE_RANK() OVER(partition by student_id order by grade desc, course_id) as rk
+    from Enrollments
+) as tmp
+where rk=1
+order by student_id;
+
+
+/* 1308. 不同性别每日分数总计 #medium
+非组统计指标, 对于日期的排序, 要求计算累计和
+思路1: 通过连接然后 SUM
+思路2: 可以利用 #窗口函数 直接完成分组和排序. 
+    即 `SUM(score_points) OVER (PARTITION BY gender ORDER BY gender, day)`, 会得到累计和.
+ */
+-- 对性别相同且日期在之前（包括今天）的得分相加。
+SELECT s1.gender, s1.day, SUM(s2.score_points) AS total
+FROM Scores s1 JOIN Scores s2 ON s1.gender = s2.gender AND s1.day >= s2.day
+GROUP BY s1.gender, s1.day
+ORDER BY s1.gender, s1.day
+-- 也可以直接用 #窗口函数
+SELECT gender, day, SUM(score_points) OVER (PARTITION BY gender ORDER BY gender, day) AS total
+-- 注意, 这里不需要 group by , order by 了! 当然加了也没错
+FROM Scores;
+
+/* 0570. 至少有5名直接下属的经理 #medium */
+select name
+from Employee
+where id in (
+    select managerid from Employee group by managerid having count(*)>=5
+);
+
+
+/* 0580. 统计各专业学生人数 #medium  */
+select dept_name,count(student_id) student_number
+from Department d left join Student s on d.dept_id=s.dept_id
+group by d.dept_id
+order by student_number desc, dept_name;
+
+
+/* 1407. 排名靠前的旅行者 #easy */
+select name, IFNULL(sum(distance),0) travelled_distance         -- 注意 SUM可能产生 NULL (COUNT不会)
+from Users u left join Rides r on u.id=r.user_id
+group by u.id
+order by travelled_distance desc,name;
+
+
+
+/* 0550. 游戏玩法分析 IV #medium
+思路1: 分别通过两次 #子查询 求出 总人数, 和第二天玩的人数.
+思路2: 利用窗口函数计算每个用户的安装时间 (最早活动时间). 然后根据 `DATEDIFF(event_date, install_date)=1` 是否成立来进行判断.
+    注意, DATEDIFF(d1, d2) 计算的 d1-d2
+ */
+
+-- # 先求出每个用户的安装日期，然后求第二天还玩的人数，然后是统计总共用户人数，相除即可。
+SELECT ROUND((part.hascount / total.allcount), 2) fraction
+FROM
+    -- 安装第二天还玩的人数
+    (
+        SELECT COUNT(*) AS hascount
+        FROM
+        (
+            SELECT player_id, MIN(event_date) as first_day
+            FROM Activity
+            GROUP BY player_id
+        ) a1, Activity a2
+        WHERE a1.player_id=a2.player_id AND DATEDIFF(a2.event_date, a1.first_day)=1
+    ) AS part,
+    -- 总安装人数
+    (SELECT COUNT(DISTINCT player_id) AS allcount FROM Activity) AS total;
+-- 
+select ROUND(
+    -- 注意, DATEDIFF(d1, d2) 计算的 d1-d2
+    SUM(IF(DATEDIFF(event_date, install_date)=1, 1, 0)) / 
+    COUNT(DISTINCT player_id)
+    , 2
+) as fraction
+from (
+    select *, MIN(event_date) OVER(PARTITION BY player_id) AS install_date
+    from Activity
+) as tmp;
+
+/* 0579. 查询员工的累计薪水 #hard
+按照 <id,month,salary> 保存了分月的薪水数据. 现要查询最近一个月之外的, 每个员工的最近三个月的累计薪水 (不足三个月的也算).
+例如, 一个员工最近几个月的薪水是 20,30,40,60,100 则应该统计前面的四个数据, 最近三个月累计薪水是 20,50,90,130.
+思路1: 先除去每个员工的最近一个月数据, 然后 连接 原表中最近3个月的工资数据
+思路2: 或者现连接然后再筛掉最大月份, 但感觉不太优雅.
+https://leetcode.cn/problems/find-cumulative-salary-of-an-employee/
+ */
+-- # 先除去每个员工的最近一个月数据
+SELECT t1.Id,t1.Month, SUM(t2.Salary) Salary
+FROM 
+    -- 除去每个员工的最近一个月数据
+    (SELECT * FROM Employee WHERE (Id, Month) NOT IN (SELECT Id, MAX(Month) FROM Employee GROUP BY Id)) t1 
+    -- 连接 原表中最近3个月的工资数据
+    LEFT JOIN Employee t2
+    ON t1.Id=t2.Id AND t1.Month>=t2.Month AND t1.Month-t2.month<3
+GROUP BY t1.Id,t1.Month
+ORDER BY t1.Id, t1.Month DESC
+
+-- # 或者先连接然后再筛掉最大月份
+SELECT t1.Id,t1.Month, SUM(t2.Salary) Salary
+FROM Employee t1 JOIN Employee t2
+    ON t1.Id=t2.Id AND t1.Month>=t2.Month AND t1.Month-t2.month<3
+WHERE (t2.Id, t2.Month) NOT IN (SELECT Id, MAX(Month) FROM Employee GROUP BY Id) 
+    AND (t1.Id, t1.Month) NOT IN (SELECT Id, MAX(Month) FROM Employee GROUP BY Id) 
+GROUP BY t1.Id,t1.Month
+ORDER BY t1.Id, t1.Month DESC
+
+

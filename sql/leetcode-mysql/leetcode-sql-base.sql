@@ -150,6 +150,7 @@ order by employee_id;
 
 /* 1795. 每个产品在不同商店的价格 #easy #题型
 1777 的反操作, 宽表转长表.
+注意这里的 `WHERE store1 IS NOT NULL` 判断.
  */
 SELECT product_id, 'store1' store, store1 price FROM products WHERE store1 IS NOT NULL
 UNION
@@ -215,19 +216,75 @@ SELECT
 
 /* ============================================ 第 5 天 合并 ============================== */
 
+/* 0175. 组合两个表 #easy
+给定 Person, Address 两张表, 根据 personId 进行连接. 
+注意要求无论 address表中是否有该人, 都要返回该人的信息, 因此对Person进行左连接.
+ */
+-- 因为题目要求无论 person 是否有地址信息，所以不能用join，要用left join
+select FirstName, LastName, City, State 
+from Person 
+left join Address on Person.PersonId=Address.PersonId
 
 
+/* 1581. 进店却未进行过交易的顾客 #easy 
+有用户进店和消费两张表, 查询进店但没有消费的用户和进店次数.
+思路1: 先用子查询得到所有消费的进店id, 从而得到没有消费的进店活动, 再分组统计.
+思路2: 左连接进店表, 通过 `IS NULL` 查询没有发生消费的活动.
+ */
+-- 思路2: 左连接进店表, 通过 `IS NULL` 查询没有发生消费的活动.
+-- 注意, 若一次进店产生了多笔消费, 左连接也会导致行数增加. 但因为我们用了 where 可以筛选掉消费了的记录, 所以不影响
+select customer_id,count(v.visit_id) count_no_trans
+from Visits v
+left join Transactions t on v.visit_id=t.visit_id
+where transaction_id IS NULL  -- 筛选没有消费的记录
+group by customer_id;
+-- 思路1: 先用子查询得到所有消费的进店id, 从而得到没有消费的进店活动, 再分组统计.
+select customer_id, count(*) count_no_trans
+from Visits v
+where v.visit_id not in (
+    select distinct visit_id from Transactions
+)
+group by customer_id;
 
-
-
-
-
-
-
+/* 1148. 文章浏览 I #easy 简单查询 */
+select distinct author_id id
+from Views
+where author_id=viewer_id
+order by author_id;
 
 
 
 
 
 /* ============================================ 第 6 天 合并 ============================== */
+/* 0197. 上升的温度 #easy #题型 要求找到符合条件的日期, 满足当天的温度高于昨天.
+思路1: 根据条件进行 #JOIN, 考察 #日期
+MySQL 使用 #DATEDIFF 来比较两个日期类型的值。
+ */
+select w.id
+from Weather w 
+    join Weather w2 ON DATEDIFF(w.recordDate,w2.recordDate)=1
+-- 事实上 where 子句完全可以接到 ON 条件后面 (AND). 但速度会更慢?
+where w.Temperature>w2.Temperature;
+
+
+/* 0607. 销售员 #easy 链表查询 */
+select name
+from SalesPerson
+where sales_id not in (
+    select sales_id
+    from Orders o left join Company c on o.com_id=c.com_id
+    group by sales_id
+    having SUM(IF(name='RED',1,0))>0
+);
+
+
+
+
+
+
+
+
+
+
 

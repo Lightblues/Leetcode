@@ -1,5 +1,6 @@
 
 - 蓝桥 [oeasy 教您玩转 python](https://www.lanqiao.cn/courses/3584)
+- [data whale] [team-learning-program](https://github.com/datawhalechina/team-learning-program/tree/master/PythonLanguage)
 
 
 ## 调试

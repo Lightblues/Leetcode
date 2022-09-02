@@ -1,5 +1,7 @@
 
 
+搜题: <https://leetcode.cn/search/>
+
 [2022 力扣夏令营](https://leetcode.cn/topic/2022-li-kou-xia-ling-ying/discuss/latest/) 第三期是分类训练.
 
 基本DS

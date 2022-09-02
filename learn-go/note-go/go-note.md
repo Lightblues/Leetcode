@@ -341,7 +341,6 @@ import (
 
 Go中除了保留了main()函数，还保留了一个init()函数，这两个函数都不能有任何参数和返回值。它们都是在特定的时候自动调用的，无需我们手动去执行。
 
-![](media/go/2022-01-01-19-39-18.png)
 
 ## 数组
 
@@ -431,7 +430,6 @@ fmt.Println(cap(my_slice))  // 5
 println(my_slice)      // [3/5]0xc42003df10
 ```
 
-![](media/go/2022-01-01-19-54-59.png)
 
 每一个slice结构都由3部分组成：容量(capacity)、长度(length)和指向底层数组某元素的指针，它们各占8字节(1个机器字长，64位机器上一个机器字长为64bit，共8字节大小，32位架构则是32bit，占用4字节)，所以**任何一个slice都是24字节(3个机器字长)**。
 
@@ -500,7 +498,6 @@ new_slice := my_slice[1:3]
 new_slice := my_slice[1:3:3]
 ```
 
-![](media/go/2022-01-01-20-04-13.png)
 
 由于多个slice共享同一个底层数组，所以当修改了某个slice中的元素时，其它包含该元素的slice也会随之改变，因为slice只是一个指向底层数组的指针(只不过这个指针不纯粹，多了两个额外的属性length和capacity)，实际上修改的是底层数组的值，而底层数组是被共享的。
 
@@ -550,7 +547,6 @@ app_slice := append(new_slice,2323)
 
 上面的append()在 `new_slice` 的后面增加了一个元素2323，所以 `app_slice[2]=2323`。但因为这些slice共享同一个底层数组，所以2323也会反映到其它slice中。
 
-![](media/go/2022-01-01-20-14-53.png)
 
 ### 扩容
 
@@ -569,7 +565,6 @@ new_slice := my_slice[1:3:3]   // [22 33]
 app_slice := append(new_slice,4444)
 ```
 
-![](media/go/2022-01-01-20-18-11.png)
 
 ### 合并slice append
 

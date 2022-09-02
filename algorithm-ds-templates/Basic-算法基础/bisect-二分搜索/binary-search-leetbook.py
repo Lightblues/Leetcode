@@ -51,10 +51,39 @@ def testClass(inputs):
 [二分查找](https://leetcode.cn/leetbook/detail/binary-search/)
 
 总结了三套模板, 三者之间的区别见 [分析](https://leetcode.cn/leetbook/read/binary-search/xewjg7/)
-感觉没啥用? 明天做了里面的例题再看看.
+感觉没啥用? 感觉这里的模版并没啥啥实质的区分度, 更多的技巧上的炫技.
+    选做了最后的一组难题, 发现利用我最常用的框架完全可以过.
+    总结: 其实, **重要的是对于问题的理解**, 例如是「满足条件的最小idx」. 更多是要看问题的转化.
+    又: 看看 bisect 的官方实现, 优雅至极.
 
+背框架如下: 
+        l,r = 0,len(nums)-1     # [l,r] 闭区间
+        # 1) 手动实现逻辑;
+        ans = 0
+        while l<=r:
+            m = (l+r)>>1
+            # 下面的更新逻辑根据题意做修改.
+            # 例如, 这里查找满足条件的最小idx
+            if check(m): l = m+1
+            else: r = m-1; ans = m
+        return ans
+        # 2) 很多时候, 直接调用 bisect_left/right;
+        return bisect_left(nums,*,*)
 
-@2022 """
+= 难题
+0287. 寻找重复数 #medium
+    一个长 n+1 的数组仅包含 1...n. 其中只有一个元素有重复(两次或多次!). 要求不修改, 只能 O(1) 空间的条件下找到.
+0004. 寻找两个正序数组的中位数 #hard 经典 #题型
+    给定两个长分别为 m,n 的有序数组, 要求中位数. 限制复杂度 O(m+n)
+    思路1: 对于转化的问题, 通过二分查找.
+    思路2: 直接利用到中位数的性质. 也是 #二分
+ 0719. 找出第 K 小的数对距离 #hard #题型 #二分
+    给定一个数组, 每个数对构成「绝对差值」. 问第k小的差值. 限制: 长度 n 1e4. 数字大小 C 1e6.  
+    思路1: 排序 + #二分 查找
+0410. 分割数组的最大值 #hard #题型.
+    对于一个非负数组, 要求分割成m个非空连续子数组, 使得这些子数组的区间和最大值 最小. 限制: 数组长度 1E3; 数组元素 C 1e6; m 50
+
+ """
 class Solution:
     """ 0704. 二分查找 #easy 基本题型, 有序不重复数组中找目标值 """
     def search(self, nums: List[int], target: int) -> int:
@@ -91,11 +120,11 @@ class Solution:
     
     """ 0004. 寻找两个正序数组的中位数 #hard 经典 #题型
 给定两个长分别为 m,n 的有序数组, 要求中位数. 限制复杂度 O(m+n)
-提示: 转化问题为「求这样的两个有序数组中, 第k大的数值」.
 思路1: 对于转化的问题, 通过二分查找.
+    提示: 转化问题为「求这样的两个有序数组中, 第k大的数值」.
     再转化, 考虑在 nums1[idx1:] 和 nums2[idx2:] 两个字数组上找第k大的数值.
     注意边界.
-思路2: 利用到中位数的性质.
+思路2: 直接利用到中位数的性质. 也是 #二分
     转化问题: 我们希望找到两个分割点 i,j. 将两个数组分成了两半. 我们希望前半部分的数量恰好是一半, 也即 `i+j+2 = (m+n+1)//2`
     并且希望, nums[i] <= nums[j+1] and nums[j] <= nums[i+1]. 也即这样的划分也是符合全局划分的.
     这样, 我们要求的中位数就由左半部分的最大值 (和右半部分的最小值) 决定.
@@ -207,7 +236,7 @@ class Solution:
         l,r = 0,nums[-1]-nums[0]
         return bisect_left(range(l,r+1), k, key=f)
     
-    """ 410. 分割数组的最大值 #hard #题型.
+    """ 0410. 分割数组的最大值 #hard #题型.
 对于一个非负数组, 要求分割成m个非空连续子数组, 使得这些子数组的区间和最大值 最小. 限制: 数组长度 1E3; 数组元素 C 1e6; m 50
 思路1: 二分.
     对于「检查数组是否可以分成成m个和小于x的子数组」这一问题, 可以通过 #贪心 在 O(n) 内得到.
@@ -241,6 +270,7 @@ class Solution:
         return ans
 
     def splitArray(self, nums: List[int], m: int) -> int:
+        # 思路2: #DP 记 `f(i,j)` 表示前i个数字分成j个子数组的最大和最小值.
         n = len(nums)
         f = [[10**18] * (m + 1) for _ in range(n + 1)]
         acc = list(accumulate(nums, initial=0))
@@ -253,7 +283,7 @@ class Solution:
                 # for k in range(i):
                 #     f[i][j] = min(f[i][j], max(f[k][j - 1], acc[i] - acc[k]))
                 for k in range(1, i + 1):
-                    val = max(f[i - k][j - 1], sub[i] - sub[i - k])
+                    val = max(f[i - k][j - 1], acc[i] - acc[i - k])
                     if val <= f[i][j]: f[i][j] = val # 单调性
                     else: break
         return f[n][m]
