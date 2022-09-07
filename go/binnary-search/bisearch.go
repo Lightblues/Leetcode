@@ -448,7 +448,7 @@ func f162(){
 	fmt.Println(findPeakElement([]int{1,2,1,3,5,6,4}))
 }
 
-/* 0167.Two-Sum-II-Input-array-is-sorted/
+/* 0167.Two-Sum-II-Input-array-is-sorted/ 0167. 两数之和 II - 输入有序数组
 找出两个数之和等于 target 的两个数字，要求输出它们的下标。注意一个数字不能使用 2 次。下标从小到大输出。假定题目一定有一个解。
 Input: numbers = [2,7,11,15], target = 9
 Output: [1,2]

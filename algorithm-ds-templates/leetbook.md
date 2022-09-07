@@ -10,11 +10,11 @@
 - [二叉搜索树](https://leetcode.cn/leetbook/detail/introduction-to-data-structure-binary-search-tree/)
 - [哈希表](https://leetcode.cn/leetbook/detail/hash-table/)
 - [链表](https://leetcode.cn/leetbook/detail/linked-list/)
+- [二分查找](https://leetcode.cn/leetbook/detail/binary-search/)
+- [滑动窗口和双指针](https://leetcode.cn/leetbook/detail/sliding-window-and-two-pointers/) 这本赞绝!!
 
 TODO
 
-- [滑动窗口和双指针](https://leetcode.cn/leetbook/detail/sliding-window-and-two-pointers/)
-- [二分查找](https://leetcode.cn/leetbook/detail/binary-search/)
 - [数组和字符串](https://leetcode.cn/leetbook/detail/array-and-string/)
 - [队列 & 栈](https://leetcode.cn/leetbook/detail/queue-stack/)
 

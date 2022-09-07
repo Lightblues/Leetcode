@@ -67,6 +67,8 @@ def testClass(inputs):
     思路1: 让第一个指针先走n步. 然后两个指针一起走.
 0160. 相交链表 #easy #题型
     给定两个节点, 判断他们是否会相交 (Y字型), 若相交返回相交的那个节点. 保证了无环. 进阶限制: 时间 O(m+n), 空间 O(1)
+0876. 链表的中间结点 #easy 若长度为偶数, 则返回靠右的那个
+
 
 = 经典问题
 0206. 反转链表 #easy #题型
@@ -109,6 +111,7 @@ class Node:
         self.next = next
         self.random = random
 class Solution:
+    """ ============================================ 双指针技巧 ============================================ """
     """ 0141. 环形链表 #easy #题型 判断链表是否有环
 思路0: 用哈希表记录
 思路1: #快慢指针
@@ -221,6 +224,20 @@ class Solution:
             headA,headB = headA.next,headB.next
         return headA
 
+
+    """ 0876. 链表的中间结点 #easy 若长度为偶数, 则返回靠右的那个 """
+    def middleNode(self, head: ListNode) -> ListNode:
+        slow = fast = head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+        return slow # 注意长度为偶数情况下的模拟
+
+
+
+
+
+    """ ============================================ 经典 ============================================ """
     """ 0206. 反转链表 #easy #题型
 给定一个链表, 将其反转.
 思路1: 迭代. 经典实现. 维护 pre,cur,next 三个指针会比较清晰.
@@ -329,6 +346,9 @@ class Solution:
             current = next_node
         return previous
 
+
+
+    """ ============================================ 小结 ============================================ """
 
     """ 0021. 合并两个有序链表 #easy
 总体思路肯定是一样的. 注意下面循环条件 `while list1 and list2` 和 `while list1 or list2` 的区别.

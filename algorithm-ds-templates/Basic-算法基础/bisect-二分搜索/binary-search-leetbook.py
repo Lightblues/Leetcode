@@ -83,6 +83,8 @@ def testClass(inputs):
 0410. 分割数组的最大值 #hard #题型.
     对于一个非负数组, 要求分割成m个非空连续子数组, 使得这些子数组的区间和最大值 最小. 限制: 数组长度 1E3; 数组元素 C 1e6; m 50
 
+
+
  """
 class Solution:
     """ 0704. 二分查找 #easy 基本题型, 有序不重复数组中找目标值 """
@@ -288,15 +290,50 @@ class Solution:
                     else: break
         return f[n][m]
 
-
-
+    """ 0644. 子数组最大平均数 II #hard #题型
+给定一个数组, 要求找到 「长度大于等于k的连续子数组的最大平均数」, 精确度 1e-5. 限制: n 1e4; 整数元素范围 +/- 1e4
+思路1: #二分 查找该平均数.
+    搜索范围 [mn,mx], 为了确保搜索精度, 也即从 1e4 到 1e-5. C=1e9. 因此复杂度: O(n logC)
+    如何在 O(n) 时间check?
+        提示: 要判断 nums[l,r] 平均值大于等于 x, 等价差值数组 a = nums-x 的 a[l,r] 的区间和非负.
+        因此, 问题转化为「判断是否有长度至少为k的子数组, 其区间和非负」.
+        采用 #前缀和. **为了找到非负区间, 可以记录「此前的前缀和的最小值」**!!! 注意在维护过程中保证数组长度k的限制.
+    see [official](https://leetcode.cn/problems/maximum-average-subarray-ii/solution/zui-da-ping-jun-zi-duan-he-ii-by-leetcode/)
+补充: 利用单调栈的 O(n) [解法](https://leetcode.cn/problems/maximum-average-subarray-ii/solution/fu-za-du-wei-onde-dan-diao-zhan-fa-by-li-trzz/)
+"""
+    def findMaxAverage(self, nums: List[int], k: int) -> float:
+        n = len(nums)
+        def check(x):
+            # 检查nums中是否存在长度至少k的平均值>=x的子数组
+            arr = [a-x for a in nums]
+            acc = sum(arr[:k])
+            if acc>=0: return True
+            accDiffK = 0    # 距离差 k 的前缀和
+            accMin = 0      # 距离差 k 的前缀和的最小值
+            for i in range(k,n):
+                acc += arr[i]
+                accDiffK += arr[i-k]
+                accMin = min(accMin, accDiffK)
+                if acc>=accMin: return True
+            return False
+        l,r = min(nums),max(nums)
+        delta = 1e-5
+        # 二分类型: 找到满足条件的最大值
+        pre = l
+        while r-pre>delta:      # 连续区间
+            mid = (l+r)/2
+            if check(mid): l = mid; pre = mid
+            else: r = mid
+        return pre
+    
 sol = Solution()
 result = [
     # sol.findDuplicate(nums = [1,3,4,2,2]),
     # sol.findDuplicate(nums = [3,1,3,4,2]),
     # sol.findMedianSortedArrays(nums1 = [1,3], nums2 = [2]),
     # sol.findMedianSortedArrays([1,2],[3,4]),
-    sol.splitArray(nums = [7,2,5,10,8], m = 2),
+    # sol.splitArray(nums = [7,2,5,10,8], m = 2),
+    sol.findMaxAverage(nums = [1,12,-5,-6,50,3], k = 4),
 ]
 for r in result:
     print(r)

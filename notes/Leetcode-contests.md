@@ -3704,6 +3704,10 @@ T1 原来用滑动窗口就可以, 想复杂了写了乱七八糟的DP; T2也是
     - from [灵神](https://leetcode.cn/problems/maximum-segment-sum-after-removals/solution/by-endlesscheng-p61j/)
 
 
+### D86
+
+T2 不知道是否有数学解法; T3 复杂度分析一开始没想好; T4 的题目描述也有点奇怪, 虽然最后实现比较简单就是...
+
 
 ## 其他
 

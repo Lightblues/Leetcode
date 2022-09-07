@@ -49,6 +49,10 @@ def testClass(inputs):
 
 """ 
 [力扣杯竞赛真题集](https://leetcode.cn/study-plan/lccup)
+
+
+
+
 @2022 """
 class Solution:
     """ LCP 39. 无人机方阵 #easy

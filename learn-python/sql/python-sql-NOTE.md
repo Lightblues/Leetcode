@@ -1,0 +1,2 @@
+- API: [PEP 249](https://peps.python.org/pep-0249/)
+- 简化操作的库: SQLobject: <http://sqlobject.org/>

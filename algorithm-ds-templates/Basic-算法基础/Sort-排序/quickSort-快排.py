@@ -32,6 +32,8 @@ import re
 
 """ 
 == 快速排序
+0075. 颜色分类 #medium #题型
+    有3种颜色, 要求「原地」修改使得数组变为有序的状态.
 0215. 数组中的第K个最大元素 #medium #题型 #star
     给定一个数组, 要求返回其中第k大的元素.
     思路1: 维护一个大小为k 的 最小 #堆
@@ -128,7 +130,7 @@ class Solution():
         quickHelper(arr, 0, len(arr) - 1)
 
 
-    """ 0215. 数组中的第K个最大元素 #medium #题型 #star
+    """ 0215. 数组中的第K个最大元素 #medium #题型 #star [另见 sliding Window 的循环不变量部分]
 给定一个数组, 要求返回其中第k大的元素.
 限制: 数组长度 1e5
 思路1: 维护一个大小为k 的 最小 #堆
@@ -138,6 +140,7 @@ class Solution():
     具体而言, 需要实现 `partition(arr, l,r)` 在 `arr[l...r]` 中随机选择一个pivot, 并返回其下标.
     复杂度: 平均复杂度 `O(n)`, 最坏情况下 `O(n^2)`. 为此, 在选择pivot的时候可以增加 random.
     具体见 [官答](https://leetcode.cn/problems/kth-largest-element-in-an-array/solution/shu-zu-zhong-de-di-kge-zui-da-yuan-su-by-leetcode-/)
+从 #循环不变量 的角度, 另见 [here](https://leetcode.cn/leetbook/read/sliding-window-and-two-pointers/rli5s3/)
 """
     def findKthLargest(self, nums: List[int], k: int) -> int:
         # 推排序

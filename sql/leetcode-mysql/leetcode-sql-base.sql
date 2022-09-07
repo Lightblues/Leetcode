@@ -279,6 +279,29 @@ where sales_id not in (
 );
 
 
+/* ============================================ 第 7 天 计算函数 ============================== */
+/* 1141. 查询近30天活跃用户数 #easy
+要求得到从 2019-07-27 截止的近30天的结果.
+思路1: 手动 `BETWEEN '2019-06-28' AND '2019-07-27'`
+思路2: 利用日期的函数, 
+    #DATE_SUB 如 `BETWEEN DATE_SUB('2019-07-27', INTERVAL 29 DAY) AND '2019-07-27'`
+    #DATEDIFF 如 `DATEDIFF('2019-07-27',activity_date)<=29 and DATEDIFF('2019-07-27',activity_date)>=0
+group by activity_date`
+ */
+select activity_date day, count(DISTINCT user_id) active_users
+from Activity
+-- 以下三种都可
+-- where activity_date BETWEEN '2019-06-28' AND '2019-07-27'
+-- where activity_date BETWEEN DATE_SUB('2019-07-27', INTERVAL 29 DAY) AND '2019-07-27'
+where DATEDIFF('2019-07-27',activity_date)<=29 and DATEDIFF('2019-07-27',activity_date)>=0
+group by activity_date;
+
+/* 1693. 每天的领导和合伙人 #easy */
+
+/* 1729. 求关注者的数量 #easy */
+
+
+/* ============================================ 第 8 天 计算函数 ============================== */
 
 
 
@@ -288,3 +311,13 @@ where sales_id not in (
 
 
 
+
+
+/* ============================================ 第 9 天 控制流 ============================== */
+
+
+
+
+
+
+/* ============================================ 第 10 天 过滤 ============================== */
