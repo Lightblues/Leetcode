@@ -48,7 +48,7 @@ def testClass(inputs):
     return s_res
 
 """ 
-[滑动窗口和双指针](https://leetcode.cn/leetbook/detail/sliding-window-and-two-pointers/)
+[滑动窗口和双指针](https://leetcode.cn/leetbook/detail/sliding-window-and-two-pointers/) #star 就是题量太大了.
 
 == 循环不变量
 基本思想: 在循环过程中维护变量满足某一性质.
@@ -71,22 +71,62 @@ def testClass(inputs):
 0643. 子数组最大平均数 I #easy
 1052. 爱生气的书店老板 #medium
 
+
+
 == 类型2: 不定长度的滑动窗口
 0076. 最小覆盖子串 #hard #题型
     给定字符串s和t, 要求s中长度最小的包含t中所有元素的子串. 限制: 长度 1e5
 2062. 统计字符串中的元音子字符串 #easy #题型
     要求统计连续子序列的数量. 条件为: 1) 所有元素为元音字符 2) 包含所有aeiou五个元素.
     思路1: #双指针. 在满足条件的情况下尽量移动左边界.
+0995. K 连续位的最小翻转次数 #hard #题型 #star 给定一个01数组, 每次可以对长度为k的子数组进行翻转. 问最少需要多少次可以得到全1的数组? 限制: 1e5
+    提示: 由于每一位都要变为1, 因此翻转的顺序不重要. 也即, 我们从左到右遍历, 尽可能保证左边部分符合条件即可.
+    思路1: #差分数组 来记录翻转的区间.
+0727. 最小窗口子序列 #hard #题型 #star 给定字符串s,t, 要求找到s中最小的子串, 使得t是该子串的子序列. 限制 s的长度 n 2e4 t的长度 k 100
+    思路3: #滑动窗口 #star. 我们从每一个位置出发, 尝试正向匹配t, 若在位置right匹配成功了, 则反向再匹配一次, 得到最小的窗口.
+
 
 == 类型3: 计数问题
 0340. 至多包含 K 个不同字符的最长子串 #medium #题型 给定一个字符串, 要求找到拥有最多k个不同字符的子串的最大长度
     关联: 「159. 至多包含两个不同字符的最长子串」 #medium
 0795. 区间子数组个数 #medium 求数组中, 最大元素在 [l,r] 范围内的子数组数量
     思路2: #分解. 考虑子问题「最大元素小于等于x的子数组数量」
+0992. K 个不同整数的子数组 #hard #题型
+    对于一个数字, 给定数字k, 统计所有子数组中, 「刚好包含k个不同数字」的子数组数量. 限制: 2e4
+    思路1: #滑动窗口. 维护「两个窗口」, 从而实现区间的计数.
+    思路2: 问题 #转化 为「求最多包含k个不同数字的子数组数量」, 再减去「最多包含k-1个不同数字的子数组数量」
+0713. 乘积小于 K 的子数组 #medium
+0904. 水果成篮 #medium 
+1358. 包含所有三种字符的子字符串数目 #medium 
+0467. 环绕字符串中唯一的子字符串 #medium #题型 #star
+    「环绕字符串」是指 zabc, a 这种形式的, 给定一个字符串, 问其中有多少个「唯一的环绕子字符串」. 限制: n 1e5
+    提示: 关键是如何去重? 一种思路是, 统计以ch结尾的环绕子串的最大长度.
+    思路1: #DP 以 `dp[ch]` 表示在前i个字符中, 以ch结尾的最长环绕字符串.
+0719. 找出第 K 小的数对距离 #hard #题型 #二分
+    给定一个数组, 每个数对构成「绝对差值」. 问第k小的差值. 限制: 长度 n 1e4. 数字大小 C 1e6.  
+    见 [二分] 这里要得到所有的差值复杂度过高, 显然需要二分. 
+    那么为什么会想到 #滑动窗口? 对于排序的数组, 进行计数的一个通用方法就是双指针.
+
+== 类型4: 使用数据结构维护窗口性质
+0239. 滑动窗口最大值 #hard #题型 对长n的数组进行宽k的滑窗, 问过程中每一个位置中窗口最大值. 限制: n 1e5, k 1e5
+    思路1: 采用 #优先队列 记录当前状态下的最大值. 并通过时间戳来防止超长. 复杂度 O(n logk)
+    思路2: #单调队列
+0480. 滑动窗口中位数 #hard #题型 #hardhard 对长n的数组进行宽k的滑窗, 问过程中每一个位置中窗口中位数. 限制: n 1e5, k 1e5
+    关联: 「0295. 数据流的中位数」
+    思路1: 双 #优先队列 + #延迟删除
+    类似 0295. 数据流的中位数, 也是用两个「平衡」的优先队列, 来维护较小和较大的一半数据. 但下面的 #细节 非常多.
+0220. 存在重复元素 III #medium #题型
+    给定一个数组, 要求判断是否有一个下标对 (i,j), 满足间距 <=k, 两者的值相差 <=t. 限制: 数组长度 2e4
+0683. K 个关闭的灯泡 #hard #题型  有 n 个顺序排列的灯泡按照一定次序打开, 问哪一天恰好有 k 个连续的关闭灯泡, 两侧为打开的灯泡.
+    思路1: 暴力用 #有序集合 O(n logn)
+    思路2: #滑动窗口 + 维护最小值.
+1438. 绝对差不超过限制的最长连续子数组 #medium #题型 找最长的子数组, 其中的任意两元素绝对差不超过limit 限制: 1e5
+    思路1: #有序集合 暴力 复杂度 O(n logn)
+    思路2: 本质上就是维护 #滑动窗口 范围内的最大值和最小值! 因此可以用 #单调队列 分别维护递增和递减的序列. 复杂度 O(n)
+    关联: 0239. 滑动窗口最大值
 
 
-
-== 链表中双指针技巧
+== 链表中双指针技巧 见 [链表]
 0141. 环形链表 #easy #题型 判断链表是否有环
     思路1: #快慢指针
 0142. 环形链表 II #题型 #medium
@@ -333,7 +373,106 @@ class Solution:
                     ans += left+1
         return ans
     
+    """ 0995. K 连续位的最小翻转次数 #hard #题型 #star 给定一个01数组, 每次可以对长度为k的子数组进行翻转. 问最少需要多少次可以得到全1的数组? 限制: 1e5
+提示: 由于每一位都要变为1, 因此翻转的顺序不重要. 也即, 我们从左到右遍历, 尽可能保证左边部分符合条件即可.
+思路1: #差分数组 来记录翻转的区间.
+    从左往右遍历, 我们需要统计「每一位被翻转的次数」. 但每次翻转的是一个区间, 所以关键是如何记录每次翻转k的范围? 答案是用差分数组
+    复杂度: O(n)
+思路2: #滑动窗口 , 简化了空间开销
+    上面的空间开销是 O(n), 能否优化到 O(1)? 实际上, 我们在遍历过程中维护acc, 只需要记录翻转区间的结束位置即可.
+    一个小技巧是, 对于翻转开始位 +x 来标记翻转, 当遍历idx位时, 若 nums[idx-k] >=k 说明翻转区间结束.
+[official](https://leetcode.cn/problems/minimum-number-of-k-consecutive-bit-flips/solution/k-lian-xu-wei-de-zui-xiao-fan-zhuan-ci-s-bikk/)
+"""
+    def minKBitFlips(self, nums: List[int], k: int) -> int:
+        # 思路1: #差分数组 来记录翻转的区间.
+        n = len(nums)
+        diff = [0] * (n+1)      # 差分数组
+        acc = 0 # 当前遍历位的翻转次数
+        cnt = 0 # 累计翻转次数
+        for i in range(n-k+1):
+            acc += diff[i]
+            if (nums[i]+acc) & 1 == 0:
+                acc += 1; diff[i+k] -= 1 # diff[i] += 1; 
+                cnt += 1
+        # 检查是否可行
+        for i in range(n-k+1,n):
+            acc += diff[i]
+            if (nums[i]+acc) & 1 == 0: return -1
+        return cnt
+    def minKBitFlips(self, nums: List[int], k: int) -> int:
+        # 思路2: #滑动窗口 , 简化了空间开销
+        n = len(nums)
+        acc = cnt = 0
+        # 统一了上面的两次for
+        for i in range(n):
+            # 检查是否翻转区间结束. 也可以 nums[i-k]-=2 对于原数组复原
+            if i >= k and nums[i-k] >= 2: acc -= 1
+            if (nums[i]+acc) & 1 == 0:
+                if i+k > n: return -1
+                acc += 1; nums[i] += 2
+                cnt += 1
+        return cnt
 
+    """ 0727. 最小窗口子序列 #hard #题型 #star 给定字符串s,t, 要求找到s中最小的子串, 使得t是该子串的子序列. 限制 s的长度 n 2e4 t的长度 k 100
+思路1: #DP (前缀递推)
+思路3: #滑动窗口 #star. 我们从每一个位置出发, 尝试正向匹配t, 若在位置right匹配成功了, 则反向再匹配一次, 得到最小的窗口.
+    复杂度: 虽然看上去有「浪费」, 但注意这里复杂度仍然是 `O(n * k)`! 实际测试下来反而是最优的!
+    see [here](https://leetcode.cn/problems/minimum-window-subsequence/solution/itcharge-727-zui-xiao-chuang-kou-zi-xu-l-v3az/)
+ """
+    def minWindow(self, s1: str, s2: str) -> str:
+        # 思路3: #滑动窗口 #star. 我们从每一个位置出发, 尝试正向匹配t, 若在位置right匹配成功了, 则反向再匹配一次, 得到最小的窗口.
+        i, j = 0, 0     # j: 待匹配的s2的位置
+        min_len = float('inf')
+        left, right = 0, 0
+        while i < len(s1):
+            if s1[i] == s2[j]:
+                j += 1
+            # 完成了匹配
+            if j == len(s2):
+                right = i
+                # 反向匹配, 从而找到最小的子数组.
+                j -= 1
+                while j >= 0:
+                    if s1[i] == s2[j]:
+                        j -= 1
+                    i -= 1
+                i += 1
+                if right - i + 1 < min_len:
+                    left = i
+                    min_len = right - left + 1
+                j = 0
+            i += 1
+        return "" if min_len == float('inf') else s1[left: left + min_len]
+
+    """ 1100. 长度为 K 的无重复字符子串 #medium """
+    def numKLenSubstrNoRepeats(self, s: str, k: int) -> int:
+        cnt = Counter(s[:k])
+        ans = len(cnt)==k
+        for i in range(k,len(s)):
+            cnt[s[i]] += 1
+            cnt[s[i-k]] -= 1
+            if cnt[s[i-k]]==0: del cnt[s[i-k]]
+            if len(cnt)==k: ans += 1
+        return int(ans)
+    """ 1151. 最少交换次数来组合所有的 1 #medium """
+    def minSwaps(self, data: List[int]) -> int:
+        c = sum(data)
+        cnt = sum(data[:c])
+        mx = cnt
+        for i in range(c, len(data)):
+            cnt += data[i]-data[i-c]
+            mx = max(mx, cnt)
+        return c - mx
+    """ 1176. 健身计划评估 #easy """
+    def dietPlanPerformance(self, calories: List[int], k: int, lower: int, upper: int) -> int:
+        s = sum(calories[:k])
+        ans = 0
+        calories.append(0)
+        for i in range(k, len(calories)):
+            if s>upper: ans +=1
+            elif s<lower: ans -=1
+            s += calories[i]-calories[i-k]
+        return ans
 
     """ ==================================== 类型 3 计数问题 ==================================== """
     """ 0340. 至多包含 K 个不同字符的最长子串 #medium #题型 给定一个字符串, 要求找到拥有最多k个不同字符的子串的最大长度
@@ -377,7 +516,261 @@ class Solution:
                 sidx = -1; idxs = []
         return ans
     
+    """ 0992. K 个不同整数的子数组 #hard #题型
+对于一个数字, 给定数字k, 统计所有子数组中, 「刚好包含k个不同数字」的子数组数量. 限制: 2e4
+思路1: #滑动窗口. 维护「两个窗口」, 从而实现区间的计数.
+    对于同样的右边界r, 满足条件的左边界形成一个区间 [l1,l2], 因此需要用两个指针维护这个区间. 计数.
+思路2: 问题 #转化 为「求最多包含k个不同数字的子数组数量」, 再减去「最多包含k-1个不同数字的子数组数量」
+"""
+    def subarraysWithKDistinct(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+        ans = 0
+        cnt1,cnt2 = Counter(),Counter()
+        # 注意两个指针的定义. l1 是符合条件的左边界, l2是第一个不符合条件的边界.
+        l1 = l2 = 0
+        for r in range(n):
+            cnt1[nums[r]] += 1
+            cnt2[nums[r]] += 1
+            while len(cnt2)>=k:
+                cnt2[nums[l2]] -= 1
+                if cnt2[nums[l2]]==0: del cnt2[nums[l2]]
+                l2 += 1
+            while len(cnt1)>k:
+                cnt1[nums[l1]] -= 1
+                if cnt1[nums[l1]]==0: del cnt1[nums[l1]]
+                l1 += 1
+            # 加if判断初始情况.
+            if len(cnt1)==k: ans += l2-l1
+        return ans
     
+    """ 0713. 乘积小于 K 的子数组 #medium """
+    def numSubarrayProductLessThanK(self, nums: List[int], k: int) -> int:
+        mul = 1
+        l = 0
+        ans = 0
+        for r,num in enumerate(nums):
+            mul *= num
+            while l<=r and mul>= k:
+                mul //= nums[l]
+                l += 1
+            ans += r-l+1
+        return ans
+    """ 0904. 水果成篮 #medium """
+    def totalFruit(self, fruits: List[int]) -> int:
+        mx = 0
+        cnt = Counter()
+        l = 0
+        for r,f in enumerate(fruits):
+            cnt[f] += 1
+            while len(cnt) > 2:
+                cnt[fruits[l]]-=1
+                if cnt[fruits[l]]==0: del cnt[fruits[l]]
+                l+=1
+            mx = max(mx, r-l+1)
+        return mx
+    """ 1358. 包含所有三种字符的子字符串数目 #medium """
+    def numberOfSubstrings(self, s: str) -> int:
+        ans = 0; n = len(s)
+        cnt = Counter()
+        l = 0
+        for r,ch in enumerate(s):
+            cnt[s[r]] += 1
+            while len(cnt)==3 and all(i>0 for i in cnt.values()):
+                cnt[s[l]]-=1; l+=1
+            ans += l
+        return ans
+    
+    """ 0467. 环绕字符串中唯一的子字符串 #medium #题型 #star
+「环绕字符串」是指 zabc, a 这种形式的, 给定一个字符串, 问其中有多少个「唯一的环绕子字符串」. 限制: n 1e5
+提示: 关键是如何去重? 一种思路是, 统计以ch结尾的环绕子串的最大长度.
+思路1: #DP 以 `dp[ch]` 表示在前i个字符中, 以ch结尾的最长环绕字符串.
+    在遍历过程中, 维护当前符合条件的环绕串长度. 
+    e.g. 此前的环绕串长k, 对于第i的字符ch 满足 s[i-1]邻接s[i], 则更新 `dp[ch] = max{ dp[ch], k+1 }`
+    [官答](https://leetcode.cn/problems/unique-substrings-in-wraparound-string/solution/huan-rao-zi-fu-chuan-zhong-wei-yi-de-zi-ndvea/)
+为何是 #滑动窗口? 是一个比较特殊的变体. 参见 [here总结](https://leetcode.cn/problems/unique-substrings-in-wraparound-string/solution/xi-fa-dai-ni-xue-suan-fa-yi-ci-gao-ding-qian-zhui-/)
+"""
+    def findSubstringInWraproundString(self, p: str) -> int:
+        # 思路1: #DP 以 `dp[ch]` 表示在前i个字符中, 以ch结尾的最长环绕字符串.
+        dp = defaultdict(int)
+        k = 0
+        for i,ch in enumerate(p):
+            # if i>0 and (ch=='a' and p[i-1]=='z' or ord(ch)-ord(p[i-1])==1):
+            # 技巧: 可以用%来简化逻辑.
+            if i>0 and (ord(ch)-ord(p[i-1])) % 26 == 1:
+                k += 1
+            else: k = 1
+            dp[ch] = max(dp[ch], k)
+        return sum(dp.values())
+    
+    """ 0719. 找出第 K 小的数对距离 #hard #题型 #二分
+给定一个数组, 每个数对构成「绝对差值」. 问第k小的差值. 限制: 长度 n 1e4. 数字大小 C 1e6.  
+见 [二分] 这里要得到所有的差值复杂度过高, 显然需要二分. 
+那么为什么会想到 #滑动窗口? 对于排序的数组, 进行计数的一个通用方法就是双指针.
+"""
+
+
+    """ ==================================== 类型 4 使用数据结构维护窗口性质 ==================================== """
+    """ 0239. 滑动窗口最大值 #hard #题型 对长n的数组进行宽k的滑窗, 问过程中每一个位置中窗口最大值. 限制: n 1e5, k 1e5
+思路1: 采用 #优先队列 记录当前状态下的最大值. 并通过时间戳来防止超长. 复杂度 O(n logk)
+思路2: #单调队列
+    优化思想: 假如滑窗内有 i<j 并且 nums[i]<=nums[j], 那么 nums[i] 一定不会是滑窗的最大值.
+    因此, 在遍历过程中, 维护「在窗口内的并且单调递减的队列」, 那么队首元素就是当前窗口的最大值.
+    注意, 这个DS要实现尾部添加和头部/尾部删除, 并且要维护单调性, 因此是「单调队列」.
+    复杂度: O(n)
+思路3: 对于nums按照长度k进行分组, 讨论. #拓展
+    类似 #稀疏表（Sparse Table）
+[官答](https://leetcode.cn/problems/sliding-window-maximum/solution/hua-dong-chuang-kou-zui-da-zhi-by-leetco-ki6m/)
+"""
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        # 思路1: 采用 #优先队列 记录当前状态下的最大值. 并通过时间戳来防止超长. 复杂度 O(n logk)
+        q = [(-num,i) for i,num in enumerate(nums[:k-1])]
+        heapify(q)
+        ans = []
+        for i in range(k-1, len(nums)):
+            heappush(q, (-nums[i], i))
+            while q[0][1] <= i-k: heappop(q)
+            ans.append(-q[0][0])
+        return ans
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        # 思路2: #单调队列
+        q = deque()
+        for i in range(k-1): # 先填满窗口的前k-1个元素
+            while q and nums[q[-1] ]<= nums[i]: q.pop()
+            q.append(i)
+        ans = []
+        for i in range(k-1, len(nums)):
+            while q and nums[q[-1]] <= nums[i]: q.pop()
+            q.append(i)
+            # 由于i始终会append, 因此不会 空.
+            while q[0] <= i-k: q.popleft()
+            ans.append(nums[q[0]])
+        return ans
+    
+    """ 0480. 滑动窗口中位数 #hard #题型 #hardhard 对长n的数组进行宽k的滑窗, 问过程中每一个位置中窗口中位数. 限制: n 1e5, k 1e5
+关联: 「0295. 数据流的中位数」
+思路1: 双 #优先队列 + #延迟删除
+    类似 0295. 数据流的中位数, 也是用两个「平衡」的优先队列, 来维护较小和较大的一半数据. 但下面的 #细节 非常多.
+    我们直接用数据结构的思想来考虑, 对于要实现的 `DualHeap` 需要哪些操作?
+        插入操作 `insert`, 类似 0295. 插入后需要维护平衡.
+        维护平衡 `makeBalance`. 当某一个堆的长度超了, 将一个「有效数据」转移到另一个堆中.
+        最重要的是删除操作 `erase`. 堆的一个问题是无法删除非堆顶元素. 
+            因此我们需要 #延迟删除 的机制. 用一个 `delayed` 记录待删除的元素.
+            何时删除? 由于我们关心的仅仅是堆顶元素 (需要保证其有效性). 因此只有当堆顶元素被弹出, 才需要触发删除操作.
+        这里的 erase,makeBalance 都涉及删除操作, 因此可以用一个 `prune` 函数复用, 作用是「不断地弹出 heap 的堆顶无效元素」
+        细节: 因为堆中可能保存了延迟删除的数据, 需要用两个计数器来记录当前堆中的有效数据量.
+[official](https://leetcode.cn/problems/sliding-window-median/solution/hua-dong-chuang-kou-zhong-wei-shu-by-lee-7ai6/)
+"""
+    def medianSlidingWindow(self, nums: List[int], k: int) -> List[float]:
+        # 仔细看下面的 DualHeap 实现!!!
+        dh = DualHeap(k)
+        for num in nums[:k]:
+            dh.insert(num)
+        
+        ans = [dh.getMedian()]
+        for i in range(k, len(nums)):
+            dh.insert(nums[i])
+            dh.erase(nums[i - k])
+            ans.append(dh.getMedian())
+        
+        return ans
+    
+    
+    """ 0220. 存在重复元素 III #medium #题型
+给定一个数组, 要求判断是否有一个下标对 (i,j), 满足间距 <=k, 两者的值相差 <=t. 限制: 数组长度 2e4
+思路1: 维护长度为 k+1 的 #滑动窗口. 每次需要插入删除元素, 并且需要得到插入元素临近的两个元素大小. 可以用 #有序列表, 复杂度 `O(n logk)`
+"""
+    
+    
+    """ 0683. K 个关闭的灯泡 #hard #题型  有 n 个顺序排列的灯泡按照一定次序打开, 问哪一天恰好有 k 个连续的关闭灯泡, 两侧为打开的灯泡.
+限制: n 2e4
+思路1: 暴力用 #有序集合 O(n logn)
+思路2: #滑动窗口 + 维护最小值.
+    上面是是以「开灯的时间顺序」视角; 还可以根据「每个灯的打开时间」来看.
+    注意到, 条件等价于, r=l+k+1, 并且 [l+1...l+k] 这k个灯的打开时间都比两者晚!
+    因此, 可以维护一个长k+1 的滑窗. 在遍历过程中记录滑窗内的最小值 (于边界比较)
+        具体而言, 滑窗的跳转逻辑可以进行简化: 每次检查 [l+1...l+k] 区间的元素即可. 更新l到第一个不满足的位置.
+    复杂度: 每个位置最多被访问两次, 因此 O(n)
+    图示见 [here](https://leetcode.cn/problems/k-empty-slots/solution/k-ge-kong-hua-pen-by-beney-2-22uh/)
+"""
+    def kEmptySlots(self, bulbs: List[int], k: int) -> int:
+        from sortedcontainers import SortedList
+        sl = SortedList()
+        for i,b in enumerate(bulbs):
+            idx = sl.bisect_right(b)
+            if idx>0 and b - sl[idx-1] == k+1: return i+1
+            if idx<len(sl) and sl[idx] - b == k+1: return i+1
+            sl.add(b)
+        return -1
+    def kEmptySlots(self, bulbs, k):
+        # 思路2: #滑动窗口 + 维护最小值.
+        # 得到每个位置的灯的点亮时间.
+        days = [0] * len(bulbs)
+        for day, position in enumerate(bulbs, 1):
+            days[position - 1] = day
+
+        ans = float('inf')
+        left, right = 0, k+1
+        while right < len(days):
+            # 检查当前范围是否满足条件
+            for i in range(left + 1, right):
+                if days[i] < days[left] or days[i] < days[right]:
+                    left, right = i, i+k+1
+                    break
+            # 满足条件. 注意到可以直接右移k个单位! 因为中间部分显然不满足条件.
+            else:
+                ans = min(ans, max(days[left], days[right]))
+                left, right = right, right+k+1
+
+        return ans if ans < float('inf') else -1
+
+    """ 1438. 绝对差不超过限制的最长连续子数组 #medium #题型 找最长的子数组, 其中的任意两元素绝对差不超过limit 限制: 1e5
+思路1: #有序集合 暴力 复杂度 O(n logn)
+思路2: 本质上就是维护 #滑动窗口 范围内的最大值和最小值! 因此可以用 #单调队列 分别维护递增和递减的序列. 复杂度 O(n)
+    关联: 0239. 滑动窗口最大值
+    回顾: 为什么可以单调性? 例如要求最大值, 若 i<j 有 nums[i]<nums[j], 则 nums[i] 一定不会是滑窗最大值, 维护递减序列即可.
+[official](https://leetcode.cn/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/solution/jue-dui-chai-bu-chao-guo-xian-zhi-de-zui-5bki/)
+"""
+    def longestSubarray(self, nums: List[int], limit: int) -> int:
+        # 思路1: #有序集合 暴力 复杂度 O(n logn)
+        s = SortedList()
+        n = len(nums)
+        left = right = ret = 0
+        while right < n:
+            s.add(nums[right])
+            while s[-1] - s[0] > limit:
+                s.remove(nums[left])
+                left += 1
+            ret = max(ret, right - left + 1)
+            right += 1
+        return ret
+    def longestSubarray(self, nums: List[int], limit: int) -> int:
+        n = len(nums)
+        # 单调队列
+        queMax, queMin = deque(), deque()
+        left = right = ret = 0
+
+        while right < n:
+            # 维护两个队列的单调性
+            # 不同于 0239题中的实现, 这里由于实现不太一样, 只能是 < 而不能 <=! 其实用上面的思路更清晰.
+            while queMax and queMax[-1] < nums[right]:
+                queMax.pop()
+            while queMin and queMin[-1] > nums[right]:
+                queMin.pop()
+            queMax.append(nums[right])
+            queMin.append(nums[right])
+            # 检查是否满足条件
+            while queMax and queMin and queMax[0] - queMin[0] > limit:
+                if nums[left] == queMin[0]:
+                    queMin.popleft()
+                if nums[left] == queMax[0]:
+                    queMax.popleft()
+                left += 1
+            
+            ret = max(ret, right - left + 1)
+            right += 1
+        
+        return ret
+
     
     
     """ ==================================== 双指针：相向交替移动的两个变量 ==================================== """
@@ -655,7 +1048,82 @@ class Solution:
                 if slots1[i][1]<slots2[j][1]: i+=1
                 else: j+=1
         return []
+
+
+class DualHeap:
+    def __init__(self, k: int):
+        # 大根堆，维护较小的一半元素，注意 python 没有大根堆，需要将所有元素取相反数并使用小根堆
+        self.small = list()
+        # 小根堆，维护较大的一半元素
+        self.large = list()
+        # 哈希表，记录「延迟删除」的元素，key 为元素，value 为需要删除的次数
+        self.delayed = collections.Counter()
+
+        self.k = k
+        # small 和 large 当前包含的元素个数，需要扣除被「延迟删除」的元素
+        self.smallSize = 0
+        self.largeSize = 0
+
+
+    # 不断地弹出 heap 的堆顶元素，并且更新哈希表
+    def prune(self, heap: List[int]):
+        while heap:
+            num = heap[0]
+            if heap is self.small:
+                num = -num
+            if num in self.delayed:
+                self.delayed[num] -= 1
+                if self.delayed[num] == 0:
+                    self.delayed.pop(num)
+                heapq.heappop(heap)
+            else:
+                break
     
+    # 调整 small 和 large 中的元素个数，使得二者的元素个数满足要求
+    def makeBalance(self):
+        if self.smallSize > self.largeSize + 1:
+            # small 比 large 元素多 2 个
+            heapq.heappush(self.large, -self.small[0])
+            heapq.heappop(self.small)
+            self.smallSize -= 1
+            self.largeSize += 1
+            # small 堆顶元素被移除，需要进行 prune
+            self.prune(self.small)
+        elif self.smallSize < self.largeSize:
+            # large 比 small 元素多 1 个
+            heapq.heappush(self.small, -self.large[0])
+            heapq.heappop(self.large)
+            self.smallSize += 1
+            self.largeSize -= 1
+            # large 堆顶元素被移除，需要进行 prune
+            self.prune(self.large)
+
+    def insert(self, num: int):
+        if not self.small or num <= -self.small[0]:
+            heapq.heappush(self.small, -num)
+            self.smallSize += 1
+        else:
+            heapq.heappush(self.large, num)
+            self.largeSize += 1
+        self.makeBalance()
+
+    def erase(self, num: int):
+        self.delayed[num] += 1
+        if num <= -self.small[0]:
+            self.smallSize -= 1
+            if num == -self.small[0]:
+                self.prune(self.small)
+        else:
+            self.largeSize -= 1
+            if num == self.large[0]:
+                self.prune(self.large)
+        self.makeBalance()
+
+    def getMedian(self) -> float:
+        return float(-self.small[0]) if self.k % 2 == 1 else (-self.small[0] + self.large[0]) / 2
+
+
+
 sol = Solution()
 result = [
     # sol.minWindow(s = "ADOBECODEBANC", t = "ABC"),
@@ -675,8 +1143,17 @@ result = [
     # sol.longestMountain(arr = [2,1,4,7,3,2,5]),
     # sol.longestMountain([2,2,2])
     # sol.twoSumLessThanK([34,23,1,24,75,33,54,8], 60),
-    sol.numSubarrayBoundedMax(nums = [2,1,4,3], left = 2, right = 3),
-    sol.numSubarrayBoundedMax(nums = [2,9,2,5,6], left = 2, right = 8),
+    # sol.numSubarrayBoundedMax(nums = [2,1,4,3], left = 2, right = 3),
+    # sol.numSubarrayBoundedMax(nums = [2,9,2,5,6], left = 2, right = 8),
+    # sol.subarraysWithKDistinct(nums = [1,2,1,2,3], k = 2),
+    # sol.subarraysWithKDistinct(nums = [1,2,1,3,4], k = 3),
+    # sol.findSubstringInWraproundString('zab'),
+    # sol.maxSlidingWindow(nums = [1,3,-1,-3,5,3,6,7], k = 3),
+    # sol.kEmptySlots(bulbs = [1,3,2], k = 1),
+    # sol.kEmptySlots(bulbs = [1,2,3], k = 1),
+    # sol.minKBitFlips(nums = [0,1,0], k = 1),
+    # sol.minKBitFlips(nums = [0,0,0,1,0,1,1,0], k = 3),
+    sol.minWindow(S = "abcdebdde", T = "bde"),
 ]
 for r in result:
     print(r)

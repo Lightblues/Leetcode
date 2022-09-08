@@ -1,4 +1,5 @@
 
+from itertools import accumulate
 from typing import List
 import collections
 import math
@@ -19,7 +20,7 @@ class Solution271:
             rings = rings[2:]
         return sum([all(label) for label in records])
 
-    """2104. 子数组范围和
+    """2104. 子数组范围和 #medium
 给你一个整数数组 nums 。nums 中，子数组的 范围 是子数组中最大元素和最小元素的差值。 
 返回 nums 中 所有 子数组范围的 和 。
 子数组是数组中一个连续 非空 的元素序列。"""
@@ -34,8 +35,8 @@ class Solution271:
                 result += nMax - nMin
         return result
 
-    """ 2105. 给植物浇水 II
-模拟法即可 """
+    """ 2105. 给植物浇水 II #medium
+#模拟 即可 """
     def minimumRefill(self, plants: List[int], capacityA: int, capacityB: int) -> int:
         l, r = 0, len(plants)-1
         result = 0
@@ -58,56 +59,31 @@ class Solution271:
                 return result+1
         return result
 
-    """ 2106. 摘水果
-在一个无限的 x 坐标轴上, 分布一定的水果, 给定 startPos 和可以移动的步数 k, 计算可以拿到的最大数量 """
+    """ 2106. 摘水果 #hard #题型 #star
+在一个无限的 x 坐标轴上, 分布一定的水果, 给定 startPos 和可以移动的步数 k, 计算可以拿到的最大数量
+限制: 水果位置 2e5; 有水果的位置数量 n 2e5; 可以走的步数 k 2e5;
+思路1: #双指针. 比较困难的那种.
+    对于 [l,r] 区间, 可以在 O(1) 时间判断是否可以从 startPos在k步限制内到达.
+    我们用 #滑动窗口 统计区间可达部分的水果数量.
+        如何滑动? 遍历右端点, 根据条件移动左端点.
+    为什么单向移动不会出现遗漏? 
+        假设 l<r<startPos, 若 [l,startPos] 检查合法, 则在右端点从r右移到startPos的过程中, l并不会发生移动! 因此不会发生遗漏.
+    复杂度: O(n)
+思路0: 枚举可能的部分, #二分 搜索. 用到 #前缀和
+    下面的实现中直接枚举 k次, 感觉复杂度较高...
+    复杂度: O(k logn)
+思路2: 更为「直观」的想法, 是分别尝试「先向右再向左」和「先向左再向右」, 但写了半天一堆错...
+    参见 [灵神](https://leetcode.cn/problems/maximum-fruits-harvested-after-at-most-k-steps/solution/qian-zhui-he-er-fen-by-endlesscheng-jjn4/).
+
+"""
     def maxTotalFruits(self, fruits: List[List[int]], startPos: int, k: int) -> int:
-        minL, maxL = fruits[0][0], fruits[-1][0]
-        pos2index = lambda x: x-minL+1
-        cumsum = [0] * (maxL - minL + 2)
-        p = 1
-        for pos, num in fruits:
-            i = pos2index(pos)
-            for j in range(p, i):
-                cumsum[j] = cumsum[j-1]
-            cumsum[i] = cumsum[i-1] + num
-            p = i+1
-        print(cumsum)
-
-        def update(x, y):
-            global result
-            result = max(result, cumsum[pos2index(y)] - cumsum[pos2index(x)-1])
-        
-        global result
-        result = 0
-
-        if startPos > maxL:
-            if startPos-k > maxL:
-                return 0
-            startPos = maxL
-            k -= startPos-maxL
-        if startPos < minL:
-            if startPos+k < minL:
-                return 0
-            startPos = minL
-            k -= minL-startPos
-
-        update(max(minL, startPos-k), startPos)
-        update(startPos, min(maxL, startPos+k))
-        for i in range(1, k//2):
-            s, e = max(startPos-i, minL), min(startPos+k-2*i, maxL)
-            update(s, e)
-            s, e = max(startPos-k+2*i, minL), min(startPos+i, maxL)
-            update(s, e)
-        return result
-
-    def maxTotalFruits1(self, fruits: List[List[int]], startPos: int, k: int) -> int:
         cumsum = [0]
         pos = [float("-inf")]
         for p, num in fruits:
             pos.append(p)
             cumsum.append(num+cumsum[-1])
         result = 0
-        # 遍历所有可能到达的区域
+        # 遍历所有可能到达的区域: 可以先往一个方向前进 d1, 然后折往另一方向前进 d2
         for d1 in range(k+1):    # k+1
             d2 = max(k - 2*d1, 0)
             # 先向左
@@ -121,6 +97,33 @@ class Solution271:
         return result
 
 
+    def maxTotalFruits0(self, fruits: List[List[int]], startPos: int, k: int) -> int:
+        fruits.append((float('inf'), 0))
+        n = len(fruits)
+        fs = [i[1] for i in fruits]
+        acc = list(accumulate(fs, initial=0))
+        def test(l,r):
+            # 判断是否可以在k步内到达[l,r]
+            l,r = fruits[l][0], fruits[r][0]
+            l,r  = (startPos-r), (startPos-l)
+            if l*r >= 0:
+                return max(abs(l), abs(r)) <= k
+            else:
+                return 2*min(abs(l), abs(r)) + max(abs(l), abs(r)) <= k
+        ans = 0
+        l = 0
+        # idx = bisect.bisect_left(fruits, startPos, key=lambda x:x[0])
+        # for r in range(idx, n):
+        for r in range(0, n):
+            while l<=r and not test(l,r):
+                l += 1
+            # 区间是合法的!
+            if l<=r:
+                ans = max(ans, acc[r+1]-acc[l])
+        return ans
+
+
+
 
 sol = Solution271()
 print(
@@ -128,11 +131,11 @@ print(
     # sol.subArrayRanges([1,2,3]),
     # sol.minimumRefill(plants = [1,2,4,4,5], capacityA = 6, capacityB = 5),
 
-    # sol.maxTotalFruits1(fruits = [[2,8],[6,3],[8,6]], startPos = 5, k = 4),   # 9
-    # sol.maxTotalFruits1(fruits = [[0,9],[4,1],[5,7],[6,2],[7,4],[10,9]], startPos = 5, k = 4),  # 14
-    sol.maxTotalFruits1([[0,7],[7,4],[9,10],[12,6],[14,8],[16,5],[17,8],[19,4],[20,1],[21,3],[24,3],[25,3],[26,1],[28,10],[30,9],[31,6],[32,1],[37,5],[40,9]], 21, 30),
-    sol.maxTotalFruits1([[200000,10000]], 0, 200000),   # 10000
-    sol.maxTotalFruits1([[0,22],[1,15],[2,91],[3,50],[4,45],[5,61],[6,77],[7,86],[8,3],[10,71],[11,65],[12,37],[13,72],[14,77],[15,42],[17,43],[18,19],[20,33],[22,24],[24,45],[25,46],[26,10],[27,65],[28,49],[29,63],[30,75],[31,48],[32,72],[33,92],[34,88],[35,19],[36,69],[37,35],[38,80],[39,14],[40,87],[41,79],[42,47],[44,61],[45,94],[46,78],[47,43],[48,56],[50,50],[51,26],[52,99],[53,64],[54,99],[56,53],[57,19],[58,59],[59,23],[60,31],[61,36],[62,75],[63,11],[64,37],[65,86],[66,64],[67,62],[68,56],[69,87],[70,36],[71,22],[74,29],[75,17],[76,72],[77,78],[78,92],[79,64],[80,58],[81,94],[83,34],[84,56],[85,48],[86,70],[87,93],[88,83],[89,85],[90,78],[91,82],[92,98],[93,13],[94,53],[95,41],[96,42],[97,67],[98,87],[99,47]], 100, 94),
+    sol.maxTotalFruits(fruits = [[2,8],[6,3],[8,6]], startPos = 5, k = 4),   # 9
+    sol.maxTotalFruits(fruits = [[0,9],[4,1],[5,7],[6,2],[7,4],[10,9]], startPos = 5, k = 4),  # 14
+    sol.maxTotalFruits([[0,7],[7,4],[9,10],[12,6],[14,8],[16,5],[17,8],[19,4],[20,1],[21,3],[24,3],[25,3],[26,1],[28,10],[30,9],[31,6],[32,1],[37,5],[40,9]], 21, 30),
+    sol.maxTotalFruits([[200000,10000]], 0, 200000),   # 10000
+    sol.maxTotalFruits([[0,10000]], 20000, 20000),   # 10000
 )
 
 

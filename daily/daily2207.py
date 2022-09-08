@@ -169,8 +169,153 @@ class Solution:
                     if v!=-1: return v
                     else: return find(m+1,r)
         return find(0, mountain_arr.length()-1)
+
+    """ 0727. 最小窗口子序列 #hard #题型 #star 给定字符串s,t, 要求找到s中最小的子串, 使得t是该子串的子序列. 限制 s的长度 n 2e4 t的长度 k 100
+思路1: #DP (前缀递推)
+    记 `f(i,j)` 为 s[:i] 中, 包含了 t[:j] 的子序列的最右start位置. 例如, 对于 aabc.., 中的位置c, 要找到最小的包含ab的子序列, 则最晚的start位置为1.
+    转移: 每次转移时, 尽量用「最小长度/最右start的序列」. 因此有 `f(i,j) = max{f(0...i-1, j-1)} and 位置i匹配第j个目标 or f(i, 0...j)`
+        其中第一项表示匹配前 j-1 个字符并且当前i位置匹配第j个字符, 第二项表示 [:j-1] 进行完成了匹配.
+        具体的转移有较多 #细节. 并且可以转为一维.
+    复杂度: `O(n * k)`
+    在官答中, `f(i,j)` 的定义为, s[i]=t[j] 并且 s[:i-1] 可以匹配 t[:j-1] 的最右start位置. 思路更简洁.
+思路2: 从每个位置开始 #模拟 匹配s 的过程, 利用 next 数组来加速.
+    具体而言, 需要预处理得到 `next[i][ch]` 表示「从位置i开始, 下一个字符为ch的位置」.
+    这样, 我们从idx开始匹配target, 可以在 O(k) 内得到结果. 因此总复杂度 O(n * k)
+思路3: #滑动窗口 #star. 我们从每一个位置出发, 尝试正向匹配t, 若在位置right匹配成功了, 则反向再匹配一次, 得到最小的窗口.
+    复杂度: 虽然看上去有「浪费」, 但注意这里复杂度仍然是 `O(n * k)`! 实际测试下来反而是最优的!
+    see [here](https://leetcode.cn/problems/minimum-window-subsequence/solution/itcharge-727-zui-xiao-chuang-kou-zi-xu-l-v3az/)
+[官答](https://leetcode.cn/problems/minimum-window-subsequence/solution/zui-xiao-chuang-kou-zi-xu-lie-by-leetcode/)
+"""
+    def minWindow(self, S: str, T: str) -> str:
+        # 思路1: #DP (前缀递推)
+        m,n = len(S), len(T)
+        # f(i,j): S[:i] 中, 包含了 T[:j] 的子序列的最右start位置
+        f = [[-1]*n for _ in range(m)]
+        # 边界: 仅匹配第一个字符. 应该可以通过哨兵来优化.
+        last = -1   # 最近一个符合的位置.
+        for i,ch in enumerate(S):
+            if ch == T[0]: last = i
+            f[i][0] = last
+        # 匹配剩余字符.
+        for j in range(n):
+            last = -1   # 最近一个符合的位置.
+            for i in range(m):
+                if i>0 and f[i-1][j-1] != -1 and T[j]==S[i]: f[i][j] = f[i-1][j-1]
+                if f[i][j] != -1: last = f[i][j]
+                if last != -1: f[i][j] = last
+        # 找到最小窗口
+        ans = ""; mn = m+1
+        for i in range(m):
+            if f[i][n-1] != -1 and i-f[i][n-1]+1 < mn:
+                mn = i-f[i][n-1]+1
+                ans = S[f[i][n-1]:i+1]
+        return ans
+    def minWindow(self, S, T):
+        # 思路1: #DP (前缀递推) 官方实现
+        cur = [i if x == T[0] else None for i, x in enumerate(S)]
+        # At time j when considering T[:j+1],
+        # the smallest window [s, e] where S[e] == T[j]
+        # is represented by cur[e] = s.
+        for j in range(1, len(T)):
+            last = None
+            new = [None] * len(S)
+            # Now we would like to calculate the candidate windows
+            # "new" for T[:j+1].  'last' is the last window seen.
+            for i, u in enumerate(S):
+                if last is not None and u == T[j]: new[i] = last
+                if cur[i] is not None: last = cur[i]
+            cur = new
+
+        # Looking at the window data cur, choose the smallest length window [s, e].
+        ans = 0, len(S)
+        for e, s in enumerate(cur):
+            if s is None: continue
+            if s >= 0 and e - s < ans[1] - ans[0]:
+                ans = s, e
+        return S[ans[0]: ans[1]+1] if ans[1] < len(S) else ""
+    def minWindow(self, S, T):
+        # 思路2: 从每个位置开始 #模拟 匹配s 的过程, 利用 next 数组来加速.
+        N = len(S)
+        # `next[i][ch]` 表示「从位置i开始, 下一个字符为ch的位置」.
+        next = [None] * N
+        last = [-1] * 26
+        for i in range(N-1, -1, -1):
+            last[ord(S[i]) - ord('a')] = i
+            next[i] = tuple(last)
+        # 从target的角度进行匹配, 相较于从source的角度, 可以起到一定的「剪枝」效果? 
+        windows = [[i, i] for i, c in enumerate(S) if c == T[0]]
+        for j in range(1, len(T)):
+            letter_index = ord(T[j]) - ord('a')
+            windows = [[root, next[i+1][letter_index]]
+                       for root, i in windows
+                       if 0 <= i < N-1 and next[i+1][letter_index] >= 0]
+        if not windows: return ""
+        i, j = min(windows, key = lambda x: x[1]-x[0])
+        return S[i: j+1]
     
-    
+    def minWindow(self, s1: str, s2: str) -> str:
+        # 思路3: #滑动窗口 #star. 我们从每一个位置出发, 尝试正向匹配t, 若在位置right匹配成功了, 则反向再匹配一次, 得到最小的窗口.
+        i, j = 0, 0     # j: 待匹配的s2的位置
+        min_len = float('inf')
+        left, right = 0, 0
+        while i < len(s1):
+            if s1[i] == s2[j]:
+                j += 1
+            # 完成了匹配
+            if j == len(s2):
+                right = i
+                # 反向匹配, 从而找到最小的子数组.
+                j -= 1
+                while j >= 0:
+                    if s1[i] == s2[j]:
+                        j -= 1
+                    i -= 1
+                i += 1
+                if right - i + 1 < min_len:
+                    left = i
+                    min_len = right - left + 1
+                j = 0
+            i += 1
+        return "" if min_len == float('inf') else s1[left: left + min_len]
+
+
+    """ 0010. 正则表达式匹配 #hard #题型 #star 实现可以有 `.*` 两个符号规则的正则表达式.
+
+"""
+
+
+""" 0295. 数据流的中位数 #hard 实现一个数据结构, 可以加入数据, 并计算当前数据 #中位数.
+思路1: 维护两个「平衡的」 #优先队列. 一个最大堆, 一个最小堆.
+    我们分别用 mn,mx 最大堆最小堆维护 最小的一半和较大的一半数据, 并保持 size(mn) = size(mx) or size(mx)+1
+    查询: 根据两个堆的大小关系返回
+    插入: 根据与堆顶元素的大小关系插入, 再维护平衡性. 复杂度 O(logn)
+思路2: 可以用 #有序集合 SortedList 维护数据, 并用 #双指针 记录中位数位置
+进阶1: 若数据范围在 [0,100], 可以用 「计数排序统计每一类数的数量，并使用双指针维护中位数」
+进阶2: 若 99% 的整数都在 0 到 100 范围内. 则可以直接用数组保存超过该范围的数字 (因为大概率没用), 若小概率中位数在这范围内的话, 暴力搜索即可.
+[official](https://leetcode.cn/problems/find-median-from-data-stream/solution/shu-ju-liu-de-zhong-wei-shu-by-leetcode-ktkst/)
+"""
+class MedianFinder:
+    def __init__(self):
+        self.mn = []
+        self.mx = []
+
+    def addNum(self, num: int) -> None:
+        if self.mn and num < -self.mn[0]:
+            heappush(self.mn, -num)
+            if len(self.mn) > len(self.mx)+1:
+                heappush(self.mx, -heappop(self.mn))
+        else:
+            heappush(self.mx, num)
+            if len(self.mx) > len(self.mn):
+                heappush(self.mn, -heappop(self.mx))
+
+    def findMedian(self) -> float:
+        if len(self.mn)==len(self.mx): return (-self.mn[0]+self.mx[0])/2
+        else: return -self.mn[0]
+
+
+
+
     
 sol = Solution()
 result = [
@@ -178,8 +323,11 @@ result = [
     # sol.smallestDistancePair(nums = [1,1,1], k = 2),
     # sol.smallestDistancePair(nums = [1,6,1], k = 3),
     # sol.smallestDistancePair([9,10,7,10,6,1,5,4,9,8], 18),
-    sol.trapRainWater(heightMap = [[1,4,3,1,3,2],[3,2,1,3,2,4],[2,3,3,2,3,1]]),
-    sol.trapRainWater(heightMap = [[3,3,3,3,3],[3,2,2,2,3],[3,2,1,2,3],[3,2,2,2,3],[3,3,3,3,3]]),
+    # sol.trapRainWater(heightMap = [[1,4,3,1,3,2],[3,2,1,3,2,4],[2,3,3,2,3,1]]),
+    # sol.trapRainWater(heightMap = [[3,3,3,3,3],[3,2,2,2,3],[3,2,1,2,3],[3,2,2,2,3],[3,3,3,3,3]]),
+#     testClass("""["MedianFinder","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian"]
+# [[],[6],[],[10],[],[2],[],[6],[],[5],[],[0],[],[6],[],[3],[],[1],[],[0],[],[0],[]]""")
+    sol.minWindow(S = "abcdebdde", T = "bde"),
 ]
 for r in result:
     print(r)
