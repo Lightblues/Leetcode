@@ -255,7 +255,6 @@ class Solution:
 思路1: 采用类似 #快排 的思路, 每次选择 pivot 对于 [l,r] 区间进行分割. 也类似 #二分
     注意: 采用随机化策略选 pivot.
 从 #循环不变量 的角度, 另见 [here](https://leetcode.cn/leetbook/read/sliding-window-and-two-pointers/rli5s3/)
-
 """
     def findKthLargest(self, nums: List[int], k: int) -> int:
         # by copilot

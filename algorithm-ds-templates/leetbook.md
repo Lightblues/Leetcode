@@ -12,6 +12,7 @@
 - [链表](https://leetcode.cn/leetbook/detail/linked-list/)
 - [二分查找](https://leetcode.cn/leetbook/detail/binary-search/)
 - [滑动窗口和双指针](https://leetcode.cn/leetbook/detail/sliding-window-and-two-pointers/) 这本赞绝!!
+- [排序](https://leetcode.cn/leetbook/detail/sort-algorithms/) #star
 
 TODO
 
