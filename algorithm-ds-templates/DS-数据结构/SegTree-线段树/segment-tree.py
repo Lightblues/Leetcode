@@ -67,16 +67,18 @@ TODO: https://leetcode.cn/problems/count-of-range-sum/solution/by-ac_oier-b36o/
     关联: [洛谷 P4513 小白逛公园](https://leetcode.cn/link/?target=https%3A%2F%2Fwww.luogu.com.cn%2Fproblem%2FP4513) 就是线段路记录动态更新的区间最大值.
 
 """
+
+
+def testClass(inputs):
+    s_res = [None] # 第一个初始化类, 一般没有返回
+    methods, args = [eval(l) for l in inputs.split('\n')]
+    class_name = eval(methods[0])(*args[0])
+    for method_name, arg in list(zip(methods, args))[1:]:
+        r = (getattr(class_name, method_name)(*arg))
+        s_res.append(r)
+    return s_res
+
 class Solution:
-    def testClass(self, inputs):
-        s_res = [None] # 第一个初始化类, 一般没有返回
-        methods, args = [eval(l) for l in inputs.split('\n')]
-        class_name = eval(methods[0])(*args[0])
-        for method_name, arg in list(zip(methods, args))[1:]:
-            r = (getattr(class_name, method_name)(*arg))
-            s_res.append(r)
-        return s_res
-    
     """ 0327. 区间和的个数 #hard #题型 #线段树
 给定一个数组, 要求其所有的子区间中, 区间和在 [lower, upper] 范围内的数量
 限制: 数组长度 1e5, 元素大小 32bit
@@ -371,9 +373,9 @@ class MyCalendarTwo:
 
 sol = Solution()
 result = [
-#     sol.testClass("""["MyCalendar", "book", "book", "book"]
+#     testClass("""["MyCalendar", "book", "book", "book"]
 # [[], [10, 20], [15, 25], [20, 30]]"""),
-#     sol.testClass("""["MyCalendar","book","book","book","book","book","book","book","book","book","book"]
+#     testClass("""["MyCalendar","book","book","book","book","book","book","book","book","book","book"]
 # [[],[48,50],[0,6],[6,13],[8,13],[15,23],[49,50],[45,50],[29,34],[3,12],[38,44]]"""),
 
     # sol.countRangeSum(nums = [-2,5,-1], lower = -2, upper = 2),
