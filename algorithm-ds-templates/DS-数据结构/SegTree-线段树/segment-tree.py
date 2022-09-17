@@ -40,17 +40,28 @@ from decimal import Decimal
 https://oi-wiki.org/ds/seg/
 [wiki](https://zh.wikipedia.org/wiki/%E7%B7%9A%E6%AE%B5%E6%A8%B9)
 [zero 如何学习可以解决本题的算法与数据结构](https://leetcode.cn/problems/count-of-range-sum/solution/xian-ren-zhi-lu-ru-he-xue-xi-ke-yi-jie-jue-ben-ti-/)
+- 灵神 [301](https://www.bilibili.com/video/BV1it4y1L7kL); [D79](https://www.bilibili.com/video/BV18t4y1p736)
+
 
 基本思想: 通过更多的空间来存储区间信息(区间长度以二进制增长), 从而对于一个查询, 可以快速分解为多个子查询.
 核心: 将一个区间查询切分到子区间上. 这里的切分方式是固定的, 例如当前节点o管辖 [l,r] 区间, 则o的两个子节点分别管辖 `[l,m], [m+1,r]`, 其中 `m = (l+r)//2`. 
     对于第o个节点, 其子节点的位置是 2*o, 2*o+1; 显然这里要求o的计数从1开始. 因此, 线段树一般的查询都是 `f(1, n,1, args)` 的形式, 第1个节点管辖 [1,n] 整个区间.
 函数写法: `f(o,l,r, args)` 这里的o是当前管辖 [l,r] 的节点, 后面的 args可以是 对idx位置元素增加value, 也可以是统计 [left, right] 区间内的元素个数等.
 
+把握两个事实
+    1. 每个区间都可以拆分成 O(log n) 个子区间
+    2. 只需要 O(n) 个子区间, 就能拼成任意区间
+懒惰思想: 如果当前险段树节点对应的区间被查询区间完整包含, 则不需要递归查询; 
+    对于更新操作, 需要记录一下更新的内容 lazy tag, 停止. 后续的某个更新操作, 如果需要继续递归的话, 则带着 lazy tag 往下继续递归 (继续进行).
 
 TODO: https://leetcode.cn/problems/count-of-range-sum/solution/by-ac_oier-b36o/
 
 0327. 区间和的个数 #hard #题型 #线段树
     给定一个数组, 要求其所有的子区间中, 区间和在 [lower, upper] 范围内的数量
+
+
+6206. 最长递增子序列 II #hard #题型 对于给定的数组, 找到其中最长的严格递增子序列, 要求相邻元素差值不超过 k. 限制: n 1e5; k 1e5
+    思路1: 建立 {val: LIS} 的字典记录以val结尾的LIS 长度. 遍历过程中, 对于val, 在 [val-k,val] 范围内查询最大值.
 
 0729. 我的日程安排表 I #medium
     给定一组左开右闭的区间表示课程. 对于一个课程序列, 依次判断是否会与之前的产生冲突 (不冲突的就加入课程集合).
@@ -125,6 +136,50 @@ see [官答](https://leetcode.cn/problems/count-of-range-sum/solution/qu-jian-he
         return ans
 
 
+    """ 6206. 最长递增子序列 II #hard #题型 对于给定的数组, 找到其中最长的严格递增子序列, 要求相邻元素差值不超过 k.
+限制: n 1e5; k 1e5
+思路1: 建立 {val: LIS} 的字典记录以val结尾的LIS 长度. 遍历过程中, 对于val, 在 [val-k,val] 范围内查询最大值.
+    考虑到数据范围, 可以采用 #线段树.
+    技巧: 由于我们线段树的定义从节点1开始, 下面注释部分要避免出现区间非法! 为此, 我们可以将数字整体shift一下.
+拓展: 若本题的数据范围在 1e9, 则需要采用 #动态开点线段树. 
+参见 [灵神](https://leetcode.cn/problems/longest-increasing-subsequence-ii/solution/zhi-yu-xian-duan-shu-pythonjavacgo-by-en-p1gz/)
+"""
+    def lengthOfLIS(self, nums: List[int], k: int) -> int:
+        # 思路1: 线段树. 注意下面因为「线段树从1开始」导致的边界情况.
+        # 线段树框架
+        # u = max(nums)
+        u = max(nums) + 1  # 对于num进行shift, 从而避免下面注释部分的判断.
+        mx = [0] * (u*4)
+        def modify(o,l,r,i,val):
+            # 修改 a[i] = val
+            if l==r: mx[o]=val; return
+            m = (l+r)//2
+            if i<=m: modify(o*2,l,m,i,val)
+            else: modify(o*2+1,m+1,r,i,val)
+            mx[o] = max(mx[o*2], mx[o*2+1])
+        def query(o,l,r,L,R):
+            # 查询 max(a[L:R+1])
+            if L<=l and r<=R: return mx[o]
+            res = 0
+            m = (l+r)//2
+            if L<=m: res = query(o*2,l,m,L,R)
+            if R>m: res = max(res, query(o*2+1,m+1,r,L,R))
+            return res
+        
+        # for x in nums:
+        #     # 注意, 线段树从 1 开始!!!
+        #     if x==1: 
+        #         modify(1,1,u,1,1)       # 都是正数, 次数长度一定为1
+        #     else: 
+        #         res = 1 + query(1,1,u,max(1,x-k),x-1)     # 这里的 x-1 应该 >= 1
+        #         modify(1,1,u,x,res)
+        for x in nums:
+            x += 1
+            res = 1 + query(1,1,u,max(1,x-k),x-1)
+            modify(1,1,u,x,res)
+        return mx[1] # 对于线段树, 最大值就是根节点.
+    
+
     """ 1964. 找出到每个位置为止最长的有效障碍赛跑路线 #hard #DP
 问题定义: 给定一个序列, 对于其中的每一个值, 计算以其结尾的递增序列的最大长度
 思路1: #线段树
@@ -136,15 +191,6 @@ see [官答](https://leetcode.cn/problems/count-of-range-sum/solution/qu-jian-he
 """
     def longestObstacleCourseAtEachPosition(self, obstacles: List[int]) -> List[int]:
         # 注意不能简单用单调栈: 例如 `[5,1,5,5,1,3,4,5,1,4]` 的最后一个值应该是 5 ([1,1,3,4,4]), 而单调栈因为要保证倒数第二个1, 会得到 4
-        # n = len(obstacles)
-        # s = []
-        # ans = [0] * n
-        # for i,height in enumerate(obstacles):
-        #     while s and s[-1] > height:
-        #         s.pop()
-        #     s.append(height)
-        #     ans[i] = len(s)
-        # return ans
         
         n = len(obstacles)
         # 离散化
@@ -231,8 +277,7 @@ class SegTree_0():
         if r <= m: return self.query(2*o, l, r)
         if l >= m+1: return self.query(2*o+1, l, r)
         return self.query(2*o, l, m) + self.query(2*o+1, m+1, r)
-    
-    
+
 class SegTree:
     """ 
     更为简洁的线段树实现, 可以查询在 [left, right] 区间元素个数

@@ -96,16 +96,15 @@ from decimal import Decimal
 
 """
 class Solution:
-    """ 0300. 最长递增子序列 #medium #题型
-给定一个序列, 要求计算这个序列的最长递增子序列的长度.(严格)
-思路1: #DP #二分
-    dp[i] 记录长度为 i+1 的序列中, 结尾元素的最小值
+    """ 0300. 最长递增子序列 #medium #题型 #star 但可以是 #hard
+给定一个序列, 要求计算这个序列的最长递增子序列的长度. (严格)
+思路1: #贪心 #DP #二分
+    `dp[i]` 记录长度为 i+1 的序列中, 结尾元素的最小值
     可知, 这样的dp数组必然是递增的.
     每到一个新的数字, 若其比 dp[-1] 更大, 则append到末尾; 否则, 更新相应bisect位置的最小值
-
-输入：nums = [10,9,2,5,3,7,101,18]
-输出：4
-解释：最长递增子序列是 [2,3,7,101]，因此长度为 4 。
+    复杂度: O(n logn)
+    see [official](https://leetcode.cn/problems/longest-increasing-subsequence/solution/zui-chang-shang-sheng-zi-xu-lie-by-leetcode-soluti/)
+思路2: #线段树 参见 带约束的版本 [6206. 最长递增子序列 II]
 """
     def lengthOfLIS(self, nums: List[int]) -> int:
         # dp[i] 记录长度为 i+1 的序列中, 结尾元素的最小值

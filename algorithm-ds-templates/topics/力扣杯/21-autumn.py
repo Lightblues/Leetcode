@@ -92,6 +92,10 @@ class Solution:
             ans = max(ans, oddcum[i] + evencum[cnt-i])
         return ans
     
+    
+    """ LCP 41. 黑白翻转棋 #medium 给定一个黑白棋盘, 问在任意位置下黑棋, 最多能翻转多少个白棋? 限制: 长宽 8"""
+    def flipChess(self, chessboard: List[str]) -> int:
+        m,n = len(chessboard), len(chessboard[0])
 sol = Solution()
 result = [
     # sol.minimumSwitchingTimes(source = [[1,2,3],[3,4,5]], target = [[1,3,5],[2,3,4]]),

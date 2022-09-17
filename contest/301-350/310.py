@@ -49,6 +49,9 @@ def testClass(inputs):
 
 """ 
 https://leetcode.cn/contest/weekly-contest-310
+
+T4 是带约束的「最长递增子序列」, 就无法采用 0300 题的 贪心+二分 的框架了; 需要用到线段树才实现「区间查询」.
+
 @2022 """
 class Solution:
     """ 6176. 出现最频繁的偶数元素 """
@@ -75,15 +78,52 @@ class Solution:
 
     """ 6206. 最长递增子序列 II #hard #题型 对于给定的数组, 找到其中最长的严格递增子序列, 要求相邻元素差值不超过 k.
 限制: n 1e5; k 1e5
-思路1: 建立 {val: LIS} 的字典, 遍历过程中, 对于val, 在 [val-k,val] 范围内查询最大值.
+思路1: 建立 {val: LIS} 的字典记录以val结尾的LIS 长度. 遍历过程中, 对于val, 在 [val-k,val] 范围内查询最大值.
     考虑到数据范围, 可以采用 #线段树.
+    技巧: 由于我们线段树的定义从节点1开始, 下面注释部分要避免出现区间非法! 为此, 我们可以将数字整体shift一下.
+拓展: 若本题的数据范围在 1e9, 则需要采用 #动态开点线段树. 
+参见 [灵神](https://leetcode.cn/problems/longest-increasing-subsequence-ii/solution/zhi-yu-xian-duan-shu-pythonjavacgo-by-en-p1gz/)
 """
     def lengthOfLIS(self, nums: List[int], k: int) -> int:
+        # 思路1: 线段树. 注意下面因为「线段树从1开始」导致的边界情况.
+        # 线段树框架
+        # u = max(nums)
+        u = max(nums) + 1  # 对于num进行shift, 从而避免下面注释部分的判断.
+        mx = [0] * (u*4)
+        def modify(o,l,r,i,val):
+            # 修改 a[i] = val
+            if l==r: mx[o]=val; return
+            m = (l+r)//2
+            if i<=m: modify(o*2,l,m,i,val)
+            else: modify(o*2+1,m+1,r,i,val)
+            mx[o] = max(mx[o*2], mx[o*2+1])
+        def query(o,l,r,L,R):
+            # 查询 max(a[L:R+1])
+            if L<=l and r<=R: return mx[o]
+            res = 0
+            m = (l+r)//2
+            if L<=m: res = query(o*2,l,m,L,R)
+            if R>m: res = max(res, query(o*2+1,m+1,r,L,R))
+            return res
         
+        # for x in nums:
+        #     # 注意, 线段树从 1 开始!!!
+        #     if x==1: 
+        #         modify(1,1,u,1,1)       # 都是正数, 次数长度一定为1
+        #     else: 
+        #         res = 1 + query(1,1,u,max(1,x-k),x-1)     # 这里的 x-1 应该 >= 1
+        #         modify(1,1,u,x,res)
+        for x in nums:
+            x += 1
+            res = 1 + query(1,1,u,max(1,x-k),x-1)
+            modify(1,1,u,x,res)
+        return mx[1] # 对于线段树, 最大值就是根节点.
+    
 sol = Solution()
 result = [
     # sol.minGroups([[5,10],[6,8],[1,5],[2,3],[1,10]]),
     # sol.minGroups([[1,3],[5,6],[8,10],[11,13]]),
-]
+    sol.lengthOfLIS(nums = [4,2,1,4,3,4,5,8,15], k = 3), 
+],
 for r in result:
     print(r)
