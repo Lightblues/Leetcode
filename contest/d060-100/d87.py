@@ -131,7 +131,7 @@ class Solution:
     结论: 对于每笔交易定义 loss = cost-cashback. 则答案是 `sum(loss) + max(cashback)`
         这是因为, 若允许负数, 则一开始需要 sum(loss) 即可; 而 max(cashback) 代表了「最大可能亏钱数」, 当先完成其他交易最后进行这个交易的时候发生.
     再考虑「盈利」交易的情况. 若不考cost则资金量会上升. 所以和上一种情况类似也要看「最大可能亏钱数」, 这个发生在 max(cost) 这笔交易上.
-        因此, 答案是 `sum(loss) + max(cashback, cost)`
+        因此, 答案是 `sum(loss) + max{ max(cashback) + max(cost) }` 这里的loss, cashback针对的是亏钱交易, cost是盈利的交易.
 """
     def minimumMoney(self, transactions: List[List[int]]) -> int:
         diffs = []

@@ -65,13 +65,14 @@ class Solution:
     
     """ 1482. 制作 m 束花所需的最少天数 #medium #题型
 给一个 bloomDay 数组表示每朵花开的时间. 要求制作 m束花, 每朵消耗连续的 k朵花. 问最少满足时间. 限制: n 1e5; 花开时间 m 1e9
-思路1: #二分. 下面基本是 copilot 自动补全的, 恐怖.
+思路1: #二分. 下面基本是 #copilot 自动补全的, 恐怖.
     复杂度: O(n log(mx-mn)). 每次检查的复杂度为 O(n)
 思路2: 强行 #并查集. 但没必要?
     按照开花的顺序依次将花朵加入连续的组. 具体逻辑比较多 #细节. 没必要.
     复杂度: O(n (a(n)+logn)). 主要是排序的复杂度.
 """
     def minDays(self, bloomDay: List[int], m: int, k: int) -> int:
+        # 思路1: #二分.
         if m*k > len(bloomDay): return -1
         def check(day, m):
             acc = 0
@@ -88,6 +89,7 @@ class Solution:
             else: l = mid + 1
         return l
     def minDays(self, bloomDay: List[int], m: int, k: int) -> int:
+        # 思路2: 强行 #并查集. 但没必要
         n = len(bloomDay)
         # 快速返回 -1
         if m*k > n: return -1
@@ -121,7 +123,7 @@ class Solution:
                 acc += (sx+sy)//k - sx//k - sy//k
             if acc>=m: return d
         
-""" 1483. 树节点的第 K 个祖先 #hard #倍增
+""" 1483. 树节点的第 K 个祖先 #hard #倍增 #题型 #hardhard
 给定一棵树, 要求快速查询节点的 k级祖先. 限制: k<=n 5e4; 查询 5e4
 思路1: #倍增 法 Binary Lifting
     直觉思想是建立指数级别的索引. 也即 1,2,4,8... 级祖先节点.

@@ -36,6 +36,13 @@ from decimal import Decimal
 # from structures import ListNode, TreeNode, linked2list, list2linked
 
 """ 
+
+
+todo
+1458. 两个子序列的最大点积 #hard #题型 给定两个数组, 要求他们的一对相同长度的非空子序列的最大点积. 限制: 长度n 500, 数值范围 -100~100
+
+
+
 == 最长递增子序列 LIS
 0300. 最长递增子序列 #medium #题型
     给定一个序列, 要求计算这个序列的最长递增子序列的长度.(严格)

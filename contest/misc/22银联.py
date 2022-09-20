@@ -48,8 +48,9 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-261
-https://leetcode-cn.com/contest/biweekly-contest-71
+https://leetcode.cn/contest/cnunionpay2022
+
+前三题都比较基础, T4题目很复杂 (但主体部分的实现, 和数据量要求不难), 最后居然因为精度问题没有AC, 应该长记性了!
 @2022 """
 
 class ListNode:
@@ -98,10 +99,16 @@ class Solution:
         
 """ 银联-4. 设计自动售货机 #hard 要求实现一个自动售货机, 题目描述好复杂...
 https://leetcode.cn/contest/cnunionpay2022/problems/NyZD2B/
+题意: 需要设计一个自动售货机. 可以 addItem, 商品居然 (上架时间, 保质期, 价格, 数量); sell(time, customer, item, number) 的逻辑是, 选择所购买商品中, 优先选择价格最低、距离过期最近的商品.
+并且需要记录用户的成功购买次数, 从而计算折扣.
+优化: 下面的代码中, 由于需要检查过期时间, 所以每一次sell的复杂度还是 O(n). 如何优化到 O(n logn)?
+    参见灵神的 [代码](https://leetcode.cn/circle/discuss/7c1ifr/). 用到 #懒删除堆, 可以实现「在维护一个堆的同时，修改另一个堆中的元素」.
+    关键在于, 令两个堆中维护的对象是同一个. 参见 [视频](https://www.bilibili.com/video/BV1fP4y1d7Mn).
 """
 class VendingMachine:
     def __init__(self):
         self.customers = defaultdict(int)
+        # 物品排序: 按照 (price, remainDaies) 的双重优先级排序. 由于剩余过期时间不好记录, 可以用 -过期日期 代替
         self.items = defaultdict(list)
 
     def addItem(self, time: int, number: int, item: str, price: int, duration: int) -> None:
@@ -111,9 +118,11 @@ class VendingMachine:
     def sell(self, time: int, customer: str, item: str, number: int) -> int:
         if item not in self.items or not self.items[item]: return -1
         items = self.items[item]
+        # 商品是否足够.
         if sum([i[2] for i in items if -i[1]>=time]) < number: return -1
         acc = 0
-        discount = max(100 - self.customers[customer], 70) / 100
+        # xs... 因为这里用了分数, 浮点误差导致没有 AC. 解决方案是直接用整数, 最后转分数.
+        discount = max(100 - self.customers[customer], 70) # / 100
         while items and number > 0:
             price, endTime, count = heappop(items)
             if -endTime < time: continue
@@ -122,8 +131,9 @@ class VendingMachine:
             number -= c
             if count > c:
                 heappush(items, (price, endTime, count-c))
+        # 记录用户消费次数, 从而计算折扣
         self.customers[customer] += 1
-        return ceil(acc)
+        return ceil(acc / 100)
 
     
 sol = Solution()
