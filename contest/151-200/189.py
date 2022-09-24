@@ -12,6 +12,9 @@ def testClass(inputs):
 
 """ 
 https://leetcode.cn/contest/weekly-contest-189
+
+T3直接暴力; T4的题目非常有意思, 虽然需要一定的数学技巧, 但还是用编程及性能暴力求解...
+
 @2022 """
 class Solution:
     """ 1450. 在既定时间做作业的学生人数 """
