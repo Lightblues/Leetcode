@@ -727,6 +727,7 @@ class Solution:
 思路2: 本质上就是维护 #滑动窗口 范围内的最大值和最小值! 因此可以用 #单调队列 分别维护递增和递减的序列. 复杂度 O(n)
     关联: 0239. 滑动窗口最大值
     回顾: 为什么可以单调性? 例如要求最大值, 若 i<j 有 nums[i]<nums[j], 则 nums[i] 一定不会是滑窗最大值, 维护递减序列即可.
+    另见 [187] 中直接用 #最小堆 来做.
 [official](https://leetcode.cn/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/solution/jue-dui-chai-bu-chao-guo-xian-zhi-de-zui-5bki/)
 """
     def longestSubarray(self, nums: List[int], limit: int) -> int:

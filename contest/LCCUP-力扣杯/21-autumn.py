@@ -177,10 +177,63 @@ class Solution:
         return ans
     
     
-    """ LCP 09. 最小跳跃次数 #hard 有一排n个弹簧, 位置i的弹簧可以跳到左侧任意位置或者 i+jump[i] 处. 问要将小球从位置0弹出 (idx>=n) 所需的最少次数. 限制: n1e6; jump[i] 1e4.
-
+    """ LCP 09. 最小跳跃次数 #hard #题型. 
+有一排n个弹簧, 位置i的弹簧可以跳到左侧任意位置或者 i+jump[i] 处. 问要将小球从位置0弹出 (idx>=n) 所需的最少次数. 限制: n1e6; jump[i] 1e4.
+思路1: #BFS. 关键是如何减少判断? 
+    核心的一点在于, **若我们最快能k步跳到x位置, 则 0...x-1 位置最多只要 k+1 步**. 为此, 我们维护当前通过左跳到达的最远位置, DFS过程中对于前面部分就不需要再进行判断了.
+    终止: 需BFS都遍历结束.
+    为何不能进行DFS? 因为在跳跃过程中可能有更优的选择. 那这样记录的 right位置就可能不是最优的.
+    复杂度: 每个节点最多入队列一次, 因此 O(n)
+思路2: DP #hardhard 思考过程较为繁琐. 但本质上类似 BFS, 不过更简洁.
+    本质上, implicit 维护了当前跳的步数 (通过 `max_dis` 来记录w步最多可到达的位置.). 然后 **在顺序更新的过程中, 遍历的每一个点的最短到达步数一定不超过w+1**.
+    详见代码.
+思路3: 利用 #线段树. 首先将所有位置的到达最短时间 f 都设置为inf. 
+    在顺序遍历过程中, 对于当前 f[i] 一定是最小值, 更新 i+jump[i] 位置为 f[i]+1, 以及 [i+1...i+jump[i]-1] 的值为 f[i]+2. (都取min).
+    因此, 需要「区间更新, 单点查询」, 可用 #线段树.
+    复杂度: O(n logn)
+[official](https://leetcode.cn/problems/zui-xiao-tiao-yue-ci-shu/solution/zui-xiao-tiao-yue-ci-shu-by-leetcode-solution/)
 """
     def minJump(self, jump: List[int]) -> int:
+        # 思路1: #BFS.
+        n = len(jump)
+        right = 0
+        visited = [False] * n
+        q = deque([(0,0)])      # (idx, step)
+        while q:
+            idx, step = q.popleft()
+            t = idx+jump[idx]
+            if t>=n: return step+1
+            # 这一这里也需要进行判断! 否则可能超时.
+            if not visited[t]:
+                q.append((idx+jump[idx], step+1)); visited[t] = True
+            # 左跳. 仅将第一次到达的idx加入队列.
+            for i in range(right, idx):
+                if not visited[i]:
+                    q.append((i, step+1)); visited[i] = True
+            right = max(right, idx+1)
+        return 
+        
+    def minJump(self, jump: List[int]) -> int:
+        # 思路2: DP #hardhard 思考过程较为繁琐. 但本质上类似 BFS, 不过更简洁.
+        res = n = len(jump)
+        f = [n]*(n+1)           # f[i] 表示到达位置i的最小步数.
+        f[0] = 0
+        max_dis = [0]*(n+1)     # w 步可以跳到的最远位置
+        curr_min_num = 0    # 记录当前跳的最多步数, 其界限通过 max_dis[curr_min_num] 记录.
+        for i in range(0,n):
+            if i > max_dis[curr_min_num]:   # 超过了当前最大距离, 需要增加步数.
+                curr_min_num += 1
+            f[i] = min(f[i],curr_min_num+1) # 通过 curr_min_num 跳到右侧之后, 再左跳到达位置 i.
+            
+            # 更新最远位置, 和最小步数 f.
+            jump_tmp = i+jump[i]
+            if jump_tmp>=n:
+                res = min(res,f[i]+1)
+            else:
+                f[jump_tmp] = min(f[jump_tmp],f[i]+1)
+                max_dis[f[i]+1] = max(max_dis[f[i]+1],jump_tmp)
+        return res
+
         
 sol = Solution()
 result = [
@@ -191,7 +244,9 @@ result = [
     # sol.robot(command = "URR", obstacles = [[2, 2]], x = 3, y = 2),
     # sol.robot(command = "URR", obstacles = [[4, 2]], x = 3, y = 2)
     # sol.numWays(n = 5, relation = [[0,2],[2,1],[3,4],[2,3],[1,4],[2,0],[0,4]], k = 3),
-    sol.getTriggerTime(increase = [[2,8,4],[2,5,0],[10,9,8]], requirements = [[2,11,3],[15,10,7],[9,17,12],[8,1,14]]),
+    # sol.getTriggerTime(increase = [[2,8,4],[2,5,0],[10,9,8]], requirements = [[2,11,3],[15,10,7],[9,17,12],[8,1,14]]),
+    sol.minJump([2, 5, 1, 1, 1, 1]),
+    sol.minJump([4,6,10,8,3,5,3,5,7,8,6,10,3,7,3,10,7,10,10,9,1,4,7,4,8,6,9,8,8,2,7,2,4,5,4,3,3,2,2,2,3,4,4,1,1,5,6,8,1,2])
 ]
 for r in result:
     print(r)
