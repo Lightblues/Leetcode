@@ -12,7 +12,10 @@ def testClass(inputs):
 
 """ 
 
-https://leetcode.cn/circle/discuss/XP89Tp/
+T3 考虑得复杂度Orz, 愣是TLE; T4 「树状DP」的思路很清楚, 明白多次操作可以用bool记录, 但比赛时候完全没想出来 记忆化DP orz.
+
+[比赛链接](https://leetcode.cn/circle/discuss/XP89Tp/)
+[灵神视频](https://www.bilibili.com/video/BV1zN4y1K762/)
 
 @2022 """
 
@@ -54,7 +57,7 @@ class Solution:
                 return i
         return -1
     
-    """ 3. 弹珠游戏
+    """ 3. 弹珠游戏 LCP 63. 弹珠游戏 #medium
 给定一个grid表示弹珠. 从四条边 (不包含角) 出发向内发射弹珠, 最大距离 num. 弹珠按照下面的规则前进, 直到进洞/出边界/达到距离限制. 要求找到所有可行的发射位置.
 "W" 表示逆时针转向器; "E" 表示顺时针转向器; "O" 表示弹珠洞. 限制: 网格大小 n 1e3; 距离限制 num 1e6
 思路0: #反向 #模拟. 从洞出发, 检测是否能到达边界.
@@ -150,20 +153,23 @@ class Solution:
             if plate[i][n-1] == '.' and check(i,n-1,2): ans.append([i,n-1])
         return ans
 
-    """ 4. 二叉树灯饰 
+    """ 4. 二叉树灯饰 LCP 64. 二叉树灯饰 #medium 但实际上 #hardhard.
 给一个二叉树, 上面有一些灯. 每个节点可以 1) 切换单节点; 2) 切换它和左右孩子; 3) 切换它所定义的整颗子树. 问最少操作多少次, 可以熄灭所有灯. 限制: 节点 n 1e5
-思路1: 
+思路0: #WA 的尝试, 没考虑完全.
     对于每个节点, 递归返回 [a,aa,b,bb], 分别表示 原结构, root发生了反转, 整体反转, 整体反转+root反转 的情况下, 最小次数.
     假设两子树分别返回 [la,laa, lb,lbb], [ra,raa, rb,rbb]. 节点状态为 n,nn (若节点为1, 则用操作1需要1次).
-        以结果a的结算为例: `a = min(la+ra+n, laa+raa+nn+1, lb+rb+nn+1, lbb+rbb+n+2)`, 对应了四种情况
+        以结果a的计算为例: `a = min(la+ra+n, laa+raa+nn+1, lb+rb+nn+1, lbb+rbb+n+2)`, 对应了四种情况
             1) 对root仅使用操作1; 2) 对root使用操作1+2; 3) 对root使用操作1+3; 4) 对root使用操作1+2+3.
-    结果 #WA
-
-https://leetcode.cn/contest/season/2022-fall/problems/U7WvvU/
-# 7
-[1,0,0,0,1,0,1,null,1,1,null,null,null,null,null,1,1,1,1,null,null,1,1,null,1,null,null,1,null,null,null,null,null,1,0,1,1,0,1,null,null,0,null,null,null,null,1]
+    结果 #WA. 应该是少考虑了一些情况.
+思路1: #树形 #DP 考虑每个节点的状态 (收到祖先节点的影响), 则当前状态仅受到 1) 祖先节点操作3的次数; 2) 父节点操作2的次数. 注意都可以用bool来表示.
+    若经过操作后节点亮, 可执行操作 1, 2, 3, 123; 若经过操作后节点灭, 可执行操作 0, 12, 13, 23.
+    考虑状态转移. 假设当前点被操作的状态有 (switch2, switch3), 本来的状态为 val. 则是否亮灯由 `(node.val == 1) == (switch2 == switch3)` 决定.
+        假设亮灯. 以操作 123 为例, 对于左右孩子的影响为 `(True, not switch3)`. 第一项是因为进行了操作2, 由于进行了操作3, 对于 switch3 进行翻转
+    复杂度: 状态数量 O(n), 每次转移 考虑 4 种情况.
+from [灵神](https://leetcode.cn/problems/U7WvvU/solution/shu-xing-dp-by-endlesscheng-isuo/).
 """
     def closeLampInTree(self, root: TreeNode) -> int:
+        # 思路0: #WA 的尝试, 没考虑完全.
         def dfs(node: TreeNode):
             # return: [a,aa, b,bb]
             if node is None: return [0,0,0,0]
@@ -183,16 +189,57 @@ https://leetcode.cn/contest/season/2022-fall/problems/U7WvvU/
         a,aa,b,bb = dfs(root)
         return a
 
+    def closeLampInTree(self, root: TreeNode) -> int:
+        # 思路1: #树形 #DP
+        @lru_cache(None)
+        def f(node: TreeNode, switch2:bool, switch3:bool):
+            # switch2 记录父节点是否进行了操作2; switch3 记录祖先节点操作3的次数是否为奇数
+            if node is None: return 0
+            if (node.val==1) == (switch2==switch3):  # 当前节点为开灯
+                res1 = f(node.left, False, switch3) + f(node.right, False, switch3) + 1
+                res2 = f(node.left, True, switch3) + f(node.right, True, switch3) + 1
+                res3 = f(node.left, False, not switch3) + f(node.right, False, not switch3) + 1
+                res123 = f(node.left, True, not switch3) + f(node.right, True, not switch3) + 3
+                return min(res1, res2, res3, res123)
+            # if (node.val==1) != (switch2==switch3):  # 当前节点为关灯
+            else:
+                res12 = f(node.left, True, switch3) + f(node.right, True, switch3) + 2
+                res13 = f(node.left, False, not switch3) + f(node.right, False, not switch3) + 2
+                res23 = f(node.left, True, not switch3) + f(node.right, True, not switch3) + 2
+                res0 = f(node.left, False, switch3) + f(node.right, False, switch3)
+                return min(res0, res12, res13, res23)
+        return f(root, False, False)
 
-    """ 5. 舒适的湿度
+    """ 5. 舒适的湿度 LCP 65. 舒适的湿度 #hard #hardhard
 题目等价于: 给定一个数组, 可以对其每个元素设置正负号. 要求, 赋值的数组, 其「任意连续子数组的和的绝对值」的最大值最小化. 求这个值.
+提示: 等价于, 前缀和中, 最大最小值的差值最小化. #数形结合
+思路1: #DP 需要使用神奇的状态定义.
+    定义 `dp[i][j]` 表示 **用前i个数, 折线图最右段点到折线图最低点的距离为j时, 折线图的最大最小值的差值**.
+        这里的范围? (考虑答案的上界是多少? 进行剪枝). 一个简单的界限 是 `2*mx`. mx 是数组的最大值. (考虑手动设置正负号的过程). 
+    转移过程
+        对于第i元素 x 取正号, `dp[i][j+x] = max(dp[i-1][j], j+x)`; 
+        取负号, 还有两种可能. 1) 没有更新最低点. 则 `dp[i][j-x] = max(dp[i-1][j], j-x)`; 2) 若超过最小值, 则更新 `dp[i][0] = f[i-1][j] -j+x`
+    from [灵神](https://leetcode.cn/problems/3aqs1c/solution/by-endlesscheng-fu9b/)
+思路2: 参考出题人的 [解答](https://leetcode.cn/problems/3aqs1c/solution/chu-ti-ren-lai-xie-zui-liao-by-hqztrue-ft1j/)
 """
-root = TreeNode(1)
-root.left = TreeNode(1)
-root.right = TreeNode(0)
-p = root.right
-p.right = TreeNode(1)
+    def unSuitability(self, operate: List[int]) -> int:
+        mx = max(operate) * 2   # 设定一个界限.
+        # 采用滚动数组进行更新.
+        pre = [0] + [inf] * mx
+        for x in operate:
+            f = [inf] * (mx + 1)
+            for j, dis in enumerate(pre):
+                if dis == inf: continue  # 无效的长度（无法组成）
+                # 取正号. if 的判断来进行剪枝.
+                if j + x <= mx: f[j + x] = min(f[j + x], max(dis, j + x))
+                # 取负号
+                if j >= x: f[j - x] = min(f[j - x], dis)
+                else: f[0] = min(f[0], dis - j + x)
+            pre = f
+        return min(pre)
 
+
+# T4
 # root = TreeNode(1)
 # p = root
 # p.left = TreeNode(1)
@@ -206,13 +253,15 @@ result = [
     # sol.temperatureTrend(temperatureA = [21,18,18,18,31], temperatureB = [34,32,16,16,17]),
     # sol.transportationHub(path = [[0,1],[0,3],[1,3],[2,0],[2,3]]),
     # sol.transportationHub(path = [[0,3],[1,0],[1,3],[2,0],[3,0],[3,2]]),
-    sol.ballGame(num = 4, plate = ["..E.",".EOW","..W."]),
-    sol.ballGame(num = 5, plate = [".....","..E..",".WO..","....."]),
-    sol.ballGame(num = 3, plate = [".....","....O","....O","....."]),
-    sol.ballGame(6, ["....",".EE.","O.E.","...."]),     # [[3, 1]]
-    sol.ballGame(69, ["W.W.WE..",".WWWEW..","EWW.WE.E","E.W.E.E.",".OEOO.EO","WE.WOE.W","WW...E..",".WEWO..O","E....E..",".OWE...."]),
+    # sol.ballGame(num = 4, plate = ["..E.",".EOW","..W."]),
+    # sol.ballGame(num = 5, plate = [".....","..E..",".WO..","....."]),
+    # sol.ballGame(num = 3, plate = [".....","....O","....O","....."]),
+    # sol.ballGame(6, ["....",".EE.","O.E.","...."]),     # [[3, 1]]
+    # sol.ballGame(69, ["W.W.WE..",".WWWEW..","EWW.WE.E","E.W.E.E.",".OEOO.EO","WE.WOE.W","WW...E..",".WEWO..O","E....E..",".OWE...."]),
     # [[1, 7], [4, 0], [0, 6], [9, 6], [6, 7], [0, 3], [9, 4]]
     # sol.closeLampInTree(root),
+    sol.unSuitability(operate = [5,3,7]),
+    sol.unSuitability(operate = [20,10]),
 ]
 for r in result:
     print(r)
