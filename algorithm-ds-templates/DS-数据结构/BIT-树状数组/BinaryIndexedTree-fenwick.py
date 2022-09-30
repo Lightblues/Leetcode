@@ -1,38 +1,4 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
+from easonsi.util.leetcode import *
 
 # from utils_leetcode import testClass
 # from structures import ListNode, TreeNode, linked2list, list2linked
@@ -54,6 +20,7 @@ def testClass(inputs):
 要更新数组 1010位置的数字 (+某一数值), 则需要更新 1010, 1100 即每次加上最低1位 (这里假设 10000 超过了数组长度)
 因此, 1. 求前缀和, 每次减去数字最低的数字1位, 累计; 2. 对某一个idx的数字更新, 每次加上最低数字1位, 直到数组最大长度.
 
+ref: [区间操作？一个树状数组就够了](https://mp.weixin.qq.com/s?__biz=MzkyMzI3ODgzNQ==&mid=2247483674&idx=1&sn=263595b26950ac60e5bf789839d70c9e&chksm=c1e6cd86f691449062d780b96d9af6d9590a71872ebfee98)
 
 LC list: https://leetcode.cn/tag/binary-indexed-tree/problemset/
 
