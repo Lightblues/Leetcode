@@ -44,6 +44,7 @@ from decimal import Decimal
     给定一个链表, 将其分割成 1,2,3... 长的子序列 (最后一个剩余的长度可以不符合). 对于这些子序列, 反转其中长度为偶数的.
 
 
+0146. LRU 缓存 #medium #hard
 """
 
 # Definition for singly-linked list.
