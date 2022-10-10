@@ -21,11 +21,12 @@
         "chrono": "cpp",
         "limits": "cpp"
     },
-    "workbench.colorCustomizations": {
-        "activityBar.background": "#1C331C",
-        "titleBar.activeBackground": "#274727",
-        "titleBar.activeForeground": "#F7FBF7"
-    }
+    // "workbench.colorCustomizations": {
+    //     "activityBar.background": "#1C331C",
+    //     "titleBar.activeBackground": "#274727",
+    //     "titleBar.activeForeground": "#F7FBF7"
+    // }
+    
     //   "pasteImage.defaultName": "Y-MM-DD-HH-mm-ss",
     //   "pasteImage.path": "${currentFileNameWithoutExt}",
     //   "files.associations": {
