@@ -40,11 +40,12 @@ class Solution:
 问能够输出的最小字典序的字符串. 限制: n 1e5
 思路0: 原本尝试用栈, 发现没有那么简单.
 注意: 例如 abac, acab 其输出的结果都是 aabc.
-思路1: #模拟 每次从剩余字符中取出所有最小字符. 
+思路1: #模拟 每次从剩余字符中取出所有最小字符. 灵神总结是 #贪心+ #栈
     这样, 放入栈中的字符的出栈顺序就固定了, 但剩余字符还可以执行的操作除了输出还可以入栈.
     因此, 每次从剩余的s中找到其中的最小字符 mn, 根据其 ridx 分割, 左边将其他字符压入栈, 右边是保留的字符串.
         注意, 次小字符也可能出现在栈顶, 需要将这些符合要求的字符先pop出来.
     具体见下代码.
+[灵神](https://leetcode.cn/problems/using-a-robot-to-print-the-lexicographically-smallest-string/solution/tan-xin-zhan-by-endlesscheng-ldds/) 的思路一样, 但简洁许多
 """
     def robotWithString(self, s: str) -> str:
         t = ""
@@ -62,7 +63,21 @@ class Solution:
             s = s[idx+1:]
         ret += t[::-1]
         return ''.join(ret)
-    
+    def robotWithString(self, s: str) -> str:
+        # from 灵神
+        ans = []
+        cnt = Counter(s)
+        min = 0  # 剩余最小字母
+        st = []
+        for c in s:
+            cnt[c] -= 1
+            while min < 25 and cnt[ascii_lowercase[min]] == 0:
+                min += 1
+            st.append(c)
+            while st and st[-1] <= ascii_lowercase[min]:
+                ans.append(st.pop())
+        return ''.join(ans)
+
     
     """ 6203. 矩阵中和能被 K 整除的路径 #hard #DP 给定一个grid, 求从左上角到右下角的路径数, 使得路径上的和能被 K 整除. 限制: m*n 5e4, k 50. 对结果取mod 1e9+7
 思路1: #取模+ #DP
@@ -72,6 +87,7 @@ class Solution:
         加上 grid[i,j] 的影响呢? 实际上就是在上面的数组上加了一个偏移量. 
         例如, 假设 k=3 时不考虑 grid[i,j] 时, 值为0,1,2的路径数量分别 [a,b,c], 若 grid[i,j]=2, 则加上之后路径数分别为 [c,a,b].
     复杂度: O(m*n*k)
+    参见 [灵神优雅的代码](https://leetcode.cn/problems/paths-in-matrix-whose-sum-is-divisible-by-k/solution/dong-tai-gui-hua-pythonjavacgo-by-endles-94wq/)
 """
     def numberOfPaths(self, grid: List[List[int]], k: int) -> int:
         mod = 10**9+7       # 注意取模
