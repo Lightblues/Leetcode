@@ -2,20 +2,31 @@
     "configurations": [
         {
             "name": "Mac",
+            // You only need to modify the Include path setting if your program includes header files that are not in your workspace or the standard library path.
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/**"
                 // "/usr/local/Cellar/gcc/11.3.0_1/include/c++/11/x86_64-apple-darwin20"
-                "/usr/bin/**"
+                // "/usr/bin/**"
             ],
             "defines": [],
+            
+            // Mac framework path. ensure that Mac framework path points to the system header files. 
             "macFrameworkPath": [
                 "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],
-            "compilerPath": "/usr/bin/gcc",
+            // Compiler path 重要!! 正在使用的编译器的完整路径(例如 /usr/bin/gcc), 以此来推断头文件位置, 以启用更准确的 IntelliSense
+            // 例如, 决定了 smart completions and Go to Definition navigation 这些功能
+            // The extension uses it to infer the path to the C++ standard library header files. 
+            "compilerPath": "/usr/bin/clang++",
+
+            // 用于 IntelliSense 的 C 语言标准的版本。注意: GNU 标准仅用于查询设置编译器以获取 GNU 定义，并且 IntelliSense 将模拟等效的 C 标准版本。
             "cStandard": "c11",
+            // 用于 IntelliSense 的 C++ 语言标准的版本。注意: GNU 标准仅用于查询设置用来获取 GNU 定义的编译器，并且 IntelliSense 将模拟等效的 C++ 标准版本。
             "cppStandard": "c++17",
-            "intelliSenseMode": "gcc-x64",
-            "configurationProvider": "ms-vscode.makefile-tools"
+            // 要使用的、映射到 MSVC、gcc 或 Clang 的平台和体系结构变体的 IntelliSense 模式。
+            "intelliSenseMode": "clang-x64"
+            // 可为源文件提供 IntelliSense 配置信息的 VS Code 扩展的 ID。
+            // "configurationProvider": "ms-vscode.makefile-tools"
         }
     ],
     "version": 4

@@ -36,8 +36,28 @@ class Solution:
                     return False
         return True
     
-    
-    
+    """ 0403. 青蛙过河 #hard 有一组石头, 开始在位置0, 只能跳单位1. 假设前一次跳跃k, 那么下一次可以跳跃k-1, k, k+1. 问是否能跳到最后一个石头.
+限制: n 2e3; 石头位置 2e31.
+思路1: #记忆化 搜索. f(i, k) 表示跳跃k到达第i个石头, 能够到达终点.
+    复杂度: 考虑记忆化的状态数为 O(n^2)
+[官答](https://leetcode.cn/problems/frog-jump/solutions/746996/qing-wa-guo-he-by-leetcode-solution-mbuo/) 还介绍了展开为 dp 的解法.
+"""
+    def canCross(self, stones: List[int]) -> bool:
+        n = len(stones)
+        s2idx = {s:i for i,s in enumerate(stones)}
+        # 记忆化 搜索
+        @lru_cache(None)
+        def f(i, dis, k):
+            # 边界: 要向前跳
+            if i==n-1: return True
+            for pos in range(k-1, k+2):
+                if pos <= 0: continue
+                if dis+pos in s2idx and f(s2idx[dis+pos], dis+pos, pos): return True
+            return False
+        # 有了上面的边界判断, 可以直接 f(0,0,0) 了
+        # if stones[1] != 1: return False
+        # return f(1,1,1)
+        return f(0,0,0)
     
 
 """ 0146. LRU 缓存 #medium  但其实挺 #hard 要求实现一个LRU缓存. (最远没有使用的) 
@@ -131,8 +151,11 @@ sol = Solution()
 result = [
     # sol.isBipartite(graph = [[1,2,3],[0,2],[0,1,3],[0,2]]),
     # sol.isBipartite(graph = [[1,3],[0,2],[1,3],[0,2]]),
-    testClass("""["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
-[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]"""),
+#     testClass("""["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+# [[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]"""),
+    sol.canCross(stones = [0,1,3,5,6,8,12,17]),
+    sol.canCross(stones = [0,1,2,3,4,8,9,11]),
+    sol.canCross([0,2]),
 ]
 for r in result:
     print(r)

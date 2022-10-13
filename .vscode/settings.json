@@ -1,17 +1,9 @@
 {
-    "go.inferGopath": false,
     "[markdown]": {
         "editor.cursorSurroundingLines": 0,
         "editor.tabSize": 4,
         "editor.wrappingIndent": "same"
     },
-    "grammarly.selectors": [
-        {
-            "language": "python",
-            "scheme": "file",
-            "pattern": "algorithm-ds-templates/BFS-DFS/search.py"
-        }
-    ],
     "files.associations": {
         "*.jsonl": "jsonc",
         "iosfwd": "cpp",

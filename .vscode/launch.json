@@ -1,9 +1,59 @@
+// copy from list-Leetcode
 {
-    // 使用 IntelliSense 了解相关属性。
-    // 悬停以查看现有属性的描述。
-    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        // Python
+        // 配置项说明见: https://code.visualstudio.com/docs/python/debugging#_set-configuration-options
+        {
+            // name: Provides the name for the debug configuration that appears in the VS Code dropdown list.
+            "name": "Python: Current File",
+            "type": "python",
+            // 两种模式: 1) launch: 直接调试 program 中所定义的文件; 2) attach: 附加到一个已经运行的进程. 
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true, 
+            // env: 设置环境变量. Sets optional environment variables for the debugger process beyond system environment variables, which the debugger always inherits. The values for these variables must be entered as strings.
+            // "env": {
+            //     "PYTHONPATH": "${workspaceFolder}/src"
+            // }
+            // cwd: 设置根目录 Specifies whether to enable subprocess debugging. Defaults to `false`, set to `true` to enable. For more information, see [multi-target debugging](https://code.visualstudio.com/docs/editor/debugging#_multitarget-debugging).
+            // "cwd": "${workspaceFolder}"
+            // python: 使用的Python解释器, 默认就是 workspace 的, 可以通过右下角选择不同的.
+            // "python": "${command:python.interpreterPath}",
+            // module 模块: Provides the ability to specify the name of a module to be debugged, similarly to the `-m` argument when run at the command line. For more information, see [Python.org](https://docs.python.org/3/using/cmdline.html#cmdoption-m)
+            // "module": ""
+        },
+        {
+            "name": "Python: Attach using Process Id",
+            "type": "python",
+            "request": "attach",
+            "processId": "${command:pickProcess}",
+            "justMyCode": true
+        },
+        // 例子: 设置 args
+        {
+            "name": "Python: startup.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/startup.py",
+            "args" : ["--port", "1593"]
+        },
+       
+        // C++
+        {
+            "name": "C/C++: clang++ 生成和调试活动文件",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "C/C++: clang++ 生成活动文件"
+        },
         // {
         //     "name": "Node daily2202",
         //     "type": "node",
@@ -46,26 +96,13 @@
         //     "program": "${file}",
         //     "cwd": "${fileDirname}"
         // },
-        {
-            "name": "Python",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "cwd": "${fileDirname}"
-        },
-        {
-            "name": "clang++ - 生成和调试活动文件",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${fileDirname}/a.out",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb",
-            "preLaunchTask": "clang++ build active file"
-        }
+        // {
+        //     "name": "Python",
+        //     "type": "python",
+        //     "request": "launch",
+        //     "program": "${file}",
+        //     "console": "integratedTerminal",
+        //     "cwd": "${fileDirname}"
+        // },
     ]
 }
