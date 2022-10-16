@@ -1,39 +1,4 @@
-from curses.ascii import SO
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, cache, reduce, partial
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, pow, neg, pos
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
+from easonsi.util.leetcode import *
 
 """ 线段树
 [单点更新, 区间查询, 就可以考虑线段树]
@@ -60,7 +25,7 @@ TODO: https://leetcode.cn/problems/count-of-range-sum/solution/by-ac_oier-b36o/
     给定一个数组, 要求其所有的子区间中, 区间和在 [lower, upper] 范围内的数量
 
 
-6206. 最长递增子序列 II #hard #题型 对于给定的数组, 找到其中最长的严格递增子序列, 要求相邻元素差值不超过 k. 限制: n 1e5; k 1e5
+2407. 最长递增子序列 II #hard #题型 对于给定的数组, 找到其中最长的严格递增子序列, 要求相邻元素差值不超过 k. 限制: n 1e5; k 1e5
     思路1: 建立 {val: LIS} 的字典记录以val结尾的LIS 长度. 遍历过程中, 对于val, 在 [val-k,val] 范围内查询最大值.
 
 0729. 我的日程安排表 I #medium

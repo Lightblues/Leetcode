@@ -11,7 +11,8 @@
         "algorithm": "cpp",
         "unordered_map": "cpp",
         "chrono": "cpp",
-        "limits": "cpp"
+        "limits": "cpp",
+        "iostream": "cpp"
     },
     // "workbench.colorCustomizations": {
     //     "activityBar.background": "#1C331C",

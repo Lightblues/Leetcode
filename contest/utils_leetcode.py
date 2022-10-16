@@ -1,5 +1,28 @@
 import sys, os
 
+
+
+# Definition for a binary tree node.
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
+
+
+
+
+
+
 class testClass:
     """ 用于接受 ACM 形式的测试用例, 例如
     ["ATM", "deposit", "withdraw", "deposit", "withdraw", "withdraw"]

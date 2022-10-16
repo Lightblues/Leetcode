@@ -1,5 +1,8 @@
 # LeetCode 刷题记录
 
+
+有时间重新刷一遍! 整理一下
+
 ### DP
 
 [编辑距离](https://github.com/labuladong/fucking-algorithm/blob/master/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%B3%BB%E5%88%97/%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB.md) 显然用动态规划，若是要求出如何进行的编辑，则需要记录每一次转移的来源；DP 表的每一个元素可以是一个设计好的数据结构。
@@ -1811,70 +1814,6 @@ class Solution:
         return n+1
 ```
 
-### 045 跳跃游戏 2
-
-```python
-给定一个非负整数数组，你最初位于数组的第一个位置。
-数组中的每个元素代表你在该位置可以跳跃的最大长度。
-你的目标是使用最少的跳跃次数到达数组的最后一个位置。
-
-输入: [2,3,1,1,4]
-输出: 2
-解释: 跳到最后一个位置的最小跳跃数是 2。
-    从下标为 0 跳到下标为 1 的位置，跳 1 ，然后跳 3 步到达数组的最后一个位置。
-```
-
-#### 贪心
-
-如果我们「贪心」地进行正向查找，每次找到可到达的最远位置，就可以在线性时间内得到最少的跳跃次数。
-例如，对于数组 [2,3,1,2,4,2,3]，初始位置是下标 0，从下标 0 出发，最远可到达下标 2。下标 0 可到达的位置中，下标 1 的值是 3，从下标 1 出发可以达到更远的位置，因此第一步到达下标 1。
-从下标 1 出发，最远可到达下标 4。下标 1 可到达的位置中，下标 4 的值是 4 ，从下标 4 出发可以达到更远的位置，因此第二步到达下标 4。
-
-![](media/16147360600817/16150882727746.jpg)
-
-【思路】就是每次选择下一个结点时，同时考虑此时可以到达的节点和到达节点可以跳跃的长度（加起来维护一个可以到达的最远边界）；然后选择其中最大的即可。
-没看答案之前用了 DFS 的想法，正是由于没考虑到达节点上的取值而出了问题。
-
-```python
-    def jump(self, nums: List[int]) -> int:
-        # 贪心
-        n = len(nums)
-        steps = 0
-        curr = 0
-
-        while curr < n-1:
-            max_hop_two = 0
-            nex = 0
-            for hop in range(nums[curr], 0, -1):
-                if hop + curr >= n-1:
-                    return steps+1
-                if nums[curr+hop] + hop + curr >= n-1:
-                    return steps+2
-                if nums[curr+hop] + hop > max_hop_two:
-                    max_hop_two = nums[curr+hop] + hop
-                    nex = hop
-            curr = curr + nex
-            steps += 1
-        return steps
-```
-
-#### 055 跳跃问题
-
-某些格子的值换成了 0，要求是返回能否到达。
-
-和上面的思路是一样的，也是贪心算法。放出下面的官答是因为其过于简洁……
-直接用一个 rightmost 维护最远距离，因为不要求最少跳数，只用了一次 `for i in range(n):` 遍历整个数组，通过 `i <= rightmost` 的判断就给出了答案。
-
-```python
-    def canJump2(self, nums: List[int]) -> bool:
-        n, rightmost = len(nums), 0
-        for i in range(n):
-            if i <= rightmost:
-                rightmost = max(rightmost, i + nums[i])
-                if rightmost >= n - 1:
-                    return True
-        return False
-```
 
 ### 052 N 皇后 2
 

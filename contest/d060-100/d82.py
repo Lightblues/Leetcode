@@ -4,39 +4,7 @@ from typing import List, Optional, Tuple
 import copy
 from copy import deepcopy, copy
 import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
+from easonsi.util.leetcode import *
 
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
@@ -144,7 +112,7 @@ class Solution:
 思路1: 找到每一个元素作为最小值的左右边界. 这样, 我们可以得到哈希表 len2max, 记录每一个长度限制下, 子数组最小值的最大值.
     为了求左右边界, 可以利用 #单调栈 求解.
     复杂度: O(n)
-    关联: 「6077. 巫师的总力量和」
+    关联: 「2281. 巫师的总力量和」
 思路2: #并查集
     直觉: 对于数组中的元素, 从大到小考虑他们所在的以其为最小值的连续子数组 (满足当前元素是最小值), 依次判断是否满足条件即可.
     如何记录连接关系? 采用并查集. 但题目要求是相邻的两个才能连接, 如何做? 下面的思路是: 每次将被遍历的元素连接到其右侧节点上 (在最右侧加一个哨兵). 这样, **对于第i个节点, 合并到i+1节点之后, i元素的值是 `sz[j] - 1` 个元素只最小的那个**! 这是因为, 由于从大到小访问, 第i节点的大小必然是1. 若i+1节点更小, 则其大小也为1; 若i+1节点更大, 则它是一条链并且最右侧一定连着一个更小的点, 也符合上述论述.

@@ -17,7 +17,7 @@ https://leetcode.cn/contest/weekly-contest-314
 
 @2022 """
 class Solution:
-    """ 6200. 处理用时最长的那个任务的员工 """
+    """ 2432. 处理用时最长的那个任务的员工 """
     def hardestWorker(self, n: int, logs: List[List[int]]) -> int:
         time = 0
         longest = 0
@@ -29,14 +29,14 @@ class Solution:
                 ret = u
         return ret
     
-    """ 6201. 找出前缀异或的原始数组 #medium 给定顺序 #异或 的结果, 求原始数组 """
+    """ 2433. 找出前缀异或的原始数组 #medium 给定顺序 #异或 的结果, 求原始数组 """
     def findArray(self, pref: List[int]) -> List[int]:
         ret = [pref[0]]
         for i in range(1, len(pref)):
             ret.append(pref[i]^pref[i-1])
         return ret
     
-    """ 6202. 使用机器人打印字典序最小的字符串 #medium #题型 给定一个字符串s, 在顺序处理s 的过程中 (输出, 或者存入栈), 可以使用一种辅助的栈t (存入字符之后只能倒序输出). 
+    """ 2434. 使用机器人打印字典序最小的字符串 #medium #题型 给定一个字符串s, 在顺序处理s 的过程中 (输出, 或者存入栈), 可以使用一种辅助的栈t (存入字符之后只能倒序输出). 
 问能够输出的最小字典序的字符串. 限制: n 1e5
 思路0: 原本尝试用栈, 发现没有那么简单.
 注意: 例如 abac, acab 其输出的结果都是 aabc.
@@ -79,7 +79,7 @@ class Solution:
         return ''.join(ans)
 
     
-    """ 6203. 矩阵中和能被 K 整除的路径 #hard #DP 给定一个grid, 求从左上角到右下角的路径数, 使得路径上的和能被 K 整除. 限制: m*n 5e4, k 50. 对结果取mod 1e9+7
+    """ 2435. 矩阵中和能被 K 整除的路径 #hard #DP 给定一个grid, 求从左上角到右下角的路径数, 使得路径上的和能被 K 整除. 限制: m*n 5e4, k 50. 对结果取mod 1e9+7
 思路1: #取模+ #DP
     如何记录路径和? 由于我们需要考虑的仅仅是能否被k整除, 因此只需要记录取模结果即可.
     因此, DP形式可以是 `f[i,j] = [...]` 长为k的数组, 表示到达 (i,j) 时, 路径和取模后的数量.

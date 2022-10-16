@@ -1,38 +1,4 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
+from easonsi.util.leetcode import *
 
 # from utils_leetcode import testClass
 # from structures import ListNode, TreeNode, linked2list, list2linked
@@ -48,8 +14,10 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-261
-https://leetcode-cn.com/contest/biweekly-contest-71
+https://leetcode.cn/contest/weekly-contest-311
+
+T3非常有意思, 当时用了暴力思路不太行! T4写了个 Tire 居然还记得.
+
 @2022 """
     
 class TreeNode:
@@ -58,7 +26,9 @@ class TreeNode:
         self.left = left
         self.right = right
 class Solution:
-    """ 6181. 最长的字母序连续子字符串的长度 """
+    """ 2413. 最小偶倍数 """
+    
+    """ 2414. 最长的字母序连续子字符串的长度 """
     def longestContinuousSubstring(self, s: str) -> int:
         s = list(ord(c)-ord('a') for c in s+"0")
         ans = 0
@@ -70,9 +40,15 @@ class Solution:
             ans = max(ans, i-idx)
         return ans
     
-    """ 6182. 反转二叉树的奇数层 #medium 给定一颗完全二叉树, 要求翻转其第 1,3,5... 层. 限制: 节点数量 2^14
-思路1: 暴力求解, 记录每一层的节点序列.
+    """ 2415. 反转二叉树的奇数层 #medium #题型 给定一颗完全二叉树, 要求翻转其第 1,3,5... 层. 限制: 节点数量 2^14
+思路1: #暴力 求解, 记录每一层的节点序列.
     空间复杂度: O(n) 这里的n是每层的最大节点数.
+思路2: #BFS 记录每一层的节点序列. 然后交换每一层的节点元素值. (而非节点顺序!!)
+思路3: #DFS. 同时递归左右子树
+    递归函数: `dfs(node1, node2, is_odd_level)` 利用一个bool来记录当前层是否为奇数层. 
+    如何「对称」? 分别递归两个节点的 left, right. 想法精巧!
+    关联: 「0101. 对称二叉树」(给定二叉树, 判断是否对称)
+见 [灵神](https://leetcode.cn/problems/reverse-odd-levels-of-binary-tree/solutions/1831556/zhi-jie-jiao-huan-zhi-by-endlesscheng-o8ze/)
 """
     def reverseOddLevels(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
         s = [root]
@@ -94,9 +70,34 @@ class Solution:
             flip = False if flip else True
             s = nxt
         return root
+    def reverseOddLevels(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        # 思路2: #BFS 记录每一层的节点序列. 然后交换每一层的节点元素值. (而非节点顺序!!)
+        q, level = [root], 0
+        while q[0].left:
+            q = list(itertools.chain.from_iterable((node.left, node.right) for node in q))
+            if level == 0:
+                for i in range(len(q) // 2):
+                    x, y = q[i], q[len(q) - 1 - i]
+                    x.val, y.val = y.val, x.val
+            level ^= 1
+        return root
+    def reverseOddLevels(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        # 思路3: #DFS. 同时递归左右子树
+        def dfs(node1: Optional[TreeNode], node2: Optional[TreeNode], is_odd_level: bool) -> None:
+            if node1 is None: return
+            if is_odd_level: node1.val, node2.val = node2.val, node1.val
+            dfs(node1.left, node2.right, not is_odd_level)
+            dfs(node1.right, node2.left, not is_odd_level)
+        dfs(root.left, root.right, True)
+        return root
 
     
-    """ 6183. 字符串的前缀分数和 #hard 简单考察 #Trie 字典树 """
+    """ 2416. 字符串的前缀分数和 #hard 简单考察 #Trie 字典树
+给定一组字符串. 每个查询字符串的分数是, 其作为其他词的前缀的次数. 对于数组中所有字符串, 求其所有前缀的分数之和. 限制: n 1e3; 字符串长度 L 1e3
+https://leetcode.cn/problems/sum-of-prefix-scores-of-strings/
+思路1: #字典树. 利用字典树记录前缀出现的次数.
+    对于每个字符串, 依次累计其路径上的节点的cnt值. (作为前缀)
+"""
     def sumPrefixScores(self, words: List[str]) -> List[int]:
         class Node():
             def __init__(self, ch) -> None:

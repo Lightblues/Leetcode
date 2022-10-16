@@ -36,25 +36,32 @@ LC list: https://leetcode.cn/tag/binary-indexed-tree/problemset/
 """
 
 
-""" 基本 BIT """
+""" 基本 BIT
+作用: 单点更新, 区间查询
+基本原理: 用 0100 存储数组中 0001-0100 四个位置之和 (从1开始计数), 用 1010 存储 1001, 1010 两个位置数字之和
+update(idx, val): 给第idx个数加上val
+query(x): 求前缀和
+"""
 class BIT:
     def __init__(self, n):
         self.n = n
-        self.tree = [0] * (n+1)
+        self.tree = [0] * (n+1)     # 从1开始计数
     @staticmethod
     def lowbit(x):
         return x & (-x)
-    def update(self, i, delta):
+    def update(self, i, delta=1):
         # 对于位置i的元素, 增加delta
         while i <= self.n:
             self.tree[i] += delta
             i += self.lowbit(i)
-    def query(self, i):
+    def query(self, x):
         # 查询位置i的前缀和
         res = 0
-        while i > 0:
-            res += self.tree[i]
-            i -= self.lowbit(i)
+        while x > 0:
+            res += self.tree[x]
+            # 下面两种等价!! 
+            # x -= self.lowbit(x)
+            x &= x-1        # 也是去掉最低位的1
         return res
 
 

@@ -16,11 +16,12 @@ https://leetcode.cn/contest/weekly-contest-312
 
 @2022 """
 class Solution:
-    """  """
+    """ 2418. 按身高排序 """
     def sortPeople(self, names: List[str], heights: List[int]) -> List[str]:
         persons = list(zip(heights, names))
         return [i[1] for i in sorted(persons, reverse=True)]
     
+    """ 2419. 按位与最大的最长子数组 """
     def longestSubarray(self, nums: List[int]) -> int:
         mx = max(nums)
         ans = c = 0
@@ -29,7 +30,7 @@ class Solution:
             else: c += 1; ans = max(ans, c)
         return ans
     
-    """ 6190. 找到所有好下标 #medium 「好下标」的定义是, 对于idx, 其左侧k长序列是非递增的, 右侧k长序列是非递减的. 找到长n数组中所有的好下标
+    """ 2420. 找到所有好下标 #medium 「好下标」的定义是, 对于idx, 其左侧k长序列是非递增的, 右侧k长序列是非递减的. 找到长n数组中所有的好下标
 思路1: #预处理 得到数组前向的非递增最大长度, 和后向的非递增最大长度. 则要求等价于, `l[i-1]>=k and r[i+1]>=k`.
 """
     def goodIndices(self, nums: List[int], k: int) -> List[int]:
@@ -48,7 +49,8 @@ class Solution:
             if l[i-1]>=k and r[i+1]>=k: ans.append(i)
         return ans
     
-    """ 6191. 好路径的数目 #hard #题型. 在n个节点的一棵树上, 统计符合要求的路径数量: 要求首尾的val相同, 并且经过节点的值要 <= val. 限制: n 3e4; 
+    """ 2421. 好路径的数目 #hard #题型 #review. 在n个节点的一棵树上, 统计符合要求的路径数量: 要求首尾的val相同, 并且经过节点的值要 <= val. 限制: n 3e4; 
+https://leetcode.cn/problems/number-of-good-paths/
 思路1: #DFS, 递归过程中返回当前子树下可能匹配的合法起点/终点. 卡在时间边界上.
     问题是, 如何汇总信息? 例如, 节点的两个孩子分别返回 {2:2}, {2:3}, 节点本身的 val=2. 则所有的匹配数量有 2+3+3*2. 
     当孩子较多的时候呢? 注意 **可以直接累加计数**. 因为前序节点内部已经进行了匹配, 只需要考虑新加入节点和前序节点的匹配. (注意是乘法!)
