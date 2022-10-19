@@ -151,7 +151,7 @@ class Solution:
             #     ans = max(ans, f[i][j])
         return ans
     
-    """ 0516. 最长回文子序列 #medium #回文
+    """ 0516. 最长回文子序列 #medium #回文 #题型
 给定一个长n的字符串, 找到最长回文子序列的长度.
 思路: #DP
     `f[i][j]` 表示 s[i...j] 内的最长长度
