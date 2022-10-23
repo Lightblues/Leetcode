@@ -59,6 +59,20 @@ class Solution:
         # return f(1,1,1)
         return f(0,0,0)
     
+    
+    """ 0769. 最多能完成排序的块 #medium #题型
+给定一个长n的数组, 表示 0...n-1 元素的一个排列. 我们对于该排列进行分快, 使得每块内部排序之后, 整体是有序的. 问最多能分成多少快? 限制: n 10
+思路1: #贪心
+    考虑哪些位置(前缀)是可能的? 细想可知, 若 arr[:i] 是 0...i 的一个排列, 该区域可以分成一块.
+    [官答](https://leetcode.cn/problems/max-chunks-to-make-sorted/solution/zui-duo-neng-wan-cheng-pai-xu-de-kuai-by-gc4k/)
+"""
+    def maxChunksToSorted(self, arr: List[int]) -> int:
+        mx = 0
+        cnt = 0
+        for i,a in enumerate(arr):
+            mx = max(mx, a)
+            if mx==i: cnt += 1
+        return cnt
 
 """ 0146. LRU 缓存 #medium  但其实挺 #hard 要求实现一个LRU缓存. (最远没有使用的) 
 也即, 给定限制的 capacity空间用于存储. 在插入的时候若超过了限制, 则删除「最远没有使用」的记录.
@@ -153,9 +167,11 @@ result = [
     # sol.isBipartite(graph = [[1,3],[0,2],[1,3],[0,2]]),
 #     testClass("""["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
 # [[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]"""),
-    sol.canCross(stones = [0,1,3,5,6,8,12,17]),
-    sol.canCross(stones = [0,1,2,3,4,8,9,11]),
-    sol.canCross([0,2]),
+    # sol.canCross(stones = [0,1,3,5,6,8,12,17]),
+    # sol.canCross(stones = [0,1,2,3,4,8,9,11]),
+    # sol.canCross([0,2]),
+    sol.maxChunksToSorted([3,2,1,0]),
+    sol.maxChunksToSorted([1,0,2,3,4])
 ]
 for r in result:
     print(r)

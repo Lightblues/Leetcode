@@ -10,6 +10,8 @@ from functools import lru_cache
 from structures import ListNode, TreeNode
 
 """ 
+https://leetcode.cn/contest/weekly-contest-285
+
 @20220320 """
 class Solution:
     """ 6027. 统计数组中峰和谷的数量

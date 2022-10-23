@@ -50,11 +50,11 @@ def testClass(inputs):
 """ 
 https://leetcode-cn.com/contest/biweekly-contest-87
 
-
+todo: T3 灵神的解答
 
 @2022 """
 class Solution:
-    """ 6184. 统计共同度过的日子数 #easy 需要计算 "08-15" 这种形式是一年的第几天 """
+    """ 2409. 统计共同度过的日子数 #easy 需要计算 "08-15" 这种形式是一年的第几天 """
     def countDaysTogether(self, arriveAlice: str, leaveAlice: str, arriveBob: str, leaveBob: str) -> int:
         days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         def getdays(date: str):
@@ -67,7 +67,7 @@ class Solution:
             , 0
         )
     
-    """ 6185. 运动员和训练师的最大匹配数 指针滑动即可 """
+    """ 2410. 运动员和训练师的最大匹配数 指针滑动即可 """
     def matchPlayersAndTrainers(self, players: List[int], trainers: List[int]) -> int:
         players.sort(); trainers.sort()
         cnt = 0
@@ -79,15 +79,17 @@ class Solution:
             idx += 1; cnt += 1
         return cnt
     
-    """ 6186. 按位或最大的最小子数组长度 #medium #题型
+    """ 2411. 按位或最大的最小子数组长度 #medium #题型 #todo
 对于一个数组下标i, 我们从i开始往右累积或操作可以得到一个最大值 mx, 定义其「按位或最大的最小子数组长度」为从i开始的累积或变为mx的最小子数组长度.
 现给定一个数组, 对每个下标球这个值. 限制: n 1e5
-思路1: 先 #逆向 算出mx, 在正向 #滑动窗口
+思路1: 先 #逆向 算出mx, 在再向 #滑动窗口
     我们可以逆向累积或, 得到每一位的目标mx值.
     提示: 
         随着i的增大, 注意到 mx 是递减的! (当然这点在本题没用)
         然后再正向考虑, 每个位置达到对应mx的右边界是递增的! 这是因为, 从 i 到 i+1, nums[i] 没有参加或运算, 所需求的最大或的目标变高了. 因此, 可以用 #滑动窗口 求解.
     还有个难点, 对于或运算, 怎样「除去」一个元素? 下面的实现cnt记录每一位上出现的次数, 从而实现 `add, remove, check` 操作, 其中 check(x) 判断cnt中的数字经过或运算是否可以得到x值.
+见 [灵神](https://leetcode.cn/problems/smallest-subarrays-with-maximum-bitwise-or/solution/by-endlesscheng-zai1/)
+#todo
 """
     def smallestSubarrays(self, nums: List[int]) -> List[int]:
         n = len(nums)
@@ -122,7 +124,7 @@ class Solution:
             ans[i] = (p-i+1)
         return ans
     
-    """ 6187. 完成所有交易的初始最少钱数 #hard 
+    """ 2412. 完成所有交易的初始最少钱数 #hard 
 给定一组交易, 每个交易包括 (cost, cashback), 先付出之后得到cashbacki反馈. 问初始资金至少为多少, 则无论交易的顺序如何, 都可以完成全部交易.
 限制: 过程中资金量必须非负; n 1e5
 例子: 交易有 [[2,1],[5,0],[4,2]], 则至少需要 10.

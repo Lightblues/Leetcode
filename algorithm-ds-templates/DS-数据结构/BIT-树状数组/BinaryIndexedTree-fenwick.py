@@ -126,6 +126,7 @@ class Solution:
 方法二：归并排序
  """
     def countSmaller(self, nums: List[int]) -> List[int]:
+        # 离散化
         sortedNums = sorted(set(nums))
         mapped = {n: i+1 for i, n in enumerate(sortedNums)}
         nums = [mapped[n] for n in nums]
@@ -140,31 +141,7 @@ class Solution:
     
     
 
-def f0():
-    """ https://loj.ac/p/130 130. 树状数组 1 ：单点修改，区间查询
 
-    第一行两个数 n,q 表示数组大小和查询次数
-    第二行为数组初始化
-    下面 q 行为查询, (1) 1 i x：给定 i 和 x, 将 i 位置的元素 +x; (2) 2 l r：求区间 [l,r] 的和
-    注意这里 1 <= l,r <= n, 即从 1 开始计数
-
-    Input:
-    3 2
-    1 2 3
-    1 2 0
-    2 1 3
-
-    output:
-    6
-    """
-    n,q = map(int, input().split())
-    t = BinaryIndexedTree(list(map(int, input().split())))
-    for i in range(q):
-        cmd,x,y = map(int, input().split())
-        if cmd == 1:
-            t.add(x, y)
-        else:
-            print(t.getRangeSum(x, y))
     
     
 
