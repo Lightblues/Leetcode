@@ -13,7 +13,7 @@ def testClass(inputs):
 """ 
 https://leetcode.cn/contest/weekly-contest-169
 
-
+T4也太烦了, 官答也太长了... 
 
 @2022 """
 
@@ -53,9 +53,18 @@ class Solution:
             return False
         return f(start)
 
-    """ 1307. 口算难题 #hard
+    """ 1307. 口算难题 #hard 给定一个字符串表达的加法式子. 每个字母对应一个数字, 没有前缀零. 问该表达式是否合法. 限制: 字符串数量 s 5; 每个字符串(数字)长度 l 7; 所有的字符的数量 n 10
 
 [official](https://leetcode.cn/problems/verbal-arithmetic-puzzle/solution/suan-nan-ti-by-leetcode-solution/)
+
+输入：words = ["SIX","SEVEN","SEVEN"], result = "TWENTY"
+输出：true
+解释：映射 'S'-> 6, 'I'->5, 'X'->0, 'E'->8, 'V'->7, 'N'->2, 'T'->1, 'W'->'3', 'Y'->4
+所以 "SIX" + "SEVEN" + "SEVEN" = "TWENTY" ,  650 + 68782 + 68782 = 138214
+
+来源：力扣（LeetCode）
+链接：https://leetcode.cn/problems/verbal-arithmetic-puzzle
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 """
     def isSolvable(self, words: List[str], result: str) -> bool:
         used, carry = [False] * 10, [0] * 10
@@ -115,14 +124,15 @@ class Solution:
                 else:
                     return False
 
-        length = len(result)
         return dfs(0, 0, len(result))
 
 
 
 sol = Solution()
 result = [
-    sol.canReach([3,0,2,1,2], 2),
+    # sol.canReach([3,0,2,1,2], 2),
+    sol.isSolvable(["SEND","MORE"], "MONEY"),
+    sol.isSolvable(["SIX","SEVEN","SEVEN"], "TWENTY"),
 ]
 for r in result:
     print(r)
