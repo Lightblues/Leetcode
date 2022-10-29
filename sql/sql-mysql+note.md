@@ -1,5 +1,6 @@
 
-- 参见 [[MySQL-note.md]]. 这里记录刷题过程中的总结.
+- 参见 [[mysql-note]]. 这里记录刷题过程中的总结.
+- 一些基本原理的理解见 [[mysql-digging]] 概念深入理解: 记录看过的一些原理性文章
 - 另外的资源: Data whale [Wonderful-sql](https://github.com/datawhalechina/wonderful-sql)
 
 TODO
@@ -32,3 +33,6 @@ mysql 语句的执行顺序:
 from -> on -> join -> where -> group by -> 聚集函数 -> having -> select ->distinct -> union -> order by -> limit
 ```
 
+## 基本用法
+
+见 [[mysql-note#MySQL 基础命令]]

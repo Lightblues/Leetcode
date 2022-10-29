@@ -5,11 +5,8 @@
 
 内容比较杂乱
 
-- Debug: 实际遇到的一些问题记录
-- 安装
 - 用户、权限管理
 - MySQL 基础命令: 常用命令记录
-- 概念深入理解: 记录看过的一些原理性文章
 - 基本概念 以下: 教程摘录
 
 参考
@@ -21,314 +18,6 @@
 - DDL(create,drop,alter,truncate)
 - DML(update,delete,insert)
 - DQL(select)
-
-## 杂项
-
-- 用反引号 `` ` `` 包围来避免名字不规范, 例如有写成 `` INSERT INTO `<table_name>` `` 这样的
-
-## Debug
-
-### 配置目录
-
-- 相关配置说明 [MySQL 配置文件 my.cnf / my.ini 逐行详解](https://kalacloud.com/blog/how-to-edit-mysql-configuration-file-my-cnf-ini)
-
-默认的配置目录
-
-```bash
-# mysql 目录
-sudo ls /var/lib/mysql
-# log
-/var/log/mysql/error.log
-
-# 配置文件
-sudo vim /etc/mysql/mysql.cnf
-```
-
-### mysql 服务重启命令
-
-```bash
-# 重启
-sudo /etc/init.d/mysql restart
-sudo service mysql restart
-sudo systemctl restart mysql
-```
-
-### 允许远程连接
-
-在默认情况下，MySQL 数据库仅监听本地连接。如果想让外网远程连接到数据库，我们需要修改配置文件，让 MySQL 可以监听远程固定 ip 或者监听所有远程 ip。
-
-在配置文件中 (/etc/mysql/mysql.conf.d/) 中搜索设置;
-
-```yaml
-bind-address = 0.0.0.0
-```
-
-修改用户远程连接权限
-
-```sql
--- 1) 将用户修改为可远程
-RENAME USER 'kalacloud'@'localhost' TO 'kalacloud'@'%';
-
--- 2)或者新建用户
-CREATE USER 'kalacloud-remote'@'%' IDENTIFIED WITH mysql_native_password BY 'password';
--- 表权限
-GRANT CREATE, ALTER, DROP, INSERT, UPDATE, DELETE, SELECT, REFERENCES, RELOAD on *.* TO 'kalacloud-remote'@'%' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
-```
-
-远程连接
-
-```bash
-mysql -P 3306 -u username -h mysql_server_ip -p
-```
-
-### 修改、查看字符集
-
-```sql
--- 数据库
-ALTER DATABASE test DEFAULT CHARACTER SET utf8mb4;
-
--- 数据表
-ALTER TABLE logtest CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8_general_ci;
--- 仅设置 默认编码
-ALTER TABLE logtest DEFAULT CHARACTER SET utf8mb4 COLLATE utf8_general_ci;
-
--- 某一列
-ALTER TABLE logtest CHANGE title title VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci;
-```
-
-查看 database, table, column 的字符集
-
-```sql
-SHOW CREATE DATABASE db_name;
-SHOW CREATE TABLE tbl_name;
-SHOW FULL COLUMNS FROM tbl_name;
-```
-
-### 设置变量
-
-- from [stackoverflow](https://stackoverflow.com/questions/11754781/how-to-declare-a-variable-in-mysql)
-- [User-defined variables](http://dev.mysql.com/doc/refman/5.0/en/user-variables.html) (prefixed with `@`)
-
-```sql
-SET @start = 1, @finish = 10;
--- or
-SELECT @start := 1, @finish := 10;
-
-SELECT * FROM places WHERE place BETWEEN @start AND @finish;
-```
-
-### 重制 root 密码
-
-from [here](https://help.aliyun.com/document_detail/42520.html)
-
-```bash
-# 1. 配置
-vim /etc/my.cnf
-# 在 [mysqld] 字段下增加
-skip-grant-tables
-
-# 2. 重启
-/etc/init.d/mysqld restart
-
-# 3. 登陆数据库
-/usr/bin/mysql
-USE mysql;
-# 注意将 [$Password] 替换成想要的密码
-UPDATE user SET authentication_string = password ('[$Password]') WHERE User = 'root';
-flush privileges;
-quit
-
-# 4. 恢复 配置文件, 重启
-vim /etc/my.cnf
-/etc/init.d/mysqld restart
-```
-
-### 查看配置文件
-
-```bash
-mysql --help | grep my.conf
-# /etc/my.cnf /etc/mysql/my.cnf /usr/etc/my.cnf ~/.my.cnf 
-# 在配置文件只查找 log-error, 错误日志的目录
-```
-
-### 修改数据目录 datadir
-
-from [here](https://stackoverflow.com/questions/1795176/how-to-change-mysql-data-directory)
-
-```bash
-sudo /etc/init.d/mysql stop
-
-# 1. 移动 /var/lib/mysql 到新目录
-sudo cp -R -p /var/lib/mysql /newpath
-
-# 2. 修改配置文件
-sudo vim /etc/apparmor.d/usr.sbin.mysqld # or perhaps /etc/mysql/mysql.conf.d/mysqld.cnf
-# 修改其中的 datadir 条目, 原本应该是 /var/lib/mysql
-
-# 3. 修改配置 AppArmor
-sudo vim /etc/apparmor.d/usr.sbin.mysqld
-# 查找替换 /var/lib/mysql
-sudo /etc/init.d/apparmor reload
-
-# 4. mysql
-sudo /etc/init.d/mysql restart
-```
-
-### 查询表结构
-
-from [here](https://segmentfault.com/a/1190000007025543)
-
-```sql
--- 1. 下面三个
-desc table;
-describe table;
-show columns from tbale;
--- 2. 查看建表语句
-show create table info;
--- 3. information_schema数据库
-use information_schema;
-select table_name,table_comment from tables where table_schema='study_test_db' and table_name='info';
-```
-
-### 取消 --secure-file-priv
-
-默认开启, 限制了mysql 导出文件只能到指定的目录下.
-
-在配置文件中, 设置为空; 重启.
-
-```yaml
-[mysqld]
-secure_file_priv =
-```
-
-## 安装、重装
-
-- 下载 <https://dev.mysql.com/downloads/mysql/>
-- 可视化图形界面MySQL Workbench <https://dev.mysql.com/downloads/workbench/>
-
-### macOS 安装
-
-- 到 <https://dev.mysql.com/downloads/mysql/> 下载，我用了 dmg 版本，安装之后可在系统设置中找到一个 MySQL 的图标
-
-```bash
-PATH=$PATH:/usr/local/mysql/bin
-alias mysql="mysql -u root -p"
-```
-
-```sql
--- 远程连接
-mysql -h 10.0.1.99 -u root -p
-
---退出
-exit
-```
-
-### Ubuntu 重装 mysql
-
-- 安装过程参见 [How To Install MySQL on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-20-04)
-
-```bash
-# 删除 mysql
-sudo apt-get autoremove --purge mysql-server
-sudo apt-get remove mysql-server
-sudo apt-get autoremove mysql-server
-sudo apt-get remove mysql-common #(非常重要)
-# 清理残留数据
-dpkg -l |grep ^rc|awk '{print $2}' |sudo xargs dpkg -P
-
-# 安装 mysql
-sudo apt-get install mysql-server
-
-# 初始化一个安全配置
-sudo mysql_secure_installation
-```
-
-存档刚安装好的目录结构:
-
-```bash
-(base) ➜  data2 ls /etc/mysql
-conf.d  debian.cnf  debian-start  my.cnf  mysql.cnf  mysql.conf.d
-
-(base) ➜  data2 sudo ls /var/lib/mysql
-auto.cnf    ca.pem      client-key.pem   ib_buffer_pool  ib_logfile0  ibtmp1  performance_schema  public_key.pem server-key.pem
-ca-key.pem  client-cert.pem  debian-5.7.flag  ibdata1       ib_logfile1  mysql   private_key.pem     server-cert.pem sys
-```
-
-### Ubuntu 升级 mysql
-
-- [中文经验](https://blog.iphpo.com/blog/2019/05/ubuntu-mysql-5.7-%E7%84%A1%E7%97%9B%E5%8D%87%E7%B4%9A%E5%88%B0-8.0/)
-- <https://dev.mysql.com/doc/refman/8.0/en/upgrade-prerequisites.html>
-
-
-## 用户、权限管理
-
-- 参见 [here](https://www.jianshu.com/p/ec2c94c4398f)
-
-### 新建用户
-
-```sql
--- 新建
--- 采用 mysql_native_password 的方式登录
-CREATE USER 'bocom'@'%' IDENTIFIED WITH mysql_native_password BY 'bocom';
-create user 用户名@主机 identified by '密码';
-create user 'test'@'%' identified by 'testPassword';
-
--- 查询
-select user,host,authentication_string from mysql.user;
-```
-
-### 用户权限
-
-记得最后 `flush privileges;` 刷写权限.
-
-```sql
--- 查看用户权限
-show grants for bocom@'%';
--- 赋权
--- grants all privileges on bocom.* to 'bocom'@'%';
-grant all on bocom.* to 'bocom'@'%';
-grant all privileges on zhangsanDb.* to zhangsan@'%';
-```
-
-### 删除用户
-
-```sql
--- 删除
-drop user 'hetan'@'%';
-```
-
-### 用户密码
-
-```sql
--- for MySQL
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';
--- for MariaDB
-ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('root');
-```
-
-也可以
-
-```bash
-sudo mysqladmin -u root password newpassword
-```
-
-### mysql 表
-
-```sql
--- 查询
-select user,host,authentication_string from mysql.user;
-```
-
-### 采用密码登录 root
-
-- 默认为 `sudo mysql` 登录
-- 需要将 plugin 设置为 `mysql_native_password` 才能用 `mysql -uroot -p` 登录
-
-```sql
-update mysql.user set authentication_string=PASSWORD('123456'), plugin='mysql_native_password' where user='root';
-flush privileges;
-```
 
 ## MySQL 基础命令
 
@@ -375,6 +64,8 @@ DROP TABLE students;
 ALTER TABLE students ADD COLUMN birth VARCHAR(10) NOT NULL;
 ALTER TABLE students CHANGE COLUMN birth birthday VARCHAR(20) NOT NULL; --修改birth列，例如把列名改为birthday，类型改为VARCHAR(20)
 ALTER TABLE students DROP COLUMN birthday;
+-- 还可以通过这种方式进行「移动」到不同数据库
+ALTER TABLE db1.student RENAME db2.student
 ```
 
 #### 表数据操作
@@ -421,29 +112,40 @@ GROUP BY column_name;
 ```
 
 
-### 查看数据库大小: information_schema
+### 查看数据库/表大小: information_schema
 
-查询库的大小
+```sql
+SELECT 
+    TABLE_SCHEMA AS `Database`,
+    TABLE_NAME AS `Table`,
+    ROUND(((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024), 2) AS `Size (MB)`
+FROM information_schema.TABLES
+-- 选择单张表
+-- WHERE table_schema = "<database name>" 
+ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;
+```
+
+或者
 
 ```sql
 USE information_schema;
-SELECT TABLE_SCHEMA, SUM(DATA_LENGTH) FROM TABLES GROUP BY TABLE_SCHEMA;
 
+-- 查询库的大小
+SELECT TABLE_SCHEMA, SUM(DATA_LENGTH) FROM TABLES GROUP BY TABLE_SCHEMA;
 -- 以 k 为单位
 SELECT TABLE_SCHEMA, SUM(DATA_LENGTH)/1024 FROM TABLES GROUP BY TABLE_SCHEMA;
-```
 
-另参 RUNOOB <https://www.runoob.com/mysql/mysql-database-export.html>
-
-查询每张表
-
-```sql
+-- 查询每张表
 SELECT table_name,table_rows,data_length+index_length, 
 CONCAT(ROUND((data_length+index_length)/1024/1024,2),'MB')
  DATA FROM information_schema.tables WHERE table_schema='bocom';
 ```
 
-### 数据导出 mysqldump
+### 导入导出-mysqldump
+
+#### 数据导出 mysqldump
+
+RUNOOB <https://www.runoob.com/mysql/mysql-database-export.html>
 
 ```sql
 -- 导出数据库用mysqldump命令，-p 然后回车之后输入密码
@@ -554,140 +256,6 @@ SELECT * FROM students FORCE INDEX (idx_class_id) WHERE class_id = 1 ORDER BY id
 ```
 
 指定索引的前提是索引`idx_class_id`必须存在。【注意 idx_class_id 的括号是必须的。】
-
-## 概念深入理解
-
-### InnoDB与mySQL 介绍
-
-- [『浅入浅出』MySQL 和 InnoDB](https://draveness.me/mysql-innodb/) | 1708
-
-数据库和实例: 在 Unix 上，启动一个 MySQL 实例往往会产生两个进程，`mysqld` 就是真正的数据库服务守护进程，而 `mysqld_safe` 是一个用于检查和设置 `mysqld` 启动的控制程序，它负责监控 MySQL 进程的执行，当 `mysqld` 发生错误时，`mysqld_safe` 会对其状态进行检查并在合适的条件下重启。
-
-mySQL 架构: 最上面的连接层; 中间的解析、优化、缓存等; 底部真正负责数据的存储和提取的存储引擎 (例如这里的 InnoDB).
-
-在 InnoDB 存储引擎中，所有的数据都被逻辑地存放在表空间中，表空间（tablespace）是存储引擎中最高的存储逻辑单位，在表空间的下面又包括段（segment）、区（extent）、页（page）
-
-#### 数据存储: tablespace, .frm/.idb, ibdata1
-
-MySQL 使用 InnoDB 存储表时，会将**表的定义**和**数据索引**等信息分开存储，其中前者存储在 `.frm` 文件中，后者存储在 `.ibd` 文件中
-
-- InnoDB 中用于存储数据的文件总共有两个部分
-    - 一是系统表空间文件，包括 ibdata1、ibdata2 等文件，其中存储了 InnoDB 系统信息和用户数据库表数据和索引，是所有表公用的。
-    - 当打开 `innodb_file_per_table` 选项时，`.ibd` 文件就是每一个表独有的表空间，文件存储了当前表的数据和相关的索引数据。
-
-如何存储记录
-
-- 与现有的大多数存储引擎一样，InnoDB 使用 **页** 作为磁盘管理的最小单位；数据在 InnoDB 存储引擎中都是按行存储的，每个 16KB 大小的页中可以存放 2-200 行的记录。
-- 页是 InnoDB 存储引擎管理数据的最小磁盘单位，而 B-Tree 节点就是实际存放表中数据的页面
-
-#### 索引: B+Tree
-
-nnoDB 存储引擎在绝大多数情况下使用 B+ 树建立索引，这是关系型数据库中查找最为常用和有效的索引，但是 B+ 树索引并不能找到一个给定键对应的具体值，它只能找到数据行对应的页，然后正如上一节所提到的，数据库把整个页读入到内存中，并在内存中查找具体的数据行。
-
-- 数据库中的 B+ 树索引可以分为聚集索引（clustered index）和辅助索引（secondary index），它们之间的最大区别就是，聚集索引中存放着一条行记录的全部信息，而辅助索引中只包含索引列和一个用于查找对应行记录的『书签』。
-    - 聚集索引理解为 PRIMARY KEY
-
-#### 锁
-
-InnoDB 实现了标准的行级锁，也就是共享锁（Shared Lock）和互斥锁（Exclusive Lock）；共享锁和互斥锁的作用其实非常好理解：
-
-- **共享锁（读锁）**：允许事务对一条行数据进行读取；
-- **互斥锁（写锁）**：允许事务对一条行数据进行删除或更新；
-
-#### 事务与隔离级别
-
-- ACID 四大特性：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）和持久性（Durability）
-
-事务的隔离性是数据库处理数据的几大基础之一，而隔离级别其实就是提供给用户用于在性能和可靠性做出选择和权衡的配置项。
-
-- `RAED UNCOMMITED`：使用查询语句不会加锁，可能会读到未提交的行（Dirty Read）；
-- `READ COMMITED`：只对记录加记录锁，而不会在记录之间加间隙锁，所以允许新的记录插入到被锁定记录的附近，所以再多次使用查询语句时，可能得到不同的结果（Non-Repeatable Read）；
-- `REPEATABLE READ`：多次读取同一范围的数据会返回第一次查询的快照，不会返回不同的数据行，但是可能发生幻读（Phantom Read）；
-- `SERIALIZABLE`：InnoDB 隐式地将全部的查询语句加上共享锁，解决了幻读的问题；
-
-MySQL 中默认的事务隔离级别就是 `REPEATABLE READ`，但是它通过 Next-Key 锁也能够在某种程度上解决幻读的问题。
-
-## 基本概念
-
-### 主键
-
-作为主键最好是完全业务无关的字段，我们一般把这个字段命名为id。常见的可作为id字段的类型有：
-
-- 自增整数类型：数据库会在插入数据时自动为每一条记录分配一个自增整数，这样我们就完全不用担心主键重复，也不用自己预先生成主键；
-- 全局唯一GUID类型：使用一种全局唯一的字符串作为主键，类似8f55d96b-8acc-4636-8cb8-76bf8abc2f57。GUID算法通过网卡MAC地址、时间戳和随机数保证任意计算机在任意时间生成的字符串都是不同的，大部分编程语言都内置了GUID算法，可以自己预算出主键。
-
-对于大部分应用来说，通常自增类型的主键就能满足需求。我们在students表中定义的主键也是`BIGINT NOT NULL AUTO_INCREMENT`类型。
-【主键是关系表中记录的唯一标识。主键的选取非常重要：主键不要带有业务含义，而应该使用BIGINT自增或者GUID类型。主键也不应该允许NULL。
-可以使用多个列作为联合主键，但联合主键并不常用。】
-
-### 外键
-
-外键并不是通过列名实现的，而是通过定义外键约束实现的：
-
-```sql
-ALTER TABLE students
-ADD CONSTRAINT fk_class_id
-FOREIGN KEY (class_id)
-REFERENCES classes (id);
-```
-
-其中，外键约束的名称 `fk_class_id` 可以任意，`FOREIGN KEY (class_id)` 指定了class_id作为外键，`REFERENCES classes (id)` 指定了这个外键将关联到classes表的id列（即classes表的主键）。
-通过定义外键约束，关系数据库可以保证无法插入无效的数据。即如果classes表不存在id=99的记录，students表就无法插入class_id=99的记录。
-由于外键约束会降低数据库的性能，大部分互联网应用程序为了追求速度，**并不设置外键约束，而是仅靠应用程序自身来保证逻辑的正确性**。这种情况下，class_id仅仅是一个普通的列，只是它起到了外键的作用而已。
-
-要删除一个外键约束，也是通过ALTER TABLE实现的：
-
-```sql
-ALTER TABLE students
-DROP FOREIGN KEY fk_class_id;
-```
-
-【关系数据库通过外键可以实现一对多、多对多和一对一的关系。外键既可以通过数据库来约束，也可以不设置约束，仅依靠应用程序的逻辑来保证。】
-
-### 索引
-
-如果要经常根据score列进行查询，就可以对score列创建索引：
-
-```sql
-ALTER TABLE students
-ADD INDEX idx_score (score);
-```
-
-使用`ADD INDEX idx_score (score)`就创建了一个名称为idx_score，使用列score的索引。索引名称是任意的，索引如果有多列，可以在括号里依次写上，例如：
-
-```sql
-ALTER TABLE students
-ADD INDEX idx_name_score (name, score);
-```
-
-索引的效率取决于索引列的值是否散列，即该列的值如果越互不相同，那么索引效率越高。反过来，如果记录的列存在大量相同的值，例如gender列，大约一半的记录值是M，另一半是F，因此，对该列创建索引就没有意义。
-
-可以对一张表创建多个索引。索引的优点是提高了查询效率，缺点是在插入、更新和删除记录时，需要同时修改索引，因此，索引越多，插入、更新和删除记录的速度就越慢。
-
-对于主键，关系数据库会自动对其创建主键索引。使用主键索引的效率是最高的，因为主键会保证绝对唯一。
-
-#### 唯一索引
-
-在设计关系数据表的时候，看上去唯一的列，例如身份证号、邮箱地址等，因为他们具有业务含义，因此不宜作为主键。
-但是，这些列根据业务要求，又具有唯一性约束：即不能出现两条记录存储了同一个身份证号。这个时候，就可以给该列添加一个唯一索引。例如，我们假设students表的name不能重复：
-
-```sql
-ALTER TABLE students
-ADD UNIQUE INDEX uni_name (name);
-```
-
-通过UNIQUE关键字我们就添加了一个唯一索引。
-
-也可以只对某一列添加一个唯一约束而不创建唯一索引：
-
-```sql
-ALTER TABLE students
-ADD CONSTRAINT uni_name UNIQUE (name);
-```
-
-这种情况下，name列没有索引，但仍然具有唯一性保证。
-
-无论是否创建索引，对于用户和应用程序来说，使用关系数据库不会有任何区别。这里的意思是说，当我们在数据库中查询时，如果有相应的索引可用，数据库系统就会自动使用索引来提高查询效率，如果没有索引，查询也能正常执行，只是速度会变慢。因此，索引可以在使用数据库的过程中逐步优化。
 
 ## 查询数据
 
