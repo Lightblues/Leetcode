@@ -12,8 +12,9 @@ def testClass(inputs):
 
 """ 
 https://leetcode-cn.com/contest/biweekly-contest-90
+灵神视频: https://www.bilibili.com/video/BV1zP411P7Ej/
 
-T2手动提交wa了一次. T4想不到优雅的解法, 直接暴力sl, 但因为没有注意到 SortedList 不能直接修改的问题WA了一次. (不会报错, 但因为修改可能导致非有序, 可能有错)
+T2手残提交wa了一次. T4想不到优雅的解法, 直接暴力sl, 但因为没有注意到 SortedList 不能直接修改的问题WA了一次. (不会报错, 但因为修改可能导致非有序, 可能有错)
 
 @2022 """
 class Solution:
@@ -53,17 +54,25 @@ class Solution:
         return min(r2min[r] for r in r2cnt if r2cnt[r]==mxCnt)
 
 
-    """ 6227. 下一个更大元素 IV #hard 对数组的每个元素求「对应元素的 第二大 整数」, 其定义为, 该元素idx右侧的第二个比val大的元素值.
+    """ 6227. 下一个更大元素 IV #hard #题型 #review 对数组的每个元素求「对应元素的 第二大 整数」, 其定义为, 该元素idx右侧的第二个比val大的元素值.
 思路1: 记录待匹配的元素信息 #二分 查找并进行更新. 
     怎么记录还没有找到对应值的信息? 需要的信息有 (val, cnt, idx), 其中cnt记录右侧比val大的元素数量.
     顺序遍历, 每次二分查找, 对于 sl[:idx] 之前的记录进行更新 (然后讲该记录插入sl)
         若 cnt>=2 说明完成了匹配, remove; 否则, cnt+=1
     为了保证有序结构, 暴力 用了 SortedList
     复杂度: 每次进行二分, 由于每个元素最多更新两次, 因此 O(nlogn)
+思路2: 利用两个 #单调栈
+    考虑「下一个更大元素」的情况, 可以维护一个单调递减栈来实现. (因为对于之前的更小的元素, 已经找到了更大的元素)
+    本题中, 需要「第二大元素」, 可以用两个单调栈来实现. 
+        具体而言, 先将元素存储到s, 若遇到更大的元素则将其转移到另一个单调栈 t中, 再次被弹出则说明找到了第二大元素.
+    复杂度: O(n)
+    [灵神](https://leetcode.cn/problems/next-greater-element-iv/solution/by-endlesscheng-q6t5/)
+思路3: 利用高级的数据结构 #elegant
+    #名次树; ST表+二分; 线段树二分; 树状数组
+    下面的代码: 从大到小遍历nums中的元素, 用一个 名次树 (SortedList) 记录出现的下标. 则在考察一个更小元素的时候, 查看其在 名次树 中的位置即可!
 """
+    from sortedcontainers import SortedList
     def secondGreaterElement(self, nums: List[int]) -> List[int]:
-        from sortedcontainers import SortedList
-        
         n = len(nums)
         sl = SortedList()
         ans = [-1] * n
@@ -85,6 +94,35 @@ class Solution:
             for tr in toRemoved: sl.remove(tr)
             for ta in toAdd: sl.add(ta)
             sl.add((x,0,i))
+        return ans
+    
+    def secondGreaterElement(self, nums: List[int]) -> List[int]:
+        # 思路2: 利用两个 #单调栈
+        ans = [-1] * len(nums)
+        s = []  # 还没找到更大元素的
+        t = []  # 找到了下一个更大元素的, 但还没找到第二大元素的
+        for i,x in enumerate(nums):
+            while t and nums[t[-1]]<x:
+                ans[t.pop()] = x
+            # 需要讲s中被弹出的元素顺序加入到t中, 可以一步完成
+            j = len(s) - 1
+            while j>=0 and nums[s[j]]<x:
+                j -= 1
+            t += s[j+1:]
+            del s[j+1:]
+            s.append(i)
+        return ans
+    
+    def secondGreaterElement(self, nums: List[int]) -> List[int]:
+        # 思路3: 利用高级的数据结构 #elegant
+        ans = [-1] * len(nums)
+        s = SortedList()
+        # 注意对于x倒序, 但是相同大小的元素应该从左往右考察
+        for _,i in sorted((-x,i) for i,x in enumerate(nums)):
+            idx = s.bisect_left(i) + 1
+            if idx < len(s): 
+                ans[i] = nums[s[idx]]
+            s.add(i)
         return ans
     
 sol = Solution()

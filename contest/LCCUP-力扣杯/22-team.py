@@ -11,8 +11,9 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-312
-https://leetcode-cn.com/contest/biweekly-contest-81
+https://leetcode.cn/circle/discuss/FjxrUR/
+灵神视频: https://www.bilibili.com/video/BV1rT411P7NA/
+
 @2022 """
 
 
@@ -62,7 +63,7 @@ class Solution:
 问取出这些字符的最小代价是多少? 限制: 单词数 n 24; 单词长度 m 8. 
 思路1: #状压 #DP
     提示: 最后的选取结果是13个字符, 选取情况可以用二进制进行表示.
-    考虑DP, 记 `f[i,mask]` 表示从第i个单词开始取, 当前选择的字符集合为 mask, 所需的最小代价.
+    考虑DP, 记 `f[i,mask]` 表示 **从第i个单词开始取, 当前选择的字符集合为 mask, 所需的最小代价**.
         转移: 考虑从 words[i] 中可选的 sub, 将其与现在的mask进行 merge. 取最小cost.
     具体而言, 
         如何表示状态? 下面灵神的表示是, 对于每一个需要的字符, 用 `(pos, limit, m)` 来定义, 分别表示当前字符在整个掩码中的位置, 所需的最大个数, 最后的m表示 位掩码.
