@@ -1,4 +1,5 @@
 """ LeetCode Python 本地测试模板 @Lightblues 221102
+https://github.com/Lightblues/Leetcode/blob/main/notes/leetcode_guide.py
 本模板是什么? 用于本地测试 LeetCode 的代码, 试图还原Leetcode的测试环境
     直接复制测试用例, 可以在本地编辑器中调试.
     导入了常见的包函数, 可以直接使用 (并且可以方便查到这些函数是来自哪些包的, 熟悉库函数)
@@ -11,7 +12,10 @@
     可以复制下面的模板, 修改下面注释部分的代码, 尝试在本地运行~
     对于一般的要求实现函数的题目, 在Solution类中实现, 然后复制用例到result列表中, 本地运行/调试即可.
     对于要实现类的题目, 在全局环境实现要求的类, 然后在result中调用testClass函数进行测试. 
-实用: 打断点; 配合Copilot等. 
+实用: 
+    学会打断点进行调试; 
+    配合 Copilot (对于lc题目的补全/抄袭能力一流), 如何使用需要自己斟酌; 
+    vscode 插件 File Template, 将本模版保存到 `.vscode/templates` 文件夹中, 可以在新建文件时直接使用模版; 
 
 实际使用例子: https://github.com/Lightblues/Leetcode/blob/main/contest/151-200/161.py
 """

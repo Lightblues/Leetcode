@@ -47,7 +47,6 @@ class Solution:
             c[0] == 1 and len(set(c[1:])) == 1 or \
                 c[-1] == c[-2] + 1 and len(set(c[:-1])) == 1
 
-
     """ 2425. 所有数对的异或和 #medium #题型 #math #xor 给定两个数组, 要求「所有数对的异或和」. 也即两两异或得到 mn 个数字, 再求异或. 限制: n,m 10^5
 思路1: 注意到 #异或 的性质: `(a^b) ^ (a^c) = b^c`. 因此, 对于数组中的某一个数字而言, 它是否被保留, 仅取决于另一个数组的长度是否为偶数.
     见 [灵神](https://leetcode.cn/problems/bitwise-xor-of-all-pairings/solution/tao-lun-mei-ge-yuan-su-zai-da-an-zhong-d-uutg/)
@@ -89,12 +88,10 @@ https://leetcode.cn/problems/bitwise-xor-of-all-pairings/
             # 树状数组 模版
             def __init__(self, n):
                 self.tree = [0] * n
-
             def add(self, x):
                 while x < len(self.tree):
                     self.tree[x] += 1
                     x += x & -x
-
             def query(self, x):
                 # 查询前缀和
                 res = 0
@@ -114,12 +111,8 @@ https://leetcode.cn/problems/bitwise-xor-of-all-pairings/
             ans += t.query(bisect_right(b, x + diff))
             t.add(bisect_left(b, x) + 1)
         return ans
-
-
-
-
     
-    """ 1224. 最大相等频率 #hard #题型 给定一个数组, 要求找到一个最大的前缀子数组, 使得从子数组中删去一个元素后, 剩余的元素出现的频率相同. 限制: 1e5
+    """ 1224. 最大相等频率 #hard #题型 #review 给定一个数组, 要求找到一个最大的前缀子数组, 使得从子数组中删去一个元素后, 剩余的元素出现的频率相同. 限制: 1e5
 关联: 1413. 删除字符使频率相同 #easy
 思路1: #计数 #分类 讨论符合的情况 
     我们用一个字典记录出现次数的计数 cntFreq = { cnt: freq }. 表示出现cnt次的数字都有多少个. 
@@ -162,7 +155,6 @@ https://leetcode.cn/problems/bitwise-xor-of-all-pairings/
     
 """ 2424. 最长上传前缀 #medium #模拟 """
 class LUPrefix:
-
     def __init__(self, n: int):
         self.n = n
         self.uploaded = [0] * n
