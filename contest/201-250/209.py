@@ -1,41 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import cache, lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
+from easonsi import utils
+from easonsi.util.leetcode import *
 
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
@@ -56,6 +20,10 @@ class TreeNode:
 
 """ 
 https://leetcode.cn/contest/weekly-contest-209
+
+两道hard的一次... T2考差了二叉树的深度, 用BFS即可, 不过还是WA了; T3之前写过了; T4事实上可以通过找规则得到DP, 但自己一开始没想明白, 实际上就是格雷码.
+
+
 @2022 """
 class Solution:
     """ 1608. 特殊数组的特征值 """
@@ -124,7 +92,7 @@ class Solution:
             else: ans = max(ans, n-i+j)
         return ans + bias
     
-    """ 1611. 使整数变为 0 的最少操作次数 #hard
+    """ 1611. 使整数变为 0 的最少操作次数 #hard #题型
 给定一个二进制数, 可以进行两种操作: 1) 翻转最低1位的上一位; 2) 翻转最后一位. 问最少需要多少次操作才能得到0.
 思路1: #找规律 #DP
     提示: 由于两种操作都是可逆的, 因此等价于将0变为目标值n

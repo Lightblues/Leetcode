@@ -1,42 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -49,6 +12,9 @@ def testClass(inputs):
 
 """ 
 https://leetcode.cn/contest/weekly-contest-210
+
+T4是很少见的 #遍历子树 的题目, 有点难Orz.
+
 @2022 """
 class Solution:
     """ 1614. 括号的最大嵌套深度 """
@@ -95,9 +61,13 @@ n个城市之间的联通关系恰好构成一棵树. 要求返回这棵树的�
 思路1: 子集遍历, 对于每一个子集检查是否为子树及其直径.
     复杂度: 2^n * n
     如何 **查询一棵树上的直径**? 采用 #树形 DP
-        任取一个点作为root, 在遍历孩子的过程中记录经过这个点的 `max_depth, max_dist`. 采用递归的形式计算. 假设当前值为 `max_depth, max_dist`, 遍历下一个孩子节点返回了 `mdepth, mdist`, 进行更新: `max_depth = max(max_depth, mdepth+1), max_dist = max(max_dist, mdist, max_depth+mdepth+1)`.
-思路2: 与其用上面的形式来找所有可能的子集/树, 我们一开始就固定树的结构 (单向图). 然后, 对于每一个树节点, 我们统计 **经过该节点的子树的所有统计结果(子问题)**. 注意到, 因为我们一开始固定了树结构, 所以不会产生重复计数, 所以答案就是子问题之和.
+        任取一个点作为root, 在遍历孩子的过程中记录经过这个点的 `max_depth, max_dist`. 
+        采用递归的形式计算. 假设当前值为 `max_depth, max_dist`, 遍历下一个孩子节点返回了 `mdepth, mdist`, 
+        更新: `max_depth = max(max_depth, mdepth+1), max_dist = max(max_dist, mdist, max_depth+mdepth+1)`.
+思路2: 与其用上面的形式来找所有可能的子集/树, 我们一开始就固定树的结构 (单向图). 
+    然后, 对于每一个树节点, 我们统计 **经过该节点的子树的所有统计结果(子问题)**. 注意到, 因为我们一开始固定了树结构, 所以不会产生重复计数, 所以答案就是子问题之和.
     如何在上面的 #树形 DP 的框架下实现结果的统计? 用 `count{dist:cnt}` 表示当前遍历中的结果, `subcount` 表示下一个孩子节点的统计结果, 对于这两个结果进行交叉即可.
+    [here](https://leetcode.cn/problems/count-subtrees-with-max-distance-between-cities/solution/python3-shu-xing-dp-by-simpleson/)
 """
     def countSubgraphsForEachDiameter(self, n: int, edges: List[List[int]]) -> List[int]:
         # 思路1 see https://leetcode.cn/problems/count-subtrees-with-max-distance-between-cities/solution/mei-ju-zi-ji-shu-xing-dp-by-lucifer1004/

@@ -1,42 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -49,6 +12,8 @@ def testClass(inputs):
 
 """ 
 https://leetcode.cn/contest/weekly-contest-198
+T3 也是 hard, 一开始还理解错题目了...虽然本来的问题也很难就是了... T4考了AND的运算性质, 也比较少见.
+
 @2022 """
 class Solution:
     """ 1518. 换酒问题 """
@@ -82,7 +47,7 @@ class Solution:
         f(0)
         return ans
     
-    """ 1520. 最多的不重叠子字符串 #hard
+    """ 1520. 最多的不重叠子字符串 #hard #题型 #细节
 给定一个字符串s, 要求返回一组不重叠子串, 其中每一个子串, 其包含的字符需要是在s中出现的全部. 要求返回的数组长度最大; 若有多个相同长度的, 则返回总长度最小的. e.g. "abbaccd" -> ["d","bb","cc"]. 注意 "abab" -> ["abab"].
 限制: ch均为小写; 长度 1e5
 思路0: 理解错题目为「给定一个字符串s, 要求返回一组不重叠子串, 其中每一个子串都包含s中全部的某一字符」. 也即 "abab" -> ["aba"].

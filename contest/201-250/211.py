@@ -1,42 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import chain, product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -49,6 +12,10 @@ def testClass(inputs):
 
 """ 
 https://leetcode.cn/contest/weekly-contest-211
+
+居然被T2折磨了半天, 事实证明是自己想多了, 直接暴力也可以过 (没想明白状态空间); 
+T3之前应该做过类似的 #双指标 排序的题, 结果这次还是疯狂打补丁剑走偏锋, 还是没想明白.
+
 @2022 """
 class Solution:
     """ 1624. 两个相同字符之间的最长子字符串 """
@@ -81,7 +48,7 @@ class Solution:
                 if arr<ans: ans = arr[:]
             return ans
         def merge(arr1: List[int], arr2: List[int]) -> str:
-            arr = chain(*zip(arr1, arr2))
+            arr = itertools.chain(*zip(arr1, arr2))
             return "".join(map(str,arr))
         n = len(s)
         # 所有可能为第一个字符的位置
@@ -178,7 +145,8 @@ class Solution:
     
     """ 1627. 带阈值的图连通性 #hard 
 有编号为 1...n 的节点. 两个节点相连的条件为, x,y 的gcd大于阈值. 对于每一个查询, 返回两点是否相连.
-思路1: 查询联通性采用 #并查集. 由于节点编号有序, 对于 g in threshold...n, 每次遍历 range(g, n+1, g) 这些节点, 将其相连. 这样的复杂度为 #调和级数 `n+n/2+n/3... = O(n logn)`.
+思路1: 查询联通性采用 #并查集. 由于节点编号有序, 对于 g in threshold...n, 每次遍历 range(g, n+1, g) 这些节点, 将其相连. 
+    这样的复杂度为 #调和级数 `n+n/2+n/3... = O(n logn)`.
 """
     def areConnected(self, n: int, threshold: int, queries: List[List[int]]) -> List[bool]:
         fa = [i for i in range(n+1)]

@@ -66,10 +66,12 @@ https://leetcode.cn/problems/minimum-swaps-to-make-strings-equal/
         return ''.join([x for i,x in enumerate(s) if i not in removed])
     
     """ 1250. 检查「好数组」 #hard 给定一个正整数数组, 要求从中选一个子集, 将这个元素乘以任意整数, 要求之和为1. 问是否存在这样的子集. 限制: n 1e5; a[i] 1e9.
-简化: 考虑两个数的情况
-    观察: 两个互质的数字 x,y, 一定可以找到因子 ax+by=1
-    说明: #裴蜀定理(重要推论) : a,b互质的充分必要条件是存在整数x,y使ax+by=1.
-推测: 对于多个数字的情况, gcd==1 即可
+思路1: #裴蜀定理
+    简化: 考虑两个数的情况
+        观察: 两个互质的数字 x,y, 一定可以找到因子 ax+by=1
+        说明: #裴蜀定理(重要推论) : a,b互质的充分必要条件是存在整数x,y使ax+by=1.
+    推测: 对于多个数字的情况, 累计 gcd==1 即可.
+see [here](https://leetcode.cn/problems/check-if-it-is-a-good-array/solution/shu-xue-he-365-shui-hu-wen-ti-lei-si-python-by-fe-/)
 """
     def isGoodArray(self, nums: List[int]) -> bool:
         g = nums[0]
