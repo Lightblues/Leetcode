@@ -72,34 +72,6 @@ class Solution:
             result += 1
         return result
 
-    """ 1219. 黄金矿工 medium
-找到矩阵中非零路径中累积和最大的
-
-DFS 即可, Copilot 牛逼! 下面的DFS直接帮写好了
- """
-    def getMaximumGold(self, grid: List[List[int]]) -> int:
-        directions = [(0,1),(0,-1),(1,0),(-1,0)]
-        m,n = len(grid), len(grid[0])
-        def isValid(x,y):
-            return 0<=x<m and 0<=y<n
-        visited = [[False]*n for _ in range(m)]
-        result = 0
-        def dfs(x,y, cumsum):
-            if not isValid(x,y):
-                return
-            if visited[x][y] or grid[x][y] == 0:
-                return
-            visited[x][y] = True
-            nonlocal result
-            result = max(result, cumsum+grid[x][y])
-            for dx,dy in directions:
-                dfs(x+dx, y+dy, cumsum+grid[x][y])
-            visited[x][y] = False
-        for i in range(m):
-            for j in range(n):
-                dfs(i,j,0)
-        return result
-
     """ 1748. 唯一元素的和 """
     def sumOfUnique(self, nums: List[int]) -> int:
         counter = collections.Counter(nums)
@@ -228,7 +200,6 @@ rels = [
     # sol.longestNiceSubstring(s = "dDzeE"),
     # sol.longestNiceSubstring("Bb"),
     # sol.findMinFibonacciNumbers(19),
-    # sol.getMaximumGold(grid = [[0,6,0],[5,8,7],[0,9,0]]),
     # sol.longestDiverseString(a = 1, b = 1, c = 7),
     # sol.longestDiverseString(a = 2, b = 2, c = 1),
     # sol.gridIllumination(n = 5, lamps = [[0,0],[0,4]], queries = [[0,4],[0,1],[1,4]]),

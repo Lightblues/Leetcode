@@ -5,7 +5,15 @@ from collections import defaultdict
 
 """ 
 
-参见 [tarjan算法 割点割边强联通 算法讲解&模板 自用整理](https://blog.csdn.net/qq_19895789/article/details/89144975); [OI](https://oi-wiki.org/graph/scc/)
+参见 [OI](https://oi-wiki.org/graph/scc/)
+    LC官方写的 [60 分钟搞定图论中的 Tarjan 算法](https://zhuanlan.zhihu.com/p/101923309)
+    [Tarjan：这个算法大神](https://zhuanlan.zhihu.com/p/348703439)
+    [tarjan算法 割点割边强联通 算法讲解&模板 自用整理](https://blog.csdn.net/qq_19895789/article/details/89144975)
+
+
+如何得到 #强连通分量 #SCC? 
+
+===
 
 在具体实现Tarjan算法上，我们需要在DFS（深度优先遍历）中，额外定义三个数组 `dfn[]，low[]，parent[]`
 
@@ -27,50 +35,44 @@ from collections import defaultdict
 """
 
 class Solution:
-    """ 1192. 查找集群内的「关键连接」 `hard`
-
-输入：n = 4, connections = [[0,1],[1,2],[2,0],[1,3]]
-输出：[[1,3]]
-解释：[[3,1]] 也是正确的。
-
+    """ 1192. 查找集群内的「关键连接」 `hard` 在一个无向联通图上寻找 #割边, #Trajan 的经典用法. 
+思路1: #Tarjan 算法
+    割边的判断条件? dfn[u] < low[v], 则边 (u,v) 就是割边. 
+        说明从u可以到达孩子v, 但是从v出发无法到达u或者更祖先的节点. 
+    如何避免重复访问? tarjan(x,parent) 中指定父节点. 
+    因为是联通的, 所以从任意一个节点一次DFS即可访问所有节点. 
 from [here](https://leetcode-cn.com/problems/critical-connections-in-a-network/solution/cpython3-tarjansuan-fa-zhao-qiao-by-qrhq-vp6i/)
-tarjan算法找桥 (连通分量之间的连接边 / 桥)
  """
     def criticalConnections(self, n: int, connections: List[List[int]]) -> List[List[int]]:
-        # 无向图
-        adjvex = defaultdict(set)
-        for x, y in connections:
-            adjvex[x].add(y)
-            adjvex[y].add(x)
-        
-
-        dfn = [0 for _ in range(n)]    #dfs访问中的实际时间
-        low = [0 for _ in range(n)]    #dfs中通过无向边可以向前回溯到的最早的时间点
-        self.T = 1
-
-        def tarjan(x: int, parent: int) -> None:
-            dfn[x] = self.T
-            low[x] = self.T
-            self.T += 1
-
-            for y in adjvex[x]:
-                if y == parent:                 #可能是父节点
-                    continue
-
-                if dfn[y] == 0:                #还没访问过
-                    tarjan(y, x)                #先访问y，访问了才能计算
-                    low[x] = min(low[x], low[y])
-
-                    # 在本题中, 「关键连接」记为所有的 联通分量 之间的边
-                    if low[y] > dfn[x]:         #x 和 y不在一个强连通分量
-                        res.append([x, y])
-                
-                elif dfn[y] != 0:              #访问过了
-                    low[x] = min(low[x], dfn[y])
-        
-        res = []
+        # 构建邻接表
+        graph = [[] for _ in range(n)]
+        for u,v in connections:
+            graph[u].append(v); graph[v].append(u)
+        # 初始化
+        t = 1
+        dfn = [0] * n   # 每个节点的访问时刻. 也可以用来判断是否访问过该节点
+        low = [0] * n   # 每个节点出发可以到达的最早时刻/节点
+        ans = []    # 记录所有的割边
+        def tarjan(u, parent):
+            nonlocal t
+            # 记录访问时间
+            dfn[u] = low[u] = t; t+=1
+            # DFS 孩子
+            for v in graph[u]:
+                if v==parent: continue
+                if dfn[v] == 0:
+                    # 核心! 先要DFS孩子, 这样孩子的 low 才是已经算好的. 
+                    tarjan(v, u)
+                    low[u] = min(low[u], low[v])
+                    # 判断割边条件: 孩子节点无法到达祖先节点!! 
+                    if dfn[u] < low[v]:
+                        ans.append((u,v))
+                else:
+                    # 已经访问过v了! 1) 可能v是祖先, 更新 low; 2) 可能是后代, 显然不会是割边. 因此, 不需要进行割边的判断. 
+                    low[u] = min(low[u], dfn[v])
+        # 由于是联通图, 从任意节点出发即可. 
         tarjan(0, -1)
-        return res
+        return ans
 
     """ 1568. 使陆地分离的最少天数 #hard #题型
 给定一个 grid, 1表示陆地, 0表示水域, 只有一个岛屿则认为是连在一起的陆地, 否则就是分离的多个岛屿. 现在要求你将陆地分离, 将陆地分离成至少两个不相交的区域, 返回最少操作数.

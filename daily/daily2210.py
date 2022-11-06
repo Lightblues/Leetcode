@@ -95,12 +95,39 @@ class Solution:
                     ans = min(ans, r-l+1)
         return ans if ans!=inf else 0
 
-    
+    """ 0754. 到达终点数字 #medium 但实际上很 #hard #数学 #题型 要从位置0走到target. 在每一步, 可以选择左/右一定i步. 问走到target最少需要多少步. 限制: target +/-1e9
+只需要考虑正整数情况. 
+利用到的结论: 假设 s = sum(1...k), 则对于在 [1,s] 范围内的任意整数 x, 都可以找到 1...k 中的一组数字 set, 使其和为 x. 
+    证明: 归纳法. 
+思路1: 
+    显然, 先要能够到达target, 我们先取最小的 s=sum(1...k) >= target.
+    记 `d = s-target`. 然后 #分类
+        考虑翻转一个数字x的符号, 其对于和产生了 -2x 的影响, 一定是奇数!!!
+        若 d为偶数. 则根据上面的节点, 我们可以找到一组数字, 使其和为 d/2. 
+            (事实上在本题中, 我们可以找到一个大小为1的set.)
+        若 d为奇数. 考虑 k+1 的符号,
+            1) 如为奇数, 则s的变为偶数. 答案为 k+1
+            2) 若为偶数, 注意到 k+1 + k+2 一定是一个奇数. 则此时 s必然为偶数. 答案为 k+2
+参见 [官答](https://leetcode.cn/problems/reach-a-number/solution/dao-da-zhong-dian-shu-zi-by-leetcode-sol-ak90/)
+图解见 [灵神](https://leetcode.cn/problems/reach-a-number/solution/fen-lei-tao-lun-xiang-xi-zheng-ming-jian-sqj2/)
+"""
+    def reachNumber(self, target: int) -> int:
+        target = abs(target)
+        k = 0; acc = 0
+        while acc < target:
+            k += 1
+            acc += k
+        d = acc - target
+        if d%2 == 0: return k
+        else: return k + (1 if k%2==0 else 2)
+        
 sol = Solution()
 result = [
-    sol.shortestSubarray(nums = [2,-1,2], k = 3),
-    sol.shortestSubarray([1,2], 4),
-    sol.shortestSubarray([84,-37,32,40,95], 167)
+    # sol.shortestSubarray(nums = [2,-1,2], k = 3),
+    # sol.shortestSubarray([1,2], 4),
+    # sol.shortestSubarray([84,-37,32,40,95], 167),
+    sol.reachNumber(3),
+    sol.reachNumber(2),
 ]
 for r in result:
     print(r)

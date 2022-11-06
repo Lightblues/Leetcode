@@ -22,9 +22,9 @@
             // 用于 IntelliSense 的 C 语言标准的版本。注意: GNU 标准仅用于查询设置编译器以获取 GNU 定义，并且 IntelliSense 将模拟等效的 C 标准版本。
             "cStandard": "c11",
             // 用于 IntelliSense 的 C++ 语言标准的版本。注意: GNU 标准仅用于查询设置用来获取 GNU 定义的编译器，并且 IntelliSense 将模拟等效的 C++ 标准版本。
-            "cppStandard": "c++17",
+            "cppStandard": "c++17"
             // 要使用的、映射到 MSVC、gcc 或 Clang 的平台和体系结构变体的 IntelliSense 模式。
-            "intelliSenseMode": "macos-clang-arm64"
+            // "intelliSenseMode": "macos-clang-arm64"
             // 可为源文件提供 IntelliSense 配置信息的 VS Code 扩展的 ID。
             // "configurationProvider": "ms-vscode.makefile-tools"
         }
