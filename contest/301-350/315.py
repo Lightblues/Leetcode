@@ -12,13 +12,14 @@ def testClass(inputs):
 
 """ 
 https://leetcode.cn/contest/weekly-contest-315
+灵神视频: https://www.bilibili.com/video/BV1Ae4y1i7PM/
 
 前三题划水, 5min做出来, 结果T4想了一个小时做不出Orz... 想了个 O(n^2) 的算法
 看了题解, 没想到思路异常的简单, 但当时真的想不到...
 
 @2022 """
 class Solution:
-    """ 6204. 与对应负数同时存在的最大正整数 """
+    """ 2441. 与对应负数同时存在的最大正整数 """
     def findMaxK(self, nums: List[int]) -> int:
         ans = -1
         s = set(nums)
@@ -27,25 +28,25 @@ class Solution:
             # s.add(a)
         return ans
     
-    """ 6205. 反转之后不同整数的数目 """
+    """ 2442. 反转之后不同整数的数目 """
     def countDistinctIntegers(self, nums: List[int]) -> int:
         s = set(nums)
         for a in nums:
             s.add(int(str(a)[::-1]))
         return len(s)
     
-    """ 6219. 反转之后的数字和 """
+    """ 2443. 反转之后的数字和 """
     def sumOfNumberAndReverse(self, num: int) -> bool:
         for a in range(num+1):
             if a + int(str(a)[::-1]) == num: return True
         return False
     
-    """ 6207. 统计定界子数组的数目 #hard #题型 #review 给定一个数组. 通过给定 mn, mx 问所有子数组中, 其最小最大值分别是这两个数字的数量.
+    """ 2444. 统计定界子数组的数目 #hard #题型 #review 给定一个数组. 通过给定 mn, mx 问所有子数组中, 其最小最大值分别是这两个数字的数量.
 限制: n 1e5;
 思路0: #TLE 尝试对于 mn, mx 两个数字, 计算其作为最小/最大值成立的区域. 然后两两匹配, 统计数量.
     关联: 2281. 巫师的总力量和
     花了将近一个小时才写好. 结果意识到复杂度是 O(n^2), 果然超时...
-思路1: 顺序遍历, 考察以 idx为右端点的合法区间的数量.
+思路1: 顺序遍历, 考察以 idx为右端点的合法区间的数量. 见代码
     怎样才合法? 先不考虑超过 [mn,mx] 范围的数字, 则匹配的左端点数量取决于 `min(mn_i, mx_i)` 的位置, 这里的两个指标是最近的 mn, mx 的位置.
     在遍历过程中, 更新 mn,mx 作为最小/最大值的区域 (可能的左端点).
     见 [灵神](https://leetcode.cn/problems/count-subarrays-with-fixed-bounds/solution/jian-ji-xie-fa-pythonjavacgo-by-endlessc-gag2/)
@@ -126,12 +127,15 @@ class Solution:
     def countSubarrays(self, nums: List[int], minK: int, maxK: int) -> int:
         # 思路2: #双指针 根据数据范围进行分割, 求解子问题.
         def f(arr, mn,mx):
+            # arr 中的元素都在 [mn,mx] 范围内
+            # 累积右端点x可以匹配到的左端点. 
             ans = 0
             cntMn = cntMx = 0
             j = 0
             for i,x in enumerate(arr):
                 if x==mn: cntMn += 1
                 if x==mx: cntMx += 1
+                # 只有在 [l...i] 范围内同时包含了 mn,mx 时才有效. 
                 while cntMn>0 and cntMx>0:
                     # 找到第一个不符合条件的位置.
                     if arr[j]==mn: cntMn -= 1
@@ -142,6 +146,7 @@ class Solution:
         ans = 0
         l = 0
         for r,x in enumerate(nums + [maxK+1]):
+            # 根据数据范围进行分割
             if x<minK or x>maxK: 
                 if l<r: ans += f(nums[l:r], minK, maxK)
                 l = r+1
