@@ -120,7 +120,24 @@ class Solution:
         d = acc - target
         if d%2 == 0: return k
         else: return k + (1 if k%2==0 else 2)
-        
+    
+    """ 0891. 子序列宽度之和 #hard 对于数组的所有子序列, 定义其「宽度」为 mx-mn, 问最有子序列的宽度之和. 限制: n 1e5
+思路1: 先 #排序, 算出每个元素在子序列中作为最大值/最小值的次数. 
+[灵神](https://leetcode.cn/problems/sum-of-subsequence-widths/solution/by-endlesscheng-upd1/)
+关联: 2104. 子数组范围和
+"""
+    def sumSubseqWidths(self, nums: List[int]) -> int:
+        MOD = 10 ** 9 + 7
+        nums.sort()
+        n = len(nums)
+        pow2 = [0] * n
+        pow2[0] = 1
+        for i in range(1, n):
+            pow2[i] = pow2[i - 1] * 2 % MOD  # 预处理 2 的幂次
+        return sum((pow2[i] - pow2[-1 - i]) * x
+                   for i, x in enumerate(nums)) % MOD
+
+    
 sol = Solution()
 result = [
     # sol.shortestSubarray(nums = [2,-1,2], k = 3),
