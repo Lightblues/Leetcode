@@ -1,39 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 # from utils_leetcode import testClass
 # from structures import ListNode, TreeNode, linked2list, list2linked
 
@@ -368,7 +334,7 @@ class Solution:
         # 都不为空, 说明 p,q 分别出现在左右子树中, 当前节点正是最小共同祖先!
         return root
 
-""" 0297. 二叉树的序列化与反序列化 #题型 要求将一个二叉树序列化 (serialize) 和反序列化. 也即用无损的字符串表示二叉树. 限制: 节点数 1e4, 注意可能为 None
+""" 0297. 二叉树的序列化与反序列化 #hard #题型 要求将一个二叉树序列化 (serialize) 和反序列化. 也即用无损的字符串表示二叉树. 限制: 节点数 1e4, 注意可能为 None
 思路: 采用任意的 BFS/DFS/前序 等遍历方式均可, 注意在解码的时候, 按照相同的顺序进行还原.
 [官答](https://leetcode.cn/problems/serialize-and-deserialize-binary-tree/solution/er-cha-shu-de-xu-lie-hua-yu-fan-xu-lie-hua-by-le-2/)
 参见 [LeetCode 序列化二叉树的格式](https://support.leetcode-cn.com/hc/kb/article/1567641/) 其表示更简化一些. (本质上就是BFS)

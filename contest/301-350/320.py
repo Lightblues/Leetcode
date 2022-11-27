@@ -155,7 +155,35 @@ class Solution:
             #             f[i+1][j] = (f[i+1][j] + f[ii][j-1]) % mod
             #             f[i+1][j] = (f[i+1][j] + f[ii][j-1]) % mod
         return f[n][k]
-    
+
+
+""" 解析LC格式的树结构
+关联: 0297. 二叉树的序列化与反序列化 #hard
+参见 [LeetCode 序列化二叉树的格式](https://support.leetcode-cn.com/hc/kb/article/1567641/)
+"""
+# easonsi.util.leetcode.parseLCBinaryTree
+def parseLCBinaryTree(data):
+    """ 解析形如 '[1,2,3,null,null,4,5]' 这样的LC树结构 """
+    if data == "[]": return None
+    data = data[1:-1].split(",")
+    n = len(data)
+    root = TreeNode(int(data[0]))
+    idx = 1
+    q = deque([root])
+    while q:
+        node = q.popleft()
+        if idx >= n: break
+        lv = data[idx]; idx+=1
+        if lv!='null':
+            l = TreeNode(int(lv))
+            node.left = l; q.append(l)
+        if idx >= n: break
+        rv = data[idx]; idx+=1
+        if rv!='null':
+            r = TreeNode(int(rv))
+            node.right = r; q.append(r)
+    return root
+
 sol = Solution()
 result = [
     # sol.unequalTriplets(nums = [4,4,2,4,3]),
@@ -163,10 +191,11 @@ result = [
     # sol.minimumFuelCost(roads = [[3,1],[3,2],[1,0],[0,4],[0,5],[4,6]], seats = 2),
     # sol.minimumFuelCost(roads = [[0,1],[0,2],[0,3]], seats = 5),
     # sol.minimumFuelCost(roads = [], seats = 1),
-    sol.beautifulPartitions(s = "23542185131", k = 3, minLength = 2),
-    sol.beautifulPartitions(s = "23542185131", k = 3, minLength = 3),
-    sol.beautifulPartitions(s = "3312958", k = 3, minLength = 1),
-    sol.beautifulPartitions("783938233588472343879134266968", 4, 6)
+    # sol.beautifulPartitions(s = "23542185131", k = 3, minLength = 2),
+    # sol.beautifulPartitions(s = "23542185131", k = 3, minLength = 3),
+    # sol.beautifulPartitions(s = "3312958", k = 3, minLength = 1),
+    # sol.beautifulPartitions("783938233588472343879134266968", 4, 6)
+    sol.closestNodes(root = parseLCBinaryTree('[6,2,13,1,4,9,15,null,null,null,null,null,null,14]'), queries = [2,5,16])
 ]
 for r in result:
     print(r)
