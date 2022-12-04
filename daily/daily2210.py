@@ -137,14 +137,38 @@ class Solution:
         return sum((pow2[i] - pow2[-1 - i]) * x
                    for i, x in enumerate(nums)) % MOD
 
+""" 
+[灵神](https://leetcode.cn/problems/maximum-frequency-stack/solution/mei-xiang-ming-bai-yi-ge-dong-hua-miao-d-oich/)
+"""
+class FreqStack:
+    def __init__(self):
+        self.cnt = Counter()
+        self.stacks = []
+
+    def push(self, val: int) -> None:
+        c = self.cnt[val]
+        if c == len(self.stacks):
+            self.stacks.append([val])
+        else:
+            self.stacks[c].append(val)
+        self.cnt[val] += 1
+
+    def pop(self) -> int:
+        val = self.stacks[-1].pop()
+        self.cnt[val] -= 1
+        if not self.stacks[-1]:
+            self.stacks.pop()
+        return val
     
 sol = Solution()
 result = [
     # sol.shortestSubarray(nums = [2,-1,2], k = 3),
     # sol.shortestSubarray([1,2], 4),
     # sol.shortestSubarray([84,-37,32,40,95], 167),
-    sol.reachNumber(3),
-    sol.reachNumber(2),
+    # sol.reachNumber(3),
+    # sol.reachNumber(2),
+    testClass("""["FreqStack","push","push","push","push","push","push","pop","pop","pop","pop"]
+[[],[5],[7],[5],[7],[4],[5],[],[],[],[]]"""),
 ]
 for r in result:
     print(r)

@@ -12,6 +12,7 @@ def testClass(inputs):
 
 """ 
 https://leetcode-cn.com/contest/biweekly-contest-92
+讨论: https://leetcode.cn/circle/discuss/YBhcDT/
 T1 因为边界WA了一次; T4写得好冗长...
 
 @2022 """
@@ -21,7 +22,9 @@ class Solution:
         if n==1: return 0
         return n//2 if n%2==0 else n
     
-    """ 6277. 行和列中一和零的差值 #暴力 模拟 """
+    """ 6277. 行和列中一和零的差值 #暴力 模拟
+[灵神](https://leetcode.cn/problems/difference-between-ones-and-zeros-in-row-and-column/solution/mo-ni-liang-ge-you-hua-by-endlesscheng-jldf/) 做了一点优化
+"""
     def onesMinusZeros(self, grid: List[List[int]]) -> List[List[int]]:
         onesRow = [sum(i==1 for i in row) for row in grid]
         zerosRow = [sum(i==0 for i in row) for row in grid]
@@ -51,7 +54,9 @@ class Solution:
     
     """ 6251. 统计回文子序列数目 #hard 统计由数字组成的字符串中, 长度为5的 #回文 子序列的数量. 限制: n 1e4
 思路0: 枚举所有的中间数字, 统计左右符合对称的长尾2的数字川数量. 复杂度 O(d^2 n), 其中d为字符数量
-    细节: 注意 left, right 两个计数器的更新
+    细节: 注意 left, right 两个计数器的更新. 重点是如何撤销?
+    [灵神](https://leetcode.cn/problems/count-palindromic-subsequences/solution/qian-hou-zhui-fen-jie-o100-chang-shu-kon-51cv/) 思路一致, 但代码简洁许多!
+关联: 「1930. 长度为 3 的不同回文子序列」
 """
     def countPalindromes(self, s: str) -> int:
         mod = 10**9+7
@@ -63,6 +68,7 @@ class Solution:
             for j in range(10):
                 mmap[10*i+j] = 10*j+i
         
+        # 优化: 可以在下面的遍历过程中完成更新, 见灵神
         # 计算前缀. acc[i+1][d] 记录 s[:i+1] 中数字 d 的数量
         cnt = [0]*10
         acc = [cnt[:]]
@@ -87,7 +93,29 @@ class Solution:
             for k,v in mmap.items():
                 ans = (ans + left[k]*right[v]) % mod
         return ans
-        
+    def countPalindromes(self, s: str) -> int:
+        #  from 灵神
+        suf = [0] * 10  # 当前后缀中, 每个d的出现次数
+        suf2 = [0] * 100
+        for d in map(int, reversed(s)):
+            for j, c in enumerate(suf):
+                suf2[d * 10 + j] += c
+            suf[d] += 1
+
+        ans = 0
+        pre = [0] * 10
+        pre2 = [0] * 100
+        for d in map(int, s):
+            suf[d] -= 1
+            for j, c in enumerate(suf):
+                suf2[d * 10 + j] -= c  # 撤销
+            ans += sum(c1 * c2 for c1, c2 in zip(pre2, suf2))  # 枚举所有字符组合
+            for j, c in enumerate(pre):
+                pre2[d * 10 + j] += c
+            pre[d] += 1
+        return ans % (10 ** 9 + 7)
+
+
 sol = Solution()
 result = [
     # sol.numberOfCuts(5),

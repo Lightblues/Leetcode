@@ -1,5 +1,11 @@
 from easonsi.util.leetcode import *
 
+""" 
+https://oi-wiki.org/graph/bi-graph/
+[二分图的最大匹配、完美匹配和匈牙利算法](https://www.renfei.org/blog/bipartite-matching.html)
+
+"""
+
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -47,8 +53,7 @@ class BinaryGraph:
         return res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-312
-https://leetcode-cn.com/contest/biweekly-contest-81
+
 @2022 """
 class Solution:
     """ LCP 04. 覆盖 #hard #hardhard 给定一个grid, 有些部分是坏的, 问能够不重叠地防止多少个 1*2 的骨牌 (可横放). 限制: 长宽 n 8.
