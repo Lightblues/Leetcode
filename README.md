@@ -1,7 +1,6 @@
 
 参考/题单
 
-- LeetCode Cookbook <https://books.halfrost.com/leetcode/>
 - [算法通关手册（LeetCode）](https://algo.itcharge.cn/); 题单部分很赞!
     - [repo](https://github.com/itcharge/LeetCode-Py)
 - 代码随想录 <https://github.com/youngyangyang04/leetcode-master>
@@ -11,12 +10,6 @@
     - [bigsai](https://github.com/javasmall/bigsai-algorithm): bigsai的数据结构与算法、LeetCode图解、剑指offer图解文章专栏
 - lucifer1004 [CP-Wiki](https://cp-wiki.vercel.app/) 又一份挺全的题解
 
-book, see [zhihu](https://www.zhihu.com/question/22299710)
-
-- 《算法竞赛进阶指南》 灵神强推
-- 《算法竞赛入门经典》 (第二版) 刘汝佳
-- 《算法》
-
 技巧
 
 - 根据数据范围推测可能的算法: [here](https://www.acwing.com/blog/content/32/)
@@ -24,10 +17,23 @@ book, see [zhihu](https://www.zhihu.com/question/22299710)
 - DP
     - [DP问题分类汇总](https://chengzhaoxi.xyz/42296.html)
 
-实际考虑/项目
+## 值得阅读的代码/项目
 
-- [Mass Data Processing Lab](https://github.com/ncghost1/MassDataProcessingLab) 海量数据处理经典面试题的 Go 语言实现，此外还提供 lab 来亲身实践
+- LeetCode
+    - halfrost | LeetCode Cookbook: <https://books.halfrost.com/leetcode/> 很好的Go实现, 分类完善
+        - [GitHub](https://github.com/halfrost/LeetCode-Go)
+    - 灵茶山艾府（0x3F） | Golang 算法竞赛模板库
+        - [GitHub](https://github.com/EndlessCheng/codeforces-go)
+- 实践/工程
+    - [Mass Data Processing Lab](https://github.com/ncghost1/MassDataProcessingLab) 海量数据处理经典面试题的 Go 语言实现，此外还提供 lab 来亲身实践
 
+## 进阶
+
+book, see [zhihu](https://www.zhihu.com/question/22299710)
+
+- 《算法竞赛进阶指南》 灵神强推
+- 《算法竞赛入门经典》 (第二版) 刘汝佳
+- 《算法》
 
 提高
 
