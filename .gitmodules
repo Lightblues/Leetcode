@@ -1,3 +1,0 @@
-[submodule "learn-go/z-gopl"]
-	path = learn-go/z-gopl
-	url = https://github.com/adonovan/gopl.io.git

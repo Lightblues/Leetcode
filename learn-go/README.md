@@ -14,8 +14,7 @@ TODO
 其他
 
 - 《[Go语言圣经](https://yar999.gitbook.io/gopl-zh/)》 翻译的名字太大了, 但确实非常精彩!! 内容简练, 但都是提纲挈领, 代码示例非常赞👍.
-    - [The Go Programming Language](http://www.gopl.io/)
-    - code: <https://github.com/adonovan/gopl.io/>
+    - [The Go Programming Language](http://www.gopl.io/); [GitHub](https://github.com/adonovan/gopl.io/)
 - [Go语言101](https://gfw.go101.org/article/101.html) 比较体系的一份教材, 有 GitHub 地址 <https://github.com/golang101/golang101>
 - [骏马金龙 | Go语言系列文章](https://www.cnblogs.com/f-ck-need-u/p/9832538.html)
 
