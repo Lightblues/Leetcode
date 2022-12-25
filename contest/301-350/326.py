@@ -11,9 +11,10 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-{{name}}
-https://leetcode-cn.com/contest/biweekly-contest-81
-Easonsi @2023 """
+https://leetcode.cn/contest/weekly-contest-326
+
+
+@2022 """
 class Solution:
     """  """
     
