@@ -43,8 +43,6 @@ class Solution:
                     k -= newIndex2 - index2 + 1
                     index2 = newIndex2 + 1
 
-
-
         m, n = len(nums1), len(nums2)
         total = m+n
         if total % 2 == 1:      # odd
