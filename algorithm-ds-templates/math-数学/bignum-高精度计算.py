@@ -1,4 +1,3 @@
-from easonsi import utils
 from easonsi.util.leetcode import *
 
 def testClass(inputs):
@@ -11,13 +10,12 @@ def testClass(inputs):
         s_res.append(r)
     return s_res
 
-""" 倍增 法 Binary Lifting
-[oi wiki](https://oi-wiki.org/basic/binary-lifting/)
-1483. 树节点的第 K 个祖先 #hard
-    给定一棵树, 要求快速查询节点的 k级祖先. 限制: k<=n 5e4; 查询 5e4
-    思路1: #倍增 法 Binary Lifting
+""" 
+https://oi-wiki.org/math/bignum/
 
-@2022 """
+
+
+Easonsi @2023 """
 class Solution:
     """  """
     

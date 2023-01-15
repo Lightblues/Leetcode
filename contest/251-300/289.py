@@ -78,56 +78,12 @@ class Solution:
                         result = max(result, min(c2r+c2c+c2, c5r+c5c+c5))
         return result
     
-    """ 6073. 相邻字符不同的最长路径
+    """ 6073. 相邻字符不同的最长路径 #树形DP 见「328.py」
 给一棵树上的节点都定义一个 label, 要求返回树上一条相邻节点的label不同的最长路径的长度。
-
 思路: 正常 DFS 即可. 注意: 1) 最长路径可能在节点的子树中, 因此需要在遍历过程中更新全局变量; 2) 注意DFS返回: 「从该节点出发的子路径的最大长度」, 而全局维护的是「一条符合条件的路径的最大长度」, 注意区分.
     """
     def longestPath(self, parent: List[int], s: str) -> int:
-        # 节点定义
-        class Node:
-            def __init__(self, val: int, label: str = "") -> None:
-                self.val = val      # 就是 id, 没用
-                self.label = label
-                self.childs = []
-        id2node = {}
-        # 哨兵节点
-        root = Node(-1)
-        id2node[-1] = root
-        
-        # 构建树. 
-        # 注意乱序的, 因此需要建立所有点之后再构造树
-        for i, label in enumerate(s):
-            node = Node(i, label)
-            id2node[i] = node
-        for i, p in enumerate(parent):
-            id2node[p].childs.append(id2node[i])
-        
-        # 至少有一个节点
-        result = 1
-        def dfs(node: Node):
-            # 返回: 经过节点 node 的最长路径长度
-            # 注意在遍历孩子的时候, 遇到相同 label 的节点, 需要继续遍历, 但不加入 lenChilds
-            if not node.childs:
-                return 1
-            
-            lenChilds = []
-            for child in node.childs:
-                # 注意即使是相同 label, 也要继续向下遍历 —— 更新 result
-                lenChild = dfs(child)
-                if child.label != node.label:
-                    lenChilds.append(lenChild)
-            lens = sorted(lenChilds, reverse=True)
-            lens.append(0) # 哨兵
-            
-            nonlocal result
-            result = max(result, sum(lens[:2]) + 1)
-            
-            return max(lens) + 1
-        
-        dfs(root.childs[0])
-        return result
-
+        pass
 
 sol = Solution()
 result = [
@@ -136,11 +92,6 @@ result = [
     
     sol.maxTrailingZeros(grid = [[23,17,15,3,20],[8,1,20,27,11],[9,4,6,2,21],[40,9,1,10,6],[22,7,4,5,3]])
     
-    # sol.longestPath(parent = [-1,0,0,1,1,2], s = "abacbe"),
-    # sol.longestPath(parent = [-1,0,0,0], s = "aabc"),
-    # sol.longestPath([-1,0,1], "aab"),
-    # sol.longestPath([-1,137,65,60,73,138,81,17,45,163,145,99,29,162,19,20,132,132,13,60,21,18,155,65,13,163,125,102,96,60,50,101,100,86,162,42,162,94,21,56,45,56,13,23,101,76,57,89,4,161,16,139,29,60,44,127,19,68,71,55,13,36,148,129,75,41,107,91,52,42,93,85,125,89,132,13,141,21,152,21,79,160,130,103,46,65,71,33,129,0,19,148,65,125,41,38,104,115,130,164,138,108,65,31,13,60,29,116,26,58,118,10,138,14,28,91,60,47,2,149,99,28,154,71,96,60,106,79,129,83,42,102,34,41,55,31,154,26,34,127,42,133,113,125,113,13,54,132,13,56,13,42,102,135,130,75,25,80,159,39,29,41,89,85,19], 
-    #                 "ajunvefrdrpgxltugqqrwisyfwwtldxjgaxsbbkhvuqeoigqssefoyngykgtthpzvsxgxrqedntvsjcpdnupvqtroxmbpsdwoswxfarnixkvcimzgvrevxnxtkkovwxcjmtgqrrsqyshxbfxptuvqrytctujnzzydhpal")
 ]
 for r in result:
     print(r)
