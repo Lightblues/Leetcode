@@ -17,6 +17,13 @@
 - DP
     - [DP问题分类汇总](https://chengzhaoxi.xyz/42296.html)
 
+## 文章
+
+- 灵神
+    - [2022 年周赛题目总结（上篇）](https://leetcode.cn/circle/discuss/G0n5iY/) 
+    - [2022 年周赛题目总结（下篇）](https://leetcode.cn/circle/discuss/WR1MJP/)
+- XYShaoKang [刷题交流 | 2700 分总结 & 算法入门](https://leetcode.cn/circle/discuss/gmXruw/)
+
 ## 值得阅读的代码/项目
 
 - LeetCode

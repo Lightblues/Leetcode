@@ -1,42 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -86,39 +49,15 @@ class Solution:
         ans = (sum(diff) - mx) % mod
         return ans
 
-    """ 1819. 序列中不同最大公约数的数目 #hard #题型 #gcd #公约数
-给定一个数组, 对于其所有的子序列 (不要求连续), 问所有子序列的公约数一共有多少中不同的数字.
-约束: 数组长度 1e5; 数组大小 C 2e5
-提示: **数组中存在gcd为g的子序列, 等价于, 数组中所有g的倍数的gcd为g**. 证明: 否则, 它们的最大公因数一定大于g.
-思路1: 因此, 对于每一个可能的公因子 1...C, 从数组中找出其所有倍数, 计算其gcd即可.
-    复杂度: 每个g最多的倍数有 `C/1,C/2,...C/C`, 之和渐进为 `ClogC`. 对于gcd, 利用 #辗转相除 法复杂度为 O(logC). 因此整体 `O(C log^2C)`
-    事实上, 这个复杂度可以进一步缩紧. 用到的是: **计算m个数字的公约数的复杂度不是 `m logC`, 而是 `m + 2logC`, 也即计算两个数共因子的复杂度logC可以从线性系数中拿出来. 原因在于, 在计算m个数共约数的过程中数字在不断变小. 具体见 [zero](https://leetcode.cn/problems/number-of-different-subsequences-gcds/solution/xu-lie-zhong-bu-tong-zui-da-gong-yue-shu-lrka/) 的评论.
-关联: 「AtCoder Beginner Contest 191 F」
-"""
-    def countDifferentSubsequenceGCDs(self, nums: List[int]) -> int:
-        # 思路1, from [zero](https://leetcode.cn/problems/number-of-different-subsequences-gcds/solution/xu-lie-zhong-bu-tong-zui-da-gong-yue-shu-lrka/)
-        nums = set(nums)
-        mx = max(nums)
-        ans = 0
-        for g in range(1, mx+1):
-            gnow = None
-            for y in range(g, mx+1, g):
-                if y in nums:
-                    if gnow is None: gnow = y
-                    else: gnow = math.gcd(gnow, y)
-                    if gnow==g:
-                        ans += 1
-                        break
-        return ans
-    
+    """ 1819. 序列中不同最大公约数的数目 [gcd] """
+
 sol = Solution()
 result = [
     # sol.findingUsersActiveMinutes(logs = [[0,5],[1,2],[0,2],[0,5],[1,3]], k = 5),
     # sol.minAbsoluteSumDiff(nums1 = [1,7,5], nums2 = [2,3,5]),
     # sol.minAbsoluteSumDiff(nums1 = [2,4,6,8,10], nums2 = [2,4,6,8,10]),
     # sol.minAbsoluteSumDiff(nums1 = [1,10,4,4,2,7], nums2 = [9,3,5,1,7,4]),
-    sol.countDifferentSubsequenceGCDs(nums = [6,10,3]),
-    sol.countDifferentSubsequenceGCDs(nums = [5,15,40,5,6]),
+
 ]
 for r in result:
     print(r)

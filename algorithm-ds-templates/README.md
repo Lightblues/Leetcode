@@ -1,4 +1,11 @@
 根据 [OIwiki](https://oi-wiki.org/) 的结构整理
+查阅
+
+- 语言基础
+    - [C++标准库](https://oi-wiki.org/lang/csl/)
+    - [Python](https://oi-wiki.org/lang/python/)
+- 算法基础
+    - [复杂度](https://oi-wiki.org/basic/complexity/)
 
 ---
 TODO: 数据结构整理: KMP, ...

@@ -1,42 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -59,29 +22,8 @@ class Solution:
             nums.add(int(num))
         return len(nums)
     
-    """ 1806. 还原排列的最少操作步数 #medium
-原本的长尾偶数的排列为 perm = 0,1,...n-1. 现每次进行操作: `f(i) = perm[i/2] if i%2==0 else perm[(i-2)/2 + n/2]` 问经过多少次操作后被还原.
-限制: 长度 [2, 1000]
-思路1: #归纳 #猜想. 
-    可知, 在每一步中, 将原数组的前一半扩充到偶数位上, 后一半扩充到奇数位上.
-    画出一步中每个位置的变化情况, 可见 0/n-1 位不变, 其他位置发生「轮转」.
-    因此 #猜想: 其他位的轮转次数相同, 因此仅考虑其中一个即可. 定义轮转函数 f, 例如当 n=6, idx=1, 这个数字在操作中依次变为 1,2,4,3,1... 因此答案为 4.
-思路2: 更为数学的 #证明
-    除了0/n-1位置保持不变之外, 其他位置的变换关系可以统一写成 `f(i)≡2i mod(n-1)`, 因此有 `f^k(i) ≡ 2^k i mod(n-1)`
-    为了还原, 需要满足 `2^k i mod(n-1) = i mod(n-1)` (可以看到与i无关)
-"""
-    def reinitializePermutation(self, n: int) -> int:
-        m = [0] * n
-        for i in range(n):
-            if i%2 == 0: m[i] = i//2
-            else: m[i] = n//2 + (i-1)//2
-        cnt = 1
-        init = 1; idx = 1
-        while m[idx] != init:
-            idx = m[idx]
-            cnt += 1
-        return cnt
-    
+    """  1806. 还原排列的最少操作步数 #medium [euler] """
+
     """ 1807. 替换字符串中的括号内容 #medium
 字符串中以 `(key)` 的形式存储着一些待替换的key, 将这些替换为所给的 dict元素.
 思路1: #模拟 遍历, 用一个变量记录本阶段的开始idx, 遇到 "()" 两个符号的时候进行替换. 注意最后加一个 `(`哨兵.
@@ -135,10 +77,6 @@ class Solution:
 sol = Solution()
 result = [
     # sol.numDifferentIntegers(word = "a123bc34d8ef34"),
-    # sol.reinitializePermutation(2),
-    # sol.reinitializePermutation(4),
-    # sol.reinitializePermutation(6),
-    # sol.reinitializePermutation(8),
     # sol.evaluate(s = "(name)is(age)yearsold", knowledge = [["name","bob"],["age","two"]]),
     # sol.evaluate(s = "hi(name)", knowledge = [["a","b"]]),
     sol.maxNiceDivisors(5),

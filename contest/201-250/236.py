@@ -1,43 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -103,6 +65,23 @@ n个玩家围成一圈, 从1开始编号; 在剩余人数超过一人的情况�
     记 `f[d][i]` 表示到达距离d处的跑道i的最少侧跳次数. 
     则有递推: 若i有障碍物, 则无法到达记为inf; 否则, `f[d+1][i] = min(f[d][i], f[d][j]*{f[d+1][j]!=j} + 1}` 这里的第二项表示从j跑道跳过来, 要求j报道的d+1处没有石子.
     化简: 注意到, 对于相同距离无障碍的跑道, **f[d] 之间的差距最大为1**. 将DP数组压缩为1维的情况下, 先将有障碍的位置置为inf, 然后记数组最小值为mn, 则对于非障碍位置有 `f[d+1][i] = min(f[d][i], mx+1)`
+思路2: 转为图上求最短路径, 叫做 #0-1BFS
+    将路上的位置 (dist,i) 作为节点, 根据向前走/侧跳进行连边, 代价分别为 0/1. 
+    这样, 可以采用 #Dijkstra 算法求最短路径. 但复杂度超过了 O(n)
+    如何进行「图上的BFS」? 这样复杂度可以是 O(n)
+        对于树上的BFS (边权均为1), 可以采用 #队列 的方式进行BFS.
+        那么在图上, 
+            若边权均为1, 也可以正常利用 dis 来防止重复访问, 进行BFS. 
+            若边权为0/1, 则需要利用 #双端队列 的方式进行BFS. 具体见下: 
+    0-1BFS
+        注意, 我们需要保证当前访问的节点的距离是最小的, 因此需要用到 #双端队列.
+            维护的队列有一个性质, 队列中节点的距离是递增的, 并且同时只会出现 d,d+1 距离的节点
+        从距离为d的x节点出发, 对于一条 x->y 的路径: 
+            若边权为1, 并且 dis[y]>d+1, 则更新y的距离, 加入队尾.
+            若边权为0, 并且 dis[y]>d, 则更新y的距离; 为了保证队列的递增, 需要加入队头!
+    说明: 如果边权不止 0和1，把双端队列换成最小堆，就得到了 Dijkstra 算法。
+    见 [灵神](https://leetcode.cn/problems/minimum-sideway-jumps/solution/cong-0-dao-1-de-0-1-bfspythonjavacgo-by-1m8z4/)
+    关联: 「2290. 到达角落需要移除障碍物的最小数目」「1368. 使网格图至少有一条有效路径的最小代价」
 """
     def minSideJumps(self, obstacles: List[int]) -> int:
         f  = [1, 0, 1]
@@ -116,65 +95,27 @@ n个玩家围成一圈, 从1开始编号; 在剩余人数超过一人的情况�
                 if i==o-1: continue
                 else: f[i] = min(f[i], mn+1)
         return min(f)
-    
+    def minSideJumps(self, obstacles: List[int]) -> int:
+        n = len(obstacles)
+        dis = [[n] * 3 for _ in range(n)]
+        dis[0][1] = 0
+        q = deque([(0, 1)])  # 起点
+        while True:
+            i, j = q.popleft()
+            d = dis[i][j]
+            if i == n - 1: return d  # 到达终点
+            if obstacles[i + 1] != j + 1 and d < dis[i + 1][j]:  # 向右
+                dis[i + 1][j] = d
+                q.appendleft((i + 1, j))  # 加到队首
+            for k in (j + 1) % 3, (j + 2) % 3:  # 枚举另外两条跑道（向上/向下）
+                if obstacles[i] != k + 1 and d + 1 < dis[i][k]:
+                    dis[i][k] = d + 1
+                    q.append((i, k))  # 加到队尾
+
+
 """ 1825. 求出 MK 平均值 #hard #题型
-给定两个参数 m,k 的情况下, 处理流数据的 MK平均值: 取最后的m个元素, 除去最大最小k个元素, 计算剩余 m-2k 个元素的平均值. 
-要求实现对于流数据的处理DS. 操作包括: 添加一个元素; 计算平均值.
-限制: m 1e5; 操作次数 1e5
-思路1: 
-    考虑实际情况, 用一个大小为m的 #环形数组 latestM 来存储最近的m个数据. 并且动态更新数组和
-    1.0:[这个方案不行, 因为无法记录当前元素是否在最大最小的k个数中] 如何维护最大最小的k个元素? 用两个有序数组来存储即可: 例如对于最大的k个元素, 若新元素 num>kLargest[0], 则pop第一个元素然后将num加入.
-    1.1: 那就用 #有序数组 直接记录最近的m个元素, 然后动态维护 sum(sl[:]) 和 sum(sl[k:-k])
-        也即, 根据每次插入/删除的位置来 #分类 讨论. 例如, 当插入第idx个数字. 我们在有序列表中找到该数字的位置 idxNew, 则: 1) 若 `idxNew<k` 则 k-1...m-k-1 部分会发生右移, 因此 midSum += sl[k-1]-sl[m-k-1]; 2) 若 `k<=idxOld<m-k`, 则 `midSum += num-sl[m-k-1`; 3) 否则, 对于midSum不影响. (一开始还要删除第idx-m个数字, 思路一致.)
-    见 [here](https://leetcode.cn/problems/finding-mk-average/solution/by-981377660lmt-5hhm/)
-总结: 本题的设置符合实际应用场景需求; 在试错的过程中逐步推导出所需记录的数据结构的过程很有意思.
-
 """
-from sortedcontainers import SortedList
-class MKAverage:
-    def __init__(self, m: int, k: int):
-        self.m = m
-        self.k = k
-        self.latestM = [-1] * m # 循环数组, 记录最近的元素
-        self.latestSum = 0      # 循环数组的和
-        self.cnt = 0            # 当前流数据的个数
-        # self.flag = False
-        # self.sorted = SortedList()
-        # self.kLargest = SortedList()
-        # self.kSmallest = SortedList()
-        # self.kLargestSum = self.kSmallestSum = 0
 
-    def addElement(self, num: int) -> None:
-        # 先处理 latestM 和 latestSum
-        vOld = self.latestM[self.cnt % self.m]
-        self.latestM[self.cnt % self.m] = num
-        self.cnt = self.cnt+1
-        self.latestSum += num - vOld if vOld!=-1 else num
-        # 在长度达到 m 的时候建立 SL
-        if self.cnt==self.m:
-            # self.flag = True
-            self.sl = SortedList(self.latestM)
-            self.midSum = sum(self.sl[self.k:self.m-self.k])
-        # 需要对于 SL 进行维护了
-        elif self.cnt>self.m:
-            # 删除序列中 idx-m 个元素
-            idxOld = self.sl.index(vOld)
-            if idxOld<self.k:
-                self.midSum += -self.sl[self.k]+self.sl[-self.k]
-            elif idxOld<self.m-self.k:
-                self.midSum += -vOld+self.sl[-self.k]
-            self.sl.pop(idxOld)
-            # 添加新的 idx 个元素
-            idxNew = self.sl.bisect_right(num)
-            if idxNew<self.k:
-                self.midSum += self.sl[self.k-1]-self.sl[self.m-self.k-1]
-            elif idxNew<self.m-self.k:
-                self.midSum += num-self.sl[self.m-self.k-1]
-            self.sl.add(num)
-
-    def calculateMKAverage(self) -> int:
-        if self.cnt>=self.m: return self.midSum // (self.m-2*self.k)
-        else: return -1
     
 sol = Solution()
 result = [
@@ -183,10 +124,7 @@ result = [
     # sol.minSideJumps(obstacles = [0,2,1,0,3,0]),
     # sol.minSideJumps(obstacles = [0,1,1,3,3,0]),
     # sol.minSideJumps([0,1,2,3,0]),
-#     testClass("""["MKAverage", "addElement", "addElement", "calculateMKAverage", "addElement", "calculateMKAverage", "addElement", "addElement", "addElement", "calculateMKAverage"]
-# [[3, 1], [3], [1], [], [10], [], [5], [5], [5], []]"""),
-#     testClass("""["MKAverage","addElement","addElement","calculateMKAverage","addElement","addElement","calculateMKAverage","addElement","addElement","calculateMKAverage","addElement"]
-# [[3,1],[58916],[61899],[],[85406],[49757],[],[27520],[12303],[],[63945]]"""),
+
 ]
 for r in result:
     print(r)
