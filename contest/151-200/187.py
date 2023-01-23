@@ -35,12 +35,16 @@ class Solution:
                 idx = i
         return True
     
-    """ 1438. 绝对差不超过限制的最长连续子数组 #medium 对于一个子数组, 定义「绝对差」为最大最小元素的差距. 在跟定绝对差限制 limit的条件下, 求最长的合法子数组. 限制: n 1e5
-思路1: #双指针. 维护区间内的最大最小值.
+    """ 1438. 绝对差不超过限制的最长连续子数组 #medium 对于一个子数组, 定义「绝对差」为最大最小元素的差距. 在绝对差限制 limit的条件下, 求最长的合法子数组. 限制: n 1e5
+思路1: #双指针+两个 #最大最小堆
+    维护区间内的最大最小值.
     如何维护? 一种思路是建立最大最小堆. 然后在推移l指针的过程中, 将过期元素丢掉.
     一种更 #优雅 的方案是, 采用 #单调队列. 这是因为, **在维护窗口的过程中, 对于可能成为窗口最大值的元素, 我们仅需要用一个递减栈来记录, 其他元素不可能成为最大值.** 参见 [sildingWindow]
+思路0: #有序集合 暴力 复杂度 O(n logn)
+思路3: #单调队列, 见 [mono-deque]
 """
     def longestSubarray(self, nums: List[int], limit: int) -> int:
+        # 思路1: #双指针+两个 #最大最小堆
         l = 0; ans = 1
         mx, mn = [], []
         def popOutdated():
@@ -55,7 +59,20 @@ class Solution:
                 popOutdated()
             ans = max(ans, r-l+1)
         return ans
-    
+    def longestSubarray(self, nums: List[int], limit: int) -> int:
+        # 思路1: #有序集合 暴力 复杂度 O(n logn)
+        s = SortedList()
+        n = len(nums)
+        left = right = ret = 0
+        while right < n:
+            s.add(nums[right])
+            while s[-1] - s[0] > limit:
+                s.remove(nums[left])
+                left += 1
+            ret = max(ret, right - left + 1)
+            right += 1
+        return ret
+
     """ 1439. 有序矩阵中的第 k 个最小数组和 #hard #题型 矩阵的每一行都是非递减的. 拿取的规则是从每一行那一个元素, 要求得到数字和第 k小的. 限制: m,n 40.  k 200
 思路1: 利用 最小堆 遍历到第k小
     所有可能的选择方式较多, 我们仅考虑「当前可能最小的选择」. 显然, 假如当前的选择列分别为 [0,0,0], 则此小的选择只可能在 `[1,0,0], [0,1,0], [0,0,1]` 中. 

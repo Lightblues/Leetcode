@@ -1,5 +1,5 @@
-from easonsi import utils
 from easonsi.util.leetcode import *
+
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -11,9 +11,8 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://oi-wiki.org/search/astar/
-
-@2022 """
+https://oi-wiki.org/search/alpha-beta/
+Easonsi @2023 """
 class Solution:
     """  """
     

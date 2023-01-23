@@ -11,8 +11,7 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://oi-wiki.org/misc/two-pointer/
-
+https://oi-wiki.org/string/hash/
 
 Easonsi @2023 """
 class Solution:

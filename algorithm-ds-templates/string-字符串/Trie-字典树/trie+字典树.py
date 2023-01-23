@@ -1,42 +1,7 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, cache, reduce, partial
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, pow, neg, pos
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 """ 
-
+https://oi-wiki.org/string/trie/
 
 0208. 实现 Trie (前缀树) #medium #题型 #Trie
     请你实现 Trie 类
@@ -454,10 +419,6 @@ class Solution:
 - [3,2]：最大基因差的对应节点为 1 ，基因差为 2 XOR 1 = 3 。
 - [2,5]：最大基因差的对应节点为 2 ，基因差为 5 XOR 2 = 7 。
 
-来源：力扣（LeetCode）
-链接：https://leetcode.cn/problems/maximum-genetic-difference-query
-著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
-
 """
     def maxGeneticDifference(self, parents: List[int], queries: List[List[int]]) -> List[int]:
         LIMIT = 20
@@ -622,7 +583,6 @@ class Solution:
         总之: 由于在每种情况下我们仅需要递归一个路径, **我们在遍历过程中仅需要记录一个与 limit^value 相应的一条路径即可**. 因此, 查询复杂度为 `O(height)`.
     复杂度: O(n log(n)), 第二项为查询树的高度.
     总结: #字典树 可以做什么? 检索某一序列是否出现过; 统计出现次数. 而在本题中, 需要统计「**字典树中与value的异或值小于等于limit的数量**」, 这可以通过一定的修改得到.
-
 """
     def countPairs(self, nums: List[int], low: int, high: int) -> int:
         # 思路1: 字典树

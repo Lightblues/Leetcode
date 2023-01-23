@@ -1,42 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -109,6 +72,8 @@ class Solution:
 思路1: #二分
     显然, 构造的数组是一个在index处有一个「山峰」的结构.
     在给定index位置高度的情况, 容易计算整个数组最小和为多少. 因此可以用二分来搜索.
+思路2: #数学 实际上可以直接归纳出公式
+[官答](https://leetcode.cn/problems/maximum-value-at-a-given-index-in-a-bounded-array/solution/you-jie-shu-zu-zhong-zhi-ding-xia-biao-c-aav4/)
 """
     def maxValue(self, n: int, index: int, maxSum: int) -> int:
         def calc(h, d):
@@ -131,24 +96,47 @@ class Solution:
                 r = mid-1
         return ans
         
-    """ 1803. 统计异或值在范围内的数对有多少 #hard #字典树 #题型
-给定一个长n的数组, 要求对于所有 (i,j) 的数对, 其XOR值在 `[low, high]` 范围内的数量.
-限制: 数组长度和元素大小 2e4; 
-思路1: 采用 #字典树 
-    see `trie.py`
-思路2: 利用numpy 进行暴力搜索. see [here](https://leetcode.com/problems/count-pairs-with-xor-in-a-range/discuss/1119721/Python-NumPy-bruteforce-O(N2)/)
-思路3: 神仙思路, 用了 #快速沃尔什变换 [here](https://leetcode.cn/problems/count-pairs-with-xor-in-a-range/solution/kuai-su-wo-er-shi-bian-huan-onlognqiu-xi-fidb/)
+    """ 1803. 统计异或值在范围内的数对有多少 #hard #字典树 #题型 给定一个长n的数组, 要求对于所有 (i,j) 的数对, 其XOR值在 `[low, high]` 范围内的数量.
+限制: 数组长度n, 元素大小, low,high 2e4; 
+思路1: 采用 #字典树 see [trie]
+思路2: 相较于字典树, 直接用哈希表+优化
+    对于 [low,high] 范围内的每个元素t, 统计数组中两个元素 xor结果为t的数量. 
+        为此, 先用cnt记录数组中元素出现次数. 枚举所有元素x, 利用异或的性质, 匹配元素应该是 y=t ^ x. 因此数量为 cnt[x] * cnt[y].
+        但这样复杂度为 O(n^2) 需要优化. 
+    考虑对「一组t」同时计数, 也即「划分 [0,high] 为不同的区间」 (问题转化为 `query([0,high])-query([0,low-1])` )
+        例如, 对于 t in [0,10100], 可以划分为 [00000,01111], [10000,10011], [10100,10100] 这些区间
+            对于第一个区间, 只要 x^y 的前1个比特符合要求, 就能从这一区间内找到一个t满足 x^y=t. 
+        具体而言, 如何实现? 在每一次迭代中, 需要对cnt进行合并; 丢掉后面不相关的位!
+    实际上, 这里虽然没有用 #字典树, 但是思路和字典树是一致的, 高位表达的信息更多些.
+    见 [灵神](https://leetcode.cn/problems/count-pairs-with-xor-in-a-range/solution/bu-hui-zi-dian-shu-zhi-yong-ha-xi-biao-y-p2pu/)
+
+思路9.1: 利用numpy 进行暴力搜索. see [here](https://leetcode.com/problems/count-pairs-with-xor-in-a-range/discuss/1119721/Python-NumPy-bruteforce-O(N2)/)
+思路9.2: 神仙思路, 用了 #快速沃尔什变换 [here](https://leetcode.cn/problems/count-pairs-with-xor-in-a-range/solution/kuai-su-wo-er-shi-bian-huan-onlognqiu-xi-fidb/)
     但其实复杂度也是 O(n log(n))
 """
-    
-    
     def countPairs(self, nums: List[int], low: int, high: int) -> int:
-        # https://leetcode.com/problems/count-pairs-with-xor-in-a-range/discuss/1119721/Python-NumPy-bruteforce-O(N2)/
+        # 利用 numpy 暴力. https://leetcode.com/problems/count-pairs-with-xor-in-a-range/discuss/1119721/Python-NumPy-bruteforce-O(N2)/
         import numpy as np
-        numBits = max(max(x.bit_length() for x in nums), lo.bit_length(), high.bit_length())
+        numBits = max(max(x.bit_length() for x in nums), low.bit_length(), high.bit_length())
         freq = np.bincount(nums, minlength=(1 << numBits))
         targets = np.arange(low, high + 1)
         return int(sum(freq[targets ^ x].sum() for x in nums) // 2)
+    def countPairs(self, nums: List[int], low: int, high: int) -> int:
+        # 思路2: 相较于字典树, 直接用哈希表+优化
+        # cnt 记录当前位的元素分布情况
+        ans, cnt = 0, Counter(nums)
+        high += 1   # +1
+        while high:
+            nxt = Counter()
+            for x, c in cnt.items():
+                # 注意这里的逻辑: 若当前最低位为1, 减掉这个1再统计!
+                if high & 1: ans += c * cnt[x ^ (high - 1)]
+                if low & 1:  ans -= c * cnt[x ^ (low - 1)]
+                nxt[x >> 1] += c
+            cnt = nxt       # 更新cnt. 注意其中的元素bit长度都减少了1
+            low >>= 1
+            high >>= 1
+        return ans // 2
 
     
 sol = Solution()

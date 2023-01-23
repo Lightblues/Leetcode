@@ -1,42 +1,9 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, cache, reduce, partial
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, pow, neg, pos
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 """ 
 https://leetcode.cn/contest/weekly-contest-295
-https://leetcode-cn.com/contest/biweekly-contest-71
+
+
 @2022 """
 class Solution:
     """ 6078. 重排字符形成目标字符串 """
@@ -88,45 +55,17 @@ class Solution:
             stack.append((num, maxt))
         return ans
     
-    """ 6081. 到达角落需要移除障碍物的最小数目 #hard #题型 #BFS
+    """ 2290. 到达角落需要移除障碍物的最小数目 #hard #题型 #BFS
 从gird的左上走到右下, 要求最小代价. grid中的每个元素为0/1, 其中1表示有障碍物, 移除的代价为1.
 思路: #BFS 其实是最短路径的变形问题
     实际上, 这里所有相连的空白位置都可以看作是(距离图上的)一个点, 每一个障碍物一个点; 这样, 可以构建我们常见的距离图, 并且可以用BFS来求解.
     具体实现上, 由于距离图上的一个节点对应了grid上的多个点, 因此可以用优先队列 (dist, (x, y)) 来规划BFS
-    一开始被 grid 的题目形式带歪了, 写了一个更复杂的逻辑: 用一个queue维护当前可达的空地, 把遇到的障碍物加入到另一个obsQ中, 当queue为空时, 将obsQ中的障碍物加入到queue中, 继续BFS.
-
-输入：grid = [[0,1,1],[1,1,0],[1,1,0]]
-输出：2
-解释：可以移除位于 (0, 1) 和 (0, 2) 的障碍物来创建从 (0, 0) 到 (2, 2) 的路径。
-可以证明我们至少需要移除两个障碍物，所以返回 2 。
-注意，可能存在其他方式来移除 2 个障碍物，创建出可行的路径。
+思路2: 其实是 [01BFS]
 """
     def minimumObstacles(self, grid: List[List[int]]) -> int:
         m,n = len(grid), len(grid[0])
         checkValid = lambda i,j: 0<=i<m and 0<=j<n
         directions = [(1,0), (-1,0), (0,1), (0,-1)]
-        
-        # visited = [[-1] * n for _ in range(m)]
-        # q = deque([(0,0)])
-        # obsQ = deque([])
-        # visited[0][0] = 0
-        # while True:
-        #     if q:
-        #         i,j = q.popleft()
-        #         for di,dj in directions:
-        #             ni,nj = i+di, j+dj
-        #             if (ni,nj)==(m-1,n-1):
-        #                 return visited[i][j]
-        #             if checkValid(ni,nj) and visited[ni][nj] == -1:
-        #                 if grid[ni][nj] == 0:
-        #                     q.append((ni,nj))
-        #                     visited[ni][nj] = visited[i][j] # 距离
-        #                 elif grid[ni][nj] == 1:
-        #                     obsQ.append((ni,nj))
-        #                     visited[ni][nj] = visited[i][j] + 1 # 距离
-        #     else:
-        #         q = obsQ
-        #         obsQ = deque([])
         
         visited = set([(0,0)])
         q = [(0, (0,0))]

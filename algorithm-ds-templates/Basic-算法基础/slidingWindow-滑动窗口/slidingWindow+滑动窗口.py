@@ -438,7 +438,7 @@ class Solution:
 
     """ ==================================== 类型 3 计数问题 ==================================== """
     """ 0340. 至多包含 K 个不同字符的最长子串 #medium #题型 给定一个字符串, 要求找到拥有最多k个不同字符的子串的最大长度
-关联: 「159. 至多包含两个不同字符的最长子串」 #medium
+关联: 「0159. 至多包含两个不同字符的最长子串」 #medium
 """
     def lengthOfLongestSubstringKDistinct(self, s: str, k: int) -> int:
         cnt = Counter()
@@ -505,7 +505,7 @@ class Solution:
             if len(cnt1)==k: ans += l2-l1
         return ans
     
-    """ 0713. 乘积小于 K 的子数组 #medium """
+    """ 0713. 乘积小于 K 的子数组 #medium 都是正数的数组, 求连续子数组的乘积小于k的子数组数量 """
     def numSubarrayProductLessThanK(self, nums: List[int], k: int) -> int:
         mul = 1
         l = 0
@@ -687,25 +687,14 @@ class Solution:
 
     """ 1438. 绝对差不超过限制的最长连续子数组 #medium #题型 找最长的子数组, 其中的任意两元素绝对差不超过limit 限制: 1e5
 思路1: #有序集合 暴力 复杂度 O(n logn)
-思路2: 本质上就是维护 #滑动窗口 范围内的最大值和最小值! 因此可以用 #单调队列 分别维护递增和递减的序列. 复杂度 O(n)
+思路2: #单调队列
+    本质上就是维护 #滑动窗口 范围内的最大值和最小值! 因此可以用 #单调队列 分别维护递增和递减的序列. 复杂度 O(n)
     关联: 0239. 滑动窗口最大值
     回顾: 为什么可以单调性? 例如要求最大值, 若 i<j 有 nums[i]<nums[j], 则 nums[i] 一定不会是滑窗最大值, 维护递减序列即可.
-    另见 [187] 中直接用 #最小堆 来做.
+    另见 [0187] 中直接用 #最小堆 来做.
 [official](https://leetcode.cn/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/solution/jue-dui-chai-bu-chao-guo-xian-zhi-de-zui-5bki/)
 """
-    def longestSubarray(self, nums: List[int], limit: int) -> int:
-        # 思路1: #有序集合 暴力 复杂度 O(n logn)
-        s = SortedList()
-        n = len(nums)
-        left = right = ret = 0
-        while right < n:
-            s.add(nums[right])
-            while s[-1] - s[0] > limit:
-                s.remove(nums[left])
-                left += 1
-            ret = max(ret, right - left + 1)
-            right += 1
-        return ret
+
     def longestSubarray(self, nums: List[int], limit: int) -> int:
         n = len(nums)
         # 单调队列

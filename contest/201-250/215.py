@@ -1,42 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import * 
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -75,25 +38,41 @@ class Solution:
         v1, v2 = sorted(cnt1.values()), sorted(cnt2.values())
         return v1==v2
     
-    """ 1658. 将 x 减到 0 的最小操作数 #medium
-给定一个整数x, 可以从数组两端选择数组, 求两端之和为x的最小数字数量.
-提示: 可以等价转换为, 求和为 `sum-x` 的子数组
-思路1: 简单起见, 计算acc之后每次 #二分 搜索对应的差值. 复杂度 O(n logn)
-思路2: 可以 #双指针 从两侧计算, 也可以利用提示 #滑动窗口. 复杂度 O(n)
+    """ 1658. 将 x 减到 0 的最小操作数 #medium 给定一个整数x, 可以从数组两端选择数组, 求两端之和为x的最小数字数量.
+思路1: 分别计算前缀后缀和, 用字典来记录 {presum: idx}, 进行匹配, 复杂度 O(n)
+思路2: #逆向 等价转换
+    可以等价转换为, 求和为 `sum-x` 的最长子数组
+    可以 同向 #双指针 复杂度 O(n)
 """
     def minOperations(self, nums: List[int], x: int) -> int:
+        # 思路1: 分别计算前缀后缀和 复杂度 O(n)
         n = len(nums)
-        acc = list(accumulate(nums, initial=0))
-        ans = inf
-        for i,a in enumerate(acc):
-            if a>x: break
-            # elif a==x: ans = min(ans, i)
-            else:
-                tgt = acc[-1] - (x-a)
-                idx = bisect_left(acc, tgt)
-                # 注意要求 idx>=i, 防止重复利用
-                if idx<=n and acc[idx]==tgt and idx>=i: ans = min(ans, i+n-idx)
+        presum = list(accumulate(nums, initial=0))
+        presum2idx = {a:i for i,a in enumerate(presum)} # 注意 0->0
+        ans = inf if x not in presum2idx else presum2idx[x]
+        postsum=0
+        for i in range(n-1, -1, -1):
+            postsum += nums[i]
+            tgt = x - postsum
+            if tgt in presum2idx and presum2idx[tgt]<i:
+                ans = min(ans, presum2idx[tgt] + n-i)
         return ans if ans!=inf else -1
+    def minOperations(self, nums: List[int], x: int) -> int:
+        # 思路2: #逆向 等价转换
+        target = sum(nums) - x
+        if target < 0: return -1  # 全部移除也无法满足要求
+        ans = -1
+        left = s = 0
+        for right, x in enumerate(nums):
+            s += x
+            while s > target:  # 缩小子数组长度
+                s -= nums[left]
+                left += 1
+            if s == target:
+                ans = max(ans, right - left + 1)
+        return -1 if ans < 0 else len(nums) - ans
+
+
     
     """ 1659. 最大化网格幸福感 #hard 非常复杂的DP, 不必掌握
 给一个 (m,n) 网格, 有 in,ex 个内向/外向的人可选择. score定义为: 内向的人初始120, 每一个邻居-30; 外向的人初始40, 每一个邻居+20. 不必填入所有人, 要求 score最大.
@@ -162,13 +141,13 @@ result = [
 # [[5], [3, "ccccc"], [1, "aaaaa"], [2, "bbbbb"], [5, "eeeee"], [4, "ddddd"]]"""),
     # sol.closeStrings(word1 = "cabbba", word2 = "abbccc"),
     # sol.closeStrings(word1 = "cabbba", word2 = "aabbss"),
-    # sol.minOperations(nums = [1,1,4,2,3], x = 5),
-    # sol.minOperations(nums = [3,2,20,1,1,3], x = 10),
-    # sol.minOperations(nums = [5,6,7,8,9], x = 4),
-    # sol.minOperations([1,1], 3),
-    sol.getMaxGridHappiness(m = 2, n = 3, introvertsCount = 1, extrovertsCount = 2),
-    sol.getMaxGridHappiness(m = 3, n = 1, introvertsCount = 2, extrovertsCount = 1),
-    sol.getMaxGridHappiness(m = 2, n = 2, introvertsCount = 4, extrovertsCount = 0),
+    sol.minOperations(nums = [1,1,4,2,3], x = 5),
+    sol.minOperations(nums = [3,2,20,1,1,3], x = 10),
+    sol.minOperations(nums = [5,6,7,8,9], x = 4),
+    sol.minOperations([1,1], 3),
+    # sol.getMaxGridHappiness(m = 2, n = 3, introvertsCount = 1, extrovertsCount = 2),
+    # sol.getMaxGridHappiness(m = 3, n = 1, introvertsCount = 2, extrovertsCount = 1),
+    # sol.getMaxGridHappiness(m = 2, n = 2, introvertsCount = 4, extrovertsCount = 0),
 ]
 for r in result:
     print(r)

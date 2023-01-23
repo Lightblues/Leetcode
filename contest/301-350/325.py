@@ -33,7 +33,7 @@ class Solution:
 思路1: #二分 检查首尾取x个是否可满足条件
     每次通过滑窗检查, 复杂度 O(x); 二分的范围为 [0,n]
     #细节: 被坑的一点是 k==0 的情况!
-思路2: #滑动窗口 或者 #双指针 复杂度 O(n)
+思路2: #同向双指针 复杂度 O(n) 见 [two-pointer]
     见 [灵神](https://leetcode.cn/problems/take-k-of-each-character-from-left-and-right/solution/on-shuang-zhi-zhen-by-endlesscheng-4g9p/)
 """
     def takeCharacters(self, s: str, k: int) -> int:
@@ -137,8 +137,7 @@ sol = Solution()
 result = [
     # sol.closetTarget(words = ["hello","i","am","leetcode","hello"], target = "hello", startIndex = 1),
     # sol.closetTarget(["hsdqinnoha","mqhskgeqzr","zemkwvqrww","zemkwvqrww","daljcrktje","fghofclnwp","djwdworyka","cxfpybanhd","fghofclnwp","fghofclnwp"],"zemkwvqrww",8),
-    # sol.takeCharacters(s = "aabaaaacaabc", k = 2),
-    # sol.takeCharacters("a", 1),
+
     # sol.maximumTastiness(price = [13,5,1,8,21,2], k = 3),
     # sol.maximumTastiness(price = [7,7,7,7], k = 2),
     sol.countPartitions(nums = [1,2,3,4], k = 4),
