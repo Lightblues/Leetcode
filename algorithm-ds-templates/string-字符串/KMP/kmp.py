@@ -1,62 +1,119 @@
+from easonsi.util.leetcode import *
 
-def prefix_function(s):
-    # 前缀函数, 注意和一般教材不同, 这里下标从1开始!
-    # from https://oi-wiki.org/string/kmp/
-    n = len(s)
-    pi = [0] * n
-    for i in range(1, n):
-        j = pi[i - 1]
-        while j > 0 and s[i] != s[j]:
-            j = pi[j - 1]
-        if s[i] == s[j]:
-            j += 1
-        pi[i] = j
-    return pi
+def testClass(inputs):
+    # 用于测试 LeetCode 的类输入
+    s_res = [None] # 第一个初始化类, 一般没有返回
+    methods, args = [eval(l) for l in inputs.split('\n')]
+    class_name = eval(methods[0])(*args[0])
+    for method_name, arg in list(zip(methods, args))[1:]:
+        r = (getattr(class_name, method_name)(*arg))
+        s_res.append(r)
+    return s_res
 
+""" KMP算法
+https://oi-wiki.org/string/kmp/
+wiki [KMP算法](https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm)
 
-class KMP:
-    def __init__(self, B, A) -> None:
-        self.b = B
-        self.a = A
-        self.nxt = []
-    
-    """ 部分匹配表，又称为失配函数，作用是让算法无需多次匹配S中的任何字符。能够实现线性时间搜索的关键是在主串的一些字段中检查模式串的初始字段，可以确切地知道在当前位置之前的一个潜在匹配的位置。换句话说，在不错过任何潜在匹配的情况下，"预搜索"这个模式串本身并将其译成一个包含所有可能失配的位置对应可以绕过最多无效字符的列表。
-例如, 对于 aaa, 字符串的前缀函数应该是 pi=[0,1,2], 定义为 s[0...i] 的真前缀和后缀相等的最大长度 (显然 pi[0]=0) 
-而其 nxt=[-1,0,1], 这是为了和编程语言中数组从0开始index保持一致. 例如当要匹配第2个元素时, 若失败, 可知 s[0...2] 的前缀函数值为2
-在下面的 search函数中, 遍历的j表示当前匹配到了字符串a的多少长度
+ """
+class Solution:
+    """ 1392. 最长快乐前缀 #hard #KMP 给定一个字符串s, 要求最长的, 既是s的前缀也是后缀的子串.
+思路1: #KMP
+    显然, 如果知道KMP算法, 那么答案就可由 #部分匹配表 或者 #前缀函数 直接得到, 也即长为 `fail[len-1]+1` 的前缀
+    复杂度: O(n)
+思路2: #Rabin-Karp 字符串编码   通过字符串编码来判断前后缀是否相同
+    注意到, 既可以从左往右也可以从右往左拓展计算编码的字符串长度. 因此我们1...n枚举长度, 每次比较前后缀是否相同即可.
+[官答](https://leetcode.cn/problems/longest-happy-prefix/solution/zui-chang-kuai-le-qian-zhui-by-leetcode-solution/)
 """
-    def build_nxt(self) -> None:
-        self.nxt.append(-1)
-        for i in range(1, len(self.a)):
-            j = self.nxt[i - 1]
-            while j != -1 and self.a[i] != self.a[j + 1]:
-                j = self.nxt[j]
-            if self.a[i] == self.a[j + 1]:
-                self.nxt.append(j + 1)
-            else:
-                self.nxt.append(-1)
+    def longestPrefix(self, s: str) -> str:
+        # 思路1: #KMP
+        n = len(s)
+        fail = [-1] * n     # 从-1开始, 表示回退到的位置
+        for i in range(1, n):
+            j = fail[i - 1]
+            while j != -1 and s[j + 1] != s[i]:
+                j = fail[j]
+            if s[j + 1] == s[i]:
+                fail[i] = j + 1
+        return s[:fail[-1] + 1]
 
-    def search(self) -> list:
-        self.build_nxt()
-        i, j = 0, 0
-        res = []
-        while i < len(self.b):
-            """ 也注意这里迭代计算下一个匹配的过程! """
-            while j != -1 and self.b[i] != self.a[j + 1]:
-                j = self.nxt[j]
-            if self.b[i] == self.a[j + 1]:
+    def longestPrefix(self, s: str) -> str:
+        # 另一种写法: 从0开始, 表示当前idx应该匹配的下一个位置 (或者表示前缀后相等的长度)
+        n = len(s)
+        pre= [0] * n    # 从0开始, 表示当前idx应该匹配的下一个位置 (或者表示前缀后相等的长度)
+        for i in range(1,n):
+            j = pre[i-1]    # 上一轮匹配中下一个代匹配位置
+            while j>0 and s[i] != s[j]:
+                j = pre[j-1]
+            if s[i] == s[j]:
                 j += 1
-            # 匹配成功
-            if j == len(self.a) - 1:
-                res.append(i - j)
-                j = self.nxt[j]
-            i += 1
-        return res
+            pre[i] = j
+        return s[:pre[-1]]
 
-full_word = "ABABAABAABAC"
-pattern = "ABAABAC"
-kmp = KMP(full_word, pattern)
-res = kmp.search()
-print(res)
-print(kmp.nxt)
-print(prefix_function(pattern))
+    """ 0028. 找出字符串中第一个匹配项的下标 #medium #题型 在字符串a中找到字符串b出现的首个位置 限制: N 1e4
+思路1: 暴力匹配, 复杂度 O(L n), 其中L为目标子串长度
+    1.1 类似 KMP的优化
+思路2: #Rabin Karp 字符串编码
+思路3: #KMP [官答](https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/solution/shi-xian-strstr-by-leetcode-solution-ds6y/)
+    核心是 #前缀函数 
+        例如, p='aaa' 的前缀函数是 `pi=[0,1,2]` 
+        这里的定义是, 当前位置i所需要匹配的pattern中的位置. 或者说, p的每一个前缀子串中, 真前后缀相等的长度
+另见 [Sunday 解法](https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/solution/python3-sundayjie-fa-9996-by-tes/)
+"""
+    def strStr(self, haystack: str, needle: str) -> int:
+        # 1.1 好像是自己写的? 类似KMP的思想, 可以完成一定的剪枝, 但无法带来复杂度上的提升.
+        L, n = len(needle), len(haystack)
+        if L==0: return 0
+        
+        pn = 0 # pointer in haystack
+        while pn < n-L+1:
+            # 对齐 needle 第一个元素
+            while pn<n-L+1 and haystack[pn]!=needle[0]:
+                pn += 1
+            # 从头开始匹配 needle，注意此时的 pn 指向的值必然为 needle 第 0 元素，也即 haystack[pn]==needle[pL]
+            curr_len = 0    # 记录匹配长度
+            pL = 0  # pointer in needle
+            while pL<L and pn<n and haystack[pn]==needle[pL]:
+                pn += 1
+                pL += 1
+                curr_len += 1
+            if curr_len == L:   # 完整匹配
+                return pn-L
+            pn = pn-curr_len+1  # 否则回退到
+        return -1
+    
+    def strStr(self, haystack: str, needle: str) -> int:
+        # 思路3: #KMP
+        # build 
+        n = len(needle)
+        pre = [0] * n
+        for i in range(1,n):
+            j = pre[i-1]
+            while j>0 and needle[i] != needle[j]:
+                j = pre[j-1]
+            if needle[i] == needle[j]:
+                j += 1
+            pre[i] = j
+        # 搜索
+        i = j = 0   # i: haystack, j: needle
+        m = len(haystack)
+        while i<m:      # 循环条件
+            while j>0 and haystack[i] != needle[j]:
+                j = pre[j-1]
+            # 部分匹配成功
+            if haystack[i] == needle[j]:
+                j += 1
+            if j == n:  # 找到答案了!!
+                return i-n+1
+            i += 1  # 注意到, i是不会回退的! 
+        return -1
+    
+sol = Solution()
+result = [
+    # sol.longestPrefix("level"),
+    # sol.longestPrefix(s = "ababab"),
+    
+    sol.strStr(haystack = "sadbutsad", needle = "sad"),
+    sol.strStr(haystack = "leetcode", needle = "leeto"),
+]
+for r in result:
+    print(r)

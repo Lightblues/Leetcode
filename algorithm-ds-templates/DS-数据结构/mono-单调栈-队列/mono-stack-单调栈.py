@@ -100,6 +100,7 @@ class Solution:
 见 [官答](https://leetcode.cn/problems/132-pattern/solution/132mo-shi-by-leetcode-solution-ye89/)
 """
     def find132pattern(self, nums: List[int]) -> bool:
+        # 思路1: 枚举3, 利用 #有序数组, 每次在右侧元素中找到次小值. 
         from sortedcontainers import SortedList
         mn = nums[0]
         sl = SortedList(nums[1:])

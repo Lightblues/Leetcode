@@ -1,5 +1,15 @@
 from easonsi import utils
 from easonsi.util.leetcode import *
+def testClass(inputs):
+    # 用于测试 LeetCode 的类输入
+    s_res = [None] # 第一个初始化类, 一般没有返回
+    methods, args = [eval(l) for l in inputs.split('\n')]
+    class_name = eval(methods[0])(*args[0])
+    for method_name, arg in list(zip(methods, args))[1:]:
+        r = (getattr(class_name, method_name)(*arg))
+        s_res.append(r)
+    return s_res
+
 """ 
 https://oi-wiki.org/string/trie/
 
@@ -35,8 +45,7 @@ class TrieBit:
         self.right = None
 
 
-class Trie:
-    """ 0208. 实现 Trie (前缀树) #medium #题型 #Trie
+""" 0208. 实现 Trie (前缀树) #medium #题型 #Trie
 请你实现 Trie 类
     Trie() 初始化前缀树对象。
     void insert(String word) 向前缀树中插入字符串 word 。
@@ -45,11 +54,8 @@ class Trie:
 思路: 前缀树基本写法. 每个节点存储: 1) 子节点的哈希表; 2) 是否为单词结尾标记
     复杂度: 初始化为 O(1)，其余操作为 O(|S|)，其中 |S| 是每次插入或查询的字符串的长度
 [官方](https://leetcode.cn/problems/implement-trie-prefix-tree/solution/shi-xian-trie-qian-zhui-shu-by-leetcode-ti500/)
-
-来源：力扣（LeetCode）
-链接：https://leetcode.cn/problems/implement-trie-prefix-tree
-著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
 """
+class Trie:
     def __init__(self):
         self.children = [None] * 26
         self.isleaf = False
@@ -85,29 +91,53 @@ class Trie:
         node = self.searchPrefix(prefix)
         return node is not None
 
+""" 1804. 实现 Trie （前缀树） II #medium
+相较于「0208. 实现 Trie (前缀树)」 多了计数、删除的要求
+"""
+class Trie:
+    def __init__(self):
+        self.children = [None] * 26
+        self.nword = 0
+        self.nprefix = 0
 
-# Your Trie object will be instantiated and called as such:
-# obj = Trie()
-# obj.insert(word)
-# param_2 = obj.search(word)
-# param_3 = obj.startsWith(prefix)
+    def insert(self, word: str) -> None:
+        node = self
+        for ch in word:
+            idx = ord(ch) - ord('a')
+            if not node.children[idx]: node.children[idx] = Trie()
+            node = node.children[idx]
+            node.nprefix += 1
+        node.nword += 1
 
+    def countWordsEqualTo(self, word: str) -> int:
+        node = self
+        for ch in word:
+            idx = ord(ch) - ord('a')
+            if not node.children[idx]: return 0
+            node = node.children[idx]
+        return node.nword
 
+    def countWordsStartingWith(self, prefix: str) -> int:
+        node = self
+        for ch in prefix:
+            idx = ord(ch) - ord('a')
+            if not node.children[idx]: return 0
+            node = node.children[idx]
+        return node.nprefix
+
+    def erase(self, word: str) -> None:
+        node = self
+        for ch in word:
+            idx = ord(ch) - ord('a')
+            node = node.children[idx]
+            node.nprefix -= 1
+        node.nword -= 1
 
 
 
 class Solution:
     
-    def testClass(self, inputs):
-        s_res = [None] # 第一个初始化类, 一般没有返回
-        methods, args = [eval(l) for l in inputs.split('\n')]
-        class_name = eval(methods[0])(*args[0])
-        for method_name, arg in list(zip(methods, args))[1:]:
-            r = (getattr(class_name, method_name)(*arg))
-            s_res.append(r)
-        return s_res
-    
-    """ 0421. 数组中两个数的最大异或值 #medium
+    """ 0421. 数组中两个数的最大异或值 #medium 实际上 #hard
 给定一组数字, 要求返回这组数字中, 两个数字的最大异或值.
 约束: nums.length 1e4, 数组元素 nums[i] <= 2^31 - 1
 思路1: #trie 
@@ -634,18 +664,19 @@ class Solution:
 
 sol = Solution()
 result = [
-#     sol.testClass("""["Trie", "insert", "search", "search", "startsWith", "insert", "search"]
+#     testClass("""["Trie", "insert", "search", "search", "startsWith", "insert", "search"]
 # [[], ["apple"], ["apple"], ["app"], ["app"], ["app"], ["app"]]"""),
-    
+    testClass("""["Trie", "insert", "insert", "countWordsEqualTo", "countWordsStartingWith", "erase", "countWordsEqualTo", "countWordsStartingWith", "erase", "countWordsStartingWith"]
+[[], ["apple"], ["apple"], ["apple"], ["app"], ["apple"], ["apple"], ["app"], ["apple"], ["app"]]""")
     # sol.findMaximumXOR(nums = [3,10,5,25,2,8]),
     # sol.findMaximumXOR(nums = [0]),
     
     # sol.maximizeXor(nums = [0,1,2,3,4], queries = [[1,3],[5,6]]),
     # sol.maximizeXor(nums = [5,2,4,6,6,3], queries = [[12,4],[8,1],[6,3]]),
     
-    sol.maxGeneticDifference(parents = [-1,0,1,1], queries = [[0,2],[3,2],[2,5]]),
-    sol.maxGeneticDifference(parents = [3,7,-1,2,0,7,0,2], queries = [[4,6],[1,15],[0,5]]), # [6,14,7]
-    sol.maxGeneticDifference([3,3,3,-1,3], [[2,6],[2,1],[1,9],[2,3],[3,6]])
+    # sol.maxGeneticDifference(parents = [-1,0,1,1], queries = [[0,2],[3,2],[2,5]]),
+    # sol.maxGeneticDifference(parents = [3,7,-1,2,0,7,0,2], queries = [[4,6],[1,15],[0,5]]), # [6,14,7]
+    # sol.maxGeneticDifference([3,3,3,-1,3], [[2,6],[2,1],[1,9],[2,3],[3,6]])
 ]
 for r in result:
     print(r)

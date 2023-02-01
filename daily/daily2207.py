@@ -373,34 +373,6 @@ e.g.: s = "adceb", p='*a*b' 是匹配的
         return allStars(p, pIndex, pRight)
 
 
-""" 0295. 数据流的中位数 #hard 实现一个数据结构, 可以加入数据, 并计算当前数据 #中位数.
-思路1: 维护两个「平衡的」 #优先队列. 一个最大堆, 一个最小堆.
-    我们分别用 mn,mx 最大堆最小堆维护 最小的一半和较大的一半数据, 并保持 size(mn) = size(mx) or size(mx)+1
-    查询: 根据两个堆的大小关系返回
-    插入: 根据与堆顶元素的大小关系插入, 再维护平衡性. 复杂度 O(logn)
-思路2: 可以用 #有序集合 SortedList 维护数据, 并用 #双指针 记录中位数位置
-进阶1: 若数据范围在 [0,100], 可以用 「计数排序统计每一类数的数量，并使用双指针维护中位数」
-进阶2: 若 99% 的整数都在 0 到 100 范围内. 则可以直接用数组保存超过该范围的数字 (因为大概率没用), 若小概率中位数在这范围内的话, 暴力搜索即可.
-[official](https://leetcode.cn/problems/find-median-from-data-stream/solution/shu-ju-liu-de-zhong-wei-shu-by-leetcode-ktkst/)
-"""
-class MedianFinder:
-    def __init__(self):
-        self.mn = []
-        self.mx = []
-
-    def addNum(self, num: int) -> None:
-        if self.mn and num < -self.mn[0]:
-            heappush(self.mn, -num)
-            if len(self.mn) > len(self.mx)+1:
-                heappush(self.mx, -heappop(self.mn))
-        else:
-            heappush(self.mx, num)
-            if len(self.mx) > len(self.mn):
-                heappush(self.mn, -heappop(self.mx))
-
-    def findMedian(self) -> float:
-        if len(self.mn)==len(self.mx): return (-self.mn[0]+self.mx[0])/2
-        else: return -self.mn[0]
 
 
 
@@ -414,8 +386,6 @@ result = [
     # sol.smallestDistancePair([9,10,7,10,6,1,5,4,9,8], 18),
     # sol.trapRainWater(heightMap = [[1,4,3,1,3,2],[3,2,1,3,2,4],[2,3,3,2,3,1]]),
     # sol.trapRainWater(heightMap = [[3,3,3,3,3],[3,2,2,2,3],[3,2,1,2,3],[3,2,2,2,3],[3,3,3,3,3]]),
-#     testClass("""["MedianFinder","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian","addNum","findMedian"]
-# [[],[6],[],[10],[],[2],[],[6],[],[5],[],[0],[],[6],[],[3],[],[1],[],[0],[],[0],[]]""")
     # sol.minWindow(S = "abcdebdde", T = "bde"),
     # sol.isMatch1(s = "aa", p='a'),
     # sol.isMatch1(s = "aa", p='*'),

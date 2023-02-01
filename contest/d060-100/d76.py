@@ -1,15 +1,5 @@
-import itertools, functools
-from typing import List, Optional
-import collections
-import math
-import bisect
-import heapq
-from functools import lru_cache
-# import sys
-# sys.setrecursionlimit(10000)
-
-from structures import ListNode, TreeNode
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 """ 
 https://leetcode-cn.com/contest/biweekly-contest-71
 @20220428 补 """
@@ -33,14 +23,13 @@ class Solution:
             result += (total - i*cost1)//cost2 + 1
         return result
     
-    """ 2242. 节点序列的最大得分
-给一张带节点权重的无向图, 求长度为4的节点序列的最大得分. 序列之间需要连接, 四个节点不得重复.
-复杂度: 节点和边均为 5*1e4
-
-思路: 直接遍历肯定会超时. 关键看这里的序列长度为4, 因此可以考虑 **遍历中间的两个节点** (边)
+    """ 2242. 节点序列的最大得分 #hard 给一张带节点权重的无向图, 求长度为4的节点序列的最大得分. 序列之间需要连接, 四个节点不得重复.
+复杂度: 节点和边均为 5e4
+思路1: 遍历中间两个节点 (边)
+    关键看这里的序列长度为4, 因此可以考虑 **遍历中间的两个节点** (边)
 进一步降低复杂度: 从边 uv 的两个节点出发, 各拓展出一个节点 a,b; 为了使得分数和最大, 则搜索的 ab 节点权重必然是最大/次大的; 因此, 仅需要对每个节点维护最大的三个邻居即可 (还要考虑 uv 边可能最最大邻居)
 在简化了搜索空间的基础上, 可以用 `itertools.product(neighbors(u), neighbors(v))` 直接遍历所有可能的节点对, 而不需要 uv 的邻居进行排序比较等复杂的判断.
-参见 [here](https://leetcode-cn.com/problems/maximum-score-of-a-node-sequence/solution/by-endlesscheng-dt8h/)
+参见 [灵神](https://leetcode-cn.com/problems/maximum-score-of-a-node-sequence/solution/by-endlesscheng-dt8h/)
     """
     def maximumScore(self, scores: List[int], edges: List[List[int]]) -> int:
         neighbor_scores = [[] for _ in range(len(scores))]

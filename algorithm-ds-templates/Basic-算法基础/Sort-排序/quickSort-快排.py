@@ -1,34 +1,7 @@
+from easonsi import utils
+from easonsi.util.leetcode import *
 import random
 import time
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-
 
 """ 
 == 快速排序
@@ -44,93 +17,11 @@ import re
 
 """
 class Solution():
-    """
-    Merge sort
-    """
-    def mergeSort(self, arr):
-        print("Splitting ", arr)
-        if len(arr) > 1:
-            mid = len(arr)//2
-            lefthalf = arr[:mid]
-            righthalf = arr[mid:]
-
-            self.mergeSort(lefthalf)
-            self.mergeSort(righthalf)
-
-            i = 0
-            j = 0
-            k = 0
-            while i < len(lefthalf) and j < len(righthalf):
-                if lefthalf[i] < righthalf[j]:
-                    arr[k] = lefthalf[i]
-                    i = i+1
-                else:
-                    arr[k] = righthalf[j]
-                    j = j+1
-                k = k+1
-
-            while i < len(lefthalf):
-                arr[k] = lefthalf[i]
-                i = i+1
-                k = k+1
-
-            while j < len(righthalf):
-                arr[k] = righthalf[j]
-                j = j+1
-                k = k+1
-            print("Merging ", arr)
 
 
-    """
-    Quick sort
-    """
-    def quickSort(self, arr: list):
 
-        def quickHelper(arr: list, first: int, last: int):
-            if first < last:
-                splitpoint = partition(arr, first, last)
-                quickHelper(arr, first, splitpoint - 1)
-                quickHelper(arr, splitpoint + 1, last)
-
-        # def partition(self, arr: list, first: int, last: int):
-        #     pivot = arr[first]
-        #     left = first + 1
-        #     right = last
-        #
-        #     done = False
-        #     while not done:
-        #         while left <= right and arr[left] <= pivot:
-        #             left = left + 1
-        #         while arr[right] >= pivot and right >= left:
-        #             right = right - 1
-        #         if right < left:
-        #             done = True
-        #         else:
-        #             temp = arr[left]
-        #             arr[left] = arr[right]
-        #             arr[right] = temp
-        #     temp = arr[first]
-        #     arr[first] = arr[right]
-        #     arr[right] = temp
-        #
-        #     return right
-
-        # 自己按照《算法导论》实现了一下
-        def partition(arr: list, first: int, last: int):
-            pivot = arr[last]       # 选定最后一个元素为 pivot
-            le_pivot = first-1      # 指针，在遍历过程中满足 le_pivot 及其右侧的元素 <=pivot
-            for i in range(first, last):
-                if arr[i] <= pivot:
-                    le_pivot += 1
-                    arr[le_pivot], arr[i] = arr[i], arr[le_pivot]
-            # 最后 pivot 和 le_pivot+1 位置进行交换
-            arr[le_pivot+1], arr[last] = arr[last], arr[le_pivot+1]
-            return le_pivot+1
-
-        quickHelper(arr, 0, len(arr) - 1)
-
-
-    """ 0215. 数组中的第K个最大元素 #medium #题型 #star [另见 sliding Window 的循环不变量部分]
+    """ 0215. 数组中的第K个最大元素 #medium #题型 #star 
+[另见 sliding Window 的循环不变量部分]
 给定一个数组, 要求返回其中第k大的元素.
 限制: 数组长度 1e5
 思路1: 维护一个大小为k 的 最小 #堆
@@ -184,19 +75,57 @@ class Solution():
         
         return quickselect(nums, 0, len(nums)-1, len(nums)-k)
     
+    """ 0347. 前 K 个高频元素 #medium #题型
+给定一个数组, 返回其中出现频次前k高的元素. 题目保证了答案唯一. 要求复杂度小于 O(n logn)
+思路1: 对于计数的结果, 要求得到 「 #topK」, 经典可以用 #堆 解决
+    复杂度: O(n logk)
+思路2: 对于「topK」问题, 另一个经典解法是 #快排.
+    注意这里只需要得到前k大的元素而不需要完整排序, 因此每次期望减半, 复杂度 O(n)
+"""
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        cnt = Counter(nums)
+        h = []  # (cnt, num)
+        for a,c in cnt.items():
+            if len(h)==k:
+                if h[0][0] < c: heappushpop(h, (c,a))
+                else: continue
+            else: heappush(h, (c,a))
+        return [a for c,a in h]
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        # 思路2: 快排. 注意这里指需要得到前k大的元素而不需要完整排序, 因此每次期望减半, 复杂度 O(n)
+        def swep(i,j): cnt[i],cnt[j] = cnt[j],cnt[i]
+        def qsort(l,r,k):
+            # 对于 [l...r] 区间, 保证前k个元素是最大的.
+            if l>=r: return
+            # 引入随机
+            picked = random.randint(l,r)
+            # 选择最后一个作为pivot
+            swep(r,picked)
+            pivot = cnt[r][0]
+            idx = l     # [l...idx) > pivot. idx 是下一个要被填入的位置.
+            for i in range(l,r):
+                if cnt[i][0]>pivot:
+                    swep(i,idx)
+                    idx += 1
+            swep(idx,r)
+            # [l...idx] 位置是最大的 idx-l+1 个元素.
+            # k = idx-l+1 / idx-l 都不用再递归了.
+            if idx-l>k: qsort(l,idx-1,k)
+            elif idx-l+1<k: qsort(idx+1,r,k-(idx-l+1))
+        cnt = Counter(nums)
+        cnt = [(c,a) for a,c in cnt.items()]
+        qsort(0, len(cnt)-1, k)
+        return [a for c,a in cnt[:k]]
     
     
-    def testQuickSort(self):
-        arr = [4, 5, 6, 3, 2, 1]
-        print("before:", arr)
-        self.quickSort(arr)
-        print("after:", arr)
+    
 
 
 sol = Solution()
 result = [
     # sol.findKthLargest([3,2,1,5,6,4], k = 2),
-    sol.testQuickSort(),
+    # sol.topKFrequent([3,0,1,0], 1),
+    # sol.topKFrequent(nums = [1,1,1,2,2,3], k = 2),
     
 ]
 for r in result:

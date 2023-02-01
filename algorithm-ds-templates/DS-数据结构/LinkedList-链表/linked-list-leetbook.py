@@ -1,43 +1,5 @@
-from hashlib import new
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -58,6 +20,7 @@ def testClass(inputs):
 0707. 设计链表 #medium
 
 = 双指针技巧
+0876. 链表的中间结点 #easy 若长度为偶数, 则返回靠右的那个
 0141. 环形链表 #easy #题型 判断链表是否有环
     思路1: #快慢指针
 0142. 环形链表 II #题型 #medium
@@ -67,7 +30,6 @@ def testClass(inputs):
     思路1: 让第一个指针先走n步. 然后两个指针一起走.
 0160. 相交链表 #easy #题型
     给定两个节点, 判断他们是否会相交 (Y字型), 若相交返回相交的那个节点. 保证了无环. 进阶限制: 时间 O(m+n), 空间 O(1)
-0876. 链表的中间结点 #easy 若长度为偶数, 则返回靠右的那个
 
 
 = 经典问题
@@ -112,11 +74,7 @@ class Node:
         self.random = random
 class Solution:
     """ ============================================ 双指针技巧 ============================================ """
-    """ 0141. 环形链表 #easy #题型 判断链表是否有环
-思路0: 用哈希表记录
-思路1: #快慢指针
-    复杂度: O(n) 因为最多绕两圈.
- """
+    """ 0141. 环形链表 [z-快慢指针] """
     def hasCycle(self, head: Optional[ListNode]) -> bool:
         if not head or not head.next: return False
         # 快慢指针. 注意下面 while 的条件: 初始时设置 fast = slow.next
@@ -125,25 +83,7 @@ class Solution:
             if not fast or not fast.next: return False
             slow, fast = slow.next, fast.next.next
         return True
-    
-    """ 0142. 环形链表 II #题型 #medium
-相较于 0141, 需要返回进入环的第一个节点.
-思路0: 用哈希表记录出现过的节点.
-思路1: #快慢指针
-    slow, fast 同时从起点走. 假设进入环的第一个点的距离是 a, 入环点和相遇点将环分割成长 b,c 两部分.
-    假设fast在环上走了n圈, 则有 `a + (b+c)n + b = 2 * (a+b)`. 注意, 这里用到了结论「slow在环上 走不满一圈就会被 fast追到」
-    于是有 `a = (b+c)(n-1) + c`. 因此, **让slow继续从相遇点走, 同时在起点放置一个速度也为1的指针, 他们恰好会在入环点相遇**.
-    复杂度: O(n). 因为相遇时间是 O(n), 之后再走的时间一定比他小.
-    测试的时间居然比思路0更快!
-见图示 [official](https://leetcode.cn/problems/linked-list-cycle-ii/solution/huan-xing-lian-biao-ii-by-leetcode-solution/)
- """
-    def detectCycle(self, head: ListNode) -> ListNode:
-        s = set()
-        while head:
-            if head in s: return head
-            s.add(head)
-            head = head.next
-        return None
+    """ 0142. 环形链表 II #题型 #medium [z-快慢指针] """
     def detectCycle(self, head: ListNode) -> ListNode:
         # 思路1: #快慢指针
         if not head: return None
@@ -160,41 +100,7 @@ class Solution:
                 return p
         return None
 
-    """ 0019. 删除链表的倒数第 N 个结点 #medium #题型
-思路1: 让第一个指针先走n步. 然后两个指针一起走.
-    优化: 一个技巧是, 在头上采用 #dummy 节点. 这样就不会发生越界了!
-思路0: 官答中还提出了 1) 计算链表长度; 2) 使用栈 的方法.
-[官答](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/solution/shan-chu-lian-biao-de-dao-shu-di-nge-jie-dian-b-61/)
- """
-    def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:
-        p = head
-        # 需要得到倒数第 n+1 个节点
-        # 但直接 range(n+1) 可能会越界!!! 因此加上下面的if判断.
-        for _ in range(n):  
-            p = p.next
-        # 何时为边界? n恰好为链表长度, 也即是第一个节点.
-        if p is None: return head.next
-        else: p = p.next
-
-        q = head
-        while p:
-            p,q = p.next, q.next
-        q.next = q.next.next
-        return head
-    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
-        # 优化: 一个技巧是, 在头上采用 dummy 节点
-        dummy = ListNode(0, head)
-        first = head
-        second = dummy
-        for i in range(n):
-            first = first.next
-
-        while first:
-            first = first.next
-            second = second.next
-        
-        second.next = second.next.next
-        return dummy.next
+    """ 0019. 删除链表的倒数第 N 个结点 #medium #题型 [z-前后] """
 
 
 
@@ -225,14 +131,6 @@ class Solution:
         return headA
 
 
-    """ 0876. 链表的中间结点 #easy 若长度为偶数, 则返回靠右的那个 """
-    def middleNode(self, head: ListNode) -> ListNode:
-        slow = fast = head
-        while fast and fast.next:
-            slow = slow.next
-            fast = fast.next.next
-        return slow # 注意长度为偶数情况下的模拟
-
 
 
 
@@ -242,34 +140,9 @@ class Solution:
 给定一个链表, 将其反转.
 思路1: 迭代. 经典实现. 维护 pre,cur,next 三个指针会比较清晰.
 思路2: 递归 实现
-[官答](https://leetcode.cn/problems/reverse-linked-list/solution/fan-zhuan-lian-biao-by-leetcode-solution-d1k2/)
 """
-    def reverseList(self, head: ListNode) -> ListNode:
-        # 思路1: 迭代.
-        pre, cur = None, head
-        while cur:
-            next = cur.next
-            cur.next = pre
-            pre, cur = cur, next
-        return pre
-    def reverseList(self, head: ListNode) -> ListNode:
-        # 思路2: 递归 实现
-        if not head or not head.next: return head
-        newHead = self.reverseList(head.next)
-        head.next.next = head
-        head.next = None
-        return newHead
-
 
     """ 0203. 移除链表元素 #easy 移除所有特定值的节点. """
-    def removeElements(self, head: Optional[ListNode], val: int) -> Optional[ListNode]:
-        ans = pre = ListNode(0)
-        p = head
-        while p:
-            if p.val!=val: pre.next = p; pre = p
-            p = p.next
-        pre.next = None
-        return ans.next
 
     """ 0328. 奇偶链表 #medium #题型
 对于一个链表, 按照奇偶进行分组, 返回 奇+偶 拼起来的结果链表. 限制: 只能使用 O(1) 的额外空间.

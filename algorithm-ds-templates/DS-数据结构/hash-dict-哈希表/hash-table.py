@@ -249,48 +249,7 @@ class Solution:
         for k in c1: ans += c1[k] * c2[-k]
         return ans
     
-    """ 0347. 前 K 个高频元素 #medium #题型
-给定一个数组, 返回其中出现频次前k高的元素. 题目保证了答案唯一. 要求复杂度小于 O(n logn)
-思路1: 对于计数的结果, 要求得到 「 #topK」, 经典可以用 #堆 解决
-    复杂度: O(n logk)
-思路2: 对于「topK」问题, 另一个经典解法是 #快排.
-    注意这里只需要得到前k大的元素而不需要完整排序, 因此每次期望减半, 复杂度 O(n)
-"""
-    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
-        cnt = Counter(nums)
-        h = []  # (cnt, num)
-        for a,c in cnt.items():
-            if len(h)==k:
-                if h[0][0] < c: heappushpop(h, (c,a))
-                else: continue
-            else: heappush(h, (c,a))
-        return [a for c,a in h]
-    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
-        # 思路2: 快排. 注意这里指需要得到前k大的元素而不需要完整排序, 因此每次期望减半, 复杂度 O(n)
-        def swep(i,j): cnt[i],cnt[j] = cnt[j],cnt[i]
-        def qsort(l,r,k):
-            # 对于 [l...r] 区间, 保证前k个元素是最大的.
-            if l>=r: return
-            # 引入随机
-            picked = random.randint(l,r)
-            # 选择最后一个作为pivot
-            swep(r,picked)
-            pivot = cnt[r][0]
-            idx = l     # [l...idx) > pivot. idx 是下一个要被填入的位置.
-            for i in range(l,r):
-                if cnt[i][0]>pivot:
-                    swep(i,idx)
-                    idx += 1
-            swep(idx,r)
-            # [l...idx] 位置是最大的 idx-l+1 个元素.
-            # k = idx-l+1 / idx-l 都不用再递归了.
-            if idx-l>k: qsort(l,idx-1,k)
-            elif idx-l+1<k: qsort(idx+1,r,k-(idx-l+1))
-        cnt = Counter(nums)
-        cnt = [(c,a) for a,c in cnt.items()]
-        qsort(0, len(cnt)-1, k)
-        return [a for c,a in cnt[:k]]
-    
+
     
     
     
@@ -438,12 +397,10 @@ result = [
 # [[], [1, 1], [2, 2], [1], [3], [2, 1], [2], [2], [2]]"""),
     # sol.groupStrings(["abc", "bcd", "acef", "xyz", "az", "ba", "a", "z"]),
     # sol.lengthOfLongestSubstring(s = "pwwkew"),
-    # sol.topKFrequent(nums = [1,1,1,2,2,3], k = 2),
 #     testClass("""["RandomizedSet", "insert", "remove", "insert", "getRandom", "remove", "insert", "getRandom"]
 # [[], [1], [2], [2], [], [1], [2], []]"""),
     testClass("""["RandomizedSet","insert","insert","remove","insert","remove","getRandom"]
 [[],[0],[1],[0],[2],[1],[]]"""),
-    # sol.topKFrequent([3,0,1,0], 1),
 ]
 for r in result:
     print(r)

@@ -1,36 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, cache, reduce, partial
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import sys, os
-# sys.setrecursionlimit(10000)
-
-# https://github.com/grantjenks/python-sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 """ 链表相关
 技巧
     挺乱的, 没有硬性要求的话可以转为列表, 或者记录val之间的交换
@@ -52,6 +21,13 @@ class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
+    def printList(self):
+        res = [self.val]
+        now = self
+        while now.next:
+            now = now.next
+            res.append(now.val)
+        print(res)
 
 def list2linked(l):
     """ 将 [1,3,2,4] 这样形式的列表转换为 ListNode 链表 """
@@ -107,8 +83,7 @@ class Solution:
         return [minDist, maxDist]
 
 
-    """ 0206. 反转链表 #easy #题型
-给定一个链表, 将其反转.
+    """ 0206. 反转链表 #easy #题型 给定一个链表, 将其反转. [z-reverse]
 思路1: 迭代. 经典实现. 维护 pre,cur,next 三个指针会比较清晰.
 思路2: 递归 实现
 思路3: 能否再减少一个指针? 在 #双指针 思路中, 不移动 head 而在遍历过程中修改 head.next 所指向的节点.
@@ -182,7 +157,6 @@ class Solution:
                 # pre, prevRecord.next.next, prevRecord.next = prevRecord.next, cur, pre
                 
         return head
-
 
 
 sol = Solution()
