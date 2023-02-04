@@ -1,42 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -87,14 +50,6 @@ class Solution:
     """ 验证二叉搜索树 判断给定的二叉搜索树是否合法
 思路1: 递归函数 `valid(root: TreeNode, l:int, r:int)` 传入合法的区间 [l, r]
 """
-    def isValidBST(self, root: Optional[TreeNode]) -> bool:
-        def valid(root: TreeNode, l:int, r:int) -> bool:
-            if root is None: return True
-            if not l<=root.val<=r: return False
-            if not valid(root.left, l, root.val-1): return False
-            if not valid(root.right, root.val+1, r): return False
-            return True
-        return valid(root, -inf, inf)
     
     """ 二叉搜索树中的搜索 """
     def searchBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
@@ -175,14 +130,6 @@ class Solution:
                 root.val = nxt.val
         return root
     
-    """ 0235. 二叉搜索树的最近公共祖先 #easy 相较于一般的二叉树, 利用其有序的性质简单了很多 """
-    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
-        a,b = sorted([p.val, q.val])
-        def f(root: TreeNode, a,b):
-            if a<=root.val<=b: return root
-            elif root.val<a: return f(root.right,a,b)
-            else: return f(root.left, a,b)
-        return f(root, a,b)
     
     """ 0220. 存在重复元素 III #medium #题型
 给定一个数组, 要求判断是否有一个下标对 (i,j), 满足间距 <=k, 两者的值相差 <=t. 限制: 数组长度 2e4
@@ -230,16 +177,8 @@ class Solution:
         return False
     
     """ 0110. 平衡二叉树. #easy 平衡二叉树定义: 「每个节点的左右子树高度差不超过1」 """
-    def isBalanced(self, root: Optional[TreeNode]) -> bool:
-        def f(root):
-            # 返回: 当前节点的高度, 若违反了则返回-1
-            if not root: return 0
-            l = f(root.left)
-            r = f(root.right)
-            # 判断是否平衡
-            if l==-1 or r==-1 or abs(l-r)>1: return -1
-            return max(l,r)+1
-        return f(root)!=-1
+
+    
     """ 0108. 将有序数组转换为二叉搜索树 """
     def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
         def f(l,r):

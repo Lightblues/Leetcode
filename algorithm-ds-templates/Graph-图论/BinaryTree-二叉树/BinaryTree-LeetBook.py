@@ -158,7 +158,7 @@ class Solution:
         # 递归逻辑
         return max(self.maxDepth(root.left)+1, self.maxDepth(root.right)+1)
     
-    """ 0101. 对称二叉树 判断一棵二叉树是否是对称的 """
+    """ 0101. 对称二叉树 判断一棵二叉树是否是对称的 另见 [z-对称] """
     def isSymmetric(self, root: Optional[TreeNode]) -> bool:
         # 递归写法
         def check(a:TreeNode, b:TreeNode) -> bool:
@@ -304,35 +304,13 @@ class Solution:
             head = dummy.next
         return root
     
-    """ 0236. 二叉树的最近公共祖先 给定二叉树上的两个节点, 找到它们的最短公共祖先
-思路1: 根据两个点的从跟节点出发的路径, 求交.
-思路2: 一个神奇的递归, 在递归掉中中, 仅去寻找当前树中是否包含 p/q 中的一个, 详见代码
+    """ 0236. 二叉树的最近公共祖先 #medium #题型 给定二叉树上的两个节点, 找到它们的最短公共祖先
+思路1: 得到每个节点的father, 直接得到路径!
+    根据两个点的从跟节点出发的路径, 求交.
+思路2: DFS返回 p/q 是否在该子树中
+[灵神](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/solution/fen-lei-tao-lun-luan-ru-ma-yi-ge-shi-pin-2r95/)
 """
-    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
-        # 思路1: 根据两个点的从跟节点出发的路径, 求交.
-        fa = {root: None}
-        def dfs(a: TreeNode):
-            if a.left: fa[a.left] = a; dfs(a.left)
-            if a.right: fa[a.right] = a; dfs(a.right)
-        dfs(root)
-        pathP = set()
-        while p:
-            pathP.add(p); p = fa[p]
-        while q not in pathP:
-            q = fa[q]
-        return q
-    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
-        # 思路2: 一个神奇的递归
-        # 边界条件, 可以写在一起
-        if root is None: return root            # 边界
-        elif root==p or root==q: return root    # 找到 p/q 了!
-        # 注意, 这里递归调用, 分别尝试从左右子树中找到 p,q
-        left = self.lowestCommonAncestor(root.left, p,q)
-        right = self.lowestCommonAncestor(root.right, p,q)
-        if left is None: return right   # left 不包含 p/q 中任意点, 返回右子树上搜索的结果!
-        if right is None: return left
-        # 都不为空, 说明 p,q 分别出现在左右子树中, 当前节点正是最小共同祖先!
-        return root
+
 
 """ 0297. 二叉树的序列化与反序列化 #hard #题型 要求将一个二叉树序列化 (serialize) 和反序列化. 也即用无损的字符串表示二叉树. 限制: 节点数 1e4, 注意可能为 None
 思路: 采用任意的 BFS/DFS/前序 等遍历方式均可, 注意在解码的时候, 按照相同的顺序进行还原.
