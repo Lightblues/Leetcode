@@ -13,6 +13,9 @@ def testClass(inputs):
 """ 
 https://leetcode-cn.com/contest/biweekly-contest-97
 https://leetcode.cn/circle/discuss/F06Kf0/
+灵神: https://www.bilibili.com/video/BV1rM4y1X7z9
+
+T4思维题, 灵神的轮廓线解法和统计路径数的解法都超级奇妙!
 Easonsi @2023 """
 class Solution:
     """ 6303. 分割数组中数字的数位 """
@@ -36,8 +39,10 @@ class Solution:
 思路1: #滑动窗口 维护一个长度为实际长度K的窗口, 还要记录此前窗口 (与当前窗口不重叠) 的最大值! 
     代码 #细节: 需要用一个 deque 来记录此前的score列表
     复杂度: O(n)
+    灵神: 关联「两数之和」. 枚举第二条线段 (右端点), 判断和第一条线段的组合!
 """
     def maximizeWin(self, prizePositions: List[int], k: int) -> int:
+        # 自己的实现, 乱七八糟...
         n = len(prizePositions)
         ans = 0
         preMx = 0
@@ -54,7 +59,17 @@ class Solution:
             # if r>k: preMx = max(preMx, scores[r-k-1])
             ans = max(ans, preMx+score)
         return ans
-    
+    def maximizeWin(self, prizePositions: List[int], k: int) -> int:
+        # from 灵神, 优雅!
+        pre = [0] * (len(prizePositions) + 1)
+        ans = left = 0
+        for right, p in enumerate(prizePositions):
+            while p - prizePositions[left] > k:
+                left += 1
+            ans = max(ans, right - left + 1 + pre[left])
+            pre[right + 1] = max(pre[right], right - left + 1)
+        return ans
+
 
     """ 6305. 二进制矩阵中翻转最多一次使路径不连通 #medium 但挺 #hard 要在一个0/1矩阵上从左上走到右下, 只能走1的位置, 只能向下向右走, 在最多翻转1个格子的情况下, 能否使得无法走通? 
 限制: m,n 1e3
@@ -65,40 +80,16 @@ Orz 看错题目了, 限制了行动的方向只能是向下向右
     若两者乘积 = 总的路径数量, 则说明该点是必经点!
     关联 「0063. 不同路径 II」
     见 [Ts](https://leetcode.cn/problems/disconnect-path-in-a-binary-matrix-by-at-most-one-flip/solution/ji-shu-by-tsreaper-m01b/)
-    
+思路2 :转换成求 #轮廓 是否相交
+    将所有可能的路径「涂色」, 则形成了一块「区域」 —— 可以由上下两条「轮廓线」描述.
+    则答案等价于: 上下轮廓线存在交集! 
+        重点: 如何求「下轮廓」? 可以 #DFS
+    简化: 再考虑一下, 假如我们将下轮廓线上的点全部堵住, 那么没有「存在交集」, 等价于无法再找到一条路径! 
+        因此, 只需要两次DFS即可!
+    见 [灵神](https://leetcode.cn/problems/disconnect-path-in-a-binary-matrix-by-at-most-one-flip/solution/zhuan-huan-cheng-qiu-lun-kuo-shi-fou-xia-io8x/)
 """
     def isPossibleToCutPath(self, grid: List[List[int]]) -> bool:
-        # WA!!! 0不一定要连起来!
-        m,n = len(grid), len(grid[0])
-        directions = [(0,1),(0,-1),(1,0),(-1,0)]
-        def test(i,j):
-            return i==0 or j==n-1
-        h = []
-        for i in range(1,m):
-            c = 1 if grid[i][0]==1 else 0
-            heappush(h, (c,i,0))
-        for j in range(1,n-1):
-            c = 1 if grid[m-1][j]==1 else 0
-            heappush(h, (c,m-1,j))
-        visited = set()
-        for c,x,y in h:
-            visited.add((c,x,y))
-        while h:
-            c, x,y = heappop(h)
-            if test(x,y): 
-                return True
-            for dx,dy in directions:
-                nx,ny = x+dx, y+dy
-                if not (0<=nx<m and 0<=ny<n): continue
-                nc = c + (1 if grid[nx][ny]==1 else 0)
-                if nc>1: continue
-                if (nc,nx,ny) in visited: continue
-                if (nx==0 and ny==0) or (nx==m-1 and ny==n-1): continue
-                heappush(h, (nc,nx,ny))
-                visited.add((nc,nx,ny))
-        return False
-
-    def isPossibleToCutPath(self, grid: List[List[int]]) -> bool:
+        # 思路1: #计数 分别统计从左上, 右下做到 (i,j) 的路径数量
         mod = 10**9+7   # 路径数可能很大
         m,n = len(grid), len(grid[0])
         f = [[0]*(n+1) for _ in range(m+1)]
@@ -122,7 +113,22 @@ Orz 看错题目了, 限制了行动的方向只能是向下向右
                 cnt_ij = f[i][j] * g[i][j] % mod
                 if cnt_ij == f[m][n]: return True
         return False
-        
+    def isPossibleToCutPath(self, grid: List[List[int]]) -> bool:
+        # from 灵神
+        m,n = len(grid), len(grid[0])
+        def dfs(x,y):
+            if x==m-1 and y==n-1: return True
+            grid[x][y] = 0  # 直接修改! 
+            return x < m - 1 and grid[x + 1][y] and dfs(x + 1, y) or \
+                   y < n - 1 and grid[x][y + 1] and dfs(x, y + 1)
+            # 优先往下走, 再往右走
+            if x<m-1 and grid[x+1][y]:
+                if dfs(x+1,y): return True
+            if y<n-1 and grid[x][y+1]:
+                if dfs(x,y+1): return True
+            return False
+        # 要么第一次就无法走到 (第一个检查); 要么翻转下轮廓之后无法走到
+        return not dfs(0,0) or not dfs(0,0)
 
     """ 0063. 不同路径 II #medium 机器人从左上走到右下, 0/1 表示是否有障碍物. 问方案数量
 思路1: 基本 #DP
