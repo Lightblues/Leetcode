@@ -41,11 +41,10 @@ class Solution:
     
     
     
-
     
 sol = Solution()
 result = [
-    sol.find([-5,2,3,3,3], [-1,3,1,5]),
+    # sol.find([-5,2,3,3,3], [-1,3,1,5]),
 ]
 for r in result:
     print(r)

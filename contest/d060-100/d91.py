@@ -19,7 +19,7 @@ https://leetcode-cn.com/contest/biweekly-contest-91
 class Solution:
     """ 2465. 不同的平均值数目 """
     
-    """ 2466. 统计构造好字符串的方案数
+    """ 2466. 统计构造好字符串的方案数 #medium 基本DP
 关联: 0070. 爬楼梯
 """
     def countGoodStrings(self, low: int, high: int, zero: int, one: int) -> int:

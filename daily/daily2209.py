@@ -74,8 +74,9 @@ class Solution:
             if mx==i: cnt += 1
         return cnt
 
-""" 0146. LRU 缓存 #medium  但其实挺 #hard 要求实现一个LRU缓存. (最远没有使用的) 
-也即, 给定限制的 capacity空间用于存储. 在插入的时候若超过了限制, 则删除「最远没有使用」的记录.
+""" 0146. LRU 缓存 #medium  但其实 #hard #双向链表
+要求实现一个LRU缓存. (最远没有使用的) 
+    也即, 给定限制的 capacity空间用于存储. 在插入的时候若超过了限制, 则删除「最远没有使用」的记录.
 限制: 插入, 查询 复杂度均为 O(1)
 关键在于: 如何记录
 思路0: 原本打算记录插入和查询 #时间戳. 但想了半天似乎不太可行!
@@ -101,7 +102,7 @@ class LRUCache(collections.OrderedDict):
 
     def put(self, key: int, value: int) -> None:
         if key in self:
-            self.move_to_end(key)
+            self.move_to_end(key)       # 有则置顶
         self[key] = value
         if len(self) > self.capacity:
             self.popitem(last=False)
@@ -116,7 +117,7 @@ class DLinkedNode:
 # 思路2: 采用 #双向链表+#哈希表.
 class LRUCache:
     def __init__(self, capacity: int) -> None:
-        self.cache = dict()
+        self.cache = dict()     # {key:node}
         # 使用伪头部和伪尾部节点  
         self.head = DLinkedNode()
         self.tail = DLinkedNode()
@@ -132,6 +133,7 @@ class LRUCache:
         return node.value
     def put(self, key:int, value:int) -> None:
         if key not in self.cache:
+            # 若不在cache中, 则新建一个节点, 插入头部; 若超过了限制, 则还要删除尾部
             node = DLinkedNode(key, value)
             self.cache[key] = node
             self.addToHead(node)
@@ -141,6 +143,7 @@ class LRUCache:
                 self.cache.pop(removed.key)
                 self.size -= 1
         else:
+            # 若在, 则更新, 并移动到头部
             node = self.cache[key]
             node.value = value
             self.moveToHead(node)

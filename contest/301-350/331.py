@@ -15,7 +15,7 @@ https://leetcode.cn/contest/weekly-contest-331
 讨论: https://leetcode.cn/circle/discuss/2Gdn7F/
 灵神: https://www.bilibili.com/video/BV1sG4y1T7oc/
 
-T3的二分反应还是慢了; T4的构造也很巧妙, 自己还需努力
+T3的二分反应还是慢了; T4的构造也很巧妙, 自己没想出来
 Easonsi @2023 """
 class Solution:
     """ 6348. 从数量最多的堆取走礼物 """

@@ -1,17 +1,5 @@
-from typing import List, Optional
-import collections
-import math
-import bisect
-import heapq
-import functools, itertools
-# from functools import lru_cache
-# import sys, os
-# sys.setrecursionlimit(10000)
-from utils_leetcode import (
-    testClass,
-)
-from structures import ListNode, TreeNode
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 """ 
 https://leetcode-cn.com/contest/biweekly-contest-71
 @20220428 补 """

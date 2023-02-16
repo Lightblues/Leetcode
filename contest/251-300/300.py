@@ -1,42 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial, cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 def testClass(inputs):
     # 用于测试 LeetCode 的类输入
     s_res = [None] # 第一个初始化类, 一般没有返回
@@ -48,8 +11,7 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-261
-https://leetcode-cn.com/contest/biweekly-contest-71
+https://leetcode.cn/contest/weekly-contest-300
 @2022 """
 
 # Definition for singly-linked list.
@@ -154,13 +116,15 @@ class Solution:
             x, y = x+dx, y+dy
         return grid
     
-    """ 6109. 知道秘密的人数 #medium #interest #题型
+    """ 2327. 知道秘密的人数 #medium #interest #题型
 第1天有1个人知道秘密, 在经过delay天之后, 他会每天告诉一个新人, 直到经过forget天之后他忘记秘密. 问经过n天之后多少人知道秘密
 限制: n 1e3; 对结果取模
-思路1: #模拟 计算; 理解为 #DP
-    记 f[i] 为第i天知道的人, 可知递推公式 `f[i+1] = f[i] - forgets[i] + news[i]`, 其中 `forgets[i]` 为第i天忘记的人, `news[i]` 为第i天新加的人
-    我们用一个哈希表 news[i] 记录当天新知道秘密的人的数量, 可知有递推关系 `news[i] = sum{ news[i-forget+1]+...+news[i-delay] }`
-    对于忘记的人显然有 `forgets[i] = news[i-forget]`
+思路1: #模拟 计算; 理解为 #DP 灵神叫做 #填表法
+    原本的想法
+        记 f[i] 为第i天知道的人, 可知递推公式 `f[i+1] = f[i] - forgets[i] + news[i]`, 其中 `forgets[i]` 为第i天忘记的人, `news[i]` 为第i天新加的人
+        我们用一个哈希表 news[i] 记录当天新知道秘密的人的数量, 可知有递推关系 `news[i] = sum{ news[i-forget+1]+...+news[i-delay] }`
+        对于忘记的人显然有 `forgets[i] = news[i-forget]`
+    实际上, 只需要一个 news记录每天新增的人数即可! 见下
     复杂度: `O(n^2)`
     灵神总结这种方法为「填表法」; 注意到, 上面的 news 计算可以利用前缀和优化到 `O(n)`
 思路2: 刷表法
@@ -170,29 +134,25 @@ class Solution:
     [灵神](https://leetcode.cn/problems/number-of-people-aware-of-a-secret/solution/by-endlesscheng-2x0z/)
 """
     def peopleAwareOfSecret(self, n: int, delay: int, forget: int) -> int:
+        # 思路1: #模拟 计算; 理解为 #DP 灵神叫做 #填表法
         MOD = 10**9 + 7
-        news = defaultdict(int)
+        news = [0] * (n+1)   # 记录每天新增人数
         news[1] = 1
-        f = 1
-        for i in range(2, n+1):
-            nf = sum(news[j] for j in range(i-forget+1, i-delay+1)) % MOD
-            news[i] = nf
-            f = (f + nf - news[i-forget]) % MOD
-        return f
-    
+        for i in range(2,n+1):
+            s,e = max(i-forget+1, 0), max(i-delay+1, 0)
+            news[i] = sum(news[s:e]) % MOD
+        return sum(news[-forget:]) % MOD
     def peopleAwareOfSecret(self, n: int, delay: int, forget: int) -> int:
-        """ 上面的算法可以利用前缀和油画到 O(n)
-        from [here](https://leetcode.cn/problems/number-of-people-aware-of-a-secret/solution/by-endlesscheng-2x0z/) """
+        """ 上面的算法可以利用前缀和优化到 O(n) from 灵神 """
         MOD = 10 ** 9 + 7
-        sum = [0] * (n + 1)
+        sum = [0] * (n + 1) # 记录每天新增人数的前缀和
         sum[1] = 1
         for i in range(2, n + 1):
             f = sum[max(i - delay, 0)] - sum[max(i - forget, 0)]
             sum[i] = (sum[i - 1] + f) % MOD
         return (sum[n] - sum[max(0, n - forget)]) % MOD
     def peopleAwareOfSecret(self, n: int, delay: int, forget: int) -> int:
-        """ 思路2: 刷表法. 注意遍历的边界
-        O(n^2) """
+        """ 思路2: 刷表法. 注意遍历的边界 O(n^2) """
         MOD = 10**9 + 7
         typeBs = [0] * (n + 1); typeBs[1] = 1
         cntA = 0
@@ -202,9 +162,10 @@ class Solution:
             for j in range(i+delay, min(i+forget, n+1)):
                 typeBs[j] += typeBs[i]
         return (cntA + typeBs[n]) % MOD
-    
-    """ 6110. 网格图中递增路径的数目 #hard
-给定一个grid, 问网格中有多少严格递增的路径. 对结果取模
+
+        
+    """ 2328. 网格图中递增路径的数目 #hard #记忆化
+给定一个grid, 问网格中有多少严格递增的路径 (从任意点到任意点, 长度为1也可以). 对结果取模
 约束: m,n <=1e3; 网格点 1e5
 思路1 对于网格值 #排序 之后 #DP
     注意看例子 [[1,1],[3,4]], 以1结尾的路径有1条; 以3结尾的路径有 `[3],[1,3]` 2条; 以4结尾的路径有 `[4],[1,4],[1,3,4]` 3条
@@ -237,8 +198,9 @@ class Solution:
         """ 记忆化搜索 from https://leetcode.cn/problems/number-of-increasing-paths-in-a-grid/solution/ji-yi-hua-sou-suo-pythonjavacgo-by-endle-xecc/ """
         MOD = 10 ** 9 + 7
         m, n = len(grid), len(grid[0])
-        @cache
+        @lru_cache(None)
         def dfs(i: int, j: int) -> int:
+            # 以(i,j)为终点的路径数
             res = 1
             for x, y in (i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1):
                 if 0 <= x < m and 0 <= y < n and grid[x][y] > grid[i][j]:
@@ -253,8 +215,8 @@ result = [
     # 注意链表不太好本地调试
     # sol.spiralMatrix(m = 3, n = 5, head = [3,0,2,6,8,1,7,9,4,2,5,5,0]),
     # sol.spiralMatrix(m = 1, n = 4, head = [0,1,2]),
-    # sol.peopleAwareOfSecret(n = 6, delay = 2, forget = 4),
-    # sol.peopleAwareOfSecret(n = 4, delay = 1, forget = 3),
+    sol.peopleAwareOfSecret(n = 6, delay = 2, forget = 4),
+    sol.peopleAwareOfSecret(n = 4, delay = 1, forget = 3),
     # sol.countPaths(grid = [[1,1],[3,4]]),
     # sol.countPaths(grid = [[1],[2]]),
     

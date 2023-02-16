@@ -75,6 +75,10 @@ class Solution:
         显然, 对于每一次检查 (i,x), 我们可以贪心地尽量靠左右匹配. 
         为此, 可以构建两个 pre, post 映射, 提前计算好t中字符串到s的匹配位置
     复杂度: 构建索引的复杂度 O(m+n), 二分的复杂度为 O(n logn) 
+思路2: #前后缀分解
+    反过来考虑! 考虑把字符串s分成两段, 分别尝试匹配t的首尾. 
+    这样, 假设前后缀分别能匹配到的位置为 pre,suf, 则需要删除的数量为 suf-pre-1
+[灵神](https://leetcode.cn/problems/subsequence-with-the-minimum-score/solution/qian-hou-zhui-fen-jie-san-zhi-zhen-pytho-6cmr/)
 """
     def minimumScore(self, s: str, t: str) -> int:
         m,n = len(s),len(t)
@@ -108,6 +112,23 @@ class Solution:
                 ans = mid
                 r = mid-1
             else: l = mid+1
+        return ans
+    def minimumScore(self, s: str, t: str) -> int:
+        n, m = len(s), len(t)
+        suf = [m] * (n + 1)
+        j = m - 1
+        for i in range(n - 1, -1, -1):
+            if j >= 0 and s[i] == t[j]:
+                j -= 1
+            suf[i] = j + 1
+        ans = suf[0]  # 删除 t[:suf[0]]
+        if ans == 0: return 0
+
+        j = 0
+        for i, c in enumerate(s):
+            if c == t[j]:  # 注意 j 不会等于 m，因为上面 suf[0]>0 表示 t 不是 s 的子序列
+                j += 1
+                ans = min(ans, suf[i + 1] - j)  # 删除 t[j:suf[i+1]]
         return ans
 
     

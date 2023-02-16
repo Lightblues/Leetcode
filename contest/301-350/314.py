@@ -115,7 +115,18 @@ class Solution:
                     new_cnt[(kk+bias)%k] = cnt[kk] % mod
                 f[i][j] = new_cnt
         return f[-1][-1][0]
-        
+    def numberOfPaths(self, grid: List[List[int]], k: int) -> int:
+        # 灵神
+        MOD = 10 ** 9 + 7
+        m, n = len(grid), len(grid[0])
+        f = [[[0] * k for _ in range(n + 1)] for _ in range(m + 1)]
+        f[0][1][0] = 1
+        for i, row in enumerate(grid):
+            for j, x in enumerate(row):
+                for v in range(k):
+                    f[i + 1][j + 1][(v + x) % k] = (f[i + 1][j][v] + f[i][j + 1][v]) % MOD
+        return f[m][n][0]
+
         
 sol = Solution()
 result = [

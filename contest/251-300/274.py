@@ -1,8 +1,10 @@
-from typing import List
-import collections
-import random
-# collections.deque
+from easonsi import utils
+from easonsi.util.leetcode import *
+""" 
 
+"""
+
+import random
 class Solution274:
     """ 2124. 检查是否所有 A 都在 B 之前 """
     def checkString(self, s: str) -> bool:

@@ -57,6 +57,7 @@ class Solution:
     见 [here](https://leetcode.cn/problems/count-increasing-quadruplets/solution/by-destiny-god-4qc6/)
 """
     def countQuadruplets(self, nums: List[int]) -> int:
+        # 思路1: 枚举中间两个数 j,k 
         n = len(nums)
         # great[k][x] 记录在k右边的比x大的数量
         great = [None] * n

@@ -1,45 +1,11 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-from bisect import bisect_right, bisect_left
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, reduce, partial # cache
-# cache = partial(lru_cache, maxsize=None)
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, neg, pos # 注意 pow 与默认环境下的 pow(x,y, MOD) 签名冲突
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
-
-# https://github.com/grantjenks/python-sortedcontainers
-import sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 """ 
 https://leetcode.cn/contest/weekly-contest-261
 https://leetcode-cn.com/contest/biweekly-contest-71
+
+一上来看错了顺序直接做第三题超时, 差点崩了, 还好相较于 1723 没有卡复杂度直接暴力+剪枝通过 (子集枚举前两天还写的Orz). 第四题真的想不到.
+还是第一次遇到第2,3题都是五分的.
 @2022 """
 class Solution:
     """ 5259. 计算应缴税款总额 """
@@ -128,7 +94,7 @@ class Solution:
             last = new
         return last[-1]
 
-    """ 6094. 公司命名 #hard #题型 #互补
+    """ 2306. 公司命名 #hard #题型 #互补
 有一组数量为n的单词, 从中选择 a,b 两个出来作为公司的名字: 选择方式为, 交换 a,b 的首字母, 若交换后生成的单词不再原数组中, 则用这两个单词作为公司名. 问所有不同的有效公司名的个数.
 约束: n<=10^5
 思路0: 根据尾序列分组. 但之后没想出来怎么缩减两两匹配的复杂度
@@ -137,7 +103,7 @@ class Solution:
         因此: 条件是 交换的首字母不能出现在另一个group中.
     因此, 问题转化为: 有一组集合, 每个集合包括了一些字母. 要求从中计算所有的二元组 (ch1,ch2) 使得它们在两个不同的集合 set1,set2 中, 满足 ch1不在set2中, ch2不在set1中.
         但可能的集合数量达 2^26, 还需要两两组合复杂度不够.
-思路1: 利用 #互补 的思想 #计数
+思路1: 利用 #互补 的思想 #计数 #分类讨论
     再来看约束目标: 两个首字母 c1,c2 需要满足, 分别单独出现在两个集合中, 也即, 一个集合包含c1不包含c2, 另一个对称.
     因此, 我们用 `cnt[i][j]` 表示 **字母i不在集合, 而字母j在集合中的数量**.
     答案是什么? 在得到cnt计数中. 我们遍历每一个group, 我们遍历每一个组合 `(i,j) in pair(group, allCh\group)`, 将其与 `cnt[i][j]` 匹配; 将结果相加即可.
@@ -147,14 +113,13 @@ class Solution:
 总结: 1) 这里 #互补 的思想很有意思. 2) **在需要两两组合但复杂度明显不够的时候, 应该考虑计数, 问题是如何找到一种好的统计方式**.
 """
     def distinctNames(self, ideas: List[str]) -> int:
-        """ 互补思想
-        [here](https://leetcode.cn/problems/naming-a-company/solution/by-endlesscheng-ruz8/)"""
+        """ 互补思想 from 灵神 """
         # 尾部相同的单词为一组, 统计每组中出现的首字母有哪些
         pattern2first = defaultdict(list)
         for idea in ideas:
             pattern2first[idea[1:]].append(ord(idea[0]) - ord('a'))
         ans = 0
-        # 辅助数组 cnt[i][j] 记录在遍历过程中, i不再组中而j在组中的个数
+        # 辅助数组 cnt[i][j] 记录在遍历过程中, i不在组中而j在组中的个数
         cnt = [[0] * 26 for _ in range(26)]
         for firsts in pattern2first.values():
             for i in range(26):
@@ -180,34 +145,15 @@ class Solution:
         cnt = [[0] * 26 for _ in range(26)]
         allCh = set(range(26))
         for firsts in pattern2first.values():
-            # for i in range(26):
-            #     # i不在组中
-            #     if i not in firsts:
-            #         for j in range(26):
-            #             if j in firsts:
-            #                 cnt[i][j] += 1
             for i in allCh.difference(firsts):
                 for j in firsts:
                     cnt[i][j] += 1
         for firsts in pattern2first.values():
-            # for i in range(26):
-            #     if i in firsts:
-            #         for j in range(26):
-            #             if j not in firsts:
-            #                 ans += cnt[i][j]
             for i in firsts:
                 for j in allCh.difference(firsts):
                     ans += cnt[i][j]
         return ans
-    def testClass(self, inputs):
-        # 用于测试 LeetCode 的类输入
-        s_res = [None] # 第一个初始化类, 一般没有返回
-        methods, args = [eval(l) for l in inputs.split('\n')]
-        class_name = eval(methods[0])(*args[0])
-        for method_name, arg in list(zip(methods, args))[1:]:
-            r = (getattr(class_name, method_name)(*arg))
-            s_res.append(r)
-        return s_res
+
     
 sol = Solution()
 result = [

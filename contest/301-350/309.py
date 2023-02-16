@@ -64,9 +64,13 @@ class Solution:
                 if ch2idx[i][1] - ch2idx[i][0] != d+1: return False
         return True
     
-    """ 6168. 恰好移动 k 步到达某一位置的方法数目 #medium
-走k步向右移动x单位, 问有多少种方式, 对结果取模.
-思路1: 本质上就是 Comb(x, (k-x)//2)
+    """ 2400. 恰好移动 k 步到达某一位置的方法数目 #medium
+走k步向右移动x单位, 问有多少种方式, 对结果取模. 限制: start,end,k 都在 1e3 范围内
+思路1: #数学 
+    本质上就是 Comb(x, (k-x)//2)
+思路2: #DP 或者 #记忆化
+    例如定义 f(x， left) 表示剩余left步骤从x位置出发, 到达终点的方法数.
+[灵神](https://leetcode.cn/problems/number-of-ways-to-reach-a-position-after-exactly-k-steps/solution/by-endlesscheng-6yvy/)
 """
     def numberOfWays(self, startPos: int, endPos: int, k: int) -> int:
         mod = 10**9 + 7
