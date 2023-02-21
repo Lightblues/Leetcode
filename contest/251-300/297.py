@@ -1,8 +1,7 @@
 from easonsi import utils
 from easonsi.util.leetcode import *
 """ 
-https://leetcode.cn/contest/weekly-contest-261
-https://leetcode-cn.com/contest/biweekly-contest-71
+https://leetcode.cn/contest/weekly-contest-297
 
 一上来看错了顺序直接做第三题超时, 差点崩了, 还好相较于 1723 没有卡复杂度直接暴力+剪枝通过 (子集枚举前两天还写的Orz). 第四题真的想不到.
 还是第一次遇到第2,3题都是五分的.
@@ -43,14 +42,13 @@ class Solution:
     直接暴力搜索的复杂度为 k**m
     然而因为采用DFS, 若当前分配数大于此前的最小不公平程度时, 可以进行剪枝.
     但不会带来复杂度上的下降. 在 1723题中长度 n==12 无法过.
-思路2: #状态压缩 #DP #子集遍历
+思路2: #状态压缩 #DP #子集遍历 [dp-subset]
     我们定义 `f[i][mask]` 表示分配完前i个孩子, 当前分配的饼干集合为mask, 时的最小不公平程度.
     我们遍历分配给第i个孩子的集合sub, 这样有 `f[i][mask] = min{ max{ f[i-1][mask\sub], sum[sub] } }` 这里的sub是mask的所有子集, sum[sub] 表示sub集合中的元素之和.
     因此, 需要两层遍历, 第一层遍历i, 第二层遍历mask (还要遍历mask的所有子集). 注意到, 若我们对于mask从大到小遍历, 则可以省略dp的第一个维度.
     遍历子集采用经典的 `sub = (sub - 1) & mask` 方式.
     复杂度: 对于mask从1遍历到 1<<n, 每次遍历mask所有的子集, 其复杂度为 `O(3^n)` (恰好是排列公式). 因此总复杂度为 O(k * 3^n).
     from [灵神](https://leetcode.cn/problems/fair-distribution-of-cookies/solution/by-endlesscheng-80ao/)
-    
 """
     def distributeCookies(self, cookies: List[int], k: int) -> int:
         counts = [0] * k
@@ -70,29 +68,6 @@ class Solution:
         dfs(0)
         return ans
     
-    def minimumTimeRequired(self, jobs: List[int], k: int) -> int:
-        """ 思路2: [灵神](https://leetcode.cn/problems/fair-distribution-of-cookies/solution/by-endlesscheng-80ao/) """
-        n = len(jobs)
-        # 预计算每一个mask所代表的工作集合之和
-        sub2cost = [0] * (1<<n)
-        for mask in range(1<<n):
-            cost = 0
-            for i,c in enumerate(jobs):
-                if mask>>i & 1:
-                    cost += c
-            sub2cost[mask] = cost
-        # f[i][mask] 表示给前i工人分配工作, 所有已分配的工作为为mask时的最短时间.
-        # f = [[0] * (2<<n) for _ in range(k)]
-        last = sub2cost[:]
-        for i in range(1, k):
-            new = [inf] * (1<<n)
-            for mask in range(1, 1<<n):
-                sub = mask
-                while sub:
-                    new[mask] = min(new[mask], max(last[mask^sub], sub2cost[sub]))
-                    sub = (sub - 1) & mask
-            last = new
-        return last[-1]
 
     """ 2306. 公司命名 #hard #题型 #互补
 有一组数量为n的单词, 从中选择 a,b 两个出来作为公司的名字: 选择方式为, 交换 a,b 的首字母, 若交换后生成的单词不再原数组中, 则用这两个单词作为公司名. 问所有不同的有效公司名的个数.

@@ -73,32 +73,14 @@ startWords 和 targetWords 中的每个字符串都仅由小写英文字母组�
                     result += 1
                     break
         return result
-    """ 5979. 全部开花的最早一天
-两个数组, 分别是 播种 和 开花 所需的时间, 要求使得所有花都开放的最小时间 
 
-https://leetcode-cn.com/contest/weekly-contest-275/problems/earliest-possible-day-of-full-bloom/
-输入：plantTime = [1,4,3], growTime = [2,3,1]
-输出：9
-解释：灰色的花盆表示播种的日子，彩色的花盆表示生长的日子，花朵表示开花的日子。
-一种最优方案是：
-第 0 天，播种第 0 枚种子，种子生长 2 整天。并在第 3 天开花。
-第 1、2、3、4 天，播种第 1 枚种子。种子生长 3 整天，并在第 8 天开花。
-第 5、6、7 天，播种第 2 枚种子。种子生长 1 整天，并在第 9 天开花。
-因此，在第 9 天，所有种子都开花。 
-
-输入：plantTime = [1,2,3,2], growTime = [2,1,2,1]
-输出：9
-解释：灰色的花盆表示播种的日子，彩色的花盆表示生长的日子，花朵表示开花的日子。 
-一种最优方案是：
-第 1 天，播种第 0 枚种子，种子生长 2 整天。并在第 4 天开花。
-第 0、3 天，播种第 1 枚种子。种子生长 1 整天，并在第 5 天开花。
-第 2、4、5 天，播种第 2 枚种子。种子生长 2 整天，并在第 8 天开花。
-第 6、7 天，播种第 3 枚种子。种子生长 1 整天，并在第 9 天开花。
-因此，在第 9 天，所有种子都开花。 
-
-- 题目给了干扰: 将一种花分成两次播种没有意义, 因为两者总的播种时间是一样的, 因此在过程中两种花都不会提早开花.
-- 于是可以化简为, 给依次播种的花进行排序
-- 可知, 总的播种时间是一定的, 目标在于减少开花所需时间. 因此每次根据开花所需时间排序, 选择需要最长时间的那种即可.
+    """ 5979. 全部开花的最早一天 #hard 两个数组, 分别是 播种/开花 所需的时间, 要求使得所有花都开放的最小时间 
+思路1: 对于开花时间进行 #排序
+    题目给了干扰: 将一种花分成两次播种没有意义, 因为两者总的播种时间是一样的, 因此在过程中两种花都不会提早开花.
+    因此, 约束在于开花时间比较长的话! 
+    于是, 我们可以 #贪心 地对于开花时间进行排序, #逆序
+证明见 [灵神](https://leetcode.cn/problems/earliest-possible-day-of-full-bloom/solution/tan-xin-ji-qi-zheng-ming-by-endlesscheng-hfwe/)
+    证明思路: 对于两个 g1<g2 的话进行分析! 
 """
     def earliestFullBloom(self, plantTime: List[int], growTime: List[int]) -> int:
         times = sorted(zip(growTime, plantTime), reverse=True)
@@ -108,7 +90,6 @@ https://leetcode-cn.com/contest/weekly-contest-275/problems/earliest-possible-da
             plantSum += pt
             result = max(result, plantSum+gt)
         return result
-    pass
 
 sol = Solution275()
 res = [

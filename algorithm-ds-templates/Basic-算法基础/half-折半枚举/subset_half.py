@@ -1,32 +1,5 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, cache, reduce, partial
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import chain, product, permutations, combinations, combinations_with_replacement
-import string
-from string import ascii_lowercase, ascii_uppercase
-import sys, os
-# sys.setrecursionlimit(10000)
-
-# https://github.com/grantjenks/python-sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 """ 利用折半枚举减少搜索空间
 
 === 枚举、划分数组
@@ -267,8 +240,7 @@ class Solution:
         return any(-ha in right and (ha, -ha) != (sleft, sright) for ha in left)
     
     
-    """ 0416. 分割等和子集 #背包 #medium
-相较于 「0805. 数组的均值分割」这里要求两个数组的和相等.
+    """ 0416. 分割等和子集 #背包 #medium 相较于 「0805. 数组的均值分割」这里要求两个数组的和相等.
 复杂性: 数组长度 200, 每个元素大小 100.
 思路1: #折半枚举
     注意本题的特殊性, 由于每个元素的数量较小, 元素和最大为 `k = 200/2 * 100` (实际上 target 也是限制, 可以剪枝), 要比枚举数量 `O(2^100)`, 因此不会超时.
@@ -278,7 +250,7 @@ class Solution:
     递推公式: 当 nums[i] 小于等于 j 时, `dp[i][j] = dp[i-1][j] or dp[i-1][j-nums[i]]`. 否则 `dp[i][j] = dp[i-1][j]`.
     复杂度: O(n * target).
 """
-    def canPartition_0(self, nums: List[int]) -> bool:
+    def canPartition(self, nums: List[int]) -> bool:
         """  """
         n = len(nums)
         s = sum(nums)
@@ -300,35 +272,12 @@ class Solution:
             if target-a in rightSet: return True
         return False
     
-    def canPartition(self, nums: List[int]) -> bool:
-        """ DP
-https://leetcode.cn/problems/partition-equal-subset-sum/solution/fen-ge-deng-he-zi-ji-by-leetcode-solution/"""
-        n = len(nums)
-        if n < 2:
-            return False
-        
-        total = sum(nums)
-        if total % 2 != 0:
-            return False
-        
-        target = total // 2
-        dp = [True] + [False] * target
-        for i, num in enumerate(nums):
-            for j in range(target, num - 1, -1):
-                dp[j] |= dp[j - num]
-        
-        return dp[target]
 
-
-    """ 0494. 目标和 #medium #背包
-给定一个整数数组, 在它们之间加 +/- 组成表达式, 要求返回结果为 target 的表达式数量.
-
+    """ 0494. 目标和 #medium #背包 #题型
+给定一个整数数组, 在它们之间加 +/- 组成表达式, 要求返回结果为 target 的表达式数量. 限制: n 20
 - 方法一, DFS
     - 改进: #折半枚举 可以减少 DFS的复杂度
-- 方法二, DP, see [here](https://leetcode-cn.com/problems/target-sum/solution/mu-biao-he-by-leetcode-solution-o0cp/)
-    - `dp[i][j]` 为前 i 个数字中选取部分, 其和为 j 的组合数量
-    - 可知, 更新公式为 `dp[i][j] = dp[i-1][j] + dp[i-1][j-nums[i]]`, 当 `j<nums[i]` 不合法, 第二项取0.
-    - 优化空间, 可以用 **滚动数组**. 则更新公式为 `dp[j] += dp[j-nums[j]]`. 注意因为用了滚动数组, 内层循环需采用倒序遍历的方式.
+- 方法二, DP, [01背包]
 """
     def findTargetSumWays(self, nums: List[int], target: int) -> int:
         n = len(nums)

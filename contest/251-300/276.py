@@ -1,11 +1,8 @@
 from typing import List
-import collections
-import random
-import heapq
 
 
 """ @220116
-https://leetcode-cn.com/contest/weekly-contest-275
+https://leetcode-cn.com/contest/weekly-contest-276
  """
 class Solution276:
     """ 5980. 将字符串拆分为若干长度为 k 的组 """

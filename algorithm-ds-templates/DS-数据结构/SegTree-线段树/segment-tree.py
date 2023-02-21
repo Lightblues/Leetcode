@@ -6,18 +6,23 @@ https://oi-wiki.org/ds/seg/
 [wiki](https://zh.wikipedia.org/wiki/%E7%B7%9A%E6%AE%B5%E6%A8%B9)
 [zero 如何学习可以解决本题的算法与数据结构](https://leetcode.cn/problems/count-of-range-sum/solution/xian-ren-zhi-lu-ru-he-xue-xi-ke-yi-jie-jue-ben-ti-/)
 - 灵神 [301](https://www.bilibili.com/video/BV1it4y1L7kL); [D79](https://www.bilibili.com/video/BV18t4y1p736)
+[D98](https://www.bilibili.com/video/BV15D4y1G7ms/)
 
 
 基本思想: 通过更多的空间来存储区间信息(区间长度以二进制增长), 从而对于一个查询, 可以快速分解为多个子查询.
 核心: 将一个区间查询切分到子区间上. 这里的切分方式是固定的, 例如当前节点o管辖 [l,r] 区间, 则o的两个子节点分别管辖 `[l,m], [m+1,r]`, 其中 `m = (l+r)//2`. 
+    为什么要开 4n 的数组? 假设是满二叉树, 则节点数量为 2n; 但这是在n个数字正好可以被划分的情况下的; 如果不能被划分则需要更多的多余节点, 但最多不会超过 4n!
     对于第o个节点, 其子节点的位置是 2*o, 2*o+1; 显然这里要求o的计数从1开始. 因此, 线段树一般的查询都是 `f(1, n,1, args)` 的形式, 第1个节点管辖 [1,n] 整个区间.
 函数写法: `f(o,l,r, args)` 这里的o是当前管辖 [l,r] 的节点, 后面的 args可以是 对idx位置元素增加value, 也可以是统计 [left, right] 区间内的元素个数等.
 
-把握两个事实
-    1. 每个区间都可以拆分成 O(log n) 个子区间
-    2. 只需要 O(n) 个子区间, 就能拼成任意区间
-懒惰思想: 如果当前险段树节点对应的区间被查询区间完整包含, 则不需要递归查询; 
-    对于更新操作, 需要记录一下更新的内容 lazy tag, 停止. 后续的某个更新操作, 如果需要继续递归的话, 则带着 lazy tag 往下继续递归 (继续进行).
+两大思想
+1. 挑选 O(n) 个 **特殊区间**, 使得任意区间可以拆分成 O(logn) 个特殊区间
+    O(n) <= 4n
+2. lazy/延迟 更新
+    lazy tag: 用一个数组维护每个区间需要更新的值. 
+    如果==0, 表示不需要更新; 如果!=0, 表示更新操作在这个区间停住了 (不递归)
+    如果又来了一个区间更新破坏了 lazy tag 区间, 则需要递归的更新子区间, 并且更新 lazy tag.
+
 
 TODO: https://leetcode.cn/problems/count-of-range-sum/solution/by-ac_oier-b36o/
 
@@ -54,7 +59,153 @@ def testClass(inputs):
         s_res.append(r)
     return s_res
 
+
+class SegTree_0():
+    """ 改写自 0327 题官答.
+    这里新定义了一个 struct 包括了其所管辖的 l,r 位置, 实际上可以通过参数的形式传入, 这样可以提升性能, 参见 SegTree """
+    class Node():
+        def __init__(self) -> None:
+            """ 线段树节点, 记录了 [l,r] 区间内的数字数量为 val """
+            self.val = 0
+            self.l = None
+            self.r = None
+    
+    def __init__(self, n) -> None:
+        self.t = [self.Node() for _ in range(n)]
+    
+    def build(self, o, l,r):
+        """ 递归建树 """
+        self.t[o].l = l
+        self.t[o].r = r
+        if l==r: return
+        m = (l+r)//2
+        self.build(2*o, l, m)
+        self.build(2*o+1, m+1, r)
+    
+    def inc(self, o, i):
+        """ 递归对于第i个元素 +1, o为当前访问的节点 """
+        if self.t[o].l==self.t[o].r:
+            self.t[o].val += 1
+            return
+        if i <= (self.t[o].l + self.t[o].r)//2:
+            self.inc(2*o, i)
+        else:
+            self.inc(2*o+1, i)
+        self.t[o].val = self.t[2*o].val + self.t[2*o+1].val
+    
+    def query(self, o, l,r):
+        """ 查询 [l,r] 范围内的元素个数 """
+        if l<=self.t[o].l and r>=self.t[o].r: return self.t[o].val
+        m = (self.t[o].l+self.t[o].r)//2
+        if r <= m: return self.query(2*o, l, r)
+        if l >= m+1: return self.query(2*o+1, l, r)
+        return self.query(2*o, l, m) + self.query(2*o+1, m+1, r)
+
+class SegTree:
+    """ 
+    更为简洁的线段树实现, 可以查询在 [left, right] 区间元素个数
+    调用的时候需要输入 o,l,r, 即当前的位置 o 的节点及其所管辖的区间 [l,r]. 一般而言, 对于一个总长度为 n的线段树而言, 调用形式都是 (1,1,n), 也即从根节点出发, 其所管辖的范围为 [1,n]
+    from [灵神](https://leetcode.cn/problems/booking-concert-tickets-in-groups/solution/by-endlesscheng-okcu/)
+    """
+    def __init__(self, n) -> None:
+        self.t = [0] * 4 * n
+    def inc(self, o,l,r, i, val=1):
+        """ 对于i位置元素加val """
+        if l==r:
+            self.t[o] += val
+            return
+        m = (l+r)>>1
+        if m>=i: self.inc(2*o, l, m, i, val)
+        else: self.inc(2*o+1, m+1, r, i, val)
+        self.t[o] = self.t[2*o] + self.t[2*o+1]
+        
+    def query(self, o,l,r, left, right):
+        """ 查询 [left, right] 区间内的元素个数
+        注意, 在递归过程中不需要考虑修改查询区间 [left, right] """
+        if l>=left and r<=right: return self.t[o]
+        m = (l+r)>>1
+        sum = 0
+        if m>=left: sum += self.query(2*o, l, m, left, right)
+        if m+1<=right: sum += self.query(2*o+1, m+1, r, left, right)
+        return sum
+
+class Template():
+    def template(self, ):
+        def build(o:int, l,r) -> None:
+            if l==r:
+                # ...
+                return 
+            m = (l+r)//2
+            build(o*2, l,m)
+            build(o*2+1, m+1,r)
+            # 维护...
+        def update(o:int, l,r, L,R) -> None:
+            if L<=l and r<=R:
+                # 更新...
+                return 
+            m = (l+r)//2
+            if m>=L: update(o*2, l,m, L,R)
+            if m<R: update(o*2+1, m+1,r, L,R)
+            # 维护...
+
 class Solution:
+    """ 6358. 更新数组后处理求和查询 #hard 题目比较复杂, 总结就是, 对于一个0/1序列, 需要实现一个函数完成 [l,r] 范围的反转操作, 并实现求和操作
+限制: n 1e5; 操作次数 q 1e5
+思路1: Python 直接暴力转为二进制数可以过?! 
+    是一个非常大的数字
+思路2: #线段树 #模版题 #题型 见 [segment-tree]
+    复杂度: O(n + q logn)
+[灵神](https://leetcode.cn/problems/handling-sum-queries-after-update/solution/xian-duan-shu-by-endlesscheng-vx80/)
+"""
+    def handleQuery(self, nums1: List[int], nums2: List[int], queries: List[List[int]]) -> List[int]:
+        # 思路2: #线段树 #模版题 #题型 见 [segment-tree]
+        n = len(nums1)
+        cnt1 = [0] * (4 * n)        # 维护的特殊区间; 注意从1开始
+        flip = [False] * (4 * n)
+
+        def maintain(o: int) -> None:
+            # 维护cnt区间, 在 build, update 时调用
+            cnt1[o] = cnt1[o * 2] + cnt1[o * 2 + 1]
+
+        def do(o: int, l: int, r: int) -> None:
+            # 执行反转操作; lazy
+            cnt1[o] = r - l + 1 - cnt1[o]
+            flip[o] = not flip[o]
+
+        # 初始化线段树   o,l,r=1,1,n
+        def build(o: int, l: int, r: int) -> None:
+            if l == r:
+                cnt1[o] = nums1[l - 1]  # 注意下标从1开始
+                return
+            m = (l + r) // 2
+            build(o * 2, l, m)
+            build(o * 2 + 1, m + 1, r)
+            maintain(o)
+
+        # 反转区间 [L,R]   o,l,r=1,1,n
+        def update(o: int, l: int, r: int, L: int, R: int) -> None:
+            if L <= l and r <= R:
+                do(o, l, r) # [l,r] 被完整包含, lazy
+                return
+            m = (l + r) // 2
+            # lazy标记下传
+            if flip[o]:
+                do(o * 2, l, m)
+                do(o * 2 + 1, m + 1, r)
+                flip[o] = False
+            if m >= L: update(o * 2, l, m, L, R)
+            if m < R: update(o * 2 + 1, m + 1, r, L, R)
+            maintain(o)     # 维护区间
+
+        build(1, 1, n)
+        ans, s = [], sum(nums2)
+        for op, l, r in queries:
+            if op == 1: update(1, 1, n, l + 1, r + 1)   # 注意idx转换
+            elif op == 2: s += l * cnt1[1]
+            else: ans.append(s)
+        return ans
+
+
     """ 0327. 区间和的个数 #hard #题型 #线段树
 给定一个数组, 要求其所有的子区间中, 区间和在 [lower, upper] 范围内的数量
 限制: 数组长度 1e5, 元素大小 32bit
@@ -186,11 +337,11 @@ see [官答](https://leetcode.cn/problems/count-of-range-sum/solution/qu-jian-he
             # from Coplit 居然如此简洁
             if R < l or r < L: return 0
             return max(query(L, R, 2*o, l, (l+r)//2), query(L, R, 2*o+1, (l+r)//2+1, r))
-            m = (l+r)//2
-            ans = 0
-            if m>=L: ans = max(ans, query(L, R, 2*o, l, m))
-            if m+1<=R: ans = max(ans, query(L, R, 2*o+1, m+1, r))
-            return ans
+            # m = (l+r)//2
+            # ans = 0
+            # if m>=L: ans = max(ans, query(L, R, 2*o, l, m))
+            # if m+1<=R: ans = max(ans, query(L, R, 2*o+1, m+1, r))
+            # return ans
         
         ans = [0] * n
         for i,height in enumerate(obstacles):
@@ -199,81 +350,6 @@ see [官答](https://leetcode.cn/problems/count-of-range-sum/solution/qu-jian-he
             ans[i] = hisHeight + 1
             update(height, hisHeight+1)
         return ans
-
-
-
-class SegTree_0():
-    """ 改写自 0327 题官答.
-    这里新定义了一个 struct 包括了其所管辖的 l,r 位置, 实际上可以通过参数的形式传入, 这样可以提升性能, 参见 SegTree """
-    class Node():
-        def __init__(self) -> None:
-            """ 线段树节点, 记录了 [l,r] 区间内的数字数量为 val """
-            self.val = 0
-            self.l = None
-            self.r = None
-    
-    def __init__(self, n) -> None:
-        self.t = [self.Node() for _ in range(n)]
-    
-    def build(self, o, l,r):
-        """ 递归建树 """
-        self.t[o].l = l
-        self.t[o].r = r
-        if l==r: return
-        m = (l+r)//2
-        self.build(2*o, l, m)
-        self.build(2*o+1, m+1, r)
-    
-    def inc(self, o, i):
-        """ 递归对于第i个元素 +1, o为当前访问的节点 """
-        if self.t[o].l==self.t[o].r:
-            self.t[o].val += 1
-            return
-        if i <= (self.t[o].l + self.t[o].r)//2:
-            self.inc(2*o, i)
-        else:
-            self.inc(2*o+1, i)
-        self.t[o].val = self.t[2*o].val + self.t[2*o+1].val
-    
-    def query(self, o, l,r):
-        """ 查询 [l,r] 范围内的元素个数 """
-        if l<=self.t[o].l and r>=self.t[o].r: return self.t[o].val
-        m = (self.t[o].l+self.t[o].r)//2
-        if r <= m: return self.query(2*o, l, r)
-        if l >= m+1: return self.query(2*o+1, l, r)
-        return self.query(2*o, l, m) + self.query(2*o+1, m+1, r)
-
-class SegTree:
-    """ 
-    更为简洁的线段树实现, 可以查询在 [left, right] 区间元素个数
-    调用的时候需要输入 o,l,r, 即当前的位置 o 的节点及其所管辖的区间 [l,r]. 一般而言, 对于一个总长度为 n的线段树而言, 调用形式都是 (1,1,n), 也即从根节点出发, 其所管辖的范围为 [1,n]
-    from [灵神](https://leetcode.cn/problems/booking-concert-tickets-in-groups/solution/by-endlesscheng-okcu/)
-    """
-    def __init__(self, n) -> None:
-        self.t = [0] * 4 * n
-    def inc(self, o,l,r, i, val=1):
-        """ 对于i位置元素加val """
-        if l==r:
-            self.t[o] += val
-            return
-        m = (l+r)>>1
-        if m>=i: self.inc(2*o, l, m, i, val)
-        else: self.inc(2*o+1, m+1, r, i, val)
-        self.t[o] = self.t[2*o] + self.t[2*o+1]
-        
-    def query(self, o,l,r, left, right):
-        """ 查询 [left, right] 区间内的元素个数
-        注意, 在递归过程中不需要考虑修改查询区间 [left, right] """
-        if l>=left and r<=right: return self.t[o]
-        m = (l+r)>>1
-        sum = 0
-        if m>=left: sum += self.query(2*o, l, m, left, right)
-        if m+1<=right: sum += self.query(2*o+1, m+1, r, left, right)
-        return sum
-
-
-
-
 
     """ 2213. 由单个字符重复的最长子字符串 #hard #线段树
 给定一个长n的字符串, 每次操作中, 对某一位置的元素修改为另一字符, 问每次操作后字符串中有的最长重复子字符串的长度.
@@ -329,6 +405,8 @@ class SegTree:
             update(1,1,n,i+1)   # 始终需要注意idx差距1
             ans.append(mx[1])
         return ans
+
+
 
 
 """ 0729. 我的日程安排表 I #medium
