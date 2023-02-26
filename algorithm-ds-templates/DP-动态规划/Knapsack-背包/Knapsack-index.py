@@ -11,8 +11,14 @@ def testClass(inputs):
     return s_res
 
 """ 
+多维背包
+[01 字符构成最多的字符串](https://leetcode-cn.com/problems/ones-and-zeroes/)：多维费用的 0-1 背包最大值，两个背包大小：0和1的数量
+[盈利计划](https://leetcode-cn.com/problems/profitable-schemes/)：多维费用的 0-1 背包最大值
+
 分组背包: 
 1155. 掷骰子的N种方法 每一组是一个骰子，每个骰子只能拿一个体积为1到6的物品
+
+
 Easonsi @2023 """
 class Solution:
     """  """

@@ -56,8 +56,19 @@ class Solution:
 思路1: #记忆化 搜索
     注意到, 高位的1会被低位的修改影响!! 但是低位的1只能自己发生修改
     所以, 搜索的过程中仅考虑如何消去 lowbit? 可以加上/减去它自己!
+思路2: #贪心 注意到, 若有低位的连续多个1, 则好的办法是, 「先加上再减掉进位」!
+思路2.2: #位运算 优化
+    注意到, 对于 00011...1000 的连续1结构, 3x ^ x 可以得到两个1位
+        对于 0001000 的结构 3x ^ x 可以得到一个1位
+        [感觉还需要证明在 11011 这种情况下也是成立的]
+    因此, 答案就是 (3x ^ x).bit_count()
+[灵神](https://leetcode.cn/problems/minimum-operations-to-reduce-an-integer-to-0/solution/ji-yi-hua-sou-suo-by-endlesscheng-cm6l/)
+思路0: 比赛时候缝缝补补出来的
+    考虑 1, 11...1, 11011, 1010101 这些情况
 """
     def minOperations(self, n: int) -> int:
+        # 比赛时候缝缝补补出来的
+        # 考虑 1, 11...1, 11011, 1010101 这些情况
         s = bin(n)[2:]
         ans = 0
         for x in re.split('00+', s.strip('0')):
@@ -68,6 +79,7 @@ class Solution:
         return ans
 
     def minOperations(self, n: int) -> int:
+        # 思路1: #记忆化 搜索
         @lru_cache(None)
         def dfs(x):
             if x&(x-1) == 0:    # 2的幂
@@ -75,6 +87,21 @@ class Solution:
             lb = x&-x       # 修改最低位1
             return 1 + min(dfs(x-lb), dfs(x+lb))
         return dfs(n)
+
+    def minOperations(self, n: int) -> int:
+        # 思路2: #贪心 注意到, 若有低位的连续多个1, 则好的办法是, 「先加上再减掉进位」!
+        ans = 1
+        while n & (n - 1):  # 不是 2 的幂次
+            lb = n & -n
+            if n & (lb << 1): n += lb  # 多个连续 1
+            else: n -= lb  # 单个 1
+            ans += 1
+        return ans
+
+    def minOperations(self, n: int) -> int:
+        # 思路2.2: #位运算 优化
+        return (3 * n ^ n).bit_count()
+
 
     """ 6364. 无平方子集计数 实际上 #hard 考虑数组的所有子集中, 各个元素的乘积不包含平方因子, 这样的子集的数量 限制: n 1e3; 元素大小 [1,30]
 预处理: 
@@ -163,10 +190,11 @@ result = [
     # sol.minOperations(38),
     # sol.minOperations(82),  # 3
     # sol.minOperations(701), # 5
+    sol.minOperations(27),
     
-    sol.findTheString(lcp = [[4,0,2,0],[0,3,0,1],[2,0,2,0],[0,1,0,1]]),
-    sol.findTheString(lcp = [[4,3,2,1],[3,3,2,1],[2,2,2,1],[1,1,1,1]]),
-    sol.findTheString(lcp = [[4,3,2,1],[3,3,2,1],[2,2,2,1],[1,1,1,3]]),
+    # sol.findTheString(lcp = [[4,0,2,0],[0,3,0,1],[2,0,2,0],[0,1,0,1]]),
+    # sol.findTheString(lcp = [[4,3,2,1],[3,3,2,1],[2,2,2,1],[1,1,1,1]]),
+    # sol.findTheString(lcp = [[4,3,2,1],[3,3,2,1],[2,2,2,1],[1,1,1,3]]),
     
 ]
 for r in result:
