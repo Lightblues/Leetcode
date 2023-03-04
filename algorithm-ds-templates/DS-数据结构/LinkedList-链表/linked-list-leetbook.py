@@ -44,6 +44,7 @@ def testClass(inputs):
 
 = 小结
 0021. 合并两个有序链表 #easy
+0023. 合并K个升序链表 #hard 就是基本的堆的使用
 0002. 两数相加 #medium
     两个整数以逆序链表的形式存储, 求和.
 0430. 扁平化多级双向链表 #medium
@@ -53,7 +54,6 @@ def testClass(inputs):
     提示: 正如题目中用数组来表示「随机链表」一样, 我们可以为每个节点定一个idx, 从而描述他们的指向关系.
 0061. 旋转链表 #medium 给定一个链表, shift(k)
     提示: 对于长 l 的链表, 循环右移 k 位, 则新的head是什么? 倒数第 k 个节点.
-
  """
 class ListNode:
     def __init__(self, x) -> None:
@@ -364,6 +364,25 @@ class Solution:
         newT.next = None
         tail.next = head
         return newH
+
+
+    """ 0023. 合并K个升序链表 #hard 就是基本的堆的使用 """
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        ans = p = ListNode(0)
+        # h = [(nd.val, nd) for nd in lists if nd]
+        h = [(nd.val, i) for i,nd in enumerate(lists) if nd]
+        # 注意, 不能直接放node进行, 因为在val相同的情况下无法比较!
+        heapq.heapify(h)
+        while h:
+            _, i = heappop(h)
+            node = lists[i]
+            p.next = node; p = p.next
+            if node.next:
+                heappush(h, (node.next.val, i))
+                # 
+                lists[i] = node.next
+        return ans.next
+
 
 
 

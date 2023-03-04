@@ -1,42 +1,11 @@
-import typing
-from typing import List, Optional, Tuple
-import copy
-from copy import deepcopy, copy
-import collections
-from collections import deque, defaultdict, Counter, OrderedDict, namedtuple
-import math
-from math import sqrt, ceil, floor, log, log2, log10, exp, sin, cos, tan, asin, acos, atan, atan2, hypot, erf, erfc, inf, nan
-import bisect
-import heapq
-from heapq import heappush, heappop, heapify, heappushpop
-import functools
-from functools import lru_cache, cache, reduce, partial
-# cache for Python 3.9, equivalent to @lru_cache(maxsize=None)
-import itertools
-from itertools import product, permutations, combinations, combinations_with_replacement, accumulate
-import string
-from string import ascii_lowercase, ascii_uppercase
-# s = ""
-# s.isdigit, s.islower, s.isnumeric
-import operator
-from operator import add, sub, xor, mul, truediv, floordiv, mod, pow, neg, pos
-import sys, os
-# sys.setrecursionlimit(10000)
-import re
 
-# https://github.com/grantjenks/python-sortedcontainers
-from sortedcontainers import SortedList, SortedSet, SortedDict
-# help(SortedDict)
-# import numpy as np
-from fractions import Fraction
-from decimal import Decimal
-
-# from utils_leetcode import testClass
-# from structures import ListNode, TreeNode, linked2list, list2linked
-
+from easonsi import utils
+from easonsi.util.leetcode import *
 """ 
 排列组合 https://oi-wiki.org/math/combinatorics/combination/
 数论: https://oi-wiki.org/math/number-theory/basic/
+
+另见 [backtracking]
 
 == 下一个排列, 第几个排列
 0031. 下一个排列 #medium #题型
@@ -58,7 +27,10 @@ from decimal import Decimal
     等价问题: 第一类斯特灵数. (题解可以作为第一类 #斯特灵数 的计算模板)
     思路: 用DP做即可
 
- """
+关联 0077. 组合 #medium #回溯 返回 [1, n] 中选k的所有组合 限制: n 20
+0039. 组合总和 #medium #题型 给定一组数字和一个目标target, 返回所有用arr中的数字可以构成的target排列.
+0040. 组合总和 II #medium 相较于0039, 数组中的元素只能使用一次. 
+"""
 class Solution:
     """ 0031. 下一个排列 #medium #题型
 给定一个数组, 要求得到它的一个重排, 是「下一个字典序比它大的」排列.
@@ -74,10 +46,7 @@ class Solution:
     [官答](https://leetcode.cn/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/)
 """
     def nextPermutation(self, nums: List[int]) -> None:
-        """
-        Do not return anything, modify nums in-place instead.
-        [官答](https://leetcode.cn/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/)
-        """
+        """ 思路1: #两遍扫描 """
         # 第一次, 找到 i
         n = len(nums)
         for i in range(n-2, -2, -1):
@@ -118,7 +87,6 @@ class Solution:
         while l<r:
             nums[l], nums[r] = nums[r], nums[l]
             l,r = l+1, r-1
-        
         
     def test_nextPermutation(self, nums):
         pre = nums[:]
@@ -302,13 +270,113 @@ class Solution:
             ans = (ans + a) % mod
         return ans
 
+    """ 0039. 组合总和 #medium #题型 给定一组数字和一个目标target, 返回所有用arr中的数字可以构成的target排列.
+限制: 保证了arr数字不重复, 大小 [2,40]; 数组长度 n 30; target [1,40]. 题目保证了答案的数量不超过150个. 
+思路1: #回溯 求解
+    函数 `dfs(idx, target)` 表示从idx开始可以得到target的组合情况
+思路2: DP
+    定义dp[i]为组成i的所有排列, 则有递推: dp[i] = dp[i-candidates[j]] + candidates[j]
+     """
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        # 思路: 递归
+        # 递归函数: 从idx开始, 递归求解target
+        @lru_cache(None)
+        def dfs(idx, target):
+            if target == 0: return [[]]
+            if idx == len(candidates): return []
+            ans = []
+            # 选择当前数字
+            if target >= candidates[idx]:
+                for sub in dfs(idx, target-candidates[idx]):
+                    ans.append([candidates[idx]] + sub)
+            # 不选择当前数字
+            for sub in dfs(idx+1, target):
+                ans.append(sub)
+            return ans
+        candidates.sort()
+        return dfs(0, target)
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        # 思路2: DP
+        # 定义dp[i]为组成i的所有排列, 则有递推: dp[i] = dp[i-candidates[j]] + candidates[j]
+        # 注意, 由于candidates中的数字可以重复使用, 因此dp[i]中的每一个排列都是有效的.
+        candidates.sort()
+        dp = [[] for _ in range(target+1)]
+        dp[0] = [[]]
+        for i in range(1, target+1):
+            for c in candidates:
+                if i-c >= 0:
+                    for sub in dp[i-c]:
+                        # 配合sort, 避免重复
+                        if sub and sub[-1] > c: continue
+                        dp[i].append(sub + [c])
+        return dp[target]
+    
+    """ 0040. 组合总和 II #medium 相较于0039, 数组中的元素只能使用一次. 
+限制: n 100; 数字范围 [1,50]; target [1,100]
+思路1: #回溯 类似上面的0039, 但是需要注意重复! 因为这里元素的数量有了限制!
+    例如, 对于[1,2,2,2,5], 要构成5, 如果不加重复按照上面的写可能记录了多个 [1,2,2]
+    为了避免重复, 不能出现 [2,2] 中第一个没选第二个选的情况
+    为此, 可以在递归的时候传入 dfs(idx, target, flag=False) flag标记上一个元素是否被选了. 
+思路2: 用一个counter来记录每个数字出现的次数, 从而避免重复的问题!
+见 [官答](https://leetcode.cn/problems/combination-sum-ii/solution/zu-he-zong-he-ii-by-leetcode-solution/)
+    说明了sort可以进行剪枝优化!
+     """
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+        candidates.sort()
+        n = len(candidates)
+        @lru_cache(None)
+        def dfs(idx, target, flag=False):
+            # 在[idx:] 中构成target的数组. flag标记上一个元素是否被使用
+            if target==0: return [[]]   # 找到了一个解!
+            if idx==n: return []
+            ans = []
+            # 选 idx
+            if target>=candidates[idx]:
+                # 为了避免重复, 不能出现 [2,2] 中第一个没选第二个选的情况
+                if idx>0 and candidates[idx]==candidates[idx-1] and (not flag):
+                    pass
+                else:
+                    for sub in dfs(idx+1, target-candidates[idx], True):
+                        ans.append([candidates[idx]] + sub)
+            # 不选idx
+            for sub in dfs(idx+1, target, False):
+                ans.append(sub)
+            return ans
+        return dfs(0, target, False)
+
+    """ 0060. 排列序列 #hard 对于1...n的所有排列, 返回其中的第k个. 限制: n 9
+思路1: #数学 注意到问题可以转化为更小的问题
+    假设剩余的数字arr有m个, 要得到从小到大的第k个排列, 那么第一个数字应该是arr的第 k/(m-1)! 个 (大概)
+    注意下面的细致分析
+见 [官答](https://leetcode.cn/problems/permutation-sequence/solution/di-kge-pai-lie-by-leetcode-solution/)
+     """
+    def getPermutation(self, n: int, k: int) -> str:
+        from math import perm
+
+        n_list = list(range(1, n+1))
+        res = []
+        while n_list:
+            if k == perm(len(n_list)):
+                res += n_list[::-1]
+                break
+            elif k == 1:
+                res += n_list
+                break
+            nums = perm(len(n_list) - 1)
+            q, k = divmod(k, nums)
+            if k==0:
+                res.append(n_list.pop(q-1))
+            else:
+                res.append(n_list.pop(q))
+        return ''.join([str(i) for i in res])
 
 sol = Solution()
-sol.test_nextPermutation(nums = [1,2,3]),
-sol.test_nextPermutation(nums = [3,2,1]),
-sol.test_nextPermutation([1,1,5])
+# sol.test_nextPermutation(nums = [1,2,3]),
+# sol.test_nextPermutation(nums = [3,2,1]),
+# sol.test_nextPermutation([1,1,5])
 result = [
-    
+    # sol.combinationSum(candidates = [2,3,6,7], target = 7),
+    sol.combinationSum2(candidates = [2,5,2,1,2], target = 5),
 ]
 for r in result:
     print(r)

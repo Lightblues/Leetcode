@@ -11,6 +11,8 @@ def testClass(inputs):
     return s_res
 
 """ 
+0007. 整数反转 #medium #题型 将一个32位有符号整数反转, 假设不能用64位数字
+0029. 两数相除 #medium 但实际 #hard 不使用乘除和 mod 运算, 实现两任意整数的整除 (注意负数的情况) 
 
 Easonsi @2023 """
 class Solution:
@@ -48,8 +50,37 @@ Python特性: 上面的 digit, x = x % 10, x // 10 操作需要对负数特殊�
 
     """ 0029. 两数相除 #medium 不使用乘除和 mod 运算, 实现两任意整数的整除 (注意负数的情况) 
 限制: 1] 对于结果去掉小数, 例如 8.345 将被截断为 8, -2.7335 将被截断至 -2; 2] 要求结果在32位整数范围内 (不在的话截断)
+思路1: 都转化为正数情况, 然后 #倍增 divisor
 """
-    
+    def divide(self, dividend: int, divisor: int) -> int:
+        # 模拟 int32
+        INT_MAX = 2147483647
+        if dividend == -INT_MAX-1 and divisor==-1:
+            return INT_MAX
+
+        # 用 flag 表示结果正负，将两数均转化为正数
+        if dividend<0:
+            dividend, divisor = -dividend, -divisor
+        flag = 1
+        if divisor<0:
+            divisor = -divisor
+            flag = -1
+
+        # 下面可以优化的!
+        def div(dividend: int, divisor: int) -> int:
+            if dividend < divisor:
+                return 0
+            count = 1
+            divisor_2 = divisor # 倍增 divisor
+            while dividend>divisor_2+divisor_2:
+                # 从加法变为左移，运行时间从 52ms 降到 40ms
+                # divisor_2 = divisor_2+divisor_2
+                # count = count + count
+                divisor_2 <<= 1
+                count <<= 1
+            return count + div(dividend-divisor_2, divisor)
+
+        return div(dividend, divisor) if flag==1 else -div(dividend, divisor)
     
 
     
