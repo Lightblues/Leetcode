@@ -4,6 +4,29 @@
 node_modules/
 package-lock.json
 
+# data
+*.jsonl
+# *.xml
+*.csv
+*.pdf
+*.epub
+# specific
+*.html
+
+*.so
+*.ttf
+
+.DS_Store
+
+# microsft office
+~*
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+
 
 /.idea/
 *.o

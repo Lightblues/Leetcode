@@ -14,8 +14,11 @@
 
 - 根据数据范围推测可能的算法: [here](https://www.acwing.com/blog/content/32/)
 - [C++ 模板](https://github.com/old-yan/CP-template)
-- DP
-    - [DP问题分类汇总](https://chengzhaoxi.xyz/42296.html)
+
+
+## 互联网笔试题
+
+[算法面试题汇总](https://leetcode.cn/leetbook/detail/top-interview-questions/)
 
 ## 文章
 

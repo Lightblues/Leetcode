@@ -15,7 +15,8 @@ https://leetcode.cn/contest/weekly-contest-336
 Easonsi @2023 """
 class Solution:
     """  """
-    
+    a1 = list(range(5))
+    a2 = list(range(5, 10))
     
     
     
