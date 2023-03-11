@@ -18,7 +18,10 @@
 
 ## 互联网笔试题
 
-[算法面试题汇总](https://leetcode.cn/leetbook/detail/top-interview-questions/)
+LeetBook [算法面试题汇总](https://leetcode.cn/leetbook/detail/top-interview-questions/)
+[🔥 LeetCode 热题 HOT 100](https://leetcode.cn/problem-list/2cktkvj/)
+
+
 
 ## 文章
 
