@@ -1,6 +1,10 @@
-from typing import List, Optional
+from easonsi import utils
+from easonsi.util.leetcode import *
 
-""" 剑指 Offer 51. 数组中的逆序对
+
+
+class Solution:
+    """ 剑指 Offer 51. 数组中的逆序对
 在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个 #逆序对。输入一个数组，求出这个数组中的逆序对的总数。
 思路1：#归并排序 
     注意归并排序是稳定的, 而 **逆序数** 等于一个 序列要变成升序排列所需要的相邻元素交换的最小次数. 
@@ -8,9 +12,7 @@ from typing import List, Optional
 思路2: 离散化树状数组
     采用离散化的方式缩减数字范围, 然后用 树状数组 计数
 [官答](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/solution/shu-zu-zhong-de-ni-xu-dui-by-leetcode-solution/)
- """
-
-class Solution:
+"""
     def reversePairs(self, nums: List[int]) -> int:
         # 注意在归并排序中需要用到的 tmp 数组, 空间复杂度 O(n), 时间 O(nlogn)
         n = len(nums)
@@ -30,7 +32,7 @@ class Solution:
             if nums[i] <= nums[j]:
                 tmp[k] = nums[i]
                 i += 1
-                # (1) 官答案的理解: 考虑右侧的 j 的移动次数, 此时需要考虑最后可能剩余的 i, 因此在下面的 while i<=mid 要加上一行
+                # (1) 官答案的理: 考虑右侧的 j 的移动次数, 此时需要考虑最后可能剩余的 i, 因此在下面的 while i<=mid 要加上一行
                 # cnt += (j - (mid + 1))
             else:
                 tmp[k] = nums[j]

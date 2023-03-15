@@ -216,31 +216,6 @@ class Solution:
         i, j = min(windows, key = lambda x: x[1]-x[0])
         return S[i: j+1]
     
-    def minWindow(self, s1: str, s2: str) -> str:
-        # 思路3: #滑动窗口 #star. 我们从每一个位置出发, 尝试正向匹配t, 若在位置right匹配成功了, 则反向再匹配一次, 得到最小的窗口.
-        i, j = 0, 0     # j: 待匹配的s2的位置
-        min_len = float('inf')
-        left, right = 0, 0
-        while i < len(s1):
-            if s1[i] == s2[j]:
-                j += 1
-            # 完成了匹配
-            if j == len(s2):
-                right = i
-                # 反向匹配, 从而找到最小的子数组.
-                j -= 1
-                while j >= 0:
-                    if s1[i] == s2[j]:
-                        j -= 1
-                    i -= 1
-                i += 1
-                if right - i + 1 < min_len:
-                    left = i
-                    min_len = right - left + 1
-                j = 0
-            i += 1
-        return "" if min_len == float('inf') else s1[left: left + min_len]
-
 
     """ 0010. 正则表达式匹配 #hard #题型 #star 实现可以有 `.*` 两个符号规则的正则表达式. 规则: `.` 匹配任意单个字符; `*` 匹配零个或多个前面的那一个元素
 思路1: #DP 记 `f(i,j)` 表示 `s[:i]` 和 `p[:j]` 是否匹配.

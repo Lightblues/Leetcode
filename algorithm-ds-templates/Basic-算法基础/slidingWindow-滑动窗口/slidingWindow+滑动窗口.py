@@ -263,7 +263,7 @@ class Solution:
     """ 0727. 最小窗口子序列 #hard #题型 #star 给定字符串s,t, 要求找到s中最小的子串, 使得t是该子串的子序列. 限制 s的长度 n 2e4 t的长度 k 100
 思路1: #DP (前缀递推)
 思路3: #滑动窗口 #star. 我们从每一个位置出发, 尝试正向匹配t, 若在位置right匹配成功了, 则反向再匹配一次, 得到最小的窗口.
-    复杂度: 虽然看上去有「浪费」, 但注意这里复杂度仍然是 `O(n * k)`! 实际测试下来反而是最优的!
+    复杂度: 虽然看上去有「浪费」, 但注意这里复杂度是 `O(n * k)`! 实际测试下来反而是最优的!
     see [here](https://leetcode.cn/problems/minimum-window-subsequence/solution/itcharge-727-zui-xiao-chuang-kou-zi-xu-l-v3az/)
  """
     def minWindow(self, s1: str, s2: str) -> str:
