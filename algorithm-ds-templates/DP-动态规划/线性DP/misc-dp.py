@@ -231,8 +231,22 @@ class Solution:
             return triangle[i][j] + min(f(i-1,j-1), f(i-1,j))
         return min(f(n-1,j) for j in range(n))
 
-
-
+    """ 0005. 最长回文子串 #medium `f[i,j]` 表示是否回文 """
+    def longestPalindrome(self, s: str) -> str:
+        n = len(s)
+        # @cache
+        @lru_cache(maxsize=50000)
+        def f(i,j):
+            if i>=j-1: return s[i]==s[j]
+            return s[i]==s[j] and f(i+1,j-1)
+        mx,ans = 0,""
+        for i in range(n):
+            for j in range(i,n):
+                if f(i,j) and j-i+1>mx:
+                    mx = j-i+1
+                    ans = s[i:j+1]
+        return ans
+    
 sol = Solution()
 result = [
     # sol.maxDotProduct(nums1 = [2,1,-2,5], nums2 = [3,0,-6]),
@@ -244,12 +258,14 @@ result = [
     # sol.encode("aaaaa"),
     # sol.encode( "abbbabbbcabbbabbbc"),
     # sol.minimumTotal(triangle = [[2],[3,4],[6,5,7],[4,1,8,3]]),
-    sol.maxProductPath(grid = [[-1,-2,-3],
-             [-2,-3,-3],
-             [-3,-3,-2]]),
-    sol.maxProductPath(grid = [[1,-2,1],
-             [1,-2,1],
-             [3,-4,1]]),
+    # sol.maxProductPath(grid = [[-1,-2,-3],
+    #          [-2,-3,-3],
+    #          [-3,-3,-2]]),
+    # sol.maxProductPath(grid = [[1,-2,1],
+    #          [1,-2,1],
+    #          [3,-4,1]]),
+    sol.longestPalindrome(s = "babad"),
+    sol.longestPalindrome("gphyvqruxjmwhonjjrgumxjhfyupajxbjgthzdvrdqmdouuukeaxhjumkmmhdglqrrohydrmbvtuwstgkobyzjjtdtjroqpyusfsbjlusekghtfbdctvgmqzeybnwzlhdnhwzptgkzmujfldoiejmvxnorvbiubfflygrkedyirienybosqzrkbpcfidvkkafftgzwrcitqizelhfsruwmtrgaocjcyxdkovtdennrkmxwpdsxpxuarhgusizmwakrmhdwcgvfljhzcskclgrvvbrkesojyhofwqiwhiupujmkcvlywjtmbncurxxmpdskupyvvweuhbsnanzfioirecfxvmgcpwrpmbhmkdtckhvbxnsbcifhqwjjczfokovpqyjmbywtpaqcfjowxnmtirdsfeujyogbzjnjcmqyzciwjqxxgrxblvqbutqittroqadqlsdzihngpfpjovbkpeveidjpfjktavvwurqrgqdomiibfgqxwybcyovysydxyyymmiuwovnevzsjisdwgkcbsookbarezbhnwyqthcvzyodbcwjptvigcphawzxouixhbpezzirbhvomqhxkfdbokblqmrhhioyqubpyqhjrnwhjxsrodtblqxkhezubprqftrqcyrzwywqrgockioqdmzuqjkpmsyohtlcnesbgzqhkalwixfcgyeqdzhnnlzawrdgskurcxfbekbspupbduxqxjeczpmdvssikbivjhinaopbabrmvscthvoqqbkgekcgyrelxkwoawpbrcbszelnxlyikbulgmlwyffurimlfxurjsbzgddxbgqpcdsuutfiivjbyqzhprdqhahpgenjkbiukurvdwapuewrbehczrtswubthodv"),
 ]
 for r in result:
     print(r)
