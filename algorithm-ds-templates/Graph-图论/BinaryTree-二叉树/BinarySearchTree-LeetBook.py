@@ -25,10 +25,10 @@ def testClass(inputs):
 *   [AVL树](https://baike.baidu.com/item/AVL%E6%A0%91/10986648?fr=aladdin)
 *   [伸展树](https://baike.baidu.com/item/%E4%BC%B8%E5%B1%95%E6%A0%91/7003945)
 *   [树堆](https://baike.baidu.com/item/Treap/4321536?fr=aladdin)
-性质: 可以在 `O(logN)` 时间复杂度内执行所有搜索、插入和删除操作
+性质: 可以在 `O(logN)` 时间复杂度内执行所有搜索、插入和删除操作
 应用: Set 和 Map 中. 相似, 这里就介绍集合.
-    `树集合`，Java 中的 `Treeset` 或者 C++ 中的 `set`，是由高度平衡的二叉搜索树实现的。
-    `散列集合`，Java 中的 `HashSet` 或者 C++ 中的 `unordered_set`，是由哈希实现的。但发生哈希碰撞的时候, 使用高度平衡的二叉搜索树可以简化在相同哈希值的元素中的搜索复杂度.
+    `树集合`，Java 中的 `Treeset` 或者 C++ 中的 `set`，是由高度平衡的二叉搜索树实现的。
+    `散列集合`，Java 中的 `HashSet` 或者 C++ 中的 `unordered_set`，是由哈希实现的。但发生哈希碰撞的时候, 使用高度平衡的二叉搜索树可以简化在相同哈希值的元素中的搜索复杂度.
     哈希集和树集之间的本质区别在于树集中的键是`有序`的。
 相关简单题: 0110. 平衡二叉树 (判断是否为); 0108. 将有序数组转换为二叉搜索树
 
@@ -131,7 +131,7 @@ class Solution:
         return root
     
     
-    """ 0220. 存在重复元素 III #medium #题型
+    """ 0220. 存在重复元素 III #hard #题型
 给定一个数组, 要求判断是否有一个下标对 (i,j), 满足间距 <=k, 两者的值相差 <=t. 限制: 数组长度 2e4
 思路0: 强行用二叉树来做, 理想的时间复杂度为 `O(n logk)`, 但最坏情况要 O(n^2)
     维护滑动窗口, 二叉树支持插入删除操作.
@@ -147,21 +147,17 @@ class Solution:
         # 思路1: 维护长度为 k+1 的 #滑动窗口
         from sortedcontainers import SortedList
         sl = SortedList()
-        # 下面两部分可以和在一起: 每次判断sl的长度来决定是否删除
-        for a in nums[:k+1]:
-            idx = sl.bisect_right(a)
-            if idx>0 and a-sl[idx-1]<=t: return True
-            if idx<len(sl) and sl[idx]-a<=t: return True
-            sl.add(a)
-        for i in range(k+1, len(nums)):
-            a = nums[i]; b = nums[i-k-1]
-            sl.remove(b)
-            idx = sl.bisect_right(a)
-            if idx>0 and a-sl[idx-1]<=t: return True
-            if idx<len(sl) and sl[idx]-a<=t: return True
-            sl.add(a)
+        for i,x in enumerate(nums):
+            # 删除过期的元素
+            if i>k:
+                sl.remove(nums[i-k-1])
+            # 找到最接近的数字
+            idx = sl.bisect_right(x)
+            if idx>0 and x-sl[idx-1]<=t: return True
+            if idx<len(sl) and sl[idx]-x<=t: return True
+            sl.add(x)
         return False
-    def containsNearbyAlmostDuplicate(self, nums: List[int], k: int, t: int) -> bool:
+    def containsNearbyAlmostDuplicate00(self, nums: List[int], k: int, t: int) -> bool:
         # 思路2: #桶排序 #star
         def getID(x): return x//(t+1)
         h = {}
@@ -175,6 +171,7 @@ class Solution:
             if iid+1 in h and h[iid+1]-num<=t: return True
             h[iid] = num
         return False
+
     
     """ 0110. 平衡二叉树. #easy 平衡二叉树定义: 「每个节点的左右子树高度差不超过1」 """
 
@@ -302,8 +299,10 @@ sol = Solution()
 result = [
 #     testClass("""["KthLargest", "add", "add", "add", "add", "add"]
 # [[3, [4, 5, 8, 2]], [3], [5], [10], [9], [4]]"""),
-    # sol.containsNearbyAlmostDuplicate(nums = [1,2,3,1], k = 3, t = 0),
+    sol.containsNearbyAlmostDuplicate(nums = [1,2,3,1], k = 3, t = 0),
     sol.containsNearbyAlmostDuplicate(nums = [1,5,9,1,5,9], k = 2, t = 3),
+    sol.containsNearbyAlmostDuplicate([4,1,6,3],4,1),
+
 ]
 for r in result:
     print(r)

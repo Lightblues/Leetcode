@@ -132,17 +132,7 @@ class Solution:
                 j = i+d
                 if s[i]==s[j]: f[i][j] = f[i+1][j-1] + 2
                 else: f[i][j] = max(f[i+1][j], f[i][j-1])
-        # return max(max(f[i]) for i in range(n))
         return f[0][n-1]
-    def longestPalindromeSubseq(self, s: str) -> int:
-        n = len(s)
-        @lru_cache(None)
-        def f(i:int, j:int):
-            if i>j: return 0
-            if i==j: return 1
-            if s[i]==s[j]: return f(i+1, j-1) + 2
-            else: return max(f(i+1, j), f(i, j-1))
-        return f(0, n-1)
 
 
 sol = Solution()

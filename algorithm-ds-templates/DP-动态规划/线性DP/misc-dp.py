@@ -234,8 +234,7 @@ class Solution:
     """ 0005. 最长回文子串 #medium `f[i,j]` 表示是否回文 """
     def longestPalindrome(self, s: str) -> str:
         n = len(s)
-        # @cache
-        @lru_cache(maxsize=50000)
+        @cache
         def f(i,j):
             if i>=j-1: return s[i]==s[j]
             return s[i]==s[j] and f(i+1,j-1)
@@ -247,6 +246,26 @@ class Solution:
                     ans = s[i:j+1]
         return ans
     
+    def longestPalindrome(self, s: str) -> str:
+        n = len(s)
+        flag = [[False]*n for _ in range(n)]
+        for i in range(n):
+            flag[i][i] = True
+        for l in range(2, n+1):
+            for i in range(n-l+1):
+                j = i+l-1
+                if l==2:
+                    flag[i][j] = s[i]==s[j]
+                else:
+                    flag[i][j] = s[i]==s[j] and flag[i+1][j-1]
+        mxL, ans = 0, ""
+        for i in range(n):
+            for j in range(i,n):
+                if flag[i][j] and j-i+1>mxL:
+                    mxL = j-i+1
+                    ans = s[i:j+1]
+        return ans 
+
 sol = Solution()
 result = [
     # sol.maxDotProduct(nums1 = [2,1,-2,5], nums2 = [3,0,-6]),
