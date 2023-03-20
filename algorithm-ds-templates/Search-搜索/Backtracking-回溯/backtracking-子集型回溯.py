@@ -27,17 +27,23 @@ class Solution:
         MAPPING = ("", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz")
         
         n = len(digits)
-        if n == 0:
-            return []
+        # 边界
+        if n == 0: return []
         ans = []
-        path = [''] * n
+        path = [''] * n     # 记录当前路径
         def dfs(i: int) -> None:
+            """ 递归/回溯函数. 重点包含 1] 终止条件; 2] 递归搜索, 也即调用 dfs(i) 自己 """
             if i == n:
+                # 回溯终止条件! 将答案记录下来
                 ans.append(''.join(path))
                 return
+            # 递归往下进行搜索
             for c in MAPPING[int(digits[i])]:
-                path[i] = c
+                path[i] = c     # 记录当前的路径
                 dfs(i + 1)
+                # 一般回溯还需要「恢复现场」, 不过这题中没有必要写
+                # path[i] = ''
+        # 开始进行搜索/递归
         dfs(0)
         return ans
 

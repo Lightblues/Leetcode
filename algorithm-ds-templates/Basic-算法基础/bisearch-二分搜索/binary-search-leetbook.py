@@ -30,6 +30,7 @@ def testClass(inputs):
             if check(m): l = m+1
             else: r = m-1; ans = m
         return ans
+        
         # 2) 很多时候, 直接调用 bisect_left/right;
         return bisect_left(nums,*,*)
 
@@ -40,7 +41,7 @@ def testClass(inputs):
     给定两个长分别为 m,n 的有序数组, 要求中位数. 限制复杂度 O(m+n)
     思路1: 对于转化的问题, 通过二分查找.
     思路2: 直接利用到中位数的性质. 也是 #二分
- 0719. 找出第 K 小的数对距离 #hard #题型 #二分
+0719. 找出第 K 小的数对距离 #hard #题型 #二分
     给定一个数组, 每个数对构成「绝对差值」. 问第k小的差值. 限制: 长度 n 1e4. 数字大小 C 1e6.  
     思路1: 排序 + #二分 查找
 0410. 分割数组的最大值 #hard #题型.
@@ -73,8 +74,8 @@ class Solution:
     def findDuplicate(self, nums: List[int]) -> int:
         def f(x): return sum(1 for i in nums if i<=x) > x
         # 注意是到 [1,2,...n] 上搜索, 要返回的值, 而 bisect 返回的是 idx, 因此有一个差值.
-        idx = bisect_left(range(1, len(nums)), 1, key=f)
-        return idx+1
+        # idx = bisect_left(range(1, len(nums)), 1, key=f)
+        # return idx+1
         l,r = 1,len(nums)-1
         ans = -1
         while l<=r:
@@ -180,13 +181,13 @@ class Solution:
         l,r = 0,nums[-1]-nums[0]
         return bisect_left(range(l,r+1), k, key=f)
         # 1) 直接调用 bisect_left; 2) 等价于下面的实现
-        ans = 0
-        while l<=r:
-            m = (l+r)>>1
-            cnt = f(m)
-            if cnt<k: l = m+1
-            else: r = m-1; ans = m
-        return ans
+        # ans = 0
+        # while l<=r:
+        #     m = (l+r)>>1
+        #     cnt = f(m)
+        #     if cnt<k: l = m+1
+        #     else: r = m-1; ans = m
+        # return ans
     def smallestDistancePair(self, nums: List[int], k: int) -> int:
         # 思路2: #双指针 优化
         nums.sort()

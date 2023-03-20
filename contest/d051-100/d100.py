@@ -11,8 +11,9 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-d100
-https://leetcode-cn.com/contest/biweekly-contest-81
+https://leetcode-cn.com/contest/biweekly-contest-100
+https://www.bilibili.com/video/BV1WM411H7UE/
+
 Easonsi @2023 """
 class Solution:
     """ 6323. 将钱分给最多的儿童 #easy WA了好多次 """
@@ -60,6 +61,7 @@ class Solution:
     """ 6325. 修车的最少时间 #hard 能力为r的工人完成x个工作需要 r*x^2 时间, 给定一组工人和要完成的数量x, 问最少时间. 限制: 1<=ranks[i]<=10^5, 1<=cars<=10^6
 思路1: #二分 给定一个时间, 可以在 O(n) 时间检查是否可行, 二分答案
     注意范围! 这里的最大应该在 1e6^2 * 100 数量级
+[灵神](https://leetcode.cn/problems/minimum-time-to-repair-cars/solution/er-fen-da-an-pythonjavacgo-by-endlessche-keqf/) 的优雅写法
      """
     def repairCars(self, ranks: List[int], cars: int) -> int:
         """ 尝试用堆来做, TLE """
@@ -71,23 +73,7 @@ class Solution:
             ans = t
             heappush(q, (r*(n+1)**2, r, n+1))
         return ans
-    def repairCars(self, ranks: List[int], cars: int) -> int:
-        cnt = Counter(ranks)
-        def check(x):
-            cc = 0
-            for r,c in cnt.items():
-                cc += floor((x/r)**0.5) * c
-            return cc>=cars
-        l,r = 0, 10**14
-        ans = inf
-        while l<=r:
-            mid = (l+r)//2
-            if check(mid):
-                ans = mid
-                r = mid-1
-            else:
-                l = mid+1
-        return ans
+
 
 
 sol = Solution()

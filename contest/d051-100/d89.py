@@ -59,9 +59,11 @@ class Solution:
             ans.append(pow(2, p, mod))
         return ans
     
-    """ 6210. 最小化数组中的最大值 #medium 对于一个数组, 每次可以将第i位的值-1, 转移到第i-1位上. 问经过操作后, 数组最大值最小可以是多少.
+    """ 2439. 最小化数组中的最大值 #medium 对于一个数组, 每次可以将第i位的值-1, 转移到第i-1位上. 问经过操作后, 数组最大值最小可以是多少.
 思路1: #贪心 即可 
     注意贪心的正确性: 对于历史的较大值, 由于我们是顺序计算的, 不会被遗漏. 
+思路2: #二分
+[灵神](https://leetcode.cn/problems/minimize-maximum-of-array/solution/liang-chong-zuo-fa-er-fen-da-an-fen-lei-qhee6/)
 """
     def minimizeArrayValue(self, nums: List[int]) -> int:
         acc = 0

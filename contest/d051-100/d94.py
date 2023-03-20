@@ -48,32 +48,16 @@ class Solution:
         scores.sort(key=lambda x: (-x[0], x[1]))
         return [i[1] for i in scores[:k]]
     
-    """ 6295. 最小化两个数组中的最大值 #medium 要求从尽可能小的自然数中, 放在两个数组中, 分别要求有 uniqueCnt1/2 个不同的数字, 其中的每个数字不能被 divisor1/2 整除
+    """ 2513. 最小化两个数组中的最大值 #medium 要求从尽可能小的自然数中, 放在两个数组中, 分别要求有 uniqueCnt1/2 个不同的数字, 其中的每个数字不能被 divisor1/2 整除
 限制: divisor1/2 1e5; 元素数量 1e9
 思路1: #二分 
     如何检查前x个自然是是否可以满足条件? 一开始纠结如何对每个数字进行分配, 后来想到, 问题等价于: 总体数量满足; 两个分组的数量都满足即可. 
-    二分的范围? 下届是 uniqueCnt1+uniqueCnt2, 上届不好确实, 直接取了 10*(uniqueCnt1+uniqueCnt2)
+    二分的范围? 下界是 uniqueCnt1+uniqueCnt2, 上界不好确定, 直接取了 10*(uniqueCnt1+uniqueCnt2)
 见 [灵神](https://leetcode.cn/problems/minimize-the-maximum-of-two-arrays/solution/er-fen-da-an-by-endlesscheng-y8fp/)
 """
     def minimizeSet(self, divisor1: int, divisor2: int, uniqueCnt1: int, uniqueCnt2: int) -> int:
-        # 两个除数的共同因子
-        divisor12 = math.lcm(divisor1, divisor2)
-        def check(x):
-            # 检查: 总体数量满足; 两个分组的数量都满足
-            if x - x//divisor12 < uniqueCnt1+uniqueCnt2: return False
-            if x - x//divisor1 < uniqueCnt1: return False
-            if x - x//divisor2 < uniqueCnt2: return False
-            return True
-        l,r = uniqueCnt1+uniqueCnt2, 10*(uniqueCnt1+uniqueCnt2)
-        ans = inf
-        while l<=r:
-            mid = (l+r)//2
-            if check(mid):
-                ans = min(ans, mid)
-                r = mid-1
-            else:
-                l = mid+1
-        return ans
+        pass
+
     
     """ 6276. 统计同位异构字符串数目 #hard 问题等价于, 对于一个字符串, 求其「同位异构字符串」的数量, 也即 b 可以由 a 通过重排列得到. 限制: n 1e5
 思路1: #排列 

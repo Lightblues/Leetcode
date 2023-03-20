@@ -46,8 +46,7 @@ class Solution:
         return ans
     
     
-    """ 6290. 最大化城市的最小供电站数目 #hard
-给定一个数组表示每个城市供电站数量, 给定r表示每个发电站可以覆盖的范围为 [i-r,i+r]; 在新增最多k个的限制下, 要求最大化 min{每个城市可接受到的发电站数量}.
+    """ 2528. 最大化城市的最小供电站数目 #hard 给定一个数组表示每个城市供电站数量, 给定r表示每个发电站可以覆盖的范围为 [i-r,i+r]; 在新增最多k个的限制下, 要求最大化 min{每个城市可接受到的发电站数量}.
 限制: n 1e5; r<n, k 1e9
 思路1: #二分 + #贪心
     观察k的数量, 可以尝试二分.
@@ -56,36 +55,7 @@ class Solution:
         细节: 注意由于在滑动过程中需要新增/修改发电站数量, 在被移除滑窗的时候也需要被删掉, 因此需要用格外的数组来进行记录!!
 """
     def maxPower(self, stations: List[int], r: int, k: int) -> int:
-        n = len(stations)
-        def f(x):
-            # 判断在k的约束下能否满足条件x, 贪心解决
-            # 注意由于在滑动过程中需要新增/修改发电站数量, 在被移除滑窗的时候也需要被删掉, 因此需要用格外的数组来进行记录!!
-            s = stations[:]
-            remain = k
-            acc = sum(s[:r])
-            for i in range(n):
-                if i+r<n:
-                    acc += s[i+r]
-                if i-r-1>=0:
-                    acc -= s[i-r-1]
-                if acc<x:
-                    needed = x-acc
-                    if needed>remain:
-                        return False
-                    remain -= needed
-                    s[min(i+r, n-1)] += needed
-                    acc += needed
-            return True
-        # 注意这里的搜索范围! right 不能用max!
-        left,right = min(stations), sum(stations)+k
-        ans = left
-        while left<=right:
-            mid = (left+right)//2
-            if f(mid):
-                ans = mid
-                left = mid+1
-            else: right = mid-1
-        return ans
+        pass
 
 """ 6288. 找到数据流中的连续整数 #medium 简单的类实现 """
 class DataStream:

@@ -73,25 +73,7 @@ class Solution:
     因此, 可以在O(n)的时间内检查; 搜索范围为p, 因此复杂度为 O(n logp)
 """
     def maxDistance(self, position: List[int], m: int) -> int:
-        def check(x) -> bool:
-            pre = -inf
-            acc = 0
-            for p in position:
-                if p-pre >= x:
-                    acc += 1; pre = p
-                    if acc>=m: return True
-            return False
-        position.sort()
-        l,r = 1,(position[-1]-position[0])//(m-1) + 1
-        ans = 1
-        while l<=r:
-            mid = (l+r)//2
-            if check(mid):
-                ans = mid
-                l = mid+1
-            else:
-                r = mid-1
-        return ans
+        pass
 
     """ 1553. 吃掉 N 个橘子的最少天数 #hard #题型
 有n个橘子, 每次可以选择: 1) 吃一个; 2) 若可以被2整除, 吃1/2个; 3) 若可以被3整除, 吃2/3个. 问最少吃完的天数. 限制: n 2e9

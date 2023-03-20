@@ -73,28 +73,7 @@ class Solution:
 关联: 「1552. 两球之间的磁力」
 """
     def maximumTastiness(self, price: List[int], k: int) -> int:
-        price.sort()
-        def check(x):
-            # 检查可否取k个糖果, 使得他们的「甜蜜度」至少为x
-            # 显然可以贪心, 取最小的, 然后遍历...
-            pre=price[0]
-            acc = 1
-            for a in price[1:]:
-                if a-pre>=x:
-                    acc += 1
-                    pre = a
-                    if acc>=k: return True
-            return False
-        # 二分搜索最大的解
-        l=0; r=ceil((price[-1]-price[0])/(k-1))
-        ans=0
-        while l<=r:
-            mid = (l+r)//2
-            if check(mid): 
-                ans = mid
-                l = mid+1
-            else: r = mid-1
-        return ans
+        pass
         
     """ 6272. 好分区的数目 #hard #题型 将一个数组分成两部分, 要求每个部分之和都大于等于 k, 问有多少中分割方式, 对答案取模. 限制: 数组长度 1e3, k 1e3
 提示: 问题等价于, 数组中, 范围在 [k, sum(nums)-k] 的数量. (注意, 若一个数组和在这一范围内, 则另一个也必然在这一范围内)
