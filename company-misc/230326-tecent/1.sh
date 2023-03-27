@@ -1,0 +1,8 @@
+3
+AB ACD B
+AB ACD B
+# 9
+3
+ABC AB CD
+ABC ABD BC
+# 4
