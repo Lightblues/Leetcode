@@ -311,6 +311,22 @@ class Solution:
 [灵神](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/solution/fen-lei-tao-lun-luan-ru-ma-yi-ge-shi-pin-2r95/)
 """
 
+    """ 0114. 二叉树展开为链表 #medium #题型 前序遍历, 将二叉树展开为链表, 使得每个节点的右子节点是下一个节点 """
+    def flatten(self, root: Optional[TreeNode]) -> None:
+        """
+        Do not return anything, modify root in-place instead.
+        """
+        if not root: return
+        dummy = p = TreeNode()
+        st = [root]
+        while st:
+            node = st.pop()
+            if node.right: st.append(node.right)
+            if node.left: st.append(node.left)
+            node.left = None
+            node.right = None
+            p.right = node
+            p = node
 
 """ 0297. 二叉树的序列化与反序列化 #hard #题型 要求将一个二叉树序列化 (serialize) 和反序列化. 也即用无损的字符串表示二叉树. 限制: 节点数 1e4, 注意可能为 None
 思路: 采用任意的 BFS/DFS/前序 等遍历方式均可, 注意在解码的时候, 按照相同的顺序进行还原.

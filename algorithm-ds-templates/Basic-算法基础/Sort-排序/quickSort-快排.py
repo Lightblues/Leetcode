@@ -4,6 +4,9 @@ import random
 import time
 
 """ 
+[「排序算法」快速排序](https://leetcode.cn/circle/article/kiHnKs/)
+[基于Python快速排序的五种写法](https://leetcode.cn/circle/article/OCwFBR/)
+
 == 快速排序
 0075. 颜色分类 #medium #题型
     有3种颜色, 要求「原地」修改使得数组变为有序的状态.
@@ -72,7 +75,6 @@ class Solution():
                 return quickselect(arr, i+1, r, k)
             else:
                 return quickselect(arr, l, i-1, k)
-        
         return quickselect(nums, 0, len(nums)-1, len(nums)-k)
     
     """ 0347. 前 K 个高频元素 #medium #题型

@@ -51,38 +51,14 @@ class Solution:
 
 
     """
-    Quick sort
+    Quick sort 快排, 原地修改
     """
     def quickSort(self, arr: list):
-
         def quickHelper(arr: list, first: int, last: int):
             if first < last:
                 splitpoint = partition(arr, first, last)
                 quickHelper(arr, first, splitpoint - 1)
                 quickHelper(arr, splitpoint + 1, last)
-
-        # def partition(self, arr: list, first: int, last: int):
-        #     pivot = arr[first]
-        #     left = first + 1
-        #     right = last
-        #
-        #     done = False
-        #     while not done:
-        #         while left <= right and arr[left] <= pivot:
-        #             left = left + 1
-        #         while arr[right] >= pivot and right >= left:
-        #             right = right - 1
-        #         if right < left:
-        #             done = True
-        #         else:
-        #             temp = arr[left]
-        #             arr[left] = arr[right]
-        #             arr[right] = temp
-        #     temp = arr[first]
-        #     arr[first] = arr[right]
-        #     arr[right] = temp
-        #
-        #     return right
 
         # 自己按照《算法导论》实现了一下
         def partition(arr: list, first: int, last: int):

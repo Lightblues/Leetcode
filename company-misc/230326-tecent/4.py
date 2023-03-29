@@ -6,24 +6,29 @@
  """
 import heapq
 import collections
+
 n,k = map(int, input().split())
 arr = list(map(int, input().split()))
 cnt = collections.Counter()
-# 两个堆
-mx = []; mn = []
+mx = []; mn = []    # 两个堆
 ans = 0
+
 for i,x in enumerate(arr):
+    # +
     cnt[x] += 1
+    heapq.heappush(mx, (-x,i))
+    heapq.heappush(mn, (x,i))
+    # -
+    # 删除过期的元素
     if i>=k:
         pp = arr[i-k]
         # 删除过期的元素
         cnt[pp] -= 1
         if cnt[pp]==0: del cnt[pp]
-    heapq.heappush(mx, (-x,i))
-    heapq.heappush(mn, (x,i))
-    # 删除过期的元素
-    while mx and mx[0][1]<=i-k: heapq.heappop(mx)
-    while mn and mn[0][1]<=i-k: heapq.heappop(mn)
-    if -mx[0][0]-mn[0][0]==k-1 and len(cnt)==k:
+        while mx and mx[0][1]<=i-k: heapq.heappop(mx)
+        while mn and mn[0][1]<=i-k: heapq.heappop(mn)
+    # o
+    if (-mx[0][0])-mn[0][0]==k-1 and len(cnt)==k:
         ans += 1
+
 print(ans)
