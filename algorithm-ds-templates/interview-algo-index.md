@@ -17,7 +17,7 @@
 - 回溯;
 
 DP
-[[interview-DP]]
+[[index-DP]]
 
 滑动窗口
 [[interview-滑窗.md]]

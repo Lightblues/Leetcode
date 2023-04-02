@@ -7,6 +7,20 @@
 LIS: Longest increasing subsequence (最长递增子序列) 
 最经典双串 LCS 系列：
 
+见 [灵神](https://space.bilibili.com/206214/channel/collectiondetail?sid=842776)
+
+- DP入门
+- 01背包
+- 最长公共子序列, 编辑距离
+- 最长递增子序列
+- 股票
+- 区间DP: 最长回文子序列, 最优三角形剖分
+
+
+
+
+# Interview 面试题
+
 ## 线性DP
 ### 单串问题, 状态为 dp[i]
 

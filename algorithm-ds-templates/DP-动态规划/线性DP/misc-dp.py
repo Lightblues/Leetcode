@@ -112,16 +112,6 @@ class Solution:
             return max(nums[i]-f(i+1,j), nums[j]-f(i,j-1))
         return f(0,n-1)>=0
 
-    """ 0516. 最长回文子序列 #medium f[i,j] 表示在区间 [i,j] 中的最长回文子序列长度 """
-    def longestPalindromeSubseq(self, s: str) -> int:
-        n = len(s)
-        @cache
-        def f(i,j):
-            if i==j: return 1
-            if i>j: return 0
-            if s[i]==s[j]: return f(i+1,j-1)+2
-            return max(f(i+1,j), f(i,j-1))
-        return f(0,n-1)
     
     """ 0312. 戳气球 #hard 倒过来看变成放气球 f[i,j] 表示填充开区间 (i,j) 可以获得的最大分数
 思路1: #DP

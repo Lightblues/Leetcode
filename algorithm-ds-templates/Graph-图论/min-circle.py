@@ -11,9 +11,10 @@ def testClass(inputs):
     return s_res
 
 """ 
-https://oi-wiki.org/dp/knapsack/
+https://oi-wiki.org/graph/min-circle/
+【朝夕的ACM笔记】 [图论-最小环](https://zhuanlan.zhihu.com/p/342293693)
 
-
+6330. 图中的最短环 #hard
 Easonsi @2023 """
 class Solution:
     """  """
