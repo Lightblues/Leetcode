@@ -73,6 +73,8 @@ class Solution:
                 maxProb[v] = pp
                 heappush(h, (-pp, v))
         return 0
+    
+
     """ 1515. 服务中心的最佳位置 #hard #题型 #最优化
 给定一组点, 寻找一个点, 使其到这些点的距离只和最小. 限制: 数量 50, 范围 [0,100], 京都要求 1e-5
 提示: 这个点就是 [几何中位数](https://en.wikipedia.org/wiki/Geometric_median) 注意没有解析解

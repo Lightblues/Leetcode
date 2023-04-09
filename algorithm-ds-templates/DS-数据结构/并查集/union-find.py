@@ -234,35 +234,12 @@ class Solution:
     """ 1631. 最小体力消耗路径 #medium #题型
 给定一个grid每个点有一定高度, 要从grid的左上走到右下(方向可以上下左右), 路径的代价定义为, 相邻两点高度差的最小值. 要求给出最小值.
 限制: m,n 100; 每个点的高度 1e6
-思路1: #UCS 应该就是 #Dijkstra
-    注意到, 由于这里路径代价的定义是每条边权的最大值, 因此, 回形的路径可能是最优的, 因此不能用DP等来做.
-    考虑采用 #UCS, 对于frontier维护一个 #优先队列, 每次拓展代价最小的节点.
-    复杂度: O(mn log(mn)) 其中对数项是优先队列的复杂度.
-思路2: 比较naive的 #二分查找
-    在限制路径代价的前提下尝试用BFS/DFS看能否走到终点. 二分检查答案
-    复杂度: O(mn log(C))
 思路3: #并查集 #star
     根据边权从小到大排序, 逐渐连边, 每次都检查是否能走到终点(联通), 显然可以用并查集来实现.
 [官答](https://leetcode.cn/problems/path-with-minimum-effort/solution/zui-xiao-ti-li-xiao-hao-lu-jing-by-leetc-3q2j/)
 """
     def minimumEffortPath(self, heights: List[List[int]]) -> int:
         """ 思路1: #UCS 应该就是 #Dijkstra """
-        m,n = len(heights), len(heights[0])
-        pq = [(0, 0,0)] # (effort, x, y)
-        seen = set() #; seen.add((0,0))
-        mx = 0
-        directions = [(1,0),(-1,0),(0,1),(0,-1)]
-        while True:
-            d, x,y = heapq.heappop(pq)
-            mx = max(mx, d)
-            if (x,y) == (m-1, n-1): break
-            seen.add((x,y))
-            for dx,dy in directions:
-                nx,ny = x+dx,y+dy
-                if nx<0 or ny<0 or nx>=m or ny>=n or (nx,ny) in seen: continue
-                d = abs(heights[nx][ny]-heights[x][y])
-                heappush(pq, (d, nx,ny))
-        return mx
     
     """ 0778. 水位上升的泳池中游泳 #hard
 要从正方形的左上移动/游到右下, 每个位置都有一个平台的高度, 时刻t的水位为t, 只有当水位高于两个点的平台高度的时候才能通过. 假设移动速度无限, 问能到达的最小时间.

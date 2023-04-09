@@ -19,7 +19,7 @@ from easonsi.util.leetcode import *
     思路1: 可以从火源出发, 预计算每个点着火的时间. 然后 **遍历从起点BFS到终点的每一条路径**, 计算这条路径上的最大等待时间.
     思路2: 相较于「遍历每条路径」, 可以利用二分查找简化逻辑.
 
-== Dijkstra
+== [Dijkstra]
 1514. 概率最大的路径 #medium #题型 #Dijkstra 算法
     等价于, 经典的「单源最短路径路径」, 在带权图上求 (s,e) 之间的最短距离.
 
@@ -269,21 +269,7 @@ class Solution:
     [官答](https://leetcode.cn/problems/path-with-maximum-probability/solution/gai-lu-zui-da-de-lu-jing-by-leetcode-solution/)
 """
     def maxProbability(self, n: int, edges: List[List[int]], succProb: List[float], start: int, end: int) -> float:
-        # 一种方式是用 `visited` 字典标记已确定节点
-        g = [[] for _ in range(n)]
-        for (u,v),p in zip(edges, succProb):
-            g[u].append((v,p)); g[v].append((u,p))
-        h = [(-1, start)]
-        visited = set()     # 已确定的点
-        while h:
-            prob,u = heappop(h)
-            if u==end: return -prob
-            if u in visited: continue
-            visited.add(u)  # 注意, visited 中的点的距离已确定为最小值.
-            for v,p in g[u]:
-                if v not in visited:
-                    heappush(h, (prob*p, v))
-        return 0
+        pass
     
 sol = Solution()
 result = [
