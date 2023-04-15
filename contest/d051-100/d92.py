@@ -52,7 +52,7 @@ class Solution:
                 ans = i
         return ans
     
-    """ 6251. 统计回文子序列数目 #hard 统计由数字组成的字符串中, 长度为5的 #回文 子序列的数量. 限制: n 1e4
+    """ 2484. 统计回文子序列数目 #hard 统计由数字组成的字符串中, 长度为5的 #回文 子序列的数量. 限制: n 1e4
 思路0: 枚举所有的中间数字, 统计左右符合对称的长尾2的数字川数量. 复杂度 O(d^2 n), 其中d为字符数量
     细节: 注意 left, right 两个计数器的更新. 重点是如何撤销?
     [灵神](https://leetcode.cn/problems/count-palindromic-subsequences/solution/qian-hou-zhui-fen-jie-o100-chang-shu-kon-51cv/) 思路一致, 但代码简洁许多!

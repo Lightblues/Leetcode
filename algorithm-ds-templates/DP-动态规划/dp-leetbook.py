@@ -85,6 +85,7 @@ class Solution:
     """ 0053. 最大子数组和 #题型 最大子序和
 DP: f[i] = max(f[i-1], 0) + nums[i], 表示以i结尾的子数组最大.
 细节: 注意子数组需要是非空的
+另见 [最大子数组和]
 """
     def maxSubArray(self, nums: List[int]) -> int:
         ans = nums[0]
