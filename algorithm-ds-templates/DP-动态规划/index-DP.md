@@ -1,7 +1,7 @@
 
 [DP问题分类汇总](https://chengzhaoxi.xyz/42296.html)
 见 [leetcode动态规划题目总结](https://leetcode.cn/circle/article/2Xxlw3/)
-
+LeetBook [动态规划图文学：线性 & 区间动态](https://leetcode.cn/leetbook/detail/dynamic-programming-1-plus/)
 
 
 LIS: Longest increasing subsequence (最长递增子序列) 

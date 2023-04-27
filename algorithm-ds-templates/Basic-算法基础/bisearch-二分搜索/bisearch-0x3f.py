@@ -151,9 +151,11 @@ class Solution:
     利用「红蓝染色」, 写一个 is_blue(i) 返回True时: target在位置i或者左侧. 两种情况
         1] nums[i]>nums[-1] 时, i左侧是上升节点, 需要 target>nums[-1] 且 target<=nums[i]
         2] nums[i]<nums[-1] 时, i右侧是上升阶段, 需要 target>nums[-1] 或 target<=nums[i]
+    [官答](https://leetcode.cn/problems/search-in-rotated-sorted-array/solution/sou-suo-xuan-zhuan-pai-xu-shu-zu-by-leetcode-solut/)
 见 [灵神](https://leetcode.cn/problems/search-in-rotated-sorted-array/solution/by-endlesscheng-auuh/)
 """
     def search(self, nums: List[int], target: int) -> int:
+        """ 思路1: 先找到旋转点, 然后再二分查找 """
         # 先找到旋转点
         x = nums[-1]
         l,r = 0,len(nums)-2     # 闭区间 [0, n-2]
@@ -176,8 +178,10 @@ class Solution:
         def is_blue(i):
             # 返回True时: target在位置i或者左侧
             if nums[i]>nums[-1]: 
+                # [0:i] 上升
                 return target>nums[-1] and target<=nums[i]
             else:
+                # [i:n-1] 上升
                 return target>nums[-1] or target<=nums[i]
         l,r = 0,len(nums)-1 # [0,n-1]
         while l<=r:
@@ -187,6 +191,37 @@ class Solution:
         if l<len(nums) and nums[l]==target: return l
         else: return -1
 
+    """ 0081. 搜索旋转排序数组 II #medium 但实际上 #hard 数组在某一位置发生了旋转, 元素可能重复, 找到目标
+关联「0033. 搜索旋转排序数组」旋转数组中元素各不相同
+提示: 相较于0033, 核心是需要避免 nums[l]==nums[mid]==nums[r] 的情况
+思路1: 当出现这种情况的时候, 无法判断哪边是有序的, 因此只能 l++, r-- 缩小范围
+    见 [官答](https://leetcode.cn/problems/search-in-rotated-sorted-array-ii/solution/sou-suo-xuan-zhuan-pai-xu-shu-zu-ii-by-l-0nmp/)
+思路2: 提前将这种情况避免掉: 可以通过pop掉nums最后==nums[0]的那些数字
+复杂度: 最坏情况 O(n)
+    """
+    def search(self, nums: List[int], target: int) -> bool:
+        if not nums: return False
+        # 避免 nums[l]==nums[mid]==nums[r] 的情况
+        while len(nums)>1 and nums[0] == nums[-1]:
+            nums.pop()
+        base = nums[0]
+
+        left, right = 0, len(nums)-1
+        while left <= right:
+            mid = (left + right)//2
+            if nums[mid] == target:
+                return True
+            if nums[mid] >= base:
+                if nums[left] <= target < nums[mid]:
+                    right = mid - 1
+                else:
+                    left = mid + 1
+            else:
+                if nums[mid] < target <= nums[right]:
+                    left = mid + 1
+                else:
+                    right = mid - 1
+        return False
 
 
 

@@ -15,6 +15,9 @@ wiki [Backtracking](https://en.wikipedia.org/wiki/Backtracking)
 0131. 分割回文串 #medium 将一个字符串分割成一些回文串, 返回所有的可能.
 0784. 字母大小写全排列 #medium 对于一个字符串中的所有英文字母, 组合其大小写可以有多种结果, 返回所有可能的结果. 限制: 字符串长度 n 12
 
+0051. N 皇后 #hard #题型
+0052. N皇后 II 同 0051
+0090. 子集 II #medium #题型
 """
 
 class Solution:
@@ -231,6 +234,7 @@ class Solution:
                 cols.remove(i); diag1.remove(idx+i); diag2.remove(idx-i)
         dfs(0)
         return ans
+    
     """ 0052. N皇后 II 同 0051 """
     def totalNQueens(self, n: int) -> int:
         cols, diag1, diag2 = set(), set(), set()
@@ -249,6 +253,53 @@ class Solution:
                 cols.remove(i); diag1.remove(idx+i); diag2.remove(idx-i)
         dfs(0)
         return ans
+    
+    """ 0090. 子集 II #medium #题型 关联「0078. 子集 #medium」
+给定一个包含重复元素的数组, 返回所有不重复的子集. 
+提示: 如何过滤重复的元素? 对于nums排序, 然后检查是否枚举过上一个相同数字 (如果上一个相同数字没有选, 这一个也不选, 也即只考虑考前的连续相同数字)
+思路1: 二进制枚举
+思路2: #回溯
+"""
+    def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+        # 1 枚举
+        nums = sorted(nums)
+        _len = len(nums)
+        res = []
+        for mask in range(2**_len):
+            now = []
+            flag = True
+            for _index in range(_len):
+                index = 2**_index
+                if mask & index:
+                    if _index>0 and nums[_index-1]==nums[_index] and not mask&(2**(_index-1)):      # 过滤
+                        flag = False
+                        break
+                    now.append(nums[_index])
+            if flag:
+                res.append(now)
+        return(res)
+    def subsetsWithDup(self, nums):
+        """2 回溯 这里使用一个数组 now 维护目前选入的元素，注意到 pop！
+        """
+        nums.sort()
+        _len = len(nums)
+        res = []
+        now = []
+        def backtrack(index, flag):        # flag 标志之前的元素是否选了
+            if index==_len:
+                res.append(now.copy())      # copy()
+                return
+            # 以下分 1. 没选index位置；2. 选了index位置 进行backtrack
+            backtrack(index+1, flag=False)
+            now.append(nums[index])
+            if index>0 and nums[index-1]==nums[index] and flag==False:      # 过滤
+                now.pop()       # 注意这里也要pop
+                return
+            backtrack(index+1, flag=True)
+            now.pop()
+        backtrack(0, False)
+        return res
+
 sol = Solution()
 reslts = [
     # sol.letterCasePermutation("abc"),
