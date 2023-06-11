@@ -1,0 +1,40 @@
+
+开发: 选择题
+
+- 算法
+    - 图算法: Prime, Kruskal
+    - 出入栈顺序
+- 数据库
+    - 隔离级别
+    - SQL语法
+    - mySQL 集群
+    - explain 执行计划语法
+- git 语法: `git branch -m/d/D`
+- 计算机组成原理
+    - 基本的
+        - 补码原理, 乘法溢出
+    - 资源
+        - 锁机制
+        - 信号量
+    - 磁盘
+        - SSTF寻道
+    - 内存
+        - SRAM, RAM, ROM
+        - 内存管理和内存碎片
+    - 寄存器
+    - 微指令
+- Java
+    - 对象
+    - 装饰器
+    - 抽象类, 接口
+    - final 关键字
+    - HashMap, TreeMap, HashTable, ConcurrnetHashMap
+    - JVM 的内存管理
+    - 平衡树, B树, B+, AVL, 红黑树
+- 计算机网络
+    - IP的构成
+    - IP到MAC的寻址? 
+    - TCP拥塞解决
+    - AWGN信道
+    - DNS原理
+    - TCP, UDP, ARP

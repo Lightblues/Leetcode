@@ -1,4 +1,4 @@
-.DS_Store
+*.DS_Store
 # /learn-js/
 /tmp
 node_modules/
