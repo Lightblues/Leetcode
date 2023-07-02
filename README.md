@@ -25,9 +25,10 @@ LeetBook [算法面试题汇总](https://leetcode.cn/leetbook/detail/top-intervi
 
 ## 文章
 
-- 灵神
+- [灵神](https://leetcode.cn/u/endlesscheng/)
     - [2022 年周赛题目总结（上篇）](https://leetcode.cn/circle/discuss/G0n5iY/) 
     - [2022 年周赛题目总结（下篇）](https://leetcode.cn/circle/discuss/WR1MJP/)
+    - [分享｜从集合论到位运算，常见位运算技巧分类总结！](https://leetcode.cn/circle/discuss/CaOJ45/)
 - XYShaoKang [刷题交流 | 2700 分总结 & 算法入门](https://leetcode.cn/circle/discuss/gmXruw/)
 
 ## 值得阅读的代码/项目
