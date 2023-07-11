@@ -579,7 +579,6 @@ class Solution:
     另见 [0187] 中直接用 #最小堆 来做.
 [official](https://leetcode.cn/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/solution/jue-dui-chai-bu-chao-guo-xian-zhi-de-zui-5bki/)
 """
-
     def longestSubarray(self, nums: List[int], limit: int) -> int:
         n = len(nums)
         # 单调队列
