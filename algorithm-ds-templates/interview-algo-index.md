@@ -1,5 +1,5 @@
-
-[sync](https://v0r8x11vrv.feishu.cn/docx/YSvwdxUhwoND1Oxryw7cLCdvnmc)
+ref: 面试题 [[interview-README.md]]
+sync: [feishu](https://v0r8x11vrv.feishu.cn/docx/YSvwdxUhwoND1Oxryw7cLCdvnmc)
 
 # 面试算法精要
 
