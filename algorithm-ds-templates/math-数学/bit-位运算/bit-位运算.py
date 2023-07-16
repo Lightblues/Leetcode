@@ -87,10 +87,36 @@ class Solution:
                     ans = max(ans, l1*l2)
         return ans
 
-    
+    """ 0371. 两整数之和 #medium #题型
+思路1: #位运算
+    根据加法的过程, 可知 a+b = a^b + (a&b)<<1
+    如何规避这里的加法? 我们等价 #变换, 使得 a&b==0
+[官答](https://leetcode.cn/problems/sum-of-two-integers/solution/liang-zheng-shu-zhi-he-by-leetcode-solut-c1s3/)
+    """
+    def getSum(self, a: int, b: int) -> int:
+        """ 在其他语言里是可以的! 但由于Python无限长度负数, 有问题! """
+        while a&b:
+            tmp = a
+            a = a^b
+            b = (tmp&b)<<1
+        return a^b
+    def getSum(self, a: int, b: int) -> int:
+        MASK = 1<<32
+        MAX_INT = (1<<31) - 1
+        MIN_INT = 1<<31
+        a,b = a%MASK, b%MASK
+        while b!=0:
+            carry = ((a&b)<<1)
+            a = (a^b) % MASK
+            b = carry % MASK
+        # 消除负数最高位, 再将正数部分取反, 再整体取反
+        return a if not(a&MIN_INT) else ~((a ^ MIN_INT) ^ MAX_INT)
+
 sol = Solution()
 result = [
-    sol.maxProduct(words = ["abcw","baz","foo","bar","xtfn","abcdef"]),
+    # sol.maxProduct(words = ["abcw","baz","foo","bar","xtfn","abcdef"]),
+    sol.getSum(a = 1, b = 2),
+    sol.getSum(-2,1), 
 ]
 for r in result:
     print(r)
