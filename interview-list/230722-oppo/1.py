@@ -3,13 +3,13 @@
 """
 x,y = map(int, input().split())
 n = int(input())
-arr = list(map(int, input().split()))
-
-arr = sorted(set(arr), reverse=True)
+a = list(map(int, input().split()))
+a = sorted(set(a), reverse=True)
 ans = 0
-for i,a in enumerate(arr):
-    if x>=y: break
-    x *= a
+idx = 0
+while idx<(len(a)) and x<y:
+    x *= a[idx]
+    idx += 1
     ans += 1
 if x<y: print(-1)
 else: print(ans)
