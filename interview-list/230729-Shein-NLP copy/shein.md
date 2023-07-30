@@ -1,0 +1,73 @@
+
+单选题
+
+- BART
+    - 可用于文本分类
+    - 预训练任务是恢复破坏的输入文本
+    - seq2seq模型
+    - 预训练时, 编码器的输入和解码器的输出需要对齐
+- 序列长度T, 维度D, 关于复杂度
+    - Transformer self-attention 复杂度: O(T^2 * D)
+    - Transformer FFN 复杂度: O(T * D^2)
+    - 卷积核 size=k, textCNN 复杂度: O(T * k * D^2)
+    - RNN 复杂度: O(T * D^2) [选项写成了SA]
+- work2vec, fasttext 
+    - 都可以进行无监督
+    - fasttext可以缓解OOV
+    - fasttext考虑词序特征 [选项说不考虑]
+    - 都可以学习词嵌入
+- ERNIE
+    - 没有改变输入的粒度
+    - ERINE采用了 Transformer的Encoder部分作为模型主干
+    - ERINE不再基于掩码语言模型
+    - 引入先验知识
+- ROBERTa相较于BERT的优化
+    - 采用了更大的batch size
+    - 使用动态 mask [选项说静态]
+    - 取消了NSP任务
+    - 在构造词表时用byte-level BPE代替原来的wordpiece
+- 关于CBOW (Continuous Bag-of-Words Model) 和 Skip-gram (Continuous Skip-gram Mode) 说法
+    - CWOB 模式用多个词语作为输入，，来预测它周围的上下文 [选项说成了Skip-gram]
+    - skip window=2时，最多只能构造4个正样本
+    - CBOW和Skip-gram负采样时语料库中高频词被选为负样本的概率大，，低频词被选中的概率小
+    - CBOW求上下文向量时，不会考虑和当前词的距离因素
+
+多选
+
+- 使用one-hot向量表示词有哪些问题？[AD]
+    - 无法表示不同词之间的相似度
+    - 构建简单，不需要训练语料
+    - 无法表示词表
+    - 量会导致维度过大
+- 关于GPT的说法中正确的是？[AD]
+    - GPT基于transformer的解码器
+    - 使用GPT进行 密本分类时，使用最上层最后一个时刻的输出作为分类依据
+    - GFT的预训练任务是掩码语言模型
+    - 相较于BERT，GPT更加适合用于自然语言生成类的任务
+- 在自然语言处理领域，下列方案可以用来缓解数据量少的问题的是？[?]
+    - 对数据集进行上采样以增加数据
+    - 基于预训练模型微调
+    - 采用多任务学习的方式
+    - 使用传统机器学习方式而非深度学习方式
+- 下列哪些模型是多语言预训练语言模型？[AC]
+    - XLN
+    - XLNet
+    - mBART
+    - MASS
+- 如何解决模型训练过拟合问题，下列说法错误的是 [AD]
+    - 增加训练数据量
+    - 使用L2正则或Dropout
+    - earling stopping
+    - 增加模型复杂度
+- 关于BERT模型说法错误的有 [ABD]
+    - BERT是基于Encoder-Decoder架构
+    - BERT中的Positional Embedding 和 Transformer中的Positional Embedding实现方式相同
+    - BERT 选择MASK的词基于独立性假设
+    - BERT本质是一种单向语言模型
+- 非中文的自然语言处理中常见的文本归一化方法有 [AB]
+    - 词干还原(stemming)算法
+    - 词形还原(lemmatization)算法
+    - 探测法(SOUNDEX)
+    - Levenshtein Distance算法
+- 在包含一百万个文档的语料库中，随机选择一个文档。该文件总共包含 M个词，词条出现 N次。如果词条出现在语料库文档中的数量接近五分之一，则TF（词频）和IDF（逆文档频率）的乘积的正确值是多少？
+    - N * Log (5) / M

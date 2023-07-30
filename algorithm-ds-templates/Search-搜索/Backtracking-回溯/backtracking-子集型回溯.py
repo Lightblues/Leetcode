@@ -213,7 +213,6 @@ class Solution:
         row = ["."] * n
         solve(0, 0, 0, 0)
         return solutions
-
     def solveNQueens(self, n: int) -> List[List[str]]:
         # 1.1 自己的实现
         cols, diag1, diag2 = set(), set(), set()
