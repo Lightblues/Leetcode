@@ -229,7 +229,9 @@ sol = Solution()
 result = [
     # sol.findPeakElement([1,2,3]),
     # sol.findMin(nums = [3,4,5,1,2]),
-    sol.search(nums = [4,5,6,7,0,1,2], target = 0),
+    
+    # sol.search(nums = [4,5,6,7,0,1,2], target = 0),
+    sol.search([4,5,1,2,3], 3),
 ]
 for r in result:
     print(r)
