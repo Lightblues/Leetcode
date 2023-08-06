@@ -1,45 +1,29 @@
-""" 统计文本中出现的数字, 求和. """
-
-#%% 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
+from easonsi import utils
+from easonsi.util.leetcode import *
 
 
-#%%
-s = r"""
-$$
-\begin{aligned}
-&25.9 \mathrm{MB} \\
-&\hline 27.5 \mathrm{MB} \\
-&\hline 26.1 \mathrm{MB} \\
-&\hline 25.8 \mathrm{MB} \\
-&\hline 18.9 \mathrm{MB} \\
-&\hline 26.1 \mathrm{MB} \\
-&\hline 26.3 \mathrm{MB} \\
-&\hline 26.3 \mathrm{MB} \\
-&\hline 28.0 \mathrm{MB} \\
-&\hline 60.8 \mathrm{MB} \\
-&\hline 18.7 \mathrm{MB} \\
-&\hline 15.5 \mathrm{MB} \\
-&\hline 9.5 \mathrm{MB} \\
-&\hline 10.2 \mathrm{MB} \\
-&\hline 57.5 \mathrm{MB}
-\end{aligned}
-$$
-"""
+def threeSum(nums, target):
+    nums.sort()
+    # ans = []
+    ans = 0
+    n = len(nums)
+    for i in range(n):
+        if i>0 and nums[i]==nums[i-1]: continue # 避免重复
+        a = nums[i]
+        l,r = i+1,n-1
+        while l<r:
+            s = nums[l]+nums[r]
+            if s == target-a:
+                # ans.append([a,nums[l],nums[r]])
+                ans += 1
+                l+=1
+                # 避免重复
+                while l<r and nums[l]==nums[l-1]: l+=1
+            elif s < target-a: l+=1
+            else: r-=1
+    return ans
 
-#%%
-import re
-
-res = re.findall(r'[\d+\.]+', s)
-print(sum([float(r) for r in res]))
-
-
-# %%
-loveLin = "100 years"
-
-
-# %%
-print(loveLin)
-# %%
+print(
+    threeSum([1,2,3,4,5], 6),
+    threeSum([1,4,3,2,6,5], 9), # 3
+)

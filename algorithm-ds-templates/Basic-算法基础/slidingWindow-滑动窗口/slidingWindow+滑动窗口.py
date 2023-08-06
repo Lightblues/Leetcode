@@ -627,6 +627,7 @@ class Solution:
     最一般的思路是什么? 三种循环.
     先固定一个值, 问题等价「找到和为 -a 的两数」, 显然可以 #双指针.
     如何避免重复? 判断是否和上个值相同.
+    复杂度: O(n^2), 外层for循环, 内部的双指针 O(n)
 """
     def threeSum(self, nums: List[int]) -> List[List[int]]:
         nums.sort()
