@@ -17,7 +17,7 @@ https://leetcode.cn/circle/discuss/1AqXeK/
 两道hard的一周. T3的构造比较难想明白 (有时间去看看灵神视频), T4的转换惊艳到了!
 Easonsi @2023 """
 class Solution:
-    """ 6921. 按分隔符拆分字符串 """
+    """ 2788. 按分隔符拆分字符串 """
     def splitWordsBySeparator(self, words: List[str], separator: str) -> List[str]:
         ans = []
         for word in words:
@@ -25,7 +25,7 @@ class Solution:
                 if w: ans.append(w)
         return ans
     
-    """ 6915. 合并后数组中的最大元素 """
+    """ 2789. 合并后数组中的最大元素 """
     def maxArrayValue(self, nums: List[int]) -> int:
         pre = 0
         ans = 0
@@ -35,7 +35,7 @@ class Solution:
             ans = max(ans, pre)
         return ans
     
-    """ 6955. 长度递增组的最大数目 #hard 给定n个数字每个可以使用的limit数量. 要求构造一个数组序列, 满足: 1] 每一个数组的长度递增; 2] 每个数组中的元素个各不相同. 问最长序列
+    """ 2790. 长度递增组的最大数目 #hard 给定n个数字每个可以使用的limit数量. 要求构造一个数组序列, 满足: 1] 每一个数组的长度递增; 2] 每个数组中的元素个各不相同. 问最长序列
 分析: 
     显然, 一个最基本的情况是 [1,2,3] 可以构成长度为3的结果. (假设三个数字分别为0/1/2) 结果为 [[2], [1,2], [0,1,2]]
     需要注意的 [2,2,2] 的情况, 它可以构成 [[0,1,2], [0,1],[2]] 这样的组合!
@@ -52,10 +52,6 @@ class Solution:
 ```
     """
     def maxIncreasingGroups(self, usageLimits: List[int]) -> int:
-        usageLimits.sort(reverse=True)
-        n = len(usageLimits)
-        # def check(x):
-    def maxIncreasingGroups(self, usageLimits: List[int]) -> int:
         usageLimits.sort()
         # n = len(usageLimits)
         remain = 0; ans = 0
@@ -67,7 +63,7 @@ class Solution:
         return ans
     
     
-    """ 6942. 树中可以形成回文的路径数 #hard 给定一个树, 找到数上所有的路径, 重拍后形成回文!
+    """ 2791. 树中可以形成回文的路径数 #hard 给定一个树, 找到数上所有的路径, 重拍后形成回文!
 限制: n 1e5
 思路1.0: #树形DP 但是 #TLE
     对于每一个节点, 匹配孩子节点之间是否可构成回文

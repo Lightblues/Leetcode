@@ -12,6 +12,16 @@ def fpowx(x, n):
         x *= x
         n >>= 1
     return res
+def qpow(a, n):
+    # 递归写法
+    if n == 0:
+        return 1
+    elif n % 2 == 1:
+        return qpow(a, n - 1) * a
+    else:
+        temp = qpow(a, n // 2)
+        return temp * temp
+    
 
 def fmulti(m, n, mod=10 ** 9 + 7):
     """ 大数字乘法, 防止溢出 (计算过程取模). 例如 x*14 = x*8 + x*4 + x*2 """
