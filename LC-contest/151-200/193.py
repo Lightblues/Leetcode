@@ -93,10 +93,39 @@ class Solution:
     于是, 问题转化为 DP 形式. 我们在初始化的时候构建这样转移表. 复杂度 O(n logd)
     如何查询? 对于查询的级别k, 根据其二进制形式搜索. 每次查询的复杂度 O(d).
     see [here](https://leetcode.cn/problems/kth-ancestor-of-a-tree-node/solution/dfsceng-ci-bian-li-er-fen-cha-zhao-bei-zeng-shi-ya/)
+另见 [灵神](https://leetcode.cn/problems/kth-ancestor-of-a-tree-node/solutions/2305895/mo-ban-jiang-jie-shu-shang-bei-zeng-suan-v3rw/)
+    用到了位运算, 优雅! 
 思路2: 利用 #DFS 给每个节点打编号, 并记录每个节点的深度信息. 查询的时候根据所在层找到对应的祖先节点.
     提示: **由DFS的访问顺序可知, 节点的祖先的序号一定小于该节点的序号**. 我们在对应的层上找到「小于该节点序号的最大序号」即可.
     [here](https://leetcode.cn/problems/kth-ancestor-of-a-tree-node/solution/er-xu-cheng-ming-jiu-xu-zui-python3shen-orrck/)
+
 """
+class TreeAncestor:
+    def __init__(self, n: int, parent: List[int]):
+        m = n.bit_length() - 1
+        pa = [[p] + [-1] * m for p in parent]
+        for i in range(m):
+            for x in range(n):
+                if (p := pa[x][i]) != -1:
+                    pa[x][i + 1] = pa[p][i]
+        self.pa = pa
+
+    def getKthAncestor(self, node: int, k: int) -> int:
+        for i in range(k.bit_length()):
+            if (k >> i) & 1:  # k 的二进制从低到高第 i 位是 1
+                node = self.pa[node][i]
+                if node < 0: break
+        return node
+    # 另一种写法，不断去掉 k 的最低位的 1
+    def getKthAncestor2(self, node: int, k: int) -> int:
+        while k and node != -1:  # 也可以写成 ~node
+            lb = k & -k
+            node = self.pa[node][lb.bit_length() - 1]
+            k ^= lb
+        return node
+
+
+
 # 思路1: 倍增思想
 class TreeAncestor:
     def __init__(self, n: int, parent: List[int]):

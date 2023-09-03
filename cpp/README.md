@@ -2,6 +2,9 @@ tags: #3 #list
 
 另见 [[cpp-roadmap.md]]
 
+230902: 
+推荐 HackerRank: https://www.hackerrank.com/domains/cpp
+
 
 M1 配置!!!
 

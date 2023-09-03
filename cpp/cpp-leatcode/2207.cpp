@@ -35,6 +35,9 @@ int main() {
     // sol.testInterpret();
     // sol.testMaxOperations();
     // sol.testConcatenatedBinary();
+    sol.printInt(1);
+    sol.printString("hello");
+    // sol.printVector(vector<int>{1,2,3});
 
 
     return 0;

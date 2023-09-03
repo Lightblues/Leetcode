@@ -2,6 +2,8 @@
 {
     "version": "0.2.0",
     "configurations": [
+        
+
         // Python
         // 配置项说明见: https://code.visualstudio.com/docs/python/debugging#_set-configuration-options
         {
@@ -41,19 +43,20 @@
         },
        
         // C++
-        // {
-        //     "name": "C/C++: clang++ 生成和调试活动文件",
-        //     "type": "cppdbg",
-        //     "request": "launch",
-        //     "program": "${fileDirname}/${fileBasenameNoExtension}",
-        //     "args": [],
-        //     "stopAtEntry": false,
-        //     "cwd": "${fileDirname}",
-        //     "environment": [],
-        //     "externalConsole": false,
-        //     "MIMode": "lldb",
-        //     "preLaunchTask": "C/C++: clang++ 生成活动文件"
-        // },
+        {
+            "name": "C/C++: clang++ 生成和调试活动文件",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}.out",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "C/C++: clang++ 生成活动文件"
+        },
+        
         
         // {
         //     "name": "Node daily2202",
@@ -88,15 +91,15 @@
         //     "request": "launch",
         //     "mainClass": "${file}"
         // },
-        // {
-        //     "name": "Go",
-        //     "type": "go",
-        //     "request": "launch",
-        //     "mode": "debug",
-        //     // "program": "${workspaceFolder}"
-        //     "program": "${file}",
-        //     "cwd": "${fileDirname}"
-        // },
+        {
+            "name": "Go",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            // "program": "${workspaceFolder}"
+            "program": "${file}",
+            "cwd": "${fileDirname}"
+        },
         // {
         //     "name": "Python",
         //     "type": "python",

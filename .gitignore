@@ -13,6 +13,9 @@ package-lock.json
 # specific
 *.html
 
+# cpp 编译生成的可执行文件
+*.out
+
 *.so
 *.ttf
 
