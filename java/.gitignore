@@ -1,0 +1,50 @@
+# 忽略编译生成的文件和目录
+target/
+bin/
+out/
+.idea/
+
+# 忽略Eclipse IDE配置文件
+/.settings/
+/.project
+/.classpath
+
+# 忽略IntelliJ IDEA配置文件
+/.idea/
+
+# 忽略编译产生的class文件
+*.class
+
+# 忽略日志文件
+*.log
+
+# 忽略操作系统和IDE生成的文件
+.DS_Store
+Thumbs.db
+
+# 忽略Maven构建产生的IDE文件
+/.project
+/.classpath
+/.settings/
+/*.iml
+
+# 忽略Eclipse项目文件
+# .project
+# .classpath
+.settings/
+
+# 忽略Gradle构建产生的文件
+/.gradle/
+.gradle/
+build/
+.gradle.kts
+
+# 忽略自动生成的说明文件
+*.iml
+*.ipr
+*.iws
+*.idea
+*.jim
+
+# 忽略本地Maven仓库目录
+.m2/

@@ -31,7 +31,7 @@ M1 配置!!!
 
 环境配置
 
-- [doc](https://code.visualstudio.com/docs/languages/cpp)
+- vscode [doc](https://code.visualstudio.com/docs/languages/cpp)
 - 简洁: [macOS下配置C/C++开发环境](https://zhuanlan.zhihu.com/p/158566155)
 - vscode 配置说明: 见 [VSCode配置C/C++环境](https://zhuanlan.zhihu.com/p/87864677) 配置部分
 
