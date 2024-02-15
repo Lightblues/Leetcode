@@ -13,8 +13,15 @@ def testClass(inputs):
 """ KMP算法
 https://oi-wiki.org/string/kmp/
 wiki [KMP算法](https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm)
+参见 [ling](https://www.zhihu.com/question/21923021/answer/37475572)
 
- """
+
+题目列表:
+    1392. 最长快乐前缀 #hard
+    0028. 找出字符串中第一个匹配项的下标 #medium
+    3036. 匹配模式数组的子数组数目 II #hard 
+
+"""
 class Solution:
     """ 1392. 最长快乐前缀 #hard #KMP 给定一个字符串s, 要求最长的, 既是s的前缀也是后缀的子串.
 思路1: #KMP
