@@ -18,10 +18,10 @@
 
 ## 互联网笔试题
 
-LeetBook [算法面试题汇总](https://leetcode.cn/leetbook/detail/top-interview-questions/)
-[🔥 LeetCode 热题 HOT 100](https://leetcode.cn/problem-list/2cktkvj/)
-
-
+- LeetBook [算法面试题汇总](https://leetcode.cn/leetbook/detail/top-interview-questions/)
+- [🔥 LeetCode 热题 HOT 100](https://leetcode.cn/problem-list/2cktkvj/)
+- [codefun2000](https://codefun2000.com/) ⭐️ 最简单的方法是直接做真题! 可以了解不同厂的风格
+    - 对应的 [blog](https://blog.codefun2000.com/)
 
 ## 文章
 
