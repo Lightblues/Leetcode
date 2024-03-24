@@ -6,7 +6,6 @@
 TODO
 
 - 自定义变量: <https://www.jianshu.com/p/357a02fb2d64>
-- 窗口函数: [doc](https://dev.mysql.com/doc/refman/8.0/en/window-functions.html)
 
 常见语法
 
@@ -36,3 +35,18 @@ from -> on -> join -> where -> group by -> 聚集函数 -> having -> select ->di
 ## 基本用法
 
 见 [[mysql-note#MySQL 基础命令]]
+
+## 窗口函数
+
+[doc](https://dev.mysql.com/doc/refman/8.0/en/window-functions.html); 见 [通俗易懂的学会：SQL窗口函数](https://zhuanlan.zhihu.com/p/92654574)
+
+```sql
+-- 窗口函数语法
+<window function> OVER (
+    [PARTITION BY <partition column(s)>]
+    [ORDER BY <order column(s)>]
+    [<window frame clause>]
+)
+<窗口函数> over (partition by <用于分组的列名>
+                order by <用于排序的列名>)
+```

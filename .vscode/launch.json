@@ -14,13 +14,13 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "justMyCode": true, 
+            "justMyCode": false, 
             // env: 设置环境变量. Sets optional environment variables for the debugger process beyond system environment variables, which the debugger always inherits. The values for these variables must be entered as strings.
             // "env": {
             //     "PYTHONPATH": "${workspaceFolder}/src"
             // }
             // cwd: 设置根目录 Specifies whether to enable subprocess debugging. Defaults to `false`, set to `true` to enable. For more information, see [multi-target debugging](https://code.visualstudio.com/docs/editor/debugging#_multitarget-debugging).
-            // "cwd": "${workspaceFolder}"
+            "cwd": "${fileDirname}"
             // python: 使用的Python解释器, 默认就是 workspace 的, 可以通过右下角选择不同的.
             // "python": "${command:python.interpreterPath}",
             // module 模块: Provides the ability to specify the name of a module to be debugged, similarly to the `-m` argument when run at the command line. For more information, see [Python.org](https://docs.python.org/3/using/cmdline.html#cmdoption-m)

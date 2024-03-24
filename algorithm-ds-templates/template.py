@@ -10,6 +10,7 @@ run test: pytest template.py
 """ 
 == Floyd 弗洛伊德算法
 wiki [Floyd](https://zh.wikipedia.org/zh-cn/Floyd-Warshall%E7%AE%97%E6%B3%95)
+[ling](https://leetcode.cn/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/solutions/2525946/dai-ni-fa-ming-floyd-suan-fa-cong-ji-yi-m8s51/)
 
 """
 

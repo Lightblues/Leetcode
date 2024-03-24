@@ -1,5 +1,5 @@
 /* @2208 重温一下mysql
-主要 from [50到数据库题](https://blog.csdn.net/qq_44186838/article/details/120499317)
+主要 from [50道数据库题](https://blog.csdn.net/qq_44186838/article/details/120499317)
 进度: 50/50
 
  */
@@ -612,7 +612,7 @@ from (
     from Chargebacks c left join Transactions t on c.trans_id=t.id
 ) as tmp
 group by month,country;
--- #WITH 写法
+-- WITH 写法
 with base as (
     select 'approved' tag, country, date_format(trans_date, '%Y-%m') month, amount
     from Transactions where state = 'approved'
