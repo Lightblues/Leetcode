@@ -14,6 +14,8 @@ def testClass(inputs):
 https://leetcode.cn/contest/weekly-contest-384
 https://leetcode.cn/circle/discuss/xrMOAr/
 
+KMP
+
 Easonsi @2023 """
 
 class Solution:
