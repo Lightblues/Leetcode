@@ -60,9 +60,9 @@ class Solution:
         return ans
 
 
-    """ 3036. 匹配模式数组的子数组数目 II #hard 对于一个长m的pattern数组, 只包含 1/0/-1 标记相邻像个元素的大小关系, 定义和一个长 m+1 的子数组是否是匹配的, 计算所给的 nums 的匹配数量
+    """ 3036. 匹配模式数组的子数组数目 II #hard 对于一个长m的pattern数组, 只包含 1/0/-1 标记相邻两个元素的大小关系, 定义和一个长 m+1 的子数组是否是匹配的, 计算所给的 nums 的匹配数量
 限制: n,m 1e6
-思路1: #KMP
+思路1: #KMP 模版题 TODO: 
     """
     def countMatchingSubarrays(self, nums: List[int], pattern: List[int]) -> int:
         s = []

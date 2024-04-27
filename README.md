@@ -1,6 +1,7 @@
 
 参考/题单
 
+- 灵神的题单 [GitHub](https://github.com/EndlessCheng/codeforces-go/blob/master/leetcode/SOLUTIONS.md) ⭐️
 - [算法通关手册（LeetCode）](https://algo.itcharge.cn/); 题单部分很赞!
     - [repo](https://github.com/itcharge/LeetCode-Py)
 - 代码随想录 <https://github.com/youngyangyang04/leetcode-master>

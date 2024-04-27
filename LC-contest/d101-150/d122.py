@@ -12,6 +12,7 @@ def testClass(inputs):
 
 """ 
 https://leetcode-cn.com/contest/biweekly-contest-122
+TODO: 
 Easonsi @2023 """
 class Solution:
     """ 3010. 将数组分成最小总代价的子数组 I """
