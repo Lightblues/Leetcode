@@ -46,7 +46,7 @@ class Solution:
 思路1: #Hierholzer 算法. 见上面的说明
 """
     def findItinerary(self, tickets: List[List[str]]) -> List[str]:
-        # Hierholzer 算法 求解欧拉通路
+        # Hierholzer 算法 求解欧拉通路 -- 建议看下面栈的写法! 
         def dfs(curr: str):
             # 重点是这里的wihle!! 尽量尝试 DFS
             while vec[curr]:
@@ -63,6 +63,21 @@ class Solution:
         record = list()
         dfs('JFK')
         return record[::-1]
+    def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+        g = defaultdict(list)
+        for s,e in tickets:
+            g[s].append(e)
+        for k,v in g.items():
+            heapq.heapify(v)
+        # 也可以写成 stack 的形式, 更优雅! 
+        h = ['JFK']
+        ans = []
+        while h:
+            while g[h[-1]]:     # 尽量去寻找环, 那条支链必然在最后被加入
+                tmp = heapq.heappop(g[h[-1]])       # 先入栈的最后出栈, 从而 [::-1] 之后保证了是最小的! 
+                h.append(tmp)
+            ans.append(h.pop())
+        return ans[::-1]
 
     """ 0753. 破解保险箱 #hard #欧拉通路
 密码是 n 位数, 密码的每一位是 k 位序列 0, 1, ..., k-1 中的一个。返回一个最短字符串, 其子字符串包括所有可能的密码. 
@@ -132,11 +147,11 @@ class Solution:
 
 sol = Solution()
 result = [
-    # sol.findItinerary([["MUC","LHR"],["JFK","MUC"],["SFO","SJC"],["LHR","SFO"]]),
-    # sol.findItinerary([["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]])
-    sol.crackSafe(1,2),
-    sol.crackSafe(2,2),
-    sol.crackSafe(3,2),
+    sol.findItinerary([["MUC","LHR"],["JFK","MUC"],["SFO","SJC"],["LHR","SFO"]]),
+    sol.findItinerary([["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]]),
+    # sol.crackSafe(1,2),
+    # sol.crackSafe(2,2),
+    # sol.crackSafe(3,2),
 ]
 for r in result:
     print(r)
