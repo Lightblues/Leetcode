@@ -27,3 +27,13 @@ print(
     threeSum([1,2,3,4,5], 6),
     threeSum([1,4,3,2,6,5], 9), # 3
 )
+
+# %%
+import numpy as np
+a = np.array([2,1,3,5,6])
+np.log(a) / np.log(2)
+# %%
+from collections import Counter
+c = Counter([1,2,2,3,3,5,4])
+sorted(c.items())
+# %%

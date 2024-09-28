@@ -14,7 +14,7 @@ def testClass(inputs):
 https://leetcode.cn/contest/weekly-contest-411
 https://leetcode.cn/circle/discuss/eDAQ8s/
 
-T3 的 DFS+DP 非常精彩! 之后可以强化一下~
+T3 的 DFS+DP 非常精彩! 之后可以强化一下~ 另外TLE也非常值得警惕! 
 T4 很综合, 有很多细节的地方, 详见ling的题解. 
 
 Easonsi @2023 """
@@ -95,10 +95,11 @@ class Solution:
         答案就是两部分之和 = 9
     复杂度: O(n + qlogn)
 [ling](https://leetcode.cn/problems/count-substrings-that-satisfy-k-constraint-ii/solutions/2884463/hua-dong-chuang-kou-qian-zhui-he-er-fen-jzo25/)
-> 下面的写法不知道为啥会 TLE
+> 下面的写法不知道为啥会 TLE? 
+    原本以为复杂度: O(n+qlogn), 灵神提醒 "right[l:r+1] 是 O(n) 的，不是 O(1)。" 所以 O(qn) 就TLE了 
     """
     def countKConstraintSubstrings(self, s: str, k: int, queries: List[List[int]]) -> List[int]:
-        # 不理解为什么这种写法会 TLE??
+        # TLE!
         s = [int(i) for i in s]
         n = len(s)
         
@@ -106,17 +107,6 @@ class Solution:
         right = [n-1] * n
         c = [0,0]
         r = 0
-        # def check(i, c):
-        #     cc = c[:]
-        #     cc[s[i]] += 1
-        #     return cc[0] <= k or cc[1] <= k
-        # for l,x in enumerate(s):
-        #     if l>0: c[s[l-1]] -= 1
-        #     while r<n and check(r, c):
-        #         c[s[r]] += 1
-        #         r += 1
-        #     if r==n: break
-        #     right[l] = r - 1
         c[s[0]] += 1
         for l,x in enumerate(s):
             if l>0: 
@@ -124,20 +114,16 @@ class Solution:
                 right[l] = right[l-1]
             while (c[0]<=k or c[1]<=k) and r<n:
                 right[l] = r
-                
                 r += 1
                 if r==n: break
                 c[s[r]] += 1
         # 
-        # adds = list(x-i+1 for i,x in enumerate(right))
-        # acc = list(accumulate(adds, initial=0))
-        acc = [0] * (n+1)
-        for i,x in enumerate(right):
-            acc[i+1] = acc[i] + x-i+1
+        adds = list(x-i+1 for i,x in enumerate(right))
+        acc = list(accumulate(adds, initial=0))
         # 
         ans = []
         for l,r in queries:
-            idx = bisect.bisect_left(right[l:r+1], r)
+            idx = bisect.bisect_left(right[l:r+1], r)  # TLE 的原因在这里! right[l:r+1] 是 O(n) 的，不是 O(1)。
             a = 0
             if idx > 0: # add acc[l...l+idx)
                 a += acc[l+idx] - acc[l]
