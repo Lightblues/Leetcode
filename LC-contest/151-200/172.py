@@ -100,7 +100,31 @@ class Solution:
             else:
                 new_llimit = min(new_llimit, prev[i])
         return cnt
-    
+
+    """ 1326. 灌溉花园的最少水龙头数目 #hard 在 [0,1...n] 有n+1个水龙头, 每个可以覆盖的范围为 [i-x, i+x], 返回可以覆盖整个 [0,n] 区间的最少水龙头数目
+限制: n 1e4; x 1e2
+思路1: 转化为 {跳跃游戏}
+    可以将所有的水龙头覆盖的区域看作是一系列的 "桥", 我们统计每个位置 "作为桥的左端点所能覆盖的最远右端点", 就转化为了 "跳跃游戏"!
+[ling](https://leetcode.cn/problems/minimum-number-of-taps-to-open-to-water-a-garden/solutions/2123855/yi-zhang-tu-miao-dong-pythonjavacgo-by-e-wqry/)
+    """
+    def minTaps(self, n: int, ranges: List[int]) -> int:
+        steps = [0] * (n+1)
+        for i,x in enumerate(ranges):
+            left = max(0, i-x)
+            right = min(n, i+x)
+            steps[left] = max(steps[left], right)
+        # 
+        ans = 0
+        cur_right = 0 # 当前桥所能覆盖的最远右端点
+        next_right = 0
+        for i in range(n):  # NOTE: 这里没有检查位置 n, 因为下面已经保障能到n了! 
+            next_right = max(next_right, steps[i])
+            if i == cur_right:
+                if i == next_right: return -1 # 无法到达! 
+                ans += 1
+                cur_right = next_right
+        return ans
+
     """ 0055. 跳跃游戏 #medium #题型
 相较于 0045, 格子元素可以是 0, 判断是否可达. 
 关联: 1024. 视频拼接 #medium 要求最小的数量, 更全面一些.
@@ -118,8 +142,11 @@ class Solution:
     
     """ 0045. 跳跃游戏 II #medium #题型 数组每一个数字表示可跳跃的距离. 问到达终点最少需要多少步. 限制: 长度 n 1e4 
 思路1: 正向逆向都可以. 维护当前步数可以到达的最远距离. 在搜索的过程中记录下一个最远距离.
+    复杂度: O(n)
 关联: 0055. 跳跃游戏 #medium; 
+    1326. 灌溉花园的最少水龙头数目 #hard
 [官答](https://leetcode.cn/problems/jump-game-ii/solution/tiao-yue-you-xi-ii-by-leetcode-solution/)
+[ling](https://leetcode.cn/problems/jump-game-ii/solutions/2926993/tu-jie-yi-zhang-tu-miao-dong-tiao-yue-yo-h2d4/)
 """
     def jump(self, nums: List[int]) -> int:
         if len(nums) == 1: return 0
@@ -135,7 +162,7 @@ class Solution:
                 limit = new_limit
             new_limit = max(new_limit, i+nums[i])
         return steps
-    
+
     """ 1024. 视频拼接 #medium #题型 #细节 有一组 [s,e] 的视频片段. 问最少需要多少个片段才能覆盖 [0,T] 区间. 限制: n 1e2; T 1e2
 思路1: #贪心. 对于s排序, 然后在遍历过程中, 选择最远的e.
 关联: 0055. 跳跃游戏
@@ -167,15 +194,15 @@ class Solution:
 sol = Solution()
 result = [
     # sol.printVertically(s = "TO BE OR NOT TO BE"),
-    # sol.minTaps(n = 5, ranges = [3,4,1,1,0,0]),
-    # sol.minTaps(n = 3, ranges = [0,0,0,0]),
+    sol.minTaps(n = 5, ranges = [3,4,1,1,0,0]),
+    sol.minTaps(n = 3, ranges = [0,0,0,0]),
     # sol.jump(nums = [2,3,1,1,4]),
     # sol.jump(nums = [2,3,0,1,4]),
     # sol.videoStitching(clips = [[0,2],[4,6],[8,10],[1,9],[1,5],[5,9]], time = 10),
     # sol.videoStitching(clips = [[0,1],[1,2]], time = 5),
     # sol.videoStitching([[0,2],[4,8]], 5),
     # sol.videoStitching([[5,7],[1,8],[0,0],[2,3],[4,5],[0,6],[5,10],[7,10]], 5),
-    sol.videoStitching([[11,28],[35,40],[28,38],[0,10],[37,39],[40,40],[18,34],[32,38],[14,36],[33,36]], 8),
+    # sol.videoStitching([[11,28],[35,40],[28,38],[0,10],[37,39],[40,40],[18,34],[32,38],[14,36],[33,36]], 8),
 ]
 for r in result:
     print(r)

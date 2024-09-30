@@ -64,7 +64,7 @@ class Solution:
     
     """ 3283. 吃掉所有兵需要的最多移动次数 #hard 在 50x50 的棋盘上有一个马和一些兵 (最多 15). 
 在一个回合中, 玩家选择一个兵, 让马用最少步骤到那边吃掉, (中间经过的话不会被吃). A 的目标是最大化总步骤; B 相反. 问最优情况下的总步骤. 
-思路0:
+思路1: 综合题
     首先, 马从 (0,0) 走到 (i, j) 的最小步数是可以通过 #DFS 找到的. 
     从而, 对于最多15个兵, 可以构建 (n+1)x(n+1) 的距离矩阵. 
         没啥用的结论: 每个AB 的决策构成了一个长 (n+1) 的路径. 
@@ -74,6 +74,7 @@ class Solution:
         g(i, s) = min{ d(i,j) + f(j, s \ j) } for j in s
     边界: g(i,0) = f(i,0) = 0
     ans: f(0, 2^n - 1)
+思路2: 除了计算两两之间的距离, 另外可以计算所有 "马到棋盘上所有位置的最短距离", 这样就避免了 calc_dist 的实现! 
 [ling](https://leetcode.cn/problems/maximum-number-of-moves-to-kill-all-pawns/solutions/2909069/pai-lie-xing-zhuang-ya-dpxiang-lin-xiang-q49q/)
     """
     def maxMoves(self, kx: int, ky: int, positions: List[List[int]]) -> int:
