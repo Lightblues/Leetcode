@@ -49,7 +49,7 @@ def testClass(inputs):
 
 """ 
 https://leetcode.cn/contest/weekly-contest-261
-https://leetcode-cn.com/contest/biweekly-contest-71
+https://leetcode.cn/contest/biweekly-contest-71
 @2022 """
 class Solution:
     """  """
