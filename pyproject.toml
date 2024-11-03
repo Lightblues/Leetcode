@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "leetcode"
+version = "0.1.0"
+description = ""
+authors = ["easonsshi <easonsshi@tencent.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+easonsi = "^0.0.8"
+
+[tool.poetry.group.dev.dependencies]
+poetry = "^1.8.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
