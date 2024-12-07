@@ -1,5 +1,6 @@
+> 存放个人的刷题记录; 以及七七八八的代码测试. 
 
-参考/题单
+## 参考/题单
 
 - 灵神的题单 [GitHub](https://github.com/EndlessCheng/codeforces-go/blob/master/leetcode/SOLUTIONS.md) ⭐️
 - [算法通关手册（LeetCode）](https://algo.itcharge.cn/); 题单部分很赞!
@@ -16,23 +17,14 @@
 - 根据数据范围推测可能的算法: [here](https://www.acwing.com/blog/content/32/)
 - [C++ 模板](https://github.com/old-yan/CP-template)
 
-
-## 互联网笔试题
-
-- LeetBook [算法面试题汇总](https://leetcode.cn/leetbook/detail/top-interview-questions/)
-- [🔥 LeetCode 热题 HOT 100](https://leetcode.cn/problem-list/2cktkvj/)
-- [codefun2000](https://codefun2000.com/) ⭐️ 最简单的方法是直接做真题! 可以了解不同厂的风格
-    - 对应的 [blog](https://blog.codefun2000.com/)
-
-## 文章
-
+总结
 - [灵神](https://leetcode.cn/u/endlesscheng/)
     - [2022 年周赛题目总结（上篇）](https://leetcode.cn/circle/discuss/G0n5iY/) 
     - [2022 年周赛题目总结（下篇）](https://leetcode.cn/circle/discuss/WR1MJP/)
     - [分享｜从集合论到位运算，常见位运算技巧分类总结！](https://leetcode.cn/circle/discuss/CaOJ45/)
 - XYShaoKang [刷题交流 | 2700 分总结 & 算法入门](https://leetcode.cn/circle/discuss/gmXruw/)
 
-## 值得阅读的代码/项目
+### 代码库
 
 - LeetCode
     - halfrost | LeetCode Cookbook: <https://books.halfrost.com/leetcode/> 很好的Go实现, 分类完善
@@ -42,7 +34,8 @@
 - 实践/工程
     - [Mass Data Processing Lab](https://github.com/ncghost1/MassDataProcessingLab) 海量数据处理经典面试题的 Go 语言实现，此外还提供 lab 来亲身实践
 
-## 进阶
+
+## 算法进阶
 
 book, see [zhihu](https://www.zhihu.com/question/22299710)
 
@@ -64,12 +57,22 @@ book, see [zhihu](https://www.zhihu.com/question/22299710)
     - LC 分数预测 (比赛结束就可以看到分数变化情况): <https://lcpredictor.herokuapp.com/>
 - hqztrue 大佬的 [LeetCode分析](https://github.com/hqztrue/LeetCodeSolutions) 主要是解法的复杂度分析
 
-## Notes
+
+## Topic: 算法笔试题
+
+- LeetBook [算法面试题汇总](https://leetcode.cn/leetbook/detail/top-interview-questions/)
+- [🔥 LeetCode 热题 HOT 100](https://leetcode.cn/problem-list/2cktkvj/)
+- [codefun2000](https://codefun2000.com/) ⭐️ 最简单的方法是直接做真题! 可以了解不同厂的风格
+    - 对应的 [blog](https://blog.codefun2000.com/)
+
+
+
+## 个人Notes
 
 - [分类题解](notes/01-分类总结/分类.md)
 - [代码语法小结](notes/language-parctise.md)
 
-## 其他
+其他
 
 - [周赛记录](notes/Leetcode-contests.md)
 - 刷了一小段的 [每日一题](notes/Leetcode-daily.md)
@@ -77,7 +80,7 @@ book, see [zhihu](https://www.zhihu.com/question/22299710)
 
 
 
-## 编程语言
+## 编程语言 Notes
 
 - JAVA 廖雪峰课程 <https://www.liaoxuefeng.com/wiki/1252599548343744>
 - Python 库 LearnKu <https://learnku.com/docs/pymotw>

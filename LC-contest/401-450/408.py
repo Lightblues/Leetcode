@@ -146,53 +146,7 @@ class Solution:
                 return False
         return True
 
-    def canReachCorner(self, X: int, Y: int, circles: List[List[int]]) -> bool:
-        # 判断点 (x,y) 是否在圆 (ox,oy,r) 内
-        def in_circle(ox: int, oy: int, r: int, x: int, y: int) -> bool:
-            return (ox - x) * (ox - x) + (oy - y) * (oy - y) <= r * r
 
-        def condition_1(x:int, y:int) -> bool:
-            # 是否与矩形上边界/左边界相交相切
-            return x <= X and abs(y - Y) <= r or 
-                y <= Y and x <= r or
-                y > Y and in_circle(x, y, r, 0, Y)
-        def condition_2(x:int, y:int) -> bool:
-            # 是否与矩形右边界/下边界相交相切
-            return y1 <= Y and abs(x1 - X) <= r1 or \
-                x1 <= X and y1 <= r1 or \
-                x1 > X and in_circle(x1, y1, r1, X, 0)
-        
-        def is_connected(x1,y1,r1, x2,y2,r2) -> bool:
-            # 判断两个圆是否相交 & 对于矩阵路径计算有影响! 
-            return \
-                # 相交! 
-                (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) <= (r1 + r2) * (r1 + r2) and \
-                # 相交的部分在矩阵内! (这里 <, <= 都可以的)
-                x1 * r2 + x2 * r1 <= (r1 + r2) * X and \
-                y1 * r2 + y2 * r1 <= (r1 + r2) * Y
-                
-        vis = [False] * len(circles)
-        def dfs(i: int) -> bool:
-            x1, y1, r1 = circles[i]
-            if condition_2(x1, y1):
-                return True
-            vis[i] = True
-            for j, (x2, y2, r2) in enumerate(circles):
-                # 在两圆相交相切的前提下，点 A 是否严格在矩形内
-                if vis[j]: continue
-                if is_connected(x1,y1,r1, x2,y2,r2) and dfs(j):
-                    return True
-            return False
-
-        for i, (x, y, r) in enumerate(circles):
-            # 圆 i 包含矩形左下角 or
-            # 圆 i 包含矩形右上角 or
-            # 圆 i 与矩形上边界/左边界相交相切
-            if in_circle(x, y, r, 0, 0) or in_circle(x, y, r, X, Y): return False
-            if vis[i]: continue
-            if condition_1(x,y) and dfs(i):
-                return False
-        return True
 
 sol = Solution()
 result = [
@@ -200,9 +154,9 @@ result = [
     # sol.canAliceWin([1,2,3,4,10]),
     # sol.nonSpecialCount(l = 4, r = 16),
     # sol.nonSpecialCount( l = 5, r = 7),
-    sol.numberOfSubstrings(s = "00011"),
-    sol.numberOfSubstrings(s = "101101"),
-    # sol.canReachCorner(3,3,[[2,4,1],[4,4,1],[4,2,1]]),
+    # sol.numberOfSubstrings(s = "00011"),
+    # sol.numberOfSubstrings(s = "101101"),
+    sol.canReachCorner(3,3,[[2,4,1],[4,4,1],[4,2,1]]),
 ]
 for r in result:
     print(r)
