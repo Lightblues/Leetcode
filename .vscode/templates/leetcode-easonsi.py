@@ -12,7 +12,8 @@ def testClass(inputs):
 
 """ 
 https://leetcode.cn/contest/weekly-contest-{{name}}
-Easonsi @2024 """
+# https://leetcode.cn/contest/biweekly-contest-134
+Easonsi @2025 """
 class Solution:
     """  """
     
