@@ -1,5 +1,5 @@
-from typing import *
 # from easonsi.util.leetcode import *
+from typing import *
 
 # def testClass(inputs):
 #     # 用于测试 LeetCode 的类输入
@@ -12,8 +12,7 @@ from typing import *
 #     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-{{name}}
-# https://leetcode.cn/contest/biweekly-contest-134
+https://leetcode.cn/contest/biweekly-contest-138
 Easonsi @2025 """
 class Solution:
     """  """

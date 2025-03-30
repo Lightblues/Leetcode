@@ -12,8 +12,7 @@ from typing import *
 #     return s_res
 
 """ 
-https://leetcode.cn/contest/weekly-contest-{{name}}
-# https://leetcode.cn/contest/biweekly-contest-134
+https://leetcode.cn/contest/biweekly-contest-139
 Easonsi @2025 """
 class Solution:
     """  """
