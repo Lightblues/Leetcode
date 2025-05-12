@@ -1,5 +1,7 @@
 > 存放个人的刷题记录; 以及七七八八的代码测试. 
 
+- [ ] clean misc codes
+
 ## 参考/题单
 
 - 灵神的题单 [GitHub](https://github.com/EndlessCheng/codeforces-go/blob/master/leetcode/SOLUTIONS.md) ⭐️
