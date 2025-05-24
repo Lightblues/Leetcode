@@ -20,9 +20,6 @@ class ListNode:
 
 
 
-
-
-
 class testClass:
     """ 用于接受 ACM 形式的测试用例, 例如
     ["ATM", "deposit", "withdraw", "deposit", "withdraw", "withdraw"]
