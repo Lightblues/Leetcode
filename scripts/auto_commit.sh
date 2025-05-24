@@ -13,14 +13,13 @@ COMMIT_MESSAGE="${1:-Auto commit: $TIMESTAMP}"
 # Check for changes
 if [[ -z $(git status --porcelain) ]]; then
     echo "No changes to commit."
-    exit 0
+else
+    # Add changes
+    git add .
+    # Commit changes
+    git commit -m "$COMMIT_MESSAGE"
+    echo "Commit message: $COMMIT_MESSAGE"
 fi
-
-# Add changes
-git add .
-
-# Commit changes
-git commit -m "$COMMIT_MESSAGE"
 
 # Pull latest changes from remote repository
 echo "Pulling latest changes from remote repository..."
@@ -30,4 +29,3 @@ git pull origin main --rebase
 git push origin main
 
 echo "Successfully committed and pushed changes to GitHub."
-echo "Commit message: $COMMIT_MESSAGE"
