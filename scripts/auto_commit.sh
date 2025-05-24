@@ -16,15 +16,15 @@ if [[ -z $(git status --porcelain) ]]; then
     exit 0
 fi
 
-# Pull latest changes from remote repository
-echo "Pulling latest changes from remote repository..."
-git pull origin main --rebase
-
 # Add changes
 git add .
 
 # Commit changes
 git commit -m "$COMMIT_MESSAGE"
+
+# Pull latest changes from remote repository
+echo "Pulling latest changes from remote repository..."
+git pull origin main --rebase
 
 # Push to remote repository
 git push origin main
