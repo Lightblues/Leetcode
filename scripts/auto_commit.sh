@@ -18,7 +18,7 @@ fi
 
 # Pull latest changes from remote repository
 echo "Pulling latest changes from remote repository..."
-git pull origin main
+git pull origin main --rebase
 
 # Add changes
 git add .
