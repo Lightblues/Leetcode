@@ -1,29 +1,33 @@
 #!/bin/bash
 
-# 自动提交并推送到GitHub的脚本
-# 使用方法: ./auto_commit.sh [提交信息]
+# Commit and push to GitHub
+# Usage: ./auto_commit.sh [commit message]
 
-# 设置工作目录为项目根目录（脚本所在目录的上一级）
-cd "$(dirname "$0")/.."
+# Change directory to project root (one level up from script location)
+cd "$(git rev-parse --show-toplevel)"
 
-# 获取当前时间作为默认提交信息
+# Get current time as default commit message
 TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-COMMIT_MESSAGE="${1:-自动提交: $TIMESTAMP}"
+COMMIT_MESSAGE="${1:-Auto commit: $TIMESTAMP}"
 
-# 检查是否有变更
+# Check for changes
 if [[ -z $(git status --porcelain) ]]; then
-    echo "没有需要提交的变更。"
+    echo "No changes to commit."
     exit 0
 fi
 
-# 添加所有变更
+# Pull latest changes from remote repository
+echo "Pulling latest changes from remote repository..."
+git pull origin main
+
+# Add changes
 git add .
 
-# 提交变更
+# Commit changes
 git commit -m "$COMMIT_MESSAGE"
 
-# 推送到远程仓库
+# Push to remote repository
 git push origin main
 
-echo "成功提交并推送变更到GitHub。"
-echo "提交信息: $COMMIT_MESSAGE"
+echo "Successfully committed and pushed changes to GitHub."
+echo "Commit message: $COMMIT_MESSAGE"

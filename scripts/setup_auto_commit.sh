@@ -1,32 +1,32 @@
 #!/bin/bash
 
-# 设置自动提交的定时任务
-# 此脚本将创建一个cron任务，定期执行auto_commit.sh
+# Set up auto commit cron job
+# This script will create a cron job that runs auto_commit.sh periodically
 
-# 获取当前脚本所在的绝对路径
+# Get the absolute path of the current script
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# 检查auto_commit.sh是否存在且可执行
+# Check if auto_commit.sh exists and is executable
 if [ ! -x "$SCRIPT_DIR/auto_commit.sh" ]; then
-    echo "错误: $SCRIPT_DIR/auto_commit.sh 不存在或不可执行"
+    echo "Error: $SCRIPT_DIR/auto_commit.sh does not exist or is not executable"
     exit 1
 fi
 
-# 创建临时crontab文件
+# Create temporary crontab file
 TEMP_CRONTAB=$(mktemp)
 crontab -l > "$TEMP_CRONTAB" 2>/dev/null
 
-# 检查是否已经存在相同的cron任务
+# Check if the cron job already exists
 if grep -q "$SCRIPT_DIR/auto_commit.sh" "$TEMP_CRONTAB"; then
     echo "自动提交任务已经存在于crontab中。"
     rm "$TEMP_CRONTAB"
     exit 0
 fi
 
-# 添加每小时执行一次的cron任务
+# Add cron job to run every hour
 echo "0 * * * * $SCRIPT_DIR/auto_commit.sh" >> "$TEMP_CRONTAB"
 
-# 应用新的crontab
+# Apply new crontab
 crontab "$TEMP_CRONTAB"
 rm "$TEMP_CRONTAB"
 
