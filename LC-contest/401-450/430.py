@@ -1,4 +1,6 @@
 from typing import *
+from math import comb
+from collections import defaultdict
 # from easonsi.util.leetcode import *
 
 # def testClass(inputs):
@@ -14,7 +16,8 @@ from typing import *
 """ 
 https://leetcode.cn/contest/weekly-contest-430
 T2 看了 "计算字典序最大的后缀" 又一个让人惊艳的算法!!!
-    # TODO:T3, T4
+T3 比较有趣, "枚举右，维护左" 的思路很巧妙, 需要进行一定的转换
+T4 组合数学
 
 Easonsi @2025 """
 class Solution:
@@ -94,12 +97,60 @@ https://leetcode.cn/problems/last-substring-in-lexicographical-order/solutions/2
                 j = j+k+1
         return s[i:]
 
-    
+    """ 3404. 统计特殊子序列的数目 #medium 但实际上 #hard 找四元组 (p,q,r,s) 的数量, 要求满足两两index相差至少2, 且元素值 p*r = q*s 
+限制: n 1e3
+思路1: **枚举右，维护左**
+    考虑经典题目: 找到数组中 (i,j) 相等的数对数量. 怎么做? 枚举的时候, 先考虑其作为j和前面匹配的数量, 然后将枚举的位置作为i加入到一个hash表中!
+    本题中, 要求 a*c = b*d, 将其变换为 a/b = d/c -- 这样两边的index是分开的比较好枚举
+    我们枚举c, 考虑它和d的匹配在前序的数量; 还要将作为b的前序增量加入到hash表中!
+    注意! 本题由于有不相邻的要求, 有一个技巧: 先将b加入到hashmap中, 再统计cd!
+    复杂度: O(n^2); 空间复杂度 O(min{n^2, U^2}), 参见ling, 主要原因是根据欧拉函数, 互质数字是很常见的, 因此数量很多
+    一个问题: 为什么下面可以直接用 浮点数作为 hashmap的key? 
+        想想什么情况会产生浮点误差? 考虑两个接近1的浮点数 a/(a+1) 和 (a-1)/a, 
+        两者差值 1/a(a+1) < 2^(-52) 的时候才会产生误差, 也即 a > 2^26, 因此本题范围安全
+        若担心误差问题, 可以基于 GCD 将key转为最简分数! -- 带来一定的计算开销
+思路2: #前后缀分解 先统计cd, 然后枚举ab的过程中 "撤销" 后缀统计, 整体复杂度也为 O(n^2), 见ling
+[ling](https://leetcode.cn/problems/count-special-subsequences/solutions/3033284/shi-zi-bian-xing-qian-hou-zhui-fen-jie-p-ts6n/)
+"""
+    def numberOfSubsequences(self, nums: List[int]) -> int:
+        n = len(nums); ans = 0
+        cnt = defaultdict(int)
+        # 核心是枚举 b,c
+        for i in range(4, n-2):  # c 可能的范围
+            # 先更新 b
+            b = nums[i-2]  # c的位置为i; 此时可考虑的b的位置到 i-2 结束
+            for a in nums[:i-3]:
+                cnt[a/b] += 1
+
+            # 枚举 c,d
+            c = nums[i]
+            for d in nums[i+2:]:
+                ans += cnt[d/c]
+        return ans
+
+
+    """ 3405. 统计恰好有 K 个相等相邻元素的数组数目 #hard 给定整数 n,m,k, 长度为n的好数组需要满足, 1) 所有元素都在 [1,m] 范围内, 2) 恰好有k个下标满足 arr[i-1] = arr[i]
+问好数组的数目, 限制: n 1e5; 结果取模1e9+7
+思路1 #组合数学
+    注意到, 有k组相同元素值相等, 则长n的数组可以划分为 n-k 个区间, 每个区间内数字相等!
+    组合数学, 这样划分方式有 C(n-1, n-k-1) -- 考虑隔板放置位置
+        对于每个划分, 放置数字的可能性有 m * (m-1)^(n-k-1)
+[ling](https://leetcode.cn/problems/count-the-number-of-arrays-with-k-matching-adjacent-elements/solutions/3033292/chun-shu-xue-ti-pythonjavacgo-by-endless-mxj7/)
+     """
+    def countGoodArrays(self, n: int, m: int, k: int) -> int:
+        MOD = 10**9 + 7
+        return comb(n-1, n-k-1) * m * pow(m-1, n-k-1, MOD) % MOD
+
+
 sol = Solution()
 result = [
     # sol.answerString(word = "dbca", numFriends = 2),
 
-    sol.lastSubstring(s = "abab"),
+    # sol.lastSubstring(s = "abab"),
+
+    # sol.numberOfSubsequences(nums = [3,4,3,4,3,4,3,4]),
+
+    sol.countGoodArrays(n = 4, m = 2, k = 2),
 ]
 for r in result:
     print(r)
