@@ -5,6 +5,8 @@
 
 # Get the absolute path of the current script
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_NAME="$(basename "$(dirname "$SCRIPT_DIR")")"
+echo "> Script directory: $SCRIPT_DIR"
 
 # Check if auto_commit.sh exists and is executable
 if [ ! -x "$SCRIPT_DIR/auto_commit.sh" ]; then
@@ -24,7 +26,10 @@ if grep -q "$SCRIPT_DIR/auto_commit.sh" "$TEMP_CRONTAB"; then
 fi
 
 # Add cron job to run every hour
-echo "0 * * * * $SCRIPT_DIR/auto_commit.sh" >> "$TEMP_CRONTAB"
+# Redirect output to log file (~/tmp/auto_commit/$PROJECT_NAME.log)
+OUTPUT_LOG="/tmp/auto_commit/$PROJECT_NAME.log"
+mkdir -p "/tmp/auto_commit"
+echo "0 * * * * $SCRIPT_DIR/auto_commit.sh >> $OUTPUT_LOG 2>&1" >> "$TEMP_CRONTAB"
 
 # Apply new crontab
 crontab "$TEMP_CRONTAB"

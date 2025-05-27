@@ -3,8 +3,10 @@
 # Commit and push to GitHub
 # Usage: ./auto_commit.sh [commit message]
 
-# Change directory to project root (one level up from script location)
+# Change directory to project root (current dir, then git root)
+cd $(dirname "$0")
 cd "$(git rev-parse --show-toplevel)"
+echo "Current directory: $(pwd)"
 
 # Get current time as default commit message
 TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
