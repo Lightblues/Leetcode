@@ -66,7 +66,7 @@ class Solution:
         return ans
     
     
-    """ 6357. 最少得分子序列 #hard 给定两个字符串 s,t 要求删除t中的字符串使其成为s的子序列, score为删除下标的 l-r, 求最小分数
+    """ 2565. 最少得分子序列 #hard 给定两个字符串 s,t 要求删除t中的字符串使其成为s的子序列, score为删除下标的 r-l+1 (长度), 求最小分数
 限制: 字符串st长度分别为 m,n 1e5 
 思路1: #二分 
     转化问题为「在score为x的基础上, 能否找到一个解?」
@@ -78,6 +78,12 @@ class Solution:
 思路2: #前后缀分解
     反过来考虑! 考虑把字符串s分成两段, 分别尝试匹配t的首尾. 
     这样, 假设前后缀分别能匹配到的位置为 pre,suf, 则需要删除的数量为 suf-pre-1
+    
+重写思路2: @2025-06-07
+    注意到, 假设删除的boundary为 l, r, 显然整体删除 l...r 不影响答案! 因此, 问题转为 "找到长度最短的删除子字符串, 使得t剩余的前后缀拼成的字符串为s的子序列"
+    转换问题 #前后缀分解 
+        记 suffix[i] 表示 t[:i] 最长可以匹配s的最长前缀结束下标; 记 prefix[i] 表示 t[i:] 最长可以匹配s的最长后缀开始下标
+        
 [灵神](https://leetcode.cn/problems/subsequence-with-the-minimum-score/solution/qian-hou-zhui-fen-jie-san-zhi-zhen-pytho-6cmr/)
 """
     def minimumScore(self, s: str, t: str) -> int:
