@@ -47,8 +47,15 @@ class Solution:
                 heappush(frontier, (v, x, y))
         return False
     
-    """ 3287. 求出数组中最大序列值 #hard """
-
+    """ 3287. 求出数组中最大序列值 #hard 长度为2k的子序列, 得分为前一半OR和后一半OR 之后, 两个数字XOR的结果. 求最大得分
+限制: n 400; x 2^7
+"""
+    def maxValue(self, nums: List[int], k: int) -> int:
+        pass
+    
+    """ 3288. 最长上升路径的长度 #hard 给定一组二维坐标点, 和其中一个点, 求一个最长的序列, 包含该点, 同时每个元素 x/y 严格递增
+限制: n 1e5
+"""
     
 sol = Solution()
 result = [

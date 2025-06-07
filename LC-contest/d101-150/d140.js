@@ -30,6 +30,18 @@ var maximumTotalSum = function(maximumHeight) {
     return acc;
 };
 
+/* 3302. 字典序最小的合法序列 #medium 找到一个最小的递增的index序列, 让 word1 的子序列 "几乎等于" word2, 这里的 "几乎等于" 是指最多只相差一个字符
+限制: n 3e5
+*/
+/**
+ * @param {string} word1
+ * @param {string} word2
+ * @return {number[]}
+ */
+var validSequence = function(word1, word2) {
+    
+};
+
 // main
 var results = [
     // minElement(nums = [10,12,13,14]),
@@ -38,4 +50,3 @@ var results = [
 for (let r of results) {
     console.log(r);
 }
-
