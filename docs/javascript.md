@@ -13,9 +13,10 @@
     2. 包含 lodash.js 库 [github](https://lodash.com/)
     3. 相关包: [priority-queue](https://github.com/datastructures-js/priority-queue), [queue](https://github.com/datastructures-js/queue/), [deque](https://github.com/datastructures-js/deque)
 
-参考 [BaffinLee/leetcode-javascript](https://github.com/BaffinLee/leetcode-javascript)
+参考 [BaffinLee/leetcode-javascript](https://github.com/BaffinLee/leetcode-javascript) 🌟
 
 ## ES6（ECMAScript 2015）
+参见 [ECMAScript 6 入门](https://es6.ruanyifeng.com/) by @阮一峰
 
 特性
 1. 变量声明：let & const `let y = 20;`
@@ -43,3 +44,62 @@
         1. 可以 `const nums = [1,2,3]; sum(...nums);` 也可以 `sum(1,2,3);`
         2. 或者是基本定义 `function sum(x, y, z) { return x + y + z; }`
 9. 新数据结构 ​Map/Set​
+
+## Lodash 包
+[github](https://github.com/lodash/lodash); [doc](https://lodash.com/docs/) #Lodash 简化数组、对象、数字、字符串等数据类型的操作
+
+数组
+```js
+import { chunk, difference, flattenDeep } from 'lodash';
+
+chunk([1, 2, 3, 4], 2); // → [[1,2], [3,4]]
+difference([2, 1], [2, 3]); // → [1]
+flattenDeep([1, [2, [3]]]); // → [1, 2, 3]
+```
+
+对象
+```js
+import { get, set, merge, omit } from 'lodash';
+
+const obj = { a: { b: 2 } };
+get(obj, 'a.b'); // → 2 (安全访问嵌套属性)
+set(obj, 'a.c', 3); // → { a: { b: 2, c: 3 } }
+merge({a: 1}, {b: 2}); // → {a:1, b:2} (深度合并)
+omit({a:1, b:2}, ['a']); // → {b:2} (排除属性)
+```
+
+函数
+```js
+import { throttle, debounce, memoize } from 'lodash';
+
+// 节流：每200ms最多触发一次
+const throttledResize = throttle(() => console.log('Resize'), 200);
+
+// 防抖：停止输入300ms后触发
+const debouncedSearch = debounce(searchAPI, 300);
+
+// 缓存结果
+const fibonacci = memoize(n => n <= 1 ? n : fibonacci(n-1) + fibonacci(n-2));
+```
+
+类型检查
+```js
+_.isObject({}); // true
+_.isNil(null); // true
+_.isEmpty([]); // true
+_.random(5, 10); // 生成5-10间的随机数
+_.times(3, () => 'hi'); // → ['hi', 'hi', 'hi']
+```
+
+集合操作
+```js
+_.map([1, 2], n => n * 2); // → [2, 4]
+_.filter([1, 2, 3], n => n > 1); // → [2, 3]
+_.groupBy(['a', 'bb', 'c'], 'length'); // → {1: ['a','c'], 2: ['bb']}
+```
+
+深度操作
+```js
+_.cloneDeep({ a: [1] }); // 深拷贝
+_.isEqual({a:1}, {a:1}); // 深度比较 → true
+```
