@@ -31,15 +31,7 @@ var maximumTotalSum = function(maximumHeight) {
 };
 
 /* 3302. 字典序最小的合法序列 #medium 找到一个最小的递增的index序列, 让 word1 的子序列 "几乎等于" word2, 这里的 "几乎等于" 是指最多只相差一个字符
-限制: n 3e5
-思路1: #前后缀分解
-    关联: [2565. 最少得分子序列] 也是找子序列
-    预处理: 先计算后缀 suf[i] 表示 words1[i:] 可以匹配 word2 的最长后缀的左下标
-    关键是如何 "字典序最小"? 枚举前缀位置i, 同时记录word2的匹配位置j:
-        若 word1[i] == word2[j], 直接使用;
-        若 不等, 且 suf[i+1] <= j+1, 说明一定要修改了 (同时后缀可以匹配上!)
-        注意! 为了避免仅修改一次, 需要用一个flag来标记是否修改过
-
+见 Python 题解
 */
 /**
  * @param {string} word1
@@ -49,6 +41,7 @@ var maximumTotalSum = function(maximumHeight) {
 var validSequence = function(word1, word2) {
     
 };
+
 
 // main
 var results = [
