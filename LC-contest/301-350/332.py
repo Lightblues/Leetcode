@@ -82,8 +82,10 @@ class Solution:
 重写思路2: @2025-06-07
     注意到, 假设删除的boundary为 l, r, 显然整体删除 l...r 不影响答案! 因此, 问题转为 "找到长度最短的删除子字符串, 使得t剩余的前后缀拼成的字符串为s的子序列"
     转换问题 #前后缀分解 
-        记 suffix[i] 表示 t[:i] 最长可以匹配s的最长前缀结束下标; 记 prefix[i] 表示 t[i:] 最长可以匹配s的最长后缀开始下标
-        
+        记 prefix[i] 表示 t[:i] 最长可以匹配s的最长前缀结束下标; 记 suffix[i] 表示 t[i:] 最长可以匹配s的最长后缀开始下标
+        则答案为 min{ suffix[i+1]-prefix[i]-1 }
+            细节: ans 不能初始化为 m! 因为要考虑边界情况
+    复杂度: O(n)
 [灵神](https://leetcode.cn/problems/subsequence-with-the-minimum-score/solution/qian-hou-zhui-fen-jie-san-zhi-zhen-pytho-6cmr/)
 """
     def minimumScore(self, s: str, t: str) -> int:
@@ -120,6 +122,7 @@ class Solution:
             else: l = mid+1
         return ans
     def minimumScore(self, s: str, t: str) -> int:
+        # from ling
         n, m = len(s), len(t)
         suf = [m] * (n + 1)
         j = m - 1
@@ -136,7 +139,29 @@ class Solution:
                 j += 1
                 ans = min(ans, suf[i + 1] - j)  # 删除 t[j:suf[i+1]]
         return ans
-
+    def minimumScore(self, s: str, t: str) -> int:
+        # @2025-06-07
+        n, m = len(s), len(t)
+        
+        prefix = [-1] * n                       # NOTE: 这里可以初始化 (n+1), 避免下面的 ans = min(suffix[0], m-1-prefix[-1])
+        j = 0  # index of next char to match
+        for i,x in enumerate(s):
+            if x == t[j]:
+                j += 1
+                if j == m: return 0 # 完全匹配了! 不需要删除
+            prefix[i] = j-1  # note to -1
+        
+        suffix = [m] * n
+        j = m-1
+        for i in range(n-1,-1,-1):
+            if s[i] == t[j]:
+                j -= 1
+            suffix[i] = j+1
+        
+        ans = min(suffix[0], m-1-prefix[-1])  # NOTE: ans 不能初始化为 m! 因为要考虑边界情况
+        for i in range(n-1):
+            ans = min(ans, suffix[i+1]-prefix[i]-1)
+        return ans
     
 sol = Solution()
 result = [
@@ -144,13 +169,14 @@ result = [
     # sol.findTheArrayConcVal([5,14,13,8,12]),
     # sol.countFairPairs(nums = [0,1,7,4,4,5], lower = 3, upper = 6),
     # sol.countFairPairs(nums = [1,7,9,2,5], lower = 11, upper = 11),
-    sol.substringXorQueries(s = "101101", queries = [[0,5],[1,2]]),
-    sol.substringXorQueries(s = "0101", queries = [[12,8]]),
-    sol.substringXorQueries(s = "1", queries = [[4,5]]),
+    # sol.substringXorQueries(s = "101101", queries = [[0,5],[1,2]]),
+    # sol.substringXorQueries(s = "0101", queries = [[12,8]]),
+    # sol.substringXorQueries(s = "1", queries = [[4,5]]),
     
     # sol.minimumScore(s = "abacaba", t = "bzaa"),
     # sol.minimumScore(s = "cde", t = "xyz"),
     # sol.minimumScore("cbedceeeccd", "ed"),
+    sol.minimumScore("aba", "abbbbba")
 ]
 for r in result:
     print(r)
