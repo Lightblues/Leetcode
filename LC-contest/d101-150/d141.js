@@ -23,7 +23,7 @@ function minBitwiseArray(nums) {
         var suffix = 0;
         while (num > 0 && num % 2 == 1) {
             suffix++;
-            num /= 2;
+            num = Math.floor(num / 2);
         }
         if (suffix == 0) {
             ans.push(-1);
@@ -34,6 +34,18 @@ function minBitwiseArray(nums) {
     return ans;
 };
 
+/* 3316. 从原字符串里进行删除操作的最多次数 #medium 已有 source 和其一个子序列 pattern. 给定下标集合, 问最多可以将其中多少的额index对应source字符删除, 仍满足 pattern为子序列
+限制: n 3e3
+ */
+/**
+ * @param {string} source
+ * @param {string} pattern
+ * @param {number[]} targetIndices
+ * @return {number}
+ */
+var maxRemovals = function(source, pattern, targetIndices) {
+    
+};
 
 
 var results = [
