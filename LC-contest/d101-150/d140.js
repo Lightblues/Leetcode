@@ -1,3 +1,8 @@
+/* 
+@2025-06-07
+https://leetcode.cn/contest/biweekly-contest-140
+*/
+
 /* 3300. 替换为数位和以后的最小元素 #easy 将数组中每个数字都替换为数位和 */
 /**
  * @param {number[]} nums
@@ -39,14 +44,43 @@ var maximumTotalSum = function(maximumHeight) {
  * @return {number[]}
  */
 var validSequence = function(word1, word2) {
+    let m = word1.length;
+    let n = word2.length;
     
+    // Initialize suffix array
+    let suf = new Array(m + 1).fill(0);
+    let j = n - 1;
+    for (let i = m - 1; i >= 0; i--) {
+        if (word1[i] === word2[j]) {
+            j -= 1;
+        }
+        if (j === -1) break;
+        suf[i] = j + 1;
+    }
+    
+    let ans = [];
+    j = 0;
+    let changed = false;
+    
+    // Approach 2: Try to match as much as possible
+    for (let i = 0; i < m; i++) {
+        if (word1[i] === word2[j] || (!changed && suf[i+1] <= j+1)) {
+            if (word1[i] !== word2[j]) changed = true;
+            j += 1;
+            ans.push(i);
+            if (j === n) return ans;
+        }
+    }
+    return [];
 };
 
 
 // main
 var results = [
     // minElement(nums = [10,12,13,14]),
-    maximumTotalSum(maximumHeight = [2,3,4,3]),
+    // maximumTotalSum(maximumHeight = [2,3,4,3]),
+    validSequence(word1 = "vbcca", word2 = "abc"),
+    validSequence(word1 = "bacdc", word2 = "abc"),
 ];
 for (let r of results) {
     console.log(r);
