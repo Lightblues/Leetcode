@@ -1,7 +1,7 @@
 from typing import *
 
 """ @2025-06-07
-https://leetcode.cn/contest/biweekly-contest-142
+https://leetcode.cn/contest/biweekly-contest-145
 
 Easonsi @2025 """
 class Solution:
