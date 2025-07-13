@@ -27,7 +27,7 @@ fi
 
 # Add cron job to run every hour
 # Redirect output to log file (~/tmp/auto_commit/$PROJECT_NAME.log)
-OUTPUT_LOG="/tmp/auto_commit/$PROJECT_NAME.log"
+OUTPUT_LOG="/tmp/auto_commit_$PROJECT_NAME.log"
 mkdir -p "/tmp/auto_commit"
 echo "0 * * * * $SCRIPT_DIR/auto_commit.sh >> $OUTPUT_LOG 2>&1" >> "$TEMP_CRONTAB"
 
