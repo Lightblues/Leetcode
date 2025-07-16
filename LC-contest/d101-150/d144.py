@@ -4,7 +4,8 @@ from heapq import heappop, heappush
 
 """ @2025-06-07
 https://leetcode.cn/contest/biweekly-contest-144
-
+T3 用栈的思维, 一时间没反应过来;
+T4 数学直觉, 比较简单
 Easonsi @2025 """
 class Solution:
     """ 3360. 移除石头游戏 """
@@ -49,22 +50,28 @@ class Solution:
     如何实现? 
         - 用堆来维护右端点
         - 在遍历i的时候, 动态增加堆的元素! -- 需要先按照左端点sort一下!
+[ling](https://leetcode.cn/problems/zero-array-transformation-iii/solutions/2998650/tan-xin-zui-da-dui-chai-fen-shu-zu-pytho-35o6/)
      """
     def maxRemoval(self, nums: List[int], queries: List[List[int]]) -> int:
         queries.sort(key=lambda x: x[0])
         diff = [0] * (len(nums) + 1)
         acc = 0
-        h = []; i = 0
+        h = []; idx = 0
         for i,x in enumerate(nums):
             acc += diff[i]
             target = x - acc
             # add into heap
-            while i<len(queries) and queries[i][0] <= i:
-                heappush(h, -queries[i][1])
-                i += 1
+            while idx<len(queries) and queries[idx][0] <= i:
+                heappush(h, -queries[idx][1])
+                idx += 1
             # try handle target
-            while target>0 and -h[0]>=i:
+            while target>0 and h and -h[0]>=i:  # 注意避免空堆!
                 r = -heappop(h)
+                acc += 1
+                diff[r+1] -= 1
+                target -= 1
+            if target>0: return -1
+        return len(h)
 
     """ 3363. 最多可收集的水果数目 #hard 在一个 n*n 的网格中, 每个单元有分数, (0,0) 沿对角线到 (n-1,n-1); (0,n-1) 每次i+1, j选择 -1/0/+1; (n-1,0) 每次j+1, i选择 -1/0/+1.
 可知, 3人都经过 n-1 到达 (n-1,n-1). 收集的分数不能重叠. 问最大分数和.
@@ -107,9 +114,9 @@ result = [
     # sol.canAliceWin(2),
     # sol.shiftDistance(s = "abab", t = "baba", nextCost = [100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], previousCost = [1,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
     # sol.shiftDistance(s = "leet", t = "code", nextCost = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], previousCost = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]),
-    
-    sol.maxCollectedFruits(fruits = [[1,2,3,4],[5,6,8,7],[9,10,11,12],[13,14,15,16]]),
-    sol.maxCollectedFruits(fruits = [[1,1],[1,1]]),
+    sol.maxRemoval(nums = [2,0,2], queries = [[0,2],[0,2],[1,1]]),
+    # sol.maxCollectedFruits(fruits = [[1,2,3,4],[5,6,8,7],[9,10,11,12],[13,14,15,16]]),
+    # sol.maxCollectedFruits(fruits = [[1,1],[1,1]]),
 ]
 for r in result:
     print(r)
