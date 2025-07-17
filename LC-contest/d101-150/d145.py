@@ -39,8 +39,8 @@ class Solution:
         while strength:
             delta = ceil(strength[0] / x)
             ans += delta
-            x += k
             strength.pop(bisect_right(strength, x*delta)-1)
+            x += k
         return ans
     
     """ 3377. 使两个整数相等的数位操作 #medium 对于两个数位相同的整数. 每次选择n的一位 +/- 1; 最后将其变为m; 要求每次操作后n都不是质数. 问操作过程中所有数字和的最小值. 
@@ -84,9 +84,49 @@ class Solution:
 
     """ 3378. 统计最小公倍数图中的连通块数目 #hard 给定一组数字. 任意两个节点的 #lcm <=th 则连边. 问构成图的连通块数量.
 限制: n 1e5; val 1e9; th 2e5
+思路1: #并查集 + 枚举 #GCD
+    #模板 两个注意点:
+    1. 看到 LCM 就应该联想到 GCD; 有关系 x*y / GCD(x,y) = LCM(x,y)
+    2. gcd 出现在分母上, 就应该想到枚举 g = GCD(x,y)
+        这是因为调和级数相加, 复杂度可控! O(log T) 级别
+    回到本题, 要求 x*y / GCD(x,y) <= th. 转为枚举 g, 那么如何再遍历 x,y 呢? 
+        显然不能两层for, 因为g的倍数有 th/g 个, 单考虑一个g的复杂度就是 O((th/g)^2) 超时了!
+        核心是只考虑最小的x (g的倍数)! 因为更大的数字必然也能和x连起来! 用并查集即可
+    复杂度? 
+        并查集平均 O(a)
+        两层for O(t log(t))
+[ling](https://leetcode.cn/problems/count-connected-components-in-lcm-graph/solutions/3013720/mei-ju-gcd-bing-cha-ji-pythonjavacgo-by-sq6vd/)
  """
     def countComponents(self, nums: List[int], threshold: int) -> int:
-        pass
+        # 
+        n = len(nums)
+        fa = list(range(n))
+        def find(x:int) -> int:
+            rt = x
+            while fa[rt] != rt:
+                rt = fa[rt]
+            while fa[x] != rt:
+                fa[x], x = rt, fa[x]
+            return rt
+        # build the map -- 注意题目保证了元素互不相等
+        m = {x:i for i,x in enumerate(nums)}
+        # enum g
+        for g in range(1, threshold+1):
+            x_group = -1
+            for x in range(g, threshold, g):
+                if x in m:
+                    x_group = find(m[x])
+                    break
+            if x_group < 0: continue
+            # y <= g*th/x
+            for y in range(x+g, g*threshold//x+1, g):
+                if y in m:
+                    y_group = find(m[y])
+                    if x_group != y_group:
+                        fa[y_group] = x_group
+                        n -= 1  # reduce the # components
+        return n
+
 
 sol = Solution()
 result = [
@@ -97,6 +137,8 @@ result = [
     sol.findMinimumTime([46,11,13], 4),
     # sol.minOperations(n = 10, m = 12),
     # sol.minOperations(n = 4, m = 8),
+    # sol.countComponents(nums = [2,4,8,3,9], threshold = 5),
+    # sol.countComponents(nums = [2,4,8,3,9,12], threshold = 10),
 
 ]
 for r in result:
