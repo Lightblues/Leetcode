@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import *
 from math import ceil
 from heapq import heappop, heappush
@@ -5,6 +6,11 @@ from bisect import bisect_right
 
 """ @2025-06-07
 https://leetcode.cn/contest/biweekly-contest-145
+
+质量相当高的一期
+T2: 一个关键的问题是理解 **为什么贪心不对**; 然后从全排列 (回溯) --> 状压DP 非常精彩! 复杂度分析
+T3: Dijkstra 搜索问题
+T4: 听灵神详细讲了 GCD 的处理. 对于问题的建模 + 并查集也非常精彩
 
 Easonsi @2025 """
 class Solution:
@@ -24,11 +30,29 @@ class Solution:
     ERROR 审题错误
     注意审题: 每次开锁消耗全部分数!
     无法贪心? strength = [3,4,1], k = 1
-    第一轮: 等待1次后打开i=2; 增加 X=2;
-    第二轮: 等待2次后应该打开i=1; 增加 X=3;
-    第三轮: 等待1次后直接打开i=0; 增加 X=4; 注意上一步若开i=0则无法打开!
+        第一轮: 等待1次后打开i=2; 增加 X=2;
+        第二轮: 等待2次后应该打开i=1; 增加 X=3;
+        第三轮: 等待1次后直接打开i=0; 增加 X=4; 注意上一步若开i=0则无法打开!
+    再来另一个case: [7,3,6,18,22,50]; k=4
+        先用 3/2/1 打开 3/6/7; 此时 x=13; 剩余 18/22/50
+        若按照顺序打开; (t=2 打开22; x=17), (t=2 打开18; x=21), (t=3 打开50; x=25) -- 累计13次
+        正确顺序: (t=2 打开22; x=17), (t=3 打开50; x=21), (t=1 打开 17) --- 少了一次!
+    核心: 本题 **为什么不能贪心**? 因为不存在最优结构 (不是递减的!)
+        开锁之后能量清空导致了可能出现浪费!!!
+思路1: 排列型 #回溯 + #最优性剪枝
+    枚举所有的开锁顺序!
+    复杂度: O(n * n!) 这里 n=8 是OK的 (需要8s左右)
+    NOTE: 最优性剪枝 时间可以降到 1s 左右 (因为枚举过程中存在大量明显错的答案!)
+思路2: #状压 DP
+    核心: 将某一状态进行表示! 例如这里用一个int来表示剩余要开的锁!
+    复杂度: O(2^n * n) 复杂度上显著小于全排列! 时间在 0.1s 左右
+    注: 对于指数级别的复杂度, Leetcode上大概能 `n=20`!
+思路3: 
+    如何 n=100 呢? #最小费用流
+[ling](https://leetcode.cn/problems/minimum-time-to-break-locks-i/solutions/3014389/san-chong-fang-fa-pai-lie-xing-hui-su-zh-cnpe/)
     """
     def findMinimumTime(self, strength: List[int], k: int) -> int:
+        # ERROR: 下面仍然错误!
         x = 1
         ans = 0
         # for val in sorted(strength):
@@ -42,7 +66,40 @@ class Solution:
             strength.pop(bisect_right(strength, x*delta)-1)
             x += k
         return ans
+
+    def findMinimumTime(self, strength: List[int], k: int) -> int:
+        n = len(strength)
+        vis = [False] * n
+        ans = float("inf")
+        def dfs(i: int, score: int) -> int:
+            nonlocal ans
+            if score >= ans: return  # NOTE: 最优性剪枝 时间降到 1s 左右
+            if i==n:
+                ans = min(ans, score)
+                return
+            x = 1 + i*k
+            for j,s in enumerate(strength):
+                if not vis[j]:
+                    vis[j] = True
+                    dfs(i+1, score + ceil(s / x))  # 枚举的核心: 找 i+1 下一个状态!
+                    vis[j] = False
+        dfs(0, 0)
+        return ans
     
+    def findMinimumTime(self, strength: List[int], k: int) -> int:
+        n = len(strength)
+        @lru_cache(None)
+        def f(i: int) -> int:  # 状态 i 表示需要开的锁
+            if i==0: return 0
+            x = 1 + (n-i.bit_count())*k  # 计算已经开的锁
+            ans = float("inf")
+            for j,s in enumerate(strength):
+                if (i>>j)&1:
+                    ans = min(ans, f(i^(1<<j)) + ceil(s/x))
+            return ans
+        return f((1<<n)-1)
+            
+
     """ 3377. 使两个整数相等的数位操作 #medium 对于两个数位相同的整数. 每次选择n的一位 +/- 1; 最后将其变为m; 要求每次操作后n都不是质数. 问操作过程中所有数字和的最小值. 
 限制: n,m 1e4
 思路1: #UCS #搜索
@@ -135,6 +192,7 @@ result = [
     sol.findMinimumTime(strength = [3,4,1], k = 1),
     sol.findMinimumTime(strength = [2,5,4], k = 2),
     sol.findMinimumTime([46,11,13], 4),
+    sol.findMinimumTime([7,3,6,18,22,50], 4),
     # sol.minOperations(n = 10, m = 12),
     # sol.minOperations(n = 4, m = 8),
     # sol.countComponents(nums = [2,4,8,3,9], threshold = 5),
