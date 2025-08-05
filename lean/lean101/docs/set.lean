@@ -143,7 +143,7 @@ Statement {A B : Set U} {x : U} (h1 : x ∈ A) (h2 : x ∉ B) : ¬A ⊆ B := by
     rewrite [mem_inter_iff] at h
     Hint (hidden := true) "Now `And.intro {h}.right {h}.left` proves the goal."
     exact And.intro h.right h.left
-7. 等价性 (inter_comm): 这里用到了 Subset.antisymm 来证明集合相等. #remark 注意 `apply` 语法需要指定参数
+7. 等价性 (inter_comm): 这里用到了 Subset.antisymm 来证明集合相等. #remark 注意下面 `exact` 语法需要指定参数
   /-- For any sets $A$ and $B$, $A \cap B = B \cap A$. -/
   Statement inter_comm (A B : Set U) : A ∩ B = B ∩ A := by
     apply Subset.antisymm
@@ -190,9 +190,10 @@ Statement {A B : Set U} {x : U} (h1 : x ∈ A) (h2 : x ∉ B) : ¬A ⊆ B := by
 1. intro
   - 对于 P → Q 使用 intro 语法, 可以引入假定 P
   - 对于 ∀ x, P x 形式的命令, 可以引入 x, 例如证明集合的属于关系
-2. apply: 应用一个 iff 来变换goal
+2. apply: 反向变换goal
   - 对于 Goal 进行变换, 例如对于 P ∧ Q, 可以用 apply And.intro 来将 Goal 转换为 P 和 Q 两个子 Goal
 3. exact: 直接符合定义
+  注意 exact 语法也需要参数, 例如 exact inter_subset_swap A B
 4. rewrite: 重写一个命题, 例如 mem_inter_iff
-5. ext:
+5. ext: 对于目标 A = B, 可以用 ext x 来将其变为 x ∈ A ↔ x ∈ B 的形式
 -/
