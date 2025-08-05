@@ -9,6 +9,8 @@ Set Theory Game
 \iff    ↔
 \not    ¬
 \^c \comp ᶜ
+\and ∧
+\inter \cap ∩
 
 # tactics
 U: Type
@@ -51,7 +53,7 @@ Statement (x : U) (A B C : Set U)
 
 
 /-
-# 2) Comp
+# 2) Complement
 notes:
 1. 反证法: 利用 by_contra 来引入反命题
   例如, 对于命题 ¬A ⊆ B, 可以用 by_contra h3 来引入的反命题 A ⊆ B, 然后证明 False 即可
@@ -75,4 +77,10 @@ Statement {A B : Set U} {x : U} (h1 : x ∈ A) (h2 : x ∉ B) : ¬A ⊆ B := by
   by_contra h3
   have h4 : x ∈ B := h3 h1
   exact h2 h4
+-/
+
+
+/-
+# 3) Intersection
+
 -/
