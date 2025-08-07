@@ -1,6 +1,7 @@
 from typing import *
 from functools import lru_cache
-from collections import defaultdict
+from collections import defaultdict, Counter
+from math import comb
 
 """ 
 https://leetcode.cn/contest/biweekly-contest-146
@@ -65,19 +66,51 @@ class Solution:
     """ 3395. 唯一中间众数子序列 I #hard 统计所有的长5的子序列, 要求其存在唯一众数, 并且 seq[2] 是众数  
 限制: n 100; 取模
 思路1: #枚举
-    从n个数中选择5个的可能性有 C(n,5); 考虑其中不合法的
+    转换: 答案 = 从n个数中选择5个的可能性有 C(n,5); 减去其中不合法的
+    考虑中间数字为 x = nums[i], 分类讨论:
+    - x 仅出现一次: 则分别在左侧/右侧选非x的两个数字
+        C(i-prex, 2) * C(n-1-i-sufx, 2). 其中 prex, sufx 是左边/右边有多少x
+    - x 出现两次: 则还有一个 y **至少出现两次** (3个y, 或者另外一个单独的数字) 再分类
+        左边两个y, 右边一个x, 另一个非x (但可以是y): C(prey, 2) * (n-1-i-sufx)*sufx
+        右边两个y, 左边一个x, 另一个非x (但可以是y): prex*(i-prex) * C(sufy, 2)
+        左右各一个y, 右边一个x, 左边非xy (不能是y了, 不然和上面重复): prex*prey * sufy*(n-1-i-sufx-sufy)
+        左右各一个y, 左边一个x, 右边非xy: prey*(i-prex-prey) * sufx*sufy
+复杂度: O(n^2)
+[ling](https://leetcode.cn/problems/subsequences-with-a-unique-middle-mode-i/solutions/3026877/zheng-nan-ze-fan-fen-lei-tao-lun-qian-ho-f7cd/)
     """
     def subsequencesWithMiddleMode(self, nums: List[int]) -> int:
         MOD = 10**9 + 7
-        
+        n = len(nums)
+        ans = comb(n, 5)
+        suf = Counter(nums)
+        pre = defaultdict(int)
+        for i,x in enumerate(nums[:-2]):
+            suf[x] -= 1
+            if i > 1:
+                prex, sufx = pre[x], suf[x]
+                ans -= comb(i-prex, 2) * comb(n-1-i-sufx, 2)
+                # ERROR: for y, prey in pre.items():
+                # 注意! 此处应该枚举 "所有可能的y", 因此不能 for pre.items() -- 因为 prey / sufy 可能是 0!
+                for y, sufy in suf.items():
+                    if y==x: continue
+                    prey = pre[y]
+                    ans -= comb(prey, 2) * (n-1-i-sufx)*sufx
+                    ans -= prex*(i-prex) * comb(sufy, 2)
+                    ans -= prex*prey * sufy*(n-1-i-sufx-sufy)
+                    ans -= prey*(i-prex-prey) * sufx*sufy
+            pre[x] += 1
+        return ans % MOD
 
 
 sol = Solution()
 result = [
     # sol.countPathsWithXorValue(grid = [[2, 1, 5], [7, 10, 0], [12, 6, 4]], k = 11),
-    sol.checkValidCuts(n = 5, rectangles = [[1,0,5,2],[0,2,2,4],[3,2,5,3],[0,4,4,5]]),
-    sol.checkValidCuts(n = 4, rectangles = [[0,0,1,1],[2,0,3,4],[0,2,2,3],[3,0,4,3]]),
-    sol.checkValidCuts(n = 4, rectangles = [[0,2,2,4],[1,0,3,2],[2,2,3,4],[3,0,4,2],[3,2,4,4]]),
+    # sol.checkValidCuts(n = 5, rectangles = [[1,0,5,2],[0,2,2,4],[3,2,5,3],[0,4,4,5]]),
+    # sol.checkValidCuts(n = 4, rectangles = [[0,0,1,1],[2,0,3,4],[0,2,2,3],[3,0,4,3]]),
+    # sol.checkValidCuts(n = 4, rectangles = [[0,2,2,4],[1,0,3,2],[2,2,3,4],[3,0,4,2],[3,2,4,4]]),
+    sol.subsequencesWithMiddleMode(nums = [1,1,1,1,1,1]),
+    sol.subsequencesWithMiddleMode(nums = [1,2,2,3,3,4]),
+    sol.subsequencesWithMiddleMode(nums = [0,1,2,3,4,5,6,7,8]),
 ]
 for r in result:
     print(r)
