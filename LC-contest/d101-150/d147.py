@@ -5,7 +5,12 @@ from math import inf
 
 """ 
 https://leetcode.cn/contest/biweekly-contest-147
-Easonsi @2025 """
+Easonsi @2025 
+
+- T2 的懒删除, 意识到工程优化需要考虑边界! 两个数据存储需要同步删除
+- T3 DP 的优化的递归计算有意思
+- T4 前后缀分解代码实现很重要! ling 的代码真的优雅
+"""
 
 """ 3408. 设计任务管理器
 思路1: #懒删除
@@ -122,12 +127,12 @@ class Solution:
         pre = [-inf] * n
         for i,x in enumerate(nums):
             if i>0: pre[i] = pre_f[i-1]
-            if j:= pre_j[i]>=0:
+            if (j := pre_j[i]) >= 0:
                 pre[i] = max(pre[i], pre[j] + s[i] - s[j+1])
         suf = [-inf] * n
         for i in range(n-1, -1, -1):
             if i<n-1: suf[i] = suf_f[i+1]
-            if j:= suf_j[i]<n:
+            if (j := suf_j[i]) < n:
                 suf[i] = max(suf[i], suf[j] + s[j] - s[i+1])
         ans = max(pre_f)
         for i,x in enumerate(nums):
