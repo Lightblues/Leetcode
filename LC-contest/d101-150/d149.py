@@ -5,6 +5,8 @@ from functools import lru_cache
 
 """ 
 https://leetcode.cn/contest/biweekly-contest-149
+T3 需要转换思维;
+T4 的DP重构问题很复杂! 需要细品! 
 Easonsi @2025 """
 class Solution:
     """ 3438. 找到字符串中合法的相邻数字 """
@@ -72,31 +74,76 @@ class Solution:
 限制: n 5e4
 思路1: #DP
     记 f[i,c] 表示前i个字符符合要求, 且最后一个字符为c的最小代价. 则有转移
-    - f[i-1,c] + d[c, i:i]
-    - f[i-2,c] + d[c, i-1:i]
-    - min{f[i-3,.]} + d[c, i-2:i]
-    其中 d[c, i1:i2] 表示将 i1:i2 范围内变为 c 的代价
-    复杂度: O(n C^2)
+        - f[i-1, c] + d[c, i:i]
+        - min{f[i-3, .]} + d[c, i-2:i]
+        取较小; 其中 d[c, i1:i2] 表示将 i1:i2 范围内变为 c 的代价
+    复杂度: O(n C^2), 若采用递推的形式并将内部的min函数做记录, 则复杂度为 O(n C)
+    复杂的问题在于: 如何重构字符串?
+        我们需要记录 f[i,c] 的来源! 假设记作 nxt[i,c]
+            若为情况1, 则设置 nxt[i,c] = i, 填入c并前向转移到 i-1
+            若为情况2, 则设置 nxt[i,c] = i-3, 填入连续3个c并前向转移到 i-3
+        如何得到字典序最小? 
+            需要逆序! 实际上要求的 (cost, dict_order) 双重排序! 外层循环考虑cost的时候, 若遇到cost相同再考虑字典序! 
+[ling](https://leetcode.cn/problems/minimum-cost-good-caption/solutions/3061609/zhuang-tai-ji-dp-shu-chu-ju-ti-fang-an-p-kjry/)
+思路2: #中位数贪心
+    TODO
     """
-    def minCostGoodCaption(self, caption: str) -> str:
-        if len(caption) < 3: return ""
+    def minCostGoodCaption(self, caption: str) -> int:
+        # 简化问题: 只需要输出最少操作! 
+        if len(caption) < 3: return -1
         n = len(caption)
         caption = [ord(c)-ord('a') for c in caption]
         def d(c, i1, i2):
             return sum(abs(c-caption[i]) for i in range(i1,i2+1))
         @lru_cache(None)
-        def f(i:int, c:int) -> tuple[int, str]:
+        def f(i:int, c:int) -> int:
             if i<2: return inf
-            elif i==2: return d(c, 0, 2), [c,c,c]
-            # return min(
-            #     f(i-1,c)+d(c,i,i),
-            #     f(i-2,c)+d(c,i-1,i),
-            #     min(f(i-3,ch) for ch in range(26)) + d(c,i-2,i)
-            # )
-            mn = inf; ans = None
-
-
+            elif i==2: return d(c, 0, 2)
+            return min(
+                f(i-1,c)+d(c,i,i),
+                # f(i-2,c)+d(c,i-1,i),  # NOTE: 不用考虑这种情况
+                min(f(i-3,ch) for ch in range(26)) + d(c,i-2,i)
+            )
         return min(f(n-1,c) for c in range(26))
+
+    def minCostGoodCaption(self, caption: str) -> str:
+        # TODO: 增加用于重构的 nxt 数组
+        if len(caption) < 3: return ""
+        n = len(caption)
+        caption = [ord(c)-ord('a') for c in caption]
+        def d(c, i1, i2):
+            return sum(abs(c-caption[i]) for i in range(i1,i2+1))
+
+        min_j = [-1]*n
+        nxt = [[-1]*26 for _ in range(n)]
+        # @lru_cache(None)
+        # def f(i:int, c:int) -> int:
+        #     if i==n: return 0  # 哨兵 for condition 1
+        #     # condition 1
+        #     res = f(i+1,c) + d(c,i,i)
+        #     nxt[i][c] = i+1
+        #     # condition 2
+        #     if i<=n-6:
+        #         if min_j[i+3]==-1:
+        #             mn = inf
+        #             for ch in range(26):
+        #                 if f(i+3,ch)<mn: mn = f(i+3,ch)
+        #             min_j[i+3] = mn
+        #         res2 = min_j[i+3]+d(c,i,i+2)
+        #         if res2<res:
+        #             nxt[i][c] = i+3
+        #             res = res2
+        #     return res
+        # _ = min(f(0,c) for c in range(26))
+
+        # rebuild
+        ans = [''] * n
+        # i, j = 
+
+
+    """ 1092. 最短公共超序列 #hard 给定两个字符串 s1, s2, 找到最短的字符串, 使得两个字符串均为其子序列
+限制: n 1e3
+    """
 
 sol = Solution()
 result = [
