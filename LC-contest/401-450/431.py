@@ -80,6 +80,7 @@ result = [
     # sol.maxLength(nums = [1,2,1,2,1,1,1]),
     # sol.calculateScore(s = "aczzx"),
     sol.maximumCoins(coins = [[8,10,1],[1,3,2],[5,6,4]], k = 4),
+    sol.maximumCoins(coins = [[1,10,3]], k = 2),
 ]
 for r in result:
     print(r)
