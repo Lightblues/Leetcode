@@ -3,7 +3,8 @@ from typing import *
 
 """ 
 https://leetcode.cn/contest/weekly-contest-434
-
+T3 的 Kadane 算法需要想到转化! 另外 #状态机DP 也很有意思
+T4 一道巨难的题
 Easonsi @2025 """
 class Solution:
     """ 3432. 统计元素和差值为偶数的分区方案 """
@@ -67,7 +68,19 @@ class Solution:
                 mx = max(mx, acc)
         return mx + ks
 
-    """ 3435. 最短公共超序列的字母出现频率 #medium 给定一组 """
+    """ 3435. 最短公共超序列的字母出现频率 #medium 给定一组长度为2的字符串 words, 求它们的 "最短公共超序列" -- 也即所有的给定字符串都是该超序列的子序列. 
+数量很多, 只需要返回所有超序列中出现的字母频率即可. 限制: n 256; 所有的字母数量不超过 16个
+思路1: 贪心构造 + 枚举子集 + 有向图判环
+    观察1: 超序列中每个字母出现的频次至多是2 -- 考虑把a放在两端, 则可满足左右的 a*, *a 的情况
+        - 因此, 我们可以枚举所有子集, 判断哪些字母出现 1/2 次!
+    给定一个划分 (char_set1, char_set2) 如何判断它是否可满足所有 words?
+        对于words中, 出现在 char_set2 里面的要求, 显然都是满足的! 
+        因此, 只需要看 char_set1 这些字母构成的要求是否满足! 
+        观察2: 这个问题等价于, 每个word构成一个有向边, 判断图是否有环!
+            - 有向图是否有环的问题, 可以通过 #拓扑排序 或者 #三色标记 来解决
+    复杂度: O(n 2^k) 需要枚举所有出现字母的子集, 每次检查的复杂度为 O(n) 
+    [ling](https://leetcode.cn/problems/frequencies-of-shortest-supersequences/solutions/3057743/mei-ju-zi-ji-jian-tu-pan-duan-shi-fou-yo-n43u/)
+    """
 
     
 sol = Solution()
