@@ -2,7 +2,7 @@ from typing import *
 
 
 """ 
-https://leetcode.cn/contest/weekly-contest-436
+https://leetcode.cn/contest/weekly-contest-437
 Easonsi @2025 """
 class Solution:
     """  """
