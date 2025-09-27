@@ -16,14 +16,16 @@
 
 技巧
 
-- 根据数据范围推测可能的算法: [here](https://www.acwing.com/blog/content/32/)
+- 根据数据范围推测可能的算法: [acwing](https://www.acwing.com/blog/content/32/)
 - [C++ 模板](https://github.com/old-yan/CP-template)
 
 总结
-- [灵神](https://leetcode.cn/u/endlesscheng/)
+
+- [灵神](https://leetcode.cn/u/endlesscheng/) 🌟🌟🌟
     - [2022 年周赛题目总结（上篇）](https://leetcode.cn/circle/discuss/G0n5iY/) 
     - [2022 年周赛题目总结（下篇）](https://leetcode.cn/circle/discuss/WR1MJP/)
     - [分享｜从集合论到位运算，常见位运算技巧分类总结！](https://leetcode.cn/circle/discuss/CaOJ45/)
+    - [【算法题单】常用数据结构（前缀和/栈/队列/堆/字典树/并查集/树状数组/线段树）](https://www.bilibili.com/video/BV15gRaYZE5o/)
 - XYShaoKang [刷题交流 | 2700 分总结 & 算法入门](https://leetcode.cn/circle/discuss/gmXruw/)
 
 ### 代码库
