@@ -82,6 +82,7 @@ class Solution:
     
     """ 0416. 分割等和子集 #背包 #medium 是否可以将数组划分成两个和相等的数组. 限制: n 200, 每个元素大小 100. 
 思路2: #0-1背包 问题. 求是否可以满足
+ling: https://leetcode.cn/problems/partition-equal-subset-sum/solutions/2785266/0-1-bei-bao-cong-ji-yi-hua-sou-suo-dao-d-ev76/
 """
     def canPartition(self, nums: List[int]) -> bool:
         s = sum(nums)
