@@ -3,7 +3,9 @@ import collections
 
 """ 
 https://leetcode.cn/contest/weekly-contest-441
-
+T2 循环数组, 注意写法
+T3 0-1 背包, 注意问题的转换
+T4 数位DP TODO:
 Easonsi @2025 """
 class Solution:
     """ 3487. 删除后的最大子数组元素和 删除部分元素, 使得剩余数组中, 子数组和最大 """
@@ -55,8 +57,12 @@ ling: https://leetcode.cn/problems/zero-array-transformation-iv/solutions/361390
                 return -1
         return ans
 
-    """ 3490. 统计美丽整数的数目 #hard """
-
+    """ 3490. 统计美丽整数的数目 #hard 问在 [l,r] 范围内, 满足 "数位之积能被之和整除" 的数字的数量
+限制: n 1e9
+思路: #数位DP
+    """
+    def beautifulNumbers(self, l: int, r: int) -> int:
+        pass
 
 sol = Solution()
 result = [
