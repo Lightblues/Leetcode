@@ -1,17 +1,17 @@
-[tool.poetry]
+[project]
 name = "leetcode"
 version = "0.1.0"
 description = ""
-authors = ["easonsshi <easonsshi@tencent.com>"]
+authors = [{ name = "easonsshi", email = "easonsshi@tencent.com" }]
+requires-python = "~=3.10"
 readme = "README.md"
+dependencies = [
+    "beautifulsoup4>=4.14.0",
+    "dotenv>=0.9.9",
+    "easonsi>=0.0.8,<0.0.9",
+    "requests>=2.32.5",
+]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-easonsi = "^0.0.8"
+[tool.uv]
+package = false
 
-[tool.poetry.group.dev.dependencies]
-poetry = "^1.8.4"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"

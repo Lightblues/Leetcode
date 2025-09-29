@@ -9,7 +9,7 @@
         {
             // name: Provides the name for the debug configuration that appears in the VS Code dropdown list.
             "name": "Python: Current File",
-            "type": "python",
+            "type": "debugpy",
             // 两种模式: 1) launch: 直接调试 program 中所定义的文件; 2) attach: 附加到一个已经运行的进程. 
             "request": "launch",
             "program": "${file}",
@@ -28,7 +28,7 @@
         },
         {
             "name": "Python: Attach using Process Id",
-            "type": "python",
+            "type": "debugpy",
             "request": "attach",
             "processId": "${command:pickProcess}",
             "justMyCode": true
@@ -36,26 +36,26 @@
         // 例子: 设置 args
         {
             "name": "Python: startup.py",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/startup.py",
             "args" : ["--port", "1593"]
         },
        
         // C++
-        {
-            "name": "C/C++: clang++ 生成和调试活动文件",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}.out",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb",
-            "preLaunchTask": "C/C++: clang++ 生成活动文件"
-        },
+        // {
+        //     "name": "C/C++: clang++ 生成和调试活动文件",
+        //     "type": "cppdbg",
+        //     "request": "launch",
+        //     "program": "${fileDirname}/${fileBasenameNoExtension}.out",
+        //     "args": [],
+        //     "stopAtEntry": false,
+        //     "cwd": "${fileDirname}",
+        //     "environment": [],
+        //     "externalConsole": false,
+        //     "MIMode": "lldb",
+        //     "preLaunchTask": "C/C++: clang++ 生成活动文件"
+        // },
         
         
         // {
@@ -91,15 +91,15 @@
         //     "request": "launch",
         //     "mainClass": "${file}"
         // },
-        {
-            "name": "Go",
-            "type": "go",
-            "request": "launch",
-            "mode": "debug",
-            // "program": "${workspaceFolder}"
-            "program": "${file}",
-            "cwd": "${fileDirname}"
-        },
+        // {
+        //     "name": "Go",
+        //     "type": "go",
+        //     "request": "launch",
+        //     "mode": "debug",
+        //     // "program": "${workspaceFolder}"
+        //     "program": "${file}",
+        //     "cwd": "${fileDirname}"
+        // },
         // {
         //     "name": "Python",
         //     "type": "python",

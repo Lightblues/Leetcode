@@ -12,6 +12,7 @@ package-lock.json
 *.epub
 # specific
 *.html
+*.json
 
 # cpp 编译生成的可执行文件
 *.out
