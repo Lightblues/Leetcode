@@ -20,6 +20,9 @@ LeetCode 中文站爬虫脚本
   列表： https://leetcode.cn/api/problems/algorithms/
   详情(GraphQL)： https://leetcode.cn/graphql
 - 该脚本未使用账号登录接口，属于公开信息抓取；若接口策略更改，可能需要添加 Cookie。
+
+其他数据API: https://github.com/alfaarghya/alfa-leetcode-api
+https://github.com/noworneverev/leetcode-api
 """
 
 from __future__ import annotations
@@ -170,7 +173,11 @@ def save_json(data: Any, path: str) -> None:
 
 
 # ----------------------------- Feishu Bitable ----------------------------- #
-
+""" 
+目标表格: https://v0r8x11vrv.feishu.cn/wiki/HIStwZz20iQS2MkZOGpclhk8nuh?table=tblNQdAV9xyGVNfC&view=vewcdJyW4c
+应用权限: https://open.feishu.cn/app/cli_a54855cb22bed00c/auth
+文档: https://open.feishu.cn/document/server-docs/docs/bitable-v1/bitable-overview
+"""
 class FeishuBitableClient:
     """飞书多维表格（Bitable）客户端，支持获取租户 token、增/改记录。
 
@@ -187,6 +194,7 @@ class FeishuBitableClient:
         table_id: str,
         base_url: str = "https://open.feishu.cn",
         session: Optional[requests.Session] = None,
+        user_access_token: Optional[str] = None,
     ) -> None:
         self.app_id = app_id
         self.app_secret = app_secret
@@ -195,6 +203,7 @@ class FeishuBitableClient:
         self.base_url = base_url.rstrip("/")
         self.s = session or _build_session()
         self._tenant_token: Optional[str] = None
+        self._user_access_token: Optional[str] = user_access_token
 
     def _request(self, method: str, url: str, **kwargs) -> requests.Response:
         """统一请求并在出错时打印可读信息（含响应体）。"""
@@ -223,6 +232,10 @@ class FeishuBitableClient:
         return self._tenant_token
 
     def _auth_headers(self) -> Dict[str, str]:
+        # 如果提供了 user_access_token，则优先使用用户令牌（以用户身份访问，需要用户对表有权限）。
+        if self._user_access_token:
+            return {"Authorization": f"Bearer {self._user_access_token}"}
+        # 否则使用租户令牌（以应用身份访问，需要把应用加入该 Base 的协作者）。
         return {"Authorization": f"Bearer {self.tenant_access_token()}"}
 
     def list_records(self, filter_formula: Optional[str] = None, page_size: int = 1) -> Dict[str, Any]:
@@ -250,6 +263,53 @@ class FeishuBitableClient:
         url = f"{self.base_url}/open-apis/bitable/v1/apps/{self.app_token}/tables/{self.table_id}/records"
         _ = self._request("GET", url, params={"page_size": 1}, headers=self._auth_headers())
 
+    # ---------------------- Fields (Schema) APIs ---------------------- #
+    def list_fields(self) -> Dict[str, Any]:
+        url = f"{self.base_url}/open-apis/bitable/v1/apps/{self.app_token}/tables/{self.table_id}/fields"
+        r = self._request("GET", url, headers=self._auth_headers())
+        return r.json()
+
+    def create_field(self, field_name: str, field_type: int = 1, property_obj: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """创建一个字段。默认按文本类型(type=1)。
+
+        注：不同类型的字段取值结构不同，如需精细类型，请调整 field_type 与 property。
+        官方类型枚举可参考飞书文档；常见：1-文本，2-数字，17-复选框，5-日期等（此处仅供参考）。
+        """
+        url = f"{self.base_url}/open-apis/bitable/v1/apps/{self.app_token}/tables/{self.table_id}/fields"
+        payload: Dict[str, Any] = {"field_name": field_name, "type": field_type}
+        if property_obj:
+            payload["property"] = property_obj
+        r = self._request("POST", url, headers=self._auth_headers(), json=payload)
+        return r.json()
+
+    def ensure_fields(self, field_types: Dict[str, int], auto_create: bool = False) -> None:
+        """确保表中存在所需字段；若缺失且允许自动创建，则以给定类型创建。
+
+        field_types: 字段名 -> 类型ID（默认可用1表示文本）。
+        """
+        try:
+            existing = self.list_fields()
+            items = (existing or {}).get("data", {}).get("items", [])
+            existing_names = {it.get("field_name") for it in items if isinstance(it, dict)}
+        except Exception as e:
+            print(f"[WARN] 获取字段列表失败：{e}")
+            existing_names = set()
+
+        missing = [name for name in field_types.keys() if name not in existing_names]
+        if not missing:
+            return
+        if not auto_create:
+            print(f"[ERROR] 目标表缺少字段：{', '.join(missing)}。请在 Bitable 中创建这些列（建议文本类型），或使用 --feishu-auto-create-fields 让脚本自动创建。")
+            return
+
+        for name in missing:
+            ftype = field_types.get(name, 1) or 1
+            try:
+                self.create_field(name, ftype)
+                print(f"[INFO] 已为 Bitable 自动创建字段：{name} (type={ftype})")
+            except Exception as e:
+                print(f"[WARN] 自动创建字段失败 {name}: {e}")
+
 
 def _build_bitable_fields(q: Dict[str, Any]) -> Dict[str, Any]:
     """将题目字典映射为 Bitable 的 fields 映射。字段名可在飞书表中自行创建对应列名。
@@ -267,7 +327,7 @@ def _build_bitable_fields(q: Dict[str, Any]) -> Dict[str, Any]:
         "title": q.get("title"),
         "title_slug": q.get("title_slug") or q.get("titleSlug"),
         "difficulty": q.get("difficulty") or q.get("difficulty"),
-        "paid_only": q.get("paid_only"),
+        "paid_only": str(q.get("paid_only")),
         "status": q.get("status"),
         "translatedTitle": q.get("translatedTitle"),
         "translatedContent": q.get("translatedContent"),
@@ -357,11 +417,22 @@ def main(argv: Optional[List[str]] = None) -> int:
         default=os.getenv("FEISHU_UNIQUE_FIELD", "title_slug"),
         help="用于增量去重的唯一字段（默认为 title_slug）",
     )
+    parser.add_argument(
+        "--feishu-auto-create-fields",
+        action="store_true",
+        help="若目标表缺少字段，则自动按文本类型创建（谨慎使用，可先手动创建更合适的类型）",
+    )
+    parser.add_argument(
+        "--feishu-user-token",
+        default=os.getenv("FEISHU_USER_ACCESS_TOKEN", ""),
+        help="可选：用户访问令牌 user_access_token（若使用用户身份访问表格）",
+    )
 
     args = parser.parse_args(argv)
-    args.limit = 1
+    args.limit = 100
     args.details = True
     args.feishu = True
+    args.feishu_auto_create_fields = True
     session = _build_session()
 
     print("[INFO] 获取题目列表...")
@@ -404,12 +475,38 @@ def main(argv: Optional[List[str]] = None) -> int:
                 app_token=args.feishu_base_id,
                 table_id=args.feishu_table_id,
                 session=session,
+                user_access_token=(args.feishu_user_token or None),
             )
             try:
                 feishu_client.verify_access()
                 print("[INFO] 飞书预检通过：表可访问且权限正常")
             except Exception as e:
-                print(f"[ERROR] 飞书预检失败：{e}\n[HINT] 请检查：\n- 应用是否具有 bitable:record:read, bitable:record:write 权限\n- 应用是否已安装到你的租户（企业自建应用需在企业内上架/安装）\n- 目标多维表格是否已将应用添加为协作者（在表的共享设置中添加应用，并授予可读写权限）\n- app_token 与 table_id 是否对应同一个 Base\n- 环境变量/参数是否正确（区分中国区 open.feishu.cn 与海外域名）")
+                print(f"[ERROR] 飞书预检失败：{e}\n[HINT] 请检查：\n- 使用应用身份（tenant_access_token）时：\n  * 应用是否具有 bitable:record:read, bitable:record:write 权限\n  * 应用是否已安装到你的租户，并被添加为该 Base 的协作者（可读写）\n- 使用用户身份（user_access_token）时：\n  * 传入的 user_access_token 是否有效且未过期\n  * 该用户是否对目标 Base/Table 具备读写权限\n- 其它：\n  * app_token 与 table_id 是否对应同一个 Base\n  * 域名是否为 open.feishu.cn（中国区）或与你的环境匹配")
+            # 确保字段存在（可选自动创建）
+            try:
+                required_fields = {
+                    # 列表信息字段
+                    "frontend_id": 1,
+                    "title_cn": 1,
+                    "title": 1,
+                    "title_slug": 1,
+                    "difficulty": 1,
+                    "paid_only": 1,
+                    "status": 1,
+                    # 详情字段
+                    "translatedTitle": 1,
+                    "translatedContent": 1,
+                    "likes": 2,       # 数字（如果 2 非数字类型，可改 1 文本以兼容）
+                    "dislikes": 2,
+                    "questionFrontendId": 1,
+                    "tags": 1,
+                    "updated_at": 2,
+                }
+                # 确保唯一字段也存在
+                required_fields.setdefault(args.feishu_unique_field, 1)
+                feishu_client.ensure_fields(required_fields, auto_create=args.feishu_auto_create_fields)
+            except Exception as e:
+                print(f"[WARN] 字段校验/创建过程出现异常：{e}")
 
     for idx, q in enumerate(subset, 1):
         merged = dict(q)
