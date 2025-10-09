@@ -60,6 +60,7 @@ ling: https://leetcode.cn/problems/zero-array-transformation-iv/solutions/361390
     """ 3490. 统计美丽整数的数目 #hard 问在 [l,r] 范围内, 满足 "数位之积能被之和整除" 的数字的数量
 限制: n 1e9
 思路: #数位DP
+[ling](https://leetcode.cn/problems/count-beautiful-numbers/solutions/3613931/mo-ban-shu-wei-dp-v21pythonjavacgo-by-en-fdzz/)
     """
     def beautifulNumbers(self, l: int, r: int) -> int:
         pass
