@@ -1,10 +1,11 @@
 from typing import *
-import heapq
+from math import ceil
 
 """ 
 https://leetcode.cn/contest/weekly-contest-442
 T2 并查集
 T3 连续处理的要求, 比较数学, ling 给了四种解法 #star
+T4 观察可以找到规律; 计数部分需要一些位运算.
 Easonsi @2025 """
 class Solution:
     """ 3492. 船上可以装载的最大集装箱数量 """
@@ -68,12 +69,30 @@ ling: https://leetcode.cn/problems/find-the-minimum-amount-of-time-to-brew-potio
         发现 1...3 需要一次; 4...15 需要两次; 16...63 需要三次, ...
         分析对于一些区间所需的操作次数, 可知所需操作次数为 ceil(M/2) 其中M为所有数字累计的操作数
     第二个问题, 如何统计 [l,r] 区间内的数字所需操作数?
+        思路1: 构建 1,4,16,... 的数组, 二分查找统计
+        思路2: 参见ling, 直接定义 f(x) 计算 1...x 范围的操作次数, 则答案就是 f(r) - f(l-1)
+            为此, 直接二进制累计每一个位数即可!
+ling: https://leetcode.cn/problems/minimum-operations-to-make-array-elements-zero/solutions/3624312/o1-gong-shi-pythonjavacgo-by-endlesschen-2gos/
     """
+    def minOperations(self, queries: List[List[int]]) -> int:
+        def f(x: int) -> int:
+            m = x.bit_length()
+            acc = 0
+            for i in range(1, m):
+                acc += ceil(i/2) * 2**(i-1)  # 对于长i的二进制数字, 一共有 2^(i-1) 个
+            acc += (x - 2**(m-1) + 1) * ceil(m/2)
+            return acc
+        acc = 0
+        for l,r in queries:
+            acc += ceil((f(r) - f(l-1)) / 2)
+        return acc
+        
 
 sol = Solution()
 result = [
     # sol.numberOfComponents(properties = [[1,2],[1,1],[3,4],[4,5],[5,6],[7,7]], k = 1),
-    sol.minTime(skill = [1,5,2,4], mana = [5,1,4,2]),
+    # sol.minTime(skill = [1,5,2,4], mana = [5,1,4,2]),
+    sol.minOperations(queries = [[1,2],[2,4]]),
 ]
 for r in result:
     print(r)
