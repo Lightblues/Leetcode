@@ -9,6 +9,7 @@ dependencies = [
     "beautifulsoup4>=4.14.0",
     "dotenv>=0.9.9",
     "easonsi>=0.0.8,<0.0.9",
+    "ipython>=8.37.0",
     "numpy>=2.2.6",
     "requests>=2.32.5",
 ]
