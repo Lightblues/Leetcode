@@ -6,7 +6,8 @@ import heapq
 
 """ 
 https://leetcode.cn/contest/weekly-contest-443
-
+T3 两个字符串的子串连接构成回文字符串, 经典DP和中心扩展法结合应用, 需要细致的分析 #star
+T4 外层划分型 DP, 内层使用懒删除堆维护滑动窗口中位数, 计算代价, 综合应用 #star
 Easonsi @2025 """
 class Solution:
     """ 3502. 到达每个位置的最小费用 """
@@ -122,7 +123,7 @@ ling: https://leetcode.cn/problems/minimum-operations-to-make-elements-within-k-
                 if left.size == right.size:  # add to left
                     left.push(-right.pushpop(x))
                 else:  # add to right
-                    right.push(left.pushpop(-x))
+                    right.push(-left.pushpop(-x))
                 if i < k-1:
                     continue
                 # 2. get median & calc result
@@ -140,13 +141,15 @@ ling: https://leetcode.cn/problems/minimum-operations-to-make-elements-within-k-
                     if left.size > right.size + 1:
                         right.push(-left.pop())
             return ans
-            
+
         cost = medianSlidingWindow(nums, x)
         n = len(nums)
         f = [[0] * (n+1) for _ in range(k+1)]
         for i in range(1, k+1):
             f[i][i*x-1] = inf
-            for j
+            for j in range(i*x, n+1):
+                f[i][j] = min(f[i][j-1], f[i-1][j-x] + cost[j - x])
+        return f[k][n]  # 题目一定满足要求
 
 class LazyHeap:
     """ 懒删除堆, 维护元素个数和元素和 """
@@ -196,7 +199,8 @@ sol = Solution()
 result = [
     # sol.minCosts(cost = [5,3,4,1,3,2]),
     # sol.longestPalindrome(s = "abc", t = "cba"),
-    sol.longestPalindrome(s = "abcde", t = "ecdba"),
+    # sol.longestPalindrome(s = "abcde", t = "ecdba"),
+    sol.minOperations(nums = [5,-2,1,3,7,3,6,4,-1], x = 3, k = 2),
 ]
 for r in result:
     print(r)

@@ -2,7 +2,7 @@ from typing import *
 import heapq
 
 """ 
-https://leetcode.cn/contest/weekly-contest-441
+https://leetcode.cn/contest/weekly-contest-444
 
 Easonsi @2025 """
 class Solution:
