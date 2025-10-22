@@ -1,15 +1,6 @@
 """ 
 - max_threads
 - (task_id, fn, deps, timeout)
-
-    queue = asyncio.Queue()
-    tasks = []
-    for i in range(3):
-        task = asyncio.create_task(worker(f'worker-{i}', queue))
-        tasks.append(task)
-    await queue.join()
-    for task in tasks:
-        task.cancel()
 """
 import asyncio
 from collections import defaultdict
@@ -24,6 +15,7 @@ class Task:
             print(f"task {self.tid} (dep {self.deps}) done")
         self.fn = fn
 
+max_threads = 5
 tasks = [
     Task(0, .5, []),
     Task(1, 1, [0]),
@@ -31,8 +23,8 @@ tasks = [
 ]
 queue = asyncio.Queue()  # task_id
 tid_task: dict[int, Task] = {}
-tid_map = defaultdict(list)
-tid_deps = {}
+tid_map = defaultdict(list) # map to deps
+tid_deps = {}               # count of deps
 for t in tasks:
     tid_task[t.tid] = t
     tid_deps[t.tid] = len(t.deps)
@@ -41,12 +33,16 @@ for t in tasks:
     if len(t.deps) == 0:
         print(f"queue: adding task {t.tid}")
         queue.put_nowait(t.tid)
+
+
 async def worker(wid: int):
-    while tasks:
+    while tid_task:
         print(f"worker {wid} getting task...")
         tid = await queue.get()
+        if tid is None:
+            return
         print(f"worker {wid} got task {tid}")
-        task = tid_task[tid]
+        task = tid_task.pop(tid)
         try:
             await asyncio.wait_for(task.fn(), task.timeout)
             # handle the deps
@@ -60,11 +56,13 @@ async def worker(wid: int):
             # failed, cancel all the dep tasks
             for t in tid_map:
                 tid_task.pop(t)
-    
-                
+        finally:
+            if len(tid_task) == 0:
+                # all done, notify other workers to exit
+                for _ in range(max_threads):
+                    queue.put_nowait(None)
 
 async def main():
-    max_threads = 2
     await asyncio.gather(*[worker(i) for i in range(max_threads)])
 
 asyncio.run(main())
