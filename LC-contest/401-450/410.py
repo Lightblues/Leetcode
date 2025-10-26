@@ -49,9 +49,15 @@ class Solution:
         return ans
     
     """ 3250. 单调数组对的数目 I 
-    3251. 单调数组对的数目 II #hard 
-https://leetcode.cn/problems/find-the-count-of-monotonic-pairs-ii/solutions/2876190/qian-zhui-he-you-hua-dppythonjavacgo-by-3biek/
+    3251. 单调数组对的数目 II #hard 给定长n的数组, 对于每个元素分解为 nums[i] = a1[i] + a2[i], 要求分解后 a1 单调非递减, a2 单调非递减. 求数量. 
+限制: n 2e3; nums[i] 1e3
+思路1: 前缀和优化 DP
+    考虑 f[i,j] 表示前i个元素, 且 a1[i]=j 的方案数.
+    状态转移: 枚举 i-1 位置的元素范围, 若 a1[i-1] = k, 则 a1[i-1] <= a1[i], a2[i-1] >= a2[i]
+        也即, k <= min{j, nums[i-1]-nums[i]+j}, 定义右边的max为 maxK
+ling: https://leetcode.cn/problems/find-the-count-of-monotonic-pairs-ii/solutions/2876190/qian-zhui-he-you-hua-dppythonjavacgo-by-3biek/
 """
+    def countOfPairs(self, nums: List[int]) -> int:
 
 sol = Solution()
 result = [
