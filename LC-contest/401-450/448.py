@@ -74,10 +74,57 @@ class Solution:
         
         return dp(-1, 0, k)
 
-    
+    def magicalSum(self, m: int, k: int, nums: List[int]) -> int:
+        MOD = 10**9 + 7
+        n = len(nums)
+        mavoduteru = (m, k, nums)
+
+        fact = [1] * (m + 2)
+        for i in range(1, m + 2):
+            fact[i] = fact[i-1] * i % MOD
+        inv_fact = [1] * (m + 2)
+        inv_fact[m + 1] = pow(fact[m + 1], MOD - 2, MOD)
+        for i in range(m, -1, -1):
+            inv_fact[i] = inv_fact[i + 1] * (i + 1) % MOD
+
+        # wt[j][c] = nums[j]^c / c! mod MOD
+        wt = []
+        for j in range(n):
+            row = [0] * (m + 1)
+            pw = 1
+            for c in range(m + 1):
+                row[c] = pw * inv_fact[c] % MOD
+                pw = pw * nums[j] % MOD
+            wt.append(row)
+
+        from functools import lru_cache
+        max_j = n + (m.bit_length() if m else 1) + 1
+
+        @lru_cache(maxsize=None)
+        def dp(j, used, carry, bits):
+            if bits > k:
+                return 0
+            if j >= n and carry == 0:
+                return 1 if (used == m and bits == k) else 0
+            if j >= max_j:
+                return 0
+            res = 0
+            upper = (m - used) if j < n else 0
+            for cj in range(upper + 1):
+                total = carry + cj
+                nb = bits + (total & 1)
+                if nb > k:
+                    continue
+                w = wt[j][cj] if j < n else 1
+                res = (res + w * dp(j + 1, used + cj, total >> 1, nb)) % MOD
+            return res
+
+        return dp(0, 0, 0, 0) * fact[m] % MOD
+
 sol = Solution()
 result = [
     sol.minTravelTime(10, 4, 1, [0,3,8,10], [5,8,3,6]),  # expected 62
+    sol.magicalSum(5, 5, [1,10,100,10000,1000000]),  # expected 991600007
 ]
 for r in result:
     print(r)
