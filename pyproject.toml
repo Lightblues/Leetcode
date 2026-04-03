@@ -17,3 +17,14 @@ dependencies = [
 [tool.uv]
 package = false
 
+[tool.pyright]
+reportWildcardImportFromLibrary = "none"
+reportUnknownVariableType = "none"
+reportUnknownMemberType = "none"
+reportUnknownParameterType = "none"
+reportUnknownArgumentType = "none"
+reportUnknownLambdaType = "none"
+reportMissingParameterType = "none"
+reportReturnType = "none"
+reportDeprecated = "none"
+reportPartiallyUnknownType = "none"
