@@ -6,11 +6,11 @@ Easonsi @2025 """
 
 
 class Solution:
-    """ 
+    """
     有两根木材长度 n, m，三辆卡车每辆最多装一根长度 <= k 的木材。
     可以切割木材，切割长度为 x 的木材成 len1, len2 的代价为 len1 * len2。
     返回最小总代价。
-    
+
     分析:
     - 3辆卡车 + 2根木材 → 最多只需要切一刀（1根变2段，共3段用3辆卡车）
     - 若 n <= k 且 m <= k，不需要切割，代价 = 0
@@ -33,6 +33,9 @@ class Solution:
             # cut the shorter one: keep 1 piece of the other (it must be <= k, contradiction)
             # actually impossible per constraints, but handle gracefully
             return min((n - k) * k, (m - k) * k)
+
+    def resultingString(self, s: str) -> str:
+
 
 
 sol = Solution()

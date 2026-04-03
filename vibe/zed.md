@@ -1,3 +1,8 @@
+- [language support](https://zed.dev/docs/configuring-languages) 语言支持
+  - [python](https://zed.dev/docs/languages/python)
+    - LSP config
+    - debug
+
 ## Python
 语言支持通常由以下三层构成：
 1. Tree-sitter 语法解析 — 负责语法高亮、代码折叠、结构识别，速度极快，无需额外配置。
@@ -14,3 +19,8 @@ Zed 的格式化分两个阶段：第一阶段执行 code actions（如 Ruff 的
 Multiple statements on one line (colon)
 ```
 // @pyproject.toml ; @/Users/frankshi/.config/zed/settings.json
+
+# Notes
+[config]
+- @/Users/frankshi/.config/zed/settings.json
+- debug: @.zed/debug.json
