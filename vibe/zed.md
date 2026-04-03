@@ -13,4 +13,4 @@ Zed 的格式化分两个阶段：第一阶段执行 code actions（如 Ruff 的
 `List` may be undefined, or defined from star imports
 Multiple statements on one line (colon)
 ```
-Config contains unrecognized setting "reportPartiallyUnknownType".
+// @pyproject.toml ; @/Users/frankshi/.config/zed/settings.json
