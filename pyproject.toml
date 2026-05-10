@@ -6,12 +6,12 @@ authors = [{ name = "easonsshi", email = "easonsshi@tencent.com" }]
 requires-python = "~=3.10"
 readme = "README.md"
 dependencies = [
-    "beautifulsoup4>=4.14.0",
+    # "beautifulsoup4>=4.14.0",
     "dotenv>=0.9.9",
-    "easonsi>=0.0.8,<0.0.9",
+    # "easonsi>=0.0.8,<0.0.9",
     "ipython>=8.37.0",
-    "numpy>=2.2.6",
-    "requests>=2.32.5",
+    # "numpy>=2.2.6",
+    # "requests>=2.32.5",
 ]
 
 [tool.uv]
