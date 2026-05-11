@@ -174,7 +174,20 @@ https://leetcode.cn/problems/minimum-moves-to-clean-the-classroom/solutions/3690
             ans += 1
             q = nq
         return -1
-
+    
+    """ 3569. 分割数组后不同质数的最大数目 #hard
+对于一个给定的数组, 每次查询 (i,v) 改变目标位置元素; 每次 query 后, 选择某一位置将数组分成两个非空数组, 最大化两部分不同质数数量之和
+限制: n 5e4; q 5e4
+思路 1: Lazy 线段树 + 有序集合
+    求 "两部分不同质数数量之和", 也即考虑原本数组中质数数量; + 切分带来的收益! 对于某一质数, 其最左侧和最右侧出现位置为 l,r, 则要求 `l+1 <= k <= r`.
+    因此, 对于该质数, 可以将 [l+1,r] 区间 +1; 问题等价于求区间和最大值 -- 由此得到思路:
+    1. 用 Lazy 线段树维护区间加一、区间最大值。
+    2. 用哈希表套有序集合维护元素及其下标，哈希表的 key 是质数，value 是这个质数在 nums 中的下标列表。这个下标列表可以用有序集合维护，方便求最小最大，即区间左右端点。
+    TODO
+https://leetcode.cn/problems/maximize-count-of-distinct-primes-after-split/solutions/3690759/xian-duan-shu-you-xu-ji-he-by-endlessche-j3nm/
+    """
+    def maximumCount(self, nums: List[int], queries: List[List[int]]) -> List[int]:
+        pass
 
 sol = Solution()
 result = [
@@ -184,7 +197,8 @@ result = [
     # sol.minAbsDiff(grid = [[3,-1]], k = 1),
     # sol.minMoves(classroom = ["S.", "XL"], energy = 2),
     # sol.minMoves(classroom = ["LS", "RL"], energy = 4),
-    sol.minMoves(classroom = ["L.S", "RXL"], energy = 3),
+    # sol.minMoves(classroom = ["L.S", "RXL"], energy = 3),
+    sol.maximumCount(nums = [2,1,3,1,2], queries = [[1,2],[3,3]]),
 ]
 for r in result:
     print(r)
