@@ -124,6 +124,8 @@ https://leetcode.cn/problems/minimum-jumps-to-reach-end-via-prime-teleportation/
         为什么? 直接下 XorBasis 即可!
         "异或运算本质是 w 维线性空间中的模 2 加法，一个二进制数可以视作一个 w 维的向量，本题 w≤30。线性基（线性异或基）计算的是这个线性空间中的由 S' 张成的一组基，S' 中的每个二进制数（视作向量）都可以被这组基表出。
     复杂度: O(2^n n logU)
+    参见: https://oi-wiki.org/math/linear-algebra/basis/
+https://leetcode.cn/problems/partition-array-for-maximum-xor-and-and/solutions/3734850/shi-zi-bian-xing-xian-xing-ji-pythonjava-3e80/
  """
     def maximizeXorAndXor(self, nums: List[int]) -> int:
         n = len(nums)
